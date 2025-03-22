@@ -1,12 +1,35 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import Header from "@/components/Header";
+import Hero from "@/components/Hero";
+import MoodSelector from "@/components/MoodSelector";
+import BreathingVisualizer from "@/components/BreathingVisualizer";
+import MeditationPlayer from "@/components/MeditationPlayer";
+import PricingTiers from "@/components/PricingTiers";
+import Footer from "@/components/Footer";
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen">
+      <Header />
+      <Hero />
+      <MoodSelector />
+      
+      <section className="py-16 px-6 bg-gradient-to-b from-transparent to-secondary/30">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Featured Meditation</h2>
+            <p className="text-foreground/70 max-w-2xl mx-auto">
+              Experience a preview of our guided meditations with this featured session.
+            </p>
+          </div>
+          
+          <MeditationPlayer />
+        </div>
+      </section>
+      
+      <BreathingVisualizer />
+      <PricingTiers />
+      <Footer />
     </div>
   );
 };
