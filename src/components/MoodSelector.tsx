@@ -1,10 +1,8 @@
-
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { motion } from 'framer-motion';
 
-// Let's fake the framer-motion library since we don't have it installed
-const motion = {
+// Custom implementation of motion functionality 
+const customMotion = {
   div: ({ children, ...props }: any) => (
     <div className={`transition-all duration-300 ${props.animate ? props.className : props.initial}`}>
       {children}
