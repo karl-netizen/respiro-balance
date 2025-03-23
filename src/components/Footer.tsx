@@ -1,4 +1,3 @@
-
 import { Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
 
 const Footer = () => {
@@ -9,10 +8,10 @@ const Footer = () => {
           <div>
             <div className="flex items-center mb-4">
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-mindflow to-mindflow-dark flex items-center justify-center">
-                <span className="text-white font-semibold text-sm">M</span>
+                <span className="text-white font-semibold text-sm">W</span>
               </div>
               <h3 className="ml-2 text-xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-mindflow-dark to-mindflow">
-                Mindflow
+                WorkPause
               </h3>
             </div>
             <p className="text-sm text-foreground/70 mb-6">
@@ -131,7 +130,7 @@ const Footer = () => {
         <div className="pt-8 border-t border-border/30">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-sm text-foreground/60 mb-4 md:mb-0">
-              © {new Date().getFullYear()} Mindflow. All rights reserved.
+              © {new Date().getFullYear()} WorkPause. All rights reserved.
             </p>
             <div className="flex space-x-6">
               <a href="#" className="text-sm text-foreground/60 hover:text-primary transition-colors">
