@@ -1,7 +1,21 @@
 
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -37,18 +51,90 @@ const Header = () => {
           </h1>
         </div>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-8">
-          <a href="#features" className="text-foreground/80 hover:text-primary button-transition">Features</a>
-          <a href="#meditation" className="text-foreground/80 hover:text-primary button-transition">Meditate</a>
-          <a href="#pricing" className="text-foreground/80 hover:text-primary button-transition">Pricing</a>
+        {/* Desktop Navigation with Dropdowns */}
+        <NavigationMenu className="hidden md:flex">
+          <NavigationMenuList>
+            <NavigationMenuItem>
+              <NavigationMenuTrigger className="text-foreground/80 hover:text-primary bg-transparent hover:bg-transparent focus:bg-transparent">
+                Features
+              </NavigationMenuTrigger>
+              <NavigationMenuContent className="bg-popover/95 backdrop-blur-sm">
+                <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2">
+                  <li className="row-span-3">
+                    <NavigationMenuLink asChild>
+                      <a href="#features" className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-primary/10 to-primary/20 p-6 no-underline outline-none focus:shadow-md">
+                        <div className="mb-2 mt-4 text-lg font-medium">
+                          Breathe
+                        </div>
+                        <p className="text-sm leading-tight text-muted-foreground">
+                          Guided breathing exercises to help you find balance in your workday
+                        </p>
+                      </a>
+                    </NavigationMenuLink>
+                  </li>
+                  <FeatureItem
+                    title="Breathing Visualizer"
+                    href="#breathing"
+                    description="Interactive visuals to guide your breathing patterns"
+                  />
+                  <FeatureItem
+                    title="Mood Selection"
+                    href="#mood"
+                    description="Customize sessions based on your current emotional state"
+                  />
+                  <FeatureItem
+                    title="Work-Life Balance"
+                    href="#balance"
+                    description="Tools designed specifically for workplace wellness"
+                  />
+                </ul>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+            
+            <NavigationMenuItem>
+              <NavigationMenuTrigger className="text-foreground/80 hover:text-primary bg-transparent hover:bg-transparent focus:bg-transparent">
+                Meditate
+              </NavigationMenuTrigger>
+              <NavigationMenuContent className="bg-popover/95 backdrop-blur-sm">
+                <ul className="grid gap-3 p-4 md:w-[400px]">
+                  <FeatureItem
+                    title="Guided Sessions"
+                    href="#meditation"
+                    description="Professional voice-guided meditation sessions"
+                  />
+                  <FeatureItem 
+                    title="Quick Breaks"
+                    href="#quick-breaks"
+                    description="2-5 minute sessions perfect for short work breaks"
+                  />
+                  <FeatureItem
+                    title="Deep Focus"
+                    href="#deep-focus"
+                    description="Longer sessions for deep restoration"
+                  />
+                </ul>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+            
+            <NavigationMenuItem>
+              <NavigationMenuLink asChild>
+                <a href="#pricing" className="text-foreground/80 hover:text-primary px-3 py-2 button-transition">
+                  Pricing
+                </a>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
+
+        {/* Login and Get Started Buttons */}
+        <div className="hidden md:flex items-center space-x-4">
           <Button variant="outline" className="border-primary text-primary hover:bg-primary hover:text-white">
             Log In
           </Button>
           <Button className="bg-primary text-white hover:bg-mindflow-dark">
             Get Started
           </Button>
-        </nav>
+        </div>
 
         {/* Mobile Menu Button */}
         <button 
@@ -62,21 +148,25 @@ const Header = () => {
       {/* Mobile Navigation */}
       {mobileMenuOpen && (
         <div className="md:hidden absolute top-full left-0 right-0 glass-morph animate-fade-in">
-          <div className="flex flex-col space-y-4 p-6">
-            <a 
-              href="#features" 
-              className="text-foreground/80 hover:text-primary py-2 button-transition"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Features
-            </a>
-            <a 
-              href="#meditation" 
-              className="text-foreground/80 hover:text-primary py-2 button-transition"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Meditate
-            </a>
+          <div className="flex flex-col space-y-2 p-6">
+            <MobileDropdown 
+              title="Features" 
+              items={[
+                { label: "Breathing Visualizer", href: "#breathing" },
+                { label: "Mood Selection", href: "#mood" },
+                { label: "Work-Life Balance", href: "#balance" }
+              ]} 
+            />
+            
+            <MobileDropdown 
+              title="Meditate" 
+              items={[
+                { label: "Guided Sessions", href: "#meditation" },
+                { label: "Quick Breaks", href: "#quick-breaks" },
+                { label: "Deep Focus", href: "#deep-focus" }
+              ]} 
+            />
+            
             <a 
               href="#pricing" 
               className="text-foreground/80 hover:text-primary py-2 button-transition"
@@ -84,7 +174,8 @@ const Header = () => {
             >
               Pricing
             </a>
-            <Button variant="outline" className="border-primary text-primary hover:bg-primary hover:text-white w-full">
+            
+            <Button variant="outline" className="border-primary text-primary hover:bg-primary hover:text-white w-full mt-2">
               Log In
             </Button>
             <Button className="bg-primary text-white hover:bg-mindflow-dark w-full">
@@ -94,6 +185,56 @@ const Header = () => {
         </div>
       )}
     </header>
+  );
+};
+
+// Helper component for feature items in the dropdown
+const FeatureItem = ({ title, href, description }: { title: string; href: string; description: string }) => {
+  return (
+    <li>
+      <NavigationMenuLink asChild>
+        <a
+          href={href}
+          className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+        >
+          <div className="text-sm font-medium leading-none">{title}</div>
+          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+            {description}
+          </p>
+        </a>
+      </NavigationMenuLink>
+    </li>
+  );
+};
+
+// Mobile dropdown component
+const MobileDropdown = ({ title, items }: { title: string; items: { label: string; href: string }[] }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex w-full items-center justify-between text-foreground/80 hover:text-primary py-2 button-transition"
+      >
+        <span>{title}</span>
+        <ChevronDown size={16} className={`transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
+      
+      {isOpen && (
+        <div className="pl-4 space-y-2 mt-1 mb-2">
+          {items.map((item) => (
+            <a
+              key={item.label}
+              href={item.href}
+              className="block text-foreground/70 hover:text-primary py-1 text-sm button-transition"
+            >
+              {item.label}
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
   );
 };
 
