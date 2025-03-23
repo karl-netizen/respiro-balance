@@ -34,7 +34,7 @@ const Hero = () => {
             </h1>
             
             <p className="text-lg text-foreground/80 max-w-xl">
-              Mindflow helps you cultivate mindfulness and reduce stress through personalized meditation experiences tailored to your needs and schedule.
+              Respiro Balance helps you cultivate mindfulness and reduce stress through personalized meditation experiences tailored to your needs and schedule.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
@@ -54,7 +54,7 @@ const Hero = () => {
                   </div>
                 ))}
               </div>
-              <span>Join over 10,000+ professionals already using Mindflow</span>
+              <span>Join over 10,000+ professionals already using Respiro Balance</span>
             </div>
           </div>
           

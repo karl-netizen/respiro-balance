@@ -1,11 +1,10 @@
-
 import { Check } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const tiers = [
   {
-    name: 'Mindflow Essentials',
+    name: 'Respiro Essentials',
     price: 'Free',
     description: 'Basic meditation for beginners',
     features: [
@@ -21,7 +20,7 @@ const tiers = [
     style: 'border-gray-200'
   },
   {
-    name: 'Mindflow Pro',
+    name: 'Respiro Pro',
     price: '$9.99',
     period: '/month',
     description: 'Perfect for dedicated practitioners',
@@ -39,7 +38,7 @@ const tiers = [
     style: 'border-primary'
   },
   {
-    name: 'Mindflow Teams',
+    name: 'Respiro Teams',
     price: '$49',
     period: '/month',
     description: 'Ideal for small teams up to 25 people',
@@ -131,9 +130,9 @@ const PricingTiers = () => {
         </div>
         
         <div className="mt-12 text-center">
-          <h3 className="text-xl font-semibold mb-3">Mindflow Enterprise</h3>
+          <h3 className="text-xl font-semibold mb-3">Respiro Enterprise</h3>
           <p className="text-foreground/70 mb-6 max-w-2xl mx-auto">
-            For organizations with 50+ members, customize Mindflow to fit your company's wellness program 
+            For organizations with 50+ members, customize Respiro Balance to fit your company's wellness program 
             with branded experiences, detailed reporting, and dedicated support.
           </p>
           <Button variant="outline" className="border-primary text-primary hover:bg-primary/10">
