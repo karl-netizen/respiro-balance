@@ -42,9 +42,9 @@ const tiers = [
     name: 'Respiro Teams',
     price: '$49',
     period: '/month',
-    description: 'Ideal for small teams up to 25 people',
+    description: 'Ideal for small teams up to 10 people',
     features: [
-      'Up to 25 team members',
+      'Up to 10 team members',
       'Team breathing dashboard',
       'Group challenges and programs',
       'Administrator management console',
