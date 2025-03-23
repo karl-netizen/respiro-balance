@@ -15,7 +15,7 @@ const Footer = () => {
               </h3>
             </div>
             <p className="text-sm text-foreground/70 mb-6">
-              Find balance in your daily life with personalized meditation and mindfulness practices.
+              Find harmony through breath-centered meditation and mindfulness practices that balance your work and life.
             </p>
             <div className="flex space-x-4">
               <a href="#" className="text-foreground/60 hover:text-primary transition-colors">
@@ -69,17 +69,17 @@ const Footer = () => {
             <ul className="space-y-2">
               <li>
                 <a href="#" className="text-sm text-foreground/70 hover:text-primary transition-colors">
-                  Guided Meditations
+                  Breathing Meditations
                 </a>
               </li>
               <li>
                 <a href="#" className="text-sm text-foreground/70 hover:text-primary transition-colors">
-                  Sleep Stories
+                  Respiro Sleep
                 </a>
               </li>
               <li>
                 <a href="#" className="text-sm text-foreground/70 hover:text-primary transition-colors">
-                  Breathing Exercises
+                  Breath Exercises
                 </a>
               </li>
               <li>
@@ -89,7 +89,7 @@ const Footer = () => {
               </li>
               <li>
                 <a href="#" className="text-sm text-foreground/70 hover:text-primary transition-colors">
-                  Focus Music
+                  Focus Rhythms
                 </a>
               </li>
             </ul>

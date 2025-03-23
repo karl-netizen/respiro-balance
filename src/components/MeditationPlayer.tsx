@@ -53,8 +53,8 @@ const MeditationPlayer = () => {
     <div className="glassmorphism-card p-6 max-w-xl mx-auto">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="font-semibold text-lg">Morning Mindfulness</h3>
-          <p className="text-sm text-foreground/70">Guided by Sarah Johnson • 10 min</p>
+          <h3 className="font-semibold text-lg">Respiro Matutinum</h3>
+          <p className="text-sm text-foreground/70">Guided by Maria Aurelia • 10 min</p>
         </div>
         <div className="w-12 h-12 rounded-full bg-mindflow-light flex items-center justify-center">
           <span className="text-mindflow-dark font-medium">10m</span>
@@ -113,7 +113,7 @@ const MeditationPlayer = () => {
       
       <div className="mt-6 p-3 bg-secondary/50 rounded-lg">
         <p className="text-sm text-foreground/70">
-          "Begin by finding a comfortable seated position and allow your eyes to gently close..."
+          "Begin by finding a comfortable seated position and allow your breath to flow naturally. Notice the rhythm of your inhale and exhale..."
         </p>
       </div>
     </div>

@@ -1,3 +1,4 @@
+
 import { Check } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -6,9 +7,9 @@ const tiers = [
   {
     name: 'Respiro Essentials',
     price: 'Free',
-    description: 'Basic meditation for beginners',
+    description: 'Basic breathing meditation for beginners',
     features: [
-      '5-10 basic meditation sessions',
+      '5-10 basic breathing sessions',
       'Simple mood tracking',
       'Basic progress statistics',
       'Session durations (5-10 minutes)',
@@ -25,7 +26,7 @@ const tiers = [
     period: '/month',
     description: 'Perfect for dedicated practitioners',
     features: [
-      'Full library of meditation content',
+      'Full library of breathing content',
       'Advanced progress analytics',
       'Extended session options (up to 30 min)',
       'Enhanced visualization experiences',
@@ -44,7 +45,7 @@ const tiers = [
     description: 'Ideal for small teams up to 25 people',
     features: [
       'Up to 25 team members',
-      'Team progress dashboard',
+      'Team breathing dashboard',
       'Group challenges and programs',
       'Administrator management console',
       'Usage analytics for team leaders',
@@ -62,11 +63,11 @@ const PricingTiers = () => {
       <div className="max-w-7xl mx-auto">
         <div className="text-center max-w-3xl mx-auto mb-12">
           <div className="inline-block px-4 py-1.5 mb-4 rounded-full bg-secondary text-primary text-sm font-medium">
-            Find Your Plan
+            Find Your Respiro Plan
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Choose the right tier for your journey</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Choose the right tier for your breathing journey</h2>
           <p className="text-foreground/70">
-            Whether you're just starting out or looking for advanced features, we have a plan to support your mindfulness practice.
+            Whether you're just beginning or seeking advanced features, we have a plan to support your breath-centered wellness practice.
           </p>
         </div>
         

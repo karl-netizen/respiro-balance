@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 
@@ -33,50 +34,50 @@ const MoodSelector = () => {
     switch (selectedMood) {
       case 'stressed':
         return {
-          title: 'Stress Relief',
-          description: 'A gentle meditation to release tension and find calm.',
+          title: 'Respiro Relief',
+          description: 'A gentle breathing meditation to release tension and restore balance.',
           duration: '10 min',
           color: 'bg-orange-50 border-orange-200'
         };
       case 'anxious':
         return {
-          title: 'Anxiety Ease',
-          description: 'Ground yourself and quiet anxious thoughts.',
+          title: 'Anxietas Calm',
+          description: 'Ground yourself with rhythmic breathing to quiet anxious thoughts.',
           duration: '8 min',
           color: 'bg-amber-50 border-amber-200'
         };
       case 'tired':
         return {
-          title: 'Energy Renewal',
-          description: 'Rejuvenate your mind and body with this energizing practice.',
+          title: 'Vitalis Renewal',
+          description: 'Rejuvenate your energy with invigorating breathing patterns.',
           duration: '5 min',
           color: 'bg-blue-50 border-blue-200'
         };
       case 'unfocused':
         return {
-          title: 'Focus Enhancer',
-          description: 'Sharpen your attention and mental clarity.',
+          title: 'Concentro Focus',
+          description: 'Sharpen your attention with centered breathing techniques.',
           duration: '7 min',
           color: 'bg-purple-50 border-purple-200'
         };
       case 'calm':
         return {
-          title: 'Deepen Tranquility',
-          description: 'Extend your sense of peace and presence.',
+          title: 'Serena Deepening',
+          description: 'Extend your sense of peace with sustained breathing practices.',
           duration: '12 min',
           color: 'bg-green-50 border-green-200'
         };
       case 'happy':
         return {
-          title: 'Joy Amplifier',
-          description: 'Celebrate and expand your positive feelings.',
+          title: 'Laetus Amplifier',
+          description: 'Celebrate and expand your positive energy through joyful breathing.',
           duration: '6 min',
           color: 'bg-yellow-50 border-yellow-200'
         };
       default:
         return {
-          title: 'Daily Calm',
-          description: 'A balanced practice for any time of day.',
+          title: 'Respiro Equilibrium',
+          description: 'A balanced breathing practice for harmony in your day.',
           duration: '10 min',
           color: 'bg-mindflow-light border-mindflow/30'
         };
@@ -89,9 +90,9 @@ const MoodSelector = () => {
     <section className="py-16 px-6" id="features">
       <div className="max-w-7xl mx-auto">
         <div className="text-center max-w-3xl mx-auto mb-12 animate-float-up">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">How are you feeling today?</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">How is your breath today?</h2>
           <p className="text-foreground/70">
-            Select your current mood and we'll recommend the perfect meditation for you.
+            Select your current mood and we'll recommend the perfect breathing meditation for your balance.
           </p>
         </div>
         
@@ -140,21 +141,21 @@ const MoodSelector = () => {
                       {recommendation.duration}
                     </span>
                     <span className="inline-flex items-center px-3 py-1 rounded-full bg-white/50 text-sm font-medium">
-                      Beginner Friendly
+                      Breath-Focused
                     </span>
                   </div>
                 </div>
                 
                 <div>
                   <Button className="bg-primary hover:bg-mindflow-dark">
-                    Start Session
+                    Begin Breathing Session
                   </Button>
                 </div>
               </div>
             ) : (
               <div className="text-center py-6">
                 <p className="text-foreground/70">
-                  Select a mood above to get a personalized meditation recommendation
+                  Select a mood above to get a personalized breathing meditation recommendation
                 </p>
               </div>
             )}

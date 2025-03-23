@@ -24,25 +24,25 @@ const Hero = () => {
           <div className={`md:w-1/2 space-y-6 ${loaded ? 'animate-float-up' : 'opacity-0'}`}>
             <div className="inline-block">
               <span className="inline-block px-4 py-1.5 rounded-full bg-mindflow-light text-mindflow-dark text-sm font-medium animate-fade-in">
-                Discover Inner Peace
+                Breathe Into Balance
               </span>
             </div>
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-mindflow-text">
-              <span className="block">Find Balance in</span>
+              <span className="block">Find Harmony in</span>
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-mindflow-dark to-mindflow">Your Daily Life</span>
             </h1>
             
             <p className="text-lg text-foreground/80 max-w-xl">
-              Respiro Balance helps you cultivate mindfulness and reduce stress through personalized meditation experiences tailored to your needs and schedule.
+              Respiro Balance helps you cultivate mindfulness and reduce stress through breathing-centered meditation experiences tailored to restore balance to your work and life.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
               <Button size="lg" className="bg-primary text-white hover:bg-mindflow-dark button-transition">
-                Start Your Journey
+                Begin Your Respiro Journey
               </Button>
               <Button size="lg" variant="outline" className="border-primary text-primary hover:bg-primary/10 button-transition">
-                Learn More
+                Discover More
               </Button>
             </div>
             
@@ -54,7 +54,7 @@ const Hero = () => {
                   </div>
                 ))}
               </div>
-              <span>Join over 10,000+ professionals already using Respiro Balance</span>
+              <span>Join over 10,000+ professionals already breathing with Respiro Balance</span>
             </div>
           </div>
           
@@ -69,12 +69,12 @@ const Hero = () => {
                   </div>
                   
                   <div className="space-y-2">
-                    <h3 className="text-xl font-semibold">Daily Mindfulness</h3>
-                    <p className="text-sm text-foreground/70">Take a moment to breathe and center yourself</p>
+                    <h3 className="text-xl font-semibold">Breathe & Center</h3>
+                    <p className="text-sm text-foreground/70">Take a moment to breathe and restore your balance</p>
                   </div>
                   
                   <Button variant="outline" className="border-primary text-primary hover:bg-primary/10 rounded-full">
-                    Begin 5-Min Session
+                    Begin 5-Min Respiro Session
                   </Button>
                 </div>
               </div>
