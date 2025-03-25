@@ -5,11 +5,22 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Briefcase, Home, Clock, Battery, Bell, Sun, Moon } from "lucide-react";
+import { useUserPreferences } from "@/context/UserPreferencesContext";
 
 const WorkLifeBalance = () => {
+  const { preferences } = useUserPreferences();
   const [workLifeRatio, setWorkLifeRatio] = useState<number[]>([50]);
   const [notifications, setNotifications] = useState<boolean>(true);
   const [focusMode, setFocusMode] = useState<boolean>(false);
+
+  // Helper function to format time (e.g., "09:00" to "9:00 AM")
+  const formatTime = (time: string) => {
+    const [hours, minutes] = time.split(':');
+    const hour = parseInt(hours, 10);
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const formattedHour = hour % 12 || 12;
+    return `${formattedHour}:${minutes} ${ampm}`;
+  };
 
   return (
     <section id="balance" className="py-16 px-6 bg-gradient-to-b from-white to-secondary/10">
@@ -20,6 +31,11 @@ const WorkLifeBalance = () => {
             Our tools help you maintain a healthy balance between work and personal life,
             with reminders for breaks, focus periods, and tracking your daily equilibrium.
           </p>
+          {preferences.hasCompletedOnboarding && (
+            <p className="mt-2 text-primary font-medium">
+              Personalized for your {preferences.workDays.length} day work week
+            </p>
+          )}
         </div>
         
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -34,7 +50,9 @@ const WorkLifeBalance = () => {
                 </div>
               </div>
               <CardDescription>
-                Track and adjust your work-life balance ratio
+                {preferences.hasCompletedOnboarding
+                  ? `Based on your ${preferences.workStartTime} to ${preferences.workEndTime} schedule`
+                  : "Track and adjust your work-life balance ratio"}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -73,7 +91,9 @@ const WorkLifeBalance = () => {
                 <Clock className="h-5 w-5 text-primary" />
               </div>
               <CardDescription>
-                Regular breaks to maintain focus and prevent burnout
+                {preferences.hasCompletedOnboarding && preferences.lunchBreak
+                  ? `Includes your lunch break at ${formatTime(preferences.lunchTime)}`
+                  : "Regular breaks to maintain focus and prevent burnout"}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -86,6 +106,12 @@ const WorkLifeBalance = () => {
                   <span className="font-medium">Medium breaks (15 min)</span>
                   <span className="text-sm text-muted-foreground">Every 2 hours</span>
                 </div>
+                {preferences.hasCompletedOnboarding && preferences.lunchBreak && (
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium">Lunch break (45 min)</span>
+                    <span className="text-sm text-muted-foreground">{formatTime(preferences.lunchTime)}</span>
+                  </div>
+                )}
                 <div className="flex items-center justify-between">
                   <span className="font-medium">Long breaks (30 min)</span>
                   <span className="text-sm text-muted-foreground">Every 4 hours</span>
@@ -120,7 +146,9 @@ const WorkLifeBalance = () => {
                 <Battery className="h-5 w-5 text-primary" />
               </div>
               <CardDescription>
-                Dedicated time for deep work with minimal distractions
+                {preferences.hasCompletedOnboarding && preferences.morningExercise
+                  ? `Optimized for your ${formatTime(preferences.exerciseTime)} workout`
+                  : "Dedicated time for deep work with minimal distractions"}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -135,6 +163,13 @@ const WorkLifeBalance = () => {
                 <div className="text-sm text-muted-foreground">
                   Focus mode blocks notifications and helps you stay concentrated on your task
                   with ambient sounds and breathing reminders.
+                  {preferences.hasCompletedOnboarding && (
+                    <span className="block mt-2">
+                      Your recommended focus times are based on your {preferences.workDays.length}-day work week
+                      {preferences.hasCompletedOnboarding && preferences.morningExercise && 
+                        ` and ${formatTime(preferences.exerciseTime)} exercise routine`}.
+                    </span>
+                  )}
                 </div>
                 <div className="flex items-center space-x-2 pt-2">
                   <Switch

@@ -7,8 +7,12 @@ import MeditationPlayer from "@/components/MeditationPlayer";
 import WorkLifeBalance from "@/components/WorkLifeBalance";
 import PricingTiers from "@/components/PricingTiers";
 import Footer from "@/components/Footer";
+import OnboardingWizard from "@/components/onboarding/OnboardingWizard";
+import { useUserPreferences } from "@/context/UserPreferencesContext";
 
 const Index = () => {
+  const { preferences } = useUserPreferences();
+  
   return (
     <div className="min-h-screen">
       <Header />
@@ -32,6 +36,9 @@ const Index = () => {
       <WorkLifeBalance />
       <PricingTiers />
       <Footer />
+      
+      {/* Onboarding wizard will automatically show for first-time users */}
+      <OnboardingWizard />
     </div>
   );
 };
