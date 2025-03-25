@@ -75,7 +75,7 @@ const OnboardingWizard = () => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-[500px]" showClose={false}>
+      <DialogContent className="sm:max-w-[500px]">
         <div className="space-y-6">
           <div className="text-center">
             <div className="bg-primary/10 inline-flex p-2 rounded-full mb-4">
