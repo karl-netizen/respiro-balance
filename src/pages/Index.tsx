@@ -4,6 +4,7 @@ import Hero from "@/components/Hero";
 import MoodSelector from "@/components/MoodSelector";
 import BreathingVisualizer from "@/components/BreathingVisualizer";
 import MeditationPlayer from "@/components/MeditationPlayer";
+import WorkLifeBalance from "@/components/WorkLifeBalance";
 import PricingTiers from "@/components/PricingTiers";
 import Footer from "@/components/Footer";
 
@@ -28,6 +29,7 @@ const Index = () => {
       </section>
       
       <BreathingVisualizer />
+      <WorkLifeBalance />
       <PricingTiers />
       <Footer />
     </div>
