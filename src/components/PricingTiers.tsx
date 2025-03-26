@@ -1,11 +1,14 @@
 
-import { Check } from 'lucide-react';
+import { Check, Users, Building, Star } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useUserPreferences } from "@/context/UserPreferencesContext";
 
 const tiers = [
   {
+    id: 'free',
     name: 'Respiro Essentials',
+    icon: <div className="p-2 rounded-full bg-secondary w-10 h-10 flex items-center justify-center text-foreground/80"><Star size={20} /></div>,
     price: 'Free',
     description: 'Basic breathing meditation for beginners',
     features: [
@@ -21,7 +24,9 @@ const tiers = [
     style: 'border-gray-200'
   },
   {
+    id: 'pro',
     name: 'Respiro Pro',
+    icon: <div className="p-2 rounded-full bg-primary/20 w-10 h-10 flex items-center justify-center text-primary"><Star size={20} /></div>,
     price: '$9.99',
     period: '/month',
     description: 'Perfect for dedicated practitioners',
@@ -39,7 +44,9 @@ const tiers = [
     style: 'border-primary'
   },
   {
+    id: 'team',
     name: 'Respiro Teams',
+    icon: <div className="p-2 rounded-full bg-secondary w-10 h-10 flex items-center justify-center text-foreground/80"><Users size={20} /></div>,
     price: '$49',
     period: '/month',
     description: 'Ideal for small teams up to 10 people',
@@ -55,9 +62,42 @@ const tiers = [
     popular: false,
     style: 'border-gray-200'
   },
+  {
+    id: 'enterprise',
+    name: 'Respiro Enterprise',
+    icon: <div className="p-2 rounded-full bg-secondary w-10 h-10 flex items-center justify-center text-foreground/80"><Building size={20} /></div>,
+    price: 'Custom',
+    description: 'For organizations with 50+ members',
+    features: [
+      'Unlimited team members',
+      'Dedicated account manager',
+      'Custom branding options',
+      'Advanced analytics and reporting',
+      'API access for custom integrations',
+      'Custom content development',
+      'Priority 24/7 support',
+    ],
+    cta: 'Contact Sales',
+    popular: false,
+    style: 'border-gray-200'
+  },
 ];
 
 const PricingTiers = () => {
+  const { preferences, updatePreferences } = useUserPreferences();
+
+  const handleSelectTier = (tierId: string) => {
+    updatePreferences({ 
+      subscriptionTier: tierId === 'free' 
+        ? 'Free' 
+        : tierId === 'pro' 
+          ? 'Pro' 
+          : tierId === 'team' 
+            ? 'Team' 
+            : 'Enterprise'
+    });
+  };
+
   return (
     <section className="py-16 px-6" id="pricing">
       <div className="max-w-7xl mx-auto">
@@ -71,10 +111,10 @@ const PricingTiers = () => {
           </p>
         </div>
         
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {tiers.map((tier) => (
             <div 
-              key={tier.name}
+              key={tier.id}
               className={cn(
                 "relative rounded-xl overflow-hidden transition-all duration-300 hover:shadow-xl",
                 tier.popular ? "transform md:-translate-y-4" : ""
@@ -88,10 +128,17 @@ const PricingTiers = () => {
               
               <div className={cn(
                 "glassmorphism-card border-2 h-full flex flex-col",
-                tier.popular ? tier.style : "border-transparent hover:border-gray-200"
+                tier.id === preferences.subscriptionTier?.toLowerCase() 
+                  ? "border-primary ring-2 ring-primary/20" 
+                  : tier.popular 
+                    ? tier.style 
+                    : "border-transparent hover:border-gray-200"
               )}>
                 <div className="p-6 pb-0">
-                  <h3 className="text-xl font-bold mb-1">{tier.name}</h3>
+                  <div className="flex items-center gap-3 mb-3">
+                    {tier.icon}
+                    <h3 className="text-xl font-bold">{tier.name}</h3>
+                  </div>
                   <p className="text-foreground/70 text-sm mb-4">{tier.description}</p>
                   
                   <div className="flex items-baseline mb-6">
@@ -117,28 +164,22 @@ const PricingTiers = () => {
                   <Button 
                     className={cn(
                       "w-full", 
-                      tier.popular 
-                        ? "bg-primary hover:bg-mindflow-dark" 
-                        : "bg-secondary text-foreground hover:bg-secondary/80"
+                      tier.id === preferences.subscriptionTier?.toLowerCase()
+                        ? "bg-secondary text-primary border border-primary"
+                        : tier.popular 
+                          ? "bg-primary hover:bg-mindflow-dark" 
+                          : "bg-secondary text-foreground hover:bg-secondary/80"
                     )}
+                    onClick={() => handleSelectTier(tier.id)}
                   >
-                    {tier.cta}
+                    {tier.id === preferences.subscriptionTier?.toLowerCase()
+                      ? "Current Plan"
+                      : tier.cta}
                   </Button>
                 </div>
               </div>
             </div>
           ))}
-        </div>
-        
-        <div className="mt-12 text-center">
-          <h3 className="text-xl font-semibold mb-3">Respiro Enterprise</h3>
-          <p className="text-foreground/70 mb-6 max-w-2xl mx-auto">
-            For organizations with 50+ members, customize Respiro Balance to fit your company's wellness program 
-            with branded experiences, detailed reporting, and dedicated support.
-          </p>
-          <Button variant="outline" className="border-primary text-primary hover:bg-primary/10">
-            Contact Us For Enterprise Pricing
-          </Button>
         </div>
       </div>
     </section>

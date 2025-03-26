@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
+import { useUserPreferences } from "@/context/UserPreferencesContext";
 
 // Custom implementation of motion functionality 
 const customMotion = {
@@ -12,17 +13,18 @@ const customMotion = {
 };
 
 const moods = [
-  { id: 'stressed', label: 'Stressed', color: 'bg-orange-100 border-orange-300 text-orange-700' },
-  { id: 'anxious', label: 'Anxious', color: 'bg-amber-100 border-amber-300 text-amber-700' },
-  { id: 'tired', label: 'Tired', color: 'bg-blue-100 border-blue-300 text-blue-700' },
-  { id: 'unfocused', label: 'Unfocused', color: 'bg-purple-100 border-purple-300 text-purple-700' },
-  { id: 'calm', label: 'Calm', color: 'bg-green-100 border-green-300 text-green-700' },
-  { id: 'happy', label: 'Happy', color: 'bg-yellow-100 border-yellow-300 text-yellow-700' },
+  { id: 'stressed', label: 'Stressed', emoji: '😖', color: 'bg-orange-100 border-orange-300 text-orange-700' },
+  { id: 'anxious', label: 'Anxious', emoji: '😰', color: 'bg-amber-100 border-amber-300 text-amber-700' },
+  { id: 'tired', label: 'Tired', emoji: '😴', color: 'bg-blue-100 border-blue-300 text-blue-700' },
+  { id: 'unfocused', label: 'Unfocused', emoji: '🤔', color: 'bg-purple-100 border-purple-300 text-purple-700' },
+  { id: 'calm', label: 'Calm', emoji: '😌', color: 'bg-green-100 border-green-300 text-green-700' },
+  { id: 'happy', label: 'Happy', emoji: '😊', color: 'bg-yellow-100 border-yellow-300 text-yellow-700' },
 ];
 
 const MoodSelector = () => {
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
   const [showRecommendation, setShowRecommendation] = useState(false);
+  const { preferences } = useUserPreferences();
 
   const handleMoodSelect = (moodId: string) => {
     setSelectedMood(moodId);
@@ -90,10 +92,15 @@ const MoodSelector = () => {
     <section className="py-16 px-6" id="features">
       <div className="max-w-7xl mx-auto">
         <div className="text-center max-w-3xl mx-auto mb-12 animate-float-up">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">How is your breath today?</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">How are you feeling today?</h2>
           <p className="text-foreground/70">
             Select your current mood and we'll recommend the perfect breathing meditation for your balance.
           </p>
+          {preferences.hasCompletedOnboarding && (
+            <p className="mt-2 text-primary text-sm">
+              Personalized recommendations based on your profile
+            </p>
+          )}
         </div>
         
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-10">
@@ -109,13 +116,8 @@ const MoodSelector = () => {
               `}
               style={{ animationDelay: `${index * 100}ms` }}
             >
-              <div className="text-2xl mb-2">
-                {mood.id === 'stressed' && '😖'}
-                {mood.id === 'anxious' && '😰'}
-                {mood.id === 'tired' && '😴'}
-                {mood.id === 'unfocused' && '🤔'}
-                {mood.id === 'calm' && '😌'}
-                {mood.id === 'happy' && '😊'}
+              <div className="text-4xl mb-3">
+                {mood.emoji}
               </div>
               <span className="font-medium">{mood.label}</span>
             </button>
@@ -161,6 +163,43 @@ const MoodSelector = () => {
             )}
           </div>
         </div>
+        
+        {preferences.hasCompletedOnboarding && (
+          <div className="mt-12">
+            <h3 className="text-xl font-semibold mb-6 text-center">Recommended for you</h3>
+            <div className="grid md:grid-cols-3 gap-6">
+              <div className="glassmorphism-card p-4 hover:shadow-lg transition-all">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-primary">Morning Focus</span>
+                  <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">5 min</span>
+                </div>
+                <h4 className="font-medium mb-1">Dawn Clarity</h4>
+                <p className="text-sm text-foreground/70 mb-3">Start your day with mental clarity and purpose</p>
+                <Button variant="outline" size="sm" className="w-full">Begin Session</Button>
+              </div>
+              
+              <div className="glassmorphism-card p-4 hover:shadow-lg transition-all">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-primary">Afternoon Reset</span>
+                  <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">8 min</span>
+                </div>
+                <h4 className="font-medium mb-1">Midday Refresh</h4>
+                <p className="text-sm text-foreground/70 mb-3">Restore energy during your afternoon slump</p>
+                <Button variant="outline" size="sm" className="w-full">Begin Session</Button>
+              </div>
+              
+              <div className="glassmorphism-card p-4 hover:shadow-lg transition-all">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-primary">Evening Wind Down</span>
+                  <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">10 min</span>
+                </div>
+                <h4 className="font-medium mb-1">Twilight Calm</h4>
+                <p className="text-sm text-foreground/70 mb-3">Release the day's tensions before bed</p>
+                <Button variant="outline" size="sm" className="w-full">Begin Session</Button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );

@@ -1,7 +1,8 @@
 
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, User, Crown } from "lucide-react";
+import { useUserPreferences } from "@/context/UserPreferencesContext";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -20,6 +21,7 @@ import {
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { preferences } = useUserPreferences();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -51,44 +53,15 @@ const Header = () => {
           </h1>
         </div>
 
-        {/* Desktop Navigation with Dropdowns */}
+        {/* Desktop Navigation with Updated Structure */}
         <NavigationMenu className="hidden md:flex">
           <NavigationMenuList>
             <NavigationMenuItem>
-              <NavigationMenuTrigger className="text-foreground/80 hover:text-primary bg-transparent hover:bg-transparent focus:bg-transparent">
-                Features
-              </NavigationMenuTrigger>
-              <NavigationMenuContent className="bg-popover/95 backdrop-blur-sm">
-                <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2">
-                  <li className="row-span-3">
-                    <NavigationMenuLink asChild>
-                      <a href="#features" className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-primary/10 to-primary/20 p-6 no-underline outline-none focus:shadow-md">
-                        <div className="mb-2 mt-4 text-lg font-medium">
-                          Breathe
-                        </div>
-                        <p className="text-sm leading-tight text-muted-foreground">
-                          Guided breathing exercises to help you find balance in your workday
-                        </p>
-                      </a>
-                    </NavigationMenuLink>
-                  </li>
-                  <FeatureItem
-                    title="Breathing Visualizer"
-                    href="#breathing"
-                    description="Interactive visuals to guide your breathing patterns"
-                  />
-                  <FeatureItem
-                    title="Mood Selection"
-                    href="#mood"
-                    description="Customize sessions based on your current emotional state"
-                  />
-                  <FeatureItem
-                    title="Work-Life Balance"
-                    href="#balance"
-                    description="Tools designed specifically for workplace wellness"
-                  />
-                </ul>
-              </NavigationMenuContent>
+              <NavigationMenuLink asChild>
+                <a href="/" className="text-foreground/80 hover:text-primary px-3 py-2 button-transition">
+                  Home
+                </a>
+              </NavigationMenuLink>
             </NavigationMenuItem>
             
             <NavigationMenuItem>
@@ -112,8 +85,29 @@ const Header = () => {
                     href="#deep-focus"
                     description="Longer sessions for deep restoration"
                   />
+                  <FeatureItem
+                    title="Meditation Library"
+                    href="/meditate"
+                    description="Browse our complete collection of sessions"
+                  />
                 </ul>
               </NavigationMenuContent>
+            </NavigationMenuItem>
+            
+            <NavigationMenuItem>
+              <NavigationMenuLink asChild>
+                <a href="/breathe" className="text-foreground/80 hover:text-primary px-3 py-2 button-transition">
+                  Breathe
+                </a>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+            
+            <NavigationMenuItem>
+              <NavigationMenuLink asChild>
+                <a href="/progress" className="text-foreground/80 hover:text-primary px-3 py-2 button-transition">
+                  Progress
+                </a>
+              </NavigationMenuLink>
             </NavigationMenuItem>
             
             <NavigationMenuItem>
@@ -126,11 +120,16 @@ const Header = () => {
           </NavigationMenuList>
         </NavigationMenu>
 
-        {/* Login and Get Started Buttons */}
+        {/* Account and Subscription Elements */}
         <div className="hidden md:flex items-center space-x-4">
-          <Button variant="outline" className="border-primary text-primary hover:bg-primary hover:text-white">
-            Log In
-          </Button>
+          <div className="flex items-center">
+            <div className="mr-2 px-2 py-1 bg-primary/10 text-primary text-xs font-medium rounded-full">
+              {preferences.subscriptionTier || "Free"}
+            </div>
+            <Button variant="ghost" size="icon" className="rounded-full">
+              <User size={20} />
+            </Button>
+          </div>
           <Button className="bg-primary text-white hover:bg-mindflow-dark">
             Get Started
           </Button>
@@ -145,27 +144,43 @@ const Header = () => {
         </button>
       </div>
 
-      {/* Mobile Navigation */}
+      {/* Mobile Navigation - Updated for new structure */}
       {mobileMenuOpen && (
         <div className="md:hidden absolute top-full left-0 right-0 glass-morph animate-fade-in">
           <div className="flex flex-col space-y-2 p-6">
-            <MobileDropdown 
-              title="Features" 
-              items={[
-                { label: "Breathing Visualizer", href: "#breathing" },
-                { label: "Mood Selection", href: "#mood" },
-                { label: "Work-Life Balance", href: "#balance" }
-              ]} 
-            />
+            <a 
+              href="/" 
+              className="text-foreground/80 hover:text-primary py-2 button-transition"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Home
+            </a>
             
             <MobileDropdown 
               title="Meditate" 
               items={[
                 { label: "Guided Sessions", href: "#meditation" },
                 { label: "Quick Breaks", href: "#quick-breaks" },
-                { label: "Deep Focus", href: "#deep-focus" }
+                { label: "Deep Focus", href: "#deep-focus" },
+                { label: "Meditation Library", href: "/meditate" }
               ]} 
             />
+            
+            <a 
+              href="/breathe" 
+              className="text-foreground/80 hover:text-primary py-2 button-transition"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Breathe
+            </a>
+            
+            <a 
+              href="/progress" 
+              className="text-foreground/80 hover:text-primary py-2 button-transition"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Progress
+            </a>
             
             <a 
               href="#pricing" 

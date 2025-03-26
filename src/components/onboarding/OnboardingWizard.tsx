@@ -5,10 +5,10 @@ import { Button } from "@/components/ui/button";
 import { useUserPreferences } from "@/context/UserPreferencesContext";
 import { toast } from "sonner";
 import WorkScheduleStep from "./steps/WorkScheduleStep";
-import LunchBreakStep from "./steps/LunchBreakStep";
-import ExerciseStep from "./steps/ExerciseStep";
-import SleepStep from "./steps/SleepStep";
-import FinalStep from "./steps/FinalStep";
+import StressFocusStep from "./steps/StressFocusStep";
+import MeditationExperienceStep from "./steps/MeditationExperienceStep";
+import BiofeedbackStep from "./steps/BiofeedbackStep";
+import NotificationPreferencesStep from "./steps/NotificationPreferencesStep";
 
 const OnboardingWizard = () => {
   const { preferences, updatePreferences } = useUserPreferences();
@@ -22,24 +22,24 @@ const OnboardingWizard = () => {
       description: "Tell us about your typical work schedule",
     },
     {
-      title: "Lunch Break",
-      component: <LunchBreakStep />,
-      description: "Do you take regular lunch breaks?",
+      title: "Stress & Focus",
+      component: <StressFocusStep />,
+      description: "Help us understand your stress levels and focus challenges",
     },
     {
-      title: "Exercise Routine",
-      component: <ExerciseStep />,
-      description: "Tell us about your exercise habits",
+      title: "Meditation Experience",
+      component: <MeditationExperienceStep />,
+      description: "Share your experience with meditation and goals",
     },
     {
-      title: "Sleep Schedule",
-      component: <SleepStep />,
-      description: "When do you typically go to bed?",
+      title: "Biofeedback & Tracking",
+      component: <BiofeedbackStep />,
+      description: "Customize how you track your progress",
     },
     {
-      title: "All Set!",
-      component: <FinalStep />,
-      description: "Your personalized experience is ready",
+      title: "Notification Preferences",
+      component: <NotificationPreferencesStep />,
+      description: "Set up reminders to help you stay consistent",
     },
   ];
 
@@ -78,6 +78,18 @@ const OnboardingWizard = () => {
       <DialogContent className="sm:max-w-[500px]">
         <div className="space-y-6">
           <div className="text-center">
+            <div className="flex items-center justify-center mb-3">
+              <div className="h-1 bg-secondary flex-1 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-primary"
+                  style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }} 
+                />
+              </div>
+              <span className="mx-2 text-sm text-muted-foreground">
+                Step {currentStep + 1} of {steps.length}
+              </span>
+            </div>
+            
             <div className="bg-primary/10 inline-flex p-2 rounded-full mb-4">
               <div className="bg-primary text-white h-8 w-8 rounded-full flex items-center justify-center text-sm font-medium">
                 {currentStep + 1}
@@ -87,7 +99,7 @@ const OnboardingWizard = () => {
             <p className="text-muted-foreground mt-1">{steps[currentStep].description}</p>
           </div>
 
-          <div className="py-4">{steps[currentStep].component}</div>
+          <div className="py-4 min-h-[240px]">{steps[currentStep].component}</div>
 
           <div className="flex justify-between">
             {currentStep > 0 ? (
