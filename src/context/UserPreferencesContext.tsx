@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from "react";
 
 type WorkDay = "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday";
@@ -6,8 +7,14 @@ type StressLevel = "low" | "moderate" | "high";
 type MeditationExperience = "none" | "beginner" | "intermediate" | "advanced";
 type SubscriptionTier = "Free" | "Pro" | "Team" | "Enterprise";
 type BusinessAttribution = "KGP Coaching & Consulting" | "LearnRelaxation" | null;
+type UserRole = "client" | "coach" | "admin";
 
 interface UserPreferences {
+  // User Role
+  userRole: UserRole;
+  coachId?: string;
+  clientIds?: string[];
+  
   // Business Attribution
   businessAttribution: BusinessAttribution;
   
@@ -39,7 +46,10 @@ interface UserPreferences {
   // Biofeedback & Tracking
   hasWearableDevice: boolean;
   wearableDeviceType?: string;
+  wearableDeviceId?: string;
+  lastSyncDate?: string;
   metricsOfInterest: string[];
+  connectedDevices: BluetoothDevice[];
   
   // Notifications
   enableSessionReminders: boolean;
@@ -53,7 +63,18 @@ interface UserPreferences {
   hasCompletedOnboarding: boolean;
 }
 
+// Create a mock BluetoothDevice interface since the Web Bluetooth API types aren't available
+interface BluetoothDevice {
+  id: string;
+  name: string;
+  type: string;
+  connected: boolean;
+}
+
 const defaultPreferences: UserPreferences = {
+  // User Role
+  userRole: "client",
+  
   // Business Attribution
   businessAttribution: null,
   
@@ -85,6 +106,7 @@ const defaultPreferences: UserPreferences = {
   // Biofeedback & Tracking
   hasWearableDevice: false,
   metricsOfInterest: ["stress", "focus"],
+  connectedDevices: [],
   
   // Notifications
   enableSessionReminders: true,
@@ -102,6 +124,9 @@ interface UserPreferencesContextType {
   preferences: UserPreferences;
   updatePreferences: (newPreferences: Partial<UserPreferences>) => void;
   resetPreferences: () => void;
+  isCoach: () => boolean;
+  connectBluetoothDevice: () => Promise<boolean>;
+  disconnectBluetoothDevice: (deviceId: string) => void;
 }
 
 const UserPreferencesContext = createContext<UserPreferencesContextType | undefined>(undefined);
@@ -129,9 +154,64 @@ export const UserPreferencesProvider: React.FC<{ children: React.ReactNode }> = 
     setPreferences(defaultPreferences);
     localStorage.removeItem("userPreferences");
   };
+  
+  const isCoach = () => {
+    return preferences.userRole === "coach" || preferences.userRole === "admin";
+  };
+  
+  const connectBluetoothDevice = async (): Promise<boolean> => {
+    // This is a mock implementation since Web Bluetooth API may not be available
+    // In a real application, you would use the Web Bluetooth API
+    try {
+      // Simulate device connection with a timeout
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Create a mock device
+      const mockDevice: BluetoothDevice = {
+        id: Math.random().toString(36).substring(2, 10),
+        name: "Respiro HR Monitor",
+        type: "heart_rate",
+        connected: true
+      };
+      
+      // Add the device to the list of connected devices
+      updatePreferences({
+        hasWearableDevice: true,
+        wearableDeviceType: "Respiro HR Monitor",
+        wearableDeviceId: mockDevice.id,
+        lastSyncDate: new Date().toISOString(),
+        connectedDevices: [...preferences.connectedDevices, mockDevice]
+      });
+      
+      return true;
+    } catch (error) {
+      console.error("Failed to connect Bluetooth device:", error);
+      return false;
+    }
+  };
+  
+  const disconnectBluetoothDevice = (deviceId: string) => {
+    const updatedDevices = preferences.connectedDevices.filter(
+      device => device.id !== deviceId
+    );
+    
+    updatePreferences({
+      connectedDevices: updatedDevices,
+      hasWearableDevice: updatedDevices.length > 0
+    });
+  };
 
   return (
-    <UserPreferencesContext.Provider value={{ preferences, updatePreferences, resetPreferences }}>
+    <UserPreferencesContext.Provider 
+      value={{ 
+        preferences, 
+        updatePreferences, 
+        resetPreferences,
+        isCoach,
+        connectBluetoothDevice,
+        disconnectBluetoothDevice
+      }}
+    >
       {children}
     </UserPreferencesContext.Provider>
   );
