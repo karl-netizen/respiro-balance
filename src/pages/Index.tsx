@@ -5,7 +5,7 @@ import Hero from "@/components/Hero";
 import MoodSelector from "@/components/MoodSelector";
 import BreathingVisualizer from "@/components/BreathingVisualizer";
 import MeditationPlayer from "@/components/MeditationPlayer";
-import WorkLifeBalance from "@/components/WorkLifeBalance";
+import WorkLifeBalance from "@/components/work-life-balance";
 import PricingTiers from "@/components/PricingTiers";
 import Footer from "@/components/Footer";
 import OnboardingWizard from "@/components/onboarding/OnboardingWizard";
