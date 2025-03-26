@@ -66,7 +66,8 @@ const tiers = [
     id: 'enterprise',
     name: 'Respiro Enterprise',
     icon: <div className="p-2 rounded-full bg-secondary w-10 h-10 flex items-center justify-center text-foreground/80"><Building size={20} /></div>,
-    price: 'Custom',
+    price: '$99',
+    period: '/month',
     description: 'For organizations with 50+ members',
     features: [
       'Unlimited team members',
@@ -76,6 +77,7 @@ const tiers = [
       'API access for custom integrations',
       'Custom content development',
       'Priority 24/7 support',
+      'Integration with corporate wellness programs',
     ],
     cta: 'Contact Sales',
     popular: false,

@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import BalanceMeterCard from "./BalanceMeterCard";
 import BreakRemindersCard from "./BreakRemindersCard";
 import FocusModeCard from "./FocusModeCard";
+import BiofeedbackCard from "@/components/BiofeedbackCard";
 import { useUserPreferences } from "@/context/UserPreferencesContext";
 
 const WorkLifeBalanceSection = () => {
@@ -24,10 +25,11 @@ const WorkLifeBalanceSection = () => {
           )}
         </div>
         
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           <BalanceMeterCard />
           <BreakRemindersCard />
           <FocusModeCard />
+          <BiofeedbackCard />
         </div>
         
         <div className="mt-12 text-center">

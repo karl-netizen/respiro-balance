@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from "react";
 
 type WorkDay = "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday";
@@ -6,8 +5,12 @@ type WorkEnvironment = "office" | "home" | "hybrid";
 type StressLevel = "low" | "moderate" | "high";
 type MeditationExperience = "none" | "beginner" | "intermediate" | "advanced";
 type SubscriptionTier = "Free" | "Pro" | "Team" | "Enterprise";
+type BusinessAttribution = "KGP Coaching & Consulting" | "LearnRelaxation" | null;
 
 interface UserPreferences {
+  // Business Attribution
+  businessAttribution: BusinessAttribution;
+  
   // Work Schedule
   workDays: WorkDay[];
   workStartTime: string;
@@ -51,6 +54,9 @@ interface UserPreferences {
 }
 
 const defaultPreferences: UserPreferences = {
+  // Business Attribution
+  businessAttribution: null,
+  
   // Work Schedule
   workDays: ["monday", "tuesday", "wednesday", "thursday", "friday"],
   workStartTime: "09:00",
