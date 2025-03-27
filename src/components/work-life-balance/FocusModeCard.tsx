@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Battery, Sun, Moon } from "lucide-react";
-import { useUserPreferences } from "@/context/UserPreferencesContext";
+import { useUserPreferences } from "@/context";
 import { formatTime } from "./utils";
 
 const FocusModeCard = () => {

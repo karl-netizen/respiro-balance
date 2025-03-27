@@ -3,7 +3,7 @@ import React from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { useUserPreferences } from "@/context/UserPreferencesContext";
+import { useUserPreferences } from "@/context";
 
 const WorkScheduleStep = () => {
   const { preferences, updatePreferences } = useUserPreferences();

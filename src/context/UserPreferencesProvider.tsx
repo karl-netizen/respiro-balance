@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { UserPreferences, UserPreferencesContextType } from './types';
 import defaultPreferences from './defaultPreferences';
 import { connectBluetoothDevice, disconnectDevice } from './bluetoothUtils';
-import { UserPreferencesContext } from './index';
+import { UserPreferencesContext } from './UserPreferencesContext';
 
 export const UserPreferencesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [preferences, setPreferences] = useState<UserPreferences>(() => {

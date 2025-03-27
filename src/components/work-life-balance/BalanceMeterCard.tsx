@@ -1,10 +1,9 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Briefcase, Home } from "lucide-react";
-import { useUserPreferences } from "@/context/UserPreferencesContext";
+import { useUserPreferences } from "@/context";
 
 const BalanceMeterCard = () => {
   const { preferences } = useUserPreferences();
