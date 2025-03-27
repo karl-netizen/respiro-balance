@@ -13,7 +13,8 @@ const StressFocusStep = () => {
   };
 
   const handleFocusChallengeChange = (value: string, checked: boolean) => {
-    let updatedChallenges = [...preferences.focusChallenges];
+    // Ensure focusChallenges is an array before using it
+    let updatedChallenges = [...(preferences.focusChallenges || [])];
     
     if (checked) {
       updatedChallenges.push(value);
@@ -58,7 +59,7 @@ const StressFocusStep = () => {
           <div className="flex items-center space-x-2">
             <Checkbox 
               id="challenge-distractions" 
-              checked={preferences.focusChallenges.includes("distractions")}
+              checked={preferences.focusChallenges?.includes("distractions") || false}
               onCheckedChange={(checked) => handleFocusChallengeChange("distractions", !!checked)}
             />
             <label htmlFor="challenge-distractions" className="text-sm">
@@ -68,7 +69,7 @@ const StressFocusStep = () => {
           <div className="flex items-center space-x-2">
             <Checkbox 
               id="challenge-afternoon_slump" 
-              checked={preferences.focusChallenges.includes("afternoon_slump")}
+              checked={preferences.focusChallenges?.includes("afternoon_slump") || false}
               onCheckedChange={(checked) => handleFocusChallengeChange("afternoon_slump", !!checked)}
             />
             <label htmlFor="challenge-afternoon_slump" className="text-sm">
@@ -78,7 +79,7 @@ const StressFocusStep = () => {
           <div className="flex items-center space-x-2">
             <Checkbox 
               id="challenge-multitasking" 
-              checked={preferences.focusChallenges.includes("multitasking")}
+              checked={preferences.focusChallenges?.includes("multitasking") || false}
               onCheckedChange={(checked) => handleFocusChallengeChange("multitasking", !!checked)}
             />
             <label htmlFor="challenge-multitasking" className="text-sm">
@@ -88,7 +89,7 @@ const StressFocusStep = () => {
           <div className="flex items-center space-x-2">
             <Checkbox 
               id="challenge-mind_wandering" 
-              checked={preferences.focusChallenges.includes("mind_wandering")}
+              checked={preferences.focusChallenges?.includes("mind_wandering") || false}
               onCheckedChange={(checked) => handleFocusChallengeChange("mind_wandering", !!checked)}
             />
             <label htmlFor="challenge-mind_wandering" className="text-sm">
@@ -101,7 +102,7 @@ const StressFocusStep = () => {
       <div>
         <h3 className="text-sm font-medium mb-3">When during the day is your energy typically lowest?</h3>
         <RadioGroup 
-          value={preferences.energyPattern} 
+          value={preferences.energyPattern || "afternoon_dip"} 
           onValueChange={handleEnergyPatternChange}
           className="flex flex-col space-y-2"
         >

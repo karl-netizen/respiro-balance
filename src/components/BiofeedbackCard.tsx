@@ -3,9 +3,10 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { Activity, Heart, LineChart, Smartphone, Watch, Users, Badge, AlertCircle } from "lucide-react";
+import { Activity, Heart, LineChart, Smartphone, Watch, Users, AlertCircle } from "lucide-react";
 import { useUserPreferences } from "@/context/UserPreferencesContext";
 import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
 
 const BiofeedbackCard = () => {
   const { preferences, updatePreferences, connectBluetoothDevice, disconnectBluetoothDevice } = useUserPreferences();
@@ -73,9 +74,7 @@ const BiofeedbackCard = () => {
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-medium">{device.name}</span>
                     {isTeamOrEnterprise && (
-                      <Badge variant="outline" className="text-xs">
-                        {device.type === "heart_rate" ? "Heart Rate" : "Activity"}
-                      </Badge>
+                      <Badge className="text-xs">{device.type === "heart_rate" ? "Heart Rate" : "Activity"}</Badge>
                     )}
                   </div>
                   
@@ -134,7 +133,7 @@ const BiofeedbackCard = () => {
                     
                     <div className="flex items-center justify-between p-2 bg-secondary/30 rounded">
                       <div className="flex items-center">
-                        <Badge className="h-4 w-4 text-primary mr-2" />
+                        <AlertCircle className="h-4 w-4 text-primary mr-2" />
                         <span className="text-sm">Coach access</span>
                       </div>
                       <Switch 

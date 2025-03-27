@@ -135,7 +135,43 @@ export const UserPreferencesProvider: React.FC<{ children: React.ReactNode }> = 
   const [preferences, setPreferences] = useState<UserPreferences>(() => {
     // Load saved preferences from localStorage if they exist
     const savedPreferences = localStorage.getItem("userPreferences");
-    return savedPreferences ? JSON.parse(savedPreferences) : defaultPreferences;
+    if (savedPreferences) {
+      try {
+        // Parse the saved preferences and ensure all required properties exist
+        const parsedPrefs = JSON.parse(savedPreferences);
+        
+        // Make sure connectedDevices exists to prevent "undefined.includes()" errors
+        if (!parsedPrefs.connectedDevices) {
+          parsedPrefs.connectedDevices = [];
+        }
+        
+        // Make sure metricsOfInterest exists
+        if (!parsedPrefs.metricsOfInterest) {
+          parsedPrefs.metricsOfInterest = defaultPreferences.metricsOfInterest;
+        }
+        
+        // Make sure focusChallenges exists
+        if (!parsedPrefs.focusChallenges) {
+          parsedPrefs.focusChallenges = defaultPreferences.focusChallenges;
+        }
+        
+        // Make sure workDays exists
+        if (!parsedPrefs.workDays) {
+          parsedPrefs.workDays = defaultPreferences.workDays;
+        }
+        
+        // Make sure meditationGoals exists
+        if (!parsedPrefs.meditationGoals) {
+          parsedPrefs.meditationGoals = defaultPreferences.meditationGoals;
+        }
+        
+        return parsedPrefs;
+      } catch (error) {
+        console.error("Error parsing saved preferences:", error);
+        return defaultPreferences;
+      }
+    }
+    return defaultPreferences;
   });
 
   // Save preferences to localStorage whenever they change

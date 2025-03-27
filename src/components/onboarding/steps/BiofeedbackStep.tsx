@@ -18,7 +18,8 @@ const BiofeedbackStep = () => {
   };
 
   const handleMetricChange = (value: string, checked: boolean) => {
-    let updatedMetrics = [...preferences.metricsOfInterest];
+    // Ensure metricsOfInterest is an array before using it
+    let updatedMetrics = [...(preferences.metricsOfInterest || [])];
     
     if (checked) {
       updatedMetrics.push(value);
@@ -66,7 +67,7 @@ const BiofeedbackStep = () => {
           <div className="flex items-center space-x-2">
             <Checkbox 
               id="metric-stress" 
-              checked={preferences.metricsOfInterest.includes("stress")}
+              checked={preferences.metricsOfInterest?.includes("stress") || false}
               onCheckedChange={(checked) => handleMetricChange("stress", !!checked)}
             />
             <label htmlFor="metric-stress" className="text-sm">
@@ -76,7 +77,7 @@ const BiofeedbackStep = () => {
           <div className="flex items-center space-x-2">
             <Checkbox 
               id="metric-focus" 
-              checked={preferences.metricsOfInterest.includes("focus")}
+              checked={preferences.metricsOfInterest?.includes("focus") || false}
               onCheckedChange={(checked) => handleMetricChange("focus", !!checked)}
             />
             <label htmlFor="metric-focus" className="text-sm">
@@ -86,7 +87,7 @@ const BiofeedbackStep = () => {
           <div className="flex items-center space-x-2">
             <Checkbox 
               id="metric-mood" 
-              checked={preferences.metricsOfInterest.includes("mood")}
+              checked={preferences.metricsOfInterest?.includes("mood") || false}
               onCheckedChange={(checked) => handleMetricChange("mood", !!checked)}
             />
             <label htmlFor="metric-mood" className="text-sm">
@@ -96,7 +97,7 @@ const BiofeedbackStep = () => {
           <div className="flex items-center space-x-2">
             <Checkbox 
               id="metric-sleep" 
-              checked={preferences.metricsOfInterest.includes("sleep")}
+              checked={preferences.metricsOfInterest?.includes("sleep") || false}
               onCheckedChange={(checked) => handleMetricChange("sleep", !!checked)}
             />
             <label htmlFor="metric-sleep" className="text-sm">
@@ -106,7 +107,7 @@ const BiofeedbackStep = () => {
           <div className="flex items-center space-x-2">
             <Checkbox 
               id="metric-breathing" 
-              checked={preferences.metricsOfInterest.includes("breathing")}
+              checked={preferences.metricsOfInterest?.includes("breathing") || false}
               onCheckedChange={(checked) => handleMetricChange("breathing", !!checked)}
             />
             <label htmlFor="metric-breathing" className="text-sm">
@@ -116,7 +117,7 @@ const BiofeedbackStep = () => {
           <div className="flex items-center space-x-2">
             <Checkbox 
               id="metric-session_consistency" 
-              checked={preferences.metricsOfInterest.includes("session_consistency")}
+              checked={preferences.metricsOfInterest?.includes("session_consistency") || false}
               onCheckedChange={(checked) => handleMetricChange("session_consistency", !!checked)}
             />
             <label htmlFor="metric-session_consistency" className="text-sm">

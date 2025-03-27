@@ -18,13 +18,15 @@ const WorkScheduleStep = () => {
   ];
 
   const toggleWorkDay = (day: string) => {
-    const isSelected = preferences.workDays.includes(day as any);
+    // Ensure workDays is an array before using it
+    const workDays = Array.isArray(preferences.workDays) ? preferences.workDays : [];
+    const isSelected = workDays.includes(day as any);
     let newWorkDays;
     
     if (isSelected) {
-      newWorkDays = preferences.workDays.filter(d => d !== day);
+      newWorkDays = workDays.filter(d => d !== day);
     } else {
-      newWorkDays = [...preferences.workDays, day as any];
+      newWorkDays = [...workDays, day as any];
     }
     
     updatePreferences({ workDays: newWorkDays });
@@ -39,7 +41,7 @@ const WorkScheduleStep = () => {
             <div key={day.id} className="flex items-center space-x-2">
               <Checkbox 
                 id={day.id} 
-                checked={preferences.workDays.includes(day.id as any)}
+                checked={Array.isArray(preferences.workDays) && preferences.workDays.includes(day.id as any)}
                 onCheckedChange={() => toggleWorkDay(day.id)}
               />
               <Label htmlFor={day.id}>{day.label}</Label>
@@ -54,7 +56,7 @@ const WorkScheduleStep = () => {
           <Input
             type="time"
             id="workStartTime"
-            value={preferences.workStartTime}
+            value={preferences.workStartTime || "09:00"}
             onChange={(e) => updatePreferences({ workStartTime: e.target.value })}
           />
         </div>
@@ -63,7 +65,7 @@ const WorkScheduleStep = () => {
           <Input
             type="time"
             id="workEndTime"
-            value={preferences.workEndTime}
+            value={preferences.workEndTime || "17:00"}
             onChange={(e) => updatePreferences({ workEndTime: e.target.value })}
           />
         </div>
