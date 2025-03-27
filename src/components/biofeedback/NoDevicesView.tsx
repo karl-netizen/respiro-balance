@@ -1,36 +1,31 @@
 
-import { Smartphone } from "lucide-react";
+import React from "react";
+import { Check } from "lucide-react";
 
 interface NoDevicesViewProps {
   isTeamOrEnterprise: boolean;
 }
 
-const NoDevicesView = ({ isTeamOrEnterprise }: NoDevicesViewProps) => {
+const NoDevicesView: React.FC<NoDevicesViewProps> = ({ isTeamOrEnterprise }) => {
   return (
     <div className="text-center py-4">
-      <div className="flex justify-center mb-4">
-        <div className="rounded-full bg-secondary/50 p-4">
-          <Smartphone className="h-8 w-8 text-primary" />
+      <div className="flex flex-col items-center space-y-2 mb-4">
+        <div className="h-10 w-10 bg-secondary/50 flex items-center justify-center rounded-full">
+          <Check className="h-5 w-5 text-primary" />
         </div>
-      </div>
-      <p className="text-sm mb-4">
-        {isTeamOrEnterprise 
-          ? "Connect multiple devices for your team and share insights with coaches" 
-          : "Connect your smartwatch or fitness tracker to gain deeper insights into your meditation practice."}
-      </p>
-      <div className="flex items-center justify-center space-x-2">
-        <div className="bg-secondary/30 px-2 py-1 rounded text-xs">Apple Watch</div>
-        <div className="bg-secondary/30 px-2 py-1 rounded text-xs">Fitbit</div>
-        <div className="bg-secondary/30 px-2 py-1 rounded text-xs">Garmin</div>
-        <div className="bg-secondary/30 px-2 py-1 rounded text-xs">+More</div>
+        <h3 className="font-medium">No devices connected</h3>
       </div>
       
+      <p className="text-sm text-muted-foreground mb-4">
+        {isTeamOrEnterprise 
+          ? "Connect wearable devices to track biofeedback data for your team"
+          : "Connect a wearable device to track your heart rate and other biofeedback data"}
+      </p>
+      
       {isTeamOrEnterprise && (
-        <p className="text-xs mt-3 text-foreground/70">
-          {isTeamOrEnterprise && "Team" === "Enterprise" 
-            ? "Enterprise tier allows unlimited device connections" 
-            : "Team tier supports up to 10 connected devices"}
-        </p>
+        <div className="text-xs text-primary bg-primary/10 p-2 rounded-md">
+          Team & Enterprise feature: Connect and monitor multiple devices
+        </div>
       )}
     </div>
   );
