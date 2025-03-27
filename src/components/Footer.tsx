@@ -1,6 +1,5 @@
-
 import { Link } from "react-router-dom";
-import { useUserPreferences } from "@/context/UserPreferencesContext";
+import { useUserPreferences } from "@/context";
 
 const Footer = () => {
   const { preferences } = useUserPreferences();

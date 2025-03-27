@@ -1,8 +1,7 @@
-
 import { Check, Users, Building, Star } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useUserPreferences } from "@/context/UserPreferencesContext";
+import { useUserPreferences } from "@/context";
 
 const tiers = [
   {

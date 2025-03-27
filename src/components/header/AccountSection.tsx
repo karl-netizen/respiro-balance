@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { User } from "lucide-react";
-import { useUserPreferences } from "@/context/UserPreferencesContext";
+import { useUserPreferences } from "@/context";
 
 const AccountSection = () => {
   const { preferences } = useUserPreferences();

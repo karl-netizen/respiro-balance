@@ -1,9 +1,8 @@
-
 import React from "react";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { useUserPreferences } from "@/context/UserPreferencesContext";
+import { useUserPreferences } from "@/context";
 
 const ExerciseStep = () => {
   const { preferences, updatePreferences } = useUserPreferences();

@@ -1,7 +1,6 @@
-
 import React from "react";
 import { Check } from "lucide-react";
-import { useUserPreferences } from "@/context/UserPreferencesContext";
+import { useUserPreferences } from "@/context";
 
 const FinalStep = () => {
   const { preferences } = useUserPreferences();

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
@@ -9,7 +8,7 @@ import WorkLifeBalance from "@/components/work-life-balance";
 import PricingTiers from "@/components/PricingTiers";
 import Footer from "@/components/Footer";
 import OnboardingWizard from "@/components/onboarding/OnboardingWizard";
-import { useUserPreferences } from "@/context/UserPreferencesContext";
+import { useUserPreferences } from "@/context";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 

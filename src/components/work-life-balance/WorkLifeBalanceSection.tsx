@@ -5,7 +5,7 @@ import BalanceMeterCard from "./BalanceMeterCard";
 import BreakRemindersCard from "./BreakRemindersCard";
 import FocusModeCard from "./FocusModeCard";
 import BiofeedbackCard from "@/components/biofeedback";
-import { useUserPreferences } from "@/context/";
+import { useUserPreferences } from "@/context";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Users, Info } from "lucide-react";
 import { Link } from "react-router-dom";

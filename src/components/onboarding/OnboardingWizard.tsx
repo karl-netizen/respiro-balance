@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useUserPreferences } from "@/context/UserPreferencesContext";
+import { useUserPreferences } from "@/context";
 import { toast } from "sonner";
 import WorkScheduleStep from "./steps/WorkScheduleStep";
 import StressFocusStep from "./steps/StressFocusStep";

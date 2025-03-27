@@ -4,7 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { UserPreferencesProvider } from "./context/UserPreferencesContext";
+import { UserPreferencesProvider } from "./context";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import CoachDashboard from "./components/coach/CoachDashboard";
