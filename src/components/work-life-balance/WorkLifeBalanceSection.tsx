@@ -1,17 +1,29 @@
 
 import { Button } from "@/components/ui/button";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import BalanceMeterCard from "./BalanceMeterCard";
 import BreakRemindersCard from "./BreakRemindersCard";
 import FocusModeCard from "./FocusModeCard";
 import BiofeedbackCard from "@/components/biofeedback";
-import { useUserPreferences } from "@/context/UserPreferencesContext";
+import { useUserPreferences } from "@/context/";
 import { Badge } from "@/components/ui/badge";
-import { Users } from "lucide-react";
+import { Calendar, Users, Info } from "lucide-react";
 import { Link } from "react-router-dom";
+import { formatTime } from "./utils";
 
 const WorkLifeBalanceSection = () => {
   const { preferences, isCoach } = useUserPreferences();
   const isTeamOrEnterprise = preferences.subscriptionTier === "Team" || preferences.subscriptionTier === "Enterprise";
+
+  // Format work days for display
+  const formatWorkDays = () => {
+    if (!preferences.workDays || preferences.workDays.length === 0) {
+      return "no scheduled";
+    }
+    
+    const days = preferences.workDays.map(day => day.charAt(0).toUpperCase() + day.slice(1));
+    return days.join(', ');
+  };
 
   return (
     <section id="balance" className="py-16 px-6 bg-gradient-to-b from-white to-secondary/10">
@@ -32,10 +44,53 @@ const WorkLifeBalanceSection = () => {
             {isTeamOrEnterprise && " Share insights with your team and coaches for better support."}
           </p>
           {preferences.hasCompletedOnboarding && (
-            <p className="mt-2 text-primary font-medium">
-              Personalized for your {preferences.workDays.length} day work week
-              {isCoach() && " • Coach view enabled"}
-            </p>
+            <Popover>
+              <PopoverTrigger asChild>
+                <p className="mt-2 text-primary font-medium cursor-pointer hover:underline inline-flex items-center">
+                  Personalized for your {preferences.workDays?.length || 0} day work week
+                  <Info className="ml-1 h-4 w-4" />
+                  {isCoach() && " • Coach view enabled"}
+                </p>
+              </PopoverTrigger>
+              <PopoverContent className="w-80">
+                <div className="space-y-2">
+                  <h4 className="font-medium">Your Work Schedule</h4>
+                  <div className="text-sm space-y-1.5">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Work Days:</span>
+                      <span>{formatWorkDays()}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Work Hours:</span>
+                      <span>{formatTime(preferences.workStartTime)} - {formatTime(preferences.workEndTime)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Environment:</span>
+                      <span className="capitalize">{preferences.workEnvironment}</span>
+                    </div>
+                    {preferences.lunchBreak && (
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Lunch Break:</span>
+                        <span>{formatTime(preferences.lunchTime)}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Stress Level:</span>
+                      <span className="capitalize">{preferences.stressLevel}</span>
+                    </div>
+                  </div>
+                  <div className="pt-2 border-t">
+                    <h4 className="font-medium mb-1">Your Tools Customization</h4>
+                    <ul className="text-sm list-disc list-inside space-y-1">
+                      <li>Break reminders aligned with your work hours</li>
+                      <li>Focus sessions optimized for your energy pattern</li>
+                      <li>Balance recommendations based on your stress level</li>
+                      <li>Meditation optimized for your experience level</li>
+                    </ul>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
           )}
         </div>
         

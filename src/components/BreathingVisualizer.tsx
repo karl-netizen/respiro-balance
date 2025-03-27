@@ -1,20 +1,83 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { Button } from "@/components/ui/button";
+import { Mic, MicOff } from 'lucide-react';
 
 const BreathingVisualizer = () => {
   const [breathingPhase, setBreathingPhase] = useState<'inhale' | 'hold' | 'exhale' | 'rest'>('inhale');
   const [count, setCount] = useState(4);
   const [isActive, setIsActive] = useState(false);
+  const [voiceEnabled, setVoiceEnabled] = useState(true);
+  const speechSynthesisRef = useRef<SpeechSynthesisUtterance | null>(null);
 
   const startBreathing = () => {
     setIsActive(true);
+    setBreathingPhase('inhale');
+    setCount(4);
+    
+    if (voiceEnabled) {
+      speakBreathingCue('inhale');
+    }
   };
 
   const stopBreathing = () => {
     setIsActive(false);
     setBreathingPhase('inhale');
     setCount(4);
+    
+    // Cancel any ongoing speech
+    if (speechSynthesis && speechSynthesisRef.current) {
+      speechSynthesis.cancel();
+    }
   };
+  
+  const toggleVoice = () => {
+    setVoiceEnabled(!voiceEnabled);
+    
+    // If turning off voice while active, cancel any ongoing speech
+    if (voiceEnabled && isActive && speechSynthesis && speechSynthesisRef.current) {
+      speechSynthesis.cancel();
+    }
+  };
+  
+  const speakBreathingCue = (phase: string) => {
+    if (!voiceEnabled || !window.speechSynthesis) return;
+    
+    // Cancel any previous speech
+    if (speechSynthesis.speaking && speechSynthesisRef.current) {
+      speechSynthesis.cancel();
+    }
+    
+    // Create new utterance
+    const utterance = new SpeechSynthesisUtterance(phase);
+    utterance.rate = 0.8;
+    utterance.volume = 0.8;
+    
+    // Try to find a calm, soothing voice
+    const voices = speechSynthesis.getVoices();
+    const preferredVoice = voices.find(voice => voice.name.includes('Female') || voice.name.includes('Karen') || voice.name.includes('Samantha'));
+    if (preferredVoice) {
+      utterance.voice = preferredVoice;
+    }
+    
+    // Store reference and speak
+    speechSynthesisRef.current = utterance;
+    speechSynthesis.speak(utterance);
+  };
+
+  useEffect(() => {
+    // Load voices when component mounts
+    speechSynthesis.onvoiceschanged = () => {
+      speechSynthesis.getVoices();
+    };
+    
+    return () => {
+      // Clean up any speech on unmount
+      if (speechSynthesis && speechSynthesisRef.current) {
+        speechSynthesis.cancel();
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (!isActive) return;
@@ -26,16 +89,24 @@ const BreathingVisualizer = () => {
         // Change phase
         switch (breathingPhase) {
           case 'inhale':
-            setBreathingPhase('hold');
+            const newPhase = 'hold';
+            setBreathingPhase(newPhase);
+            if (voiceEnabled) speakBreathingCue(newPhase);
             return 4; // Hold for 4 seconds
           case 'hold':
-            setBreathingPhase('exhale');
+            const exhalePhase = 'exhale';
+            setBreathingPhase(exhalePhase);
+            if (voiceEnabled) speakBreathingCue(exhalePhase);
             return 6; // Exhale for 6 seconds
           case 'exhale':
-            setBreathingPhase('rest');
+            const restPhase = 'rest';
+            setBreathingPhase(restPhase);
+            if (voiceEnabled) speakBreathingCue(restPhase);
             return 2; // Rest for 2 seconds  
           case 'rest':
-            setBreathingPhase('inhale');
+            const inhalePhase = 'inhale';
+            setBreathingPhase(inhalePhase);
+            if (voiceEnabled) speakBreathingCue(inhalePhase);
             return 4; // Inhale for 4 seconds
           default:
             return 4;
@@ -44,7 +115,7 @@ const BreathingVisualizer = () => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [isActive, breathingPhase]);
+  }, [isActive, breathingPhase, voiceEnabled]);
 
   return (
     <section className="py-16 px-6 bg-secondary/50" id="meditation">
@@ -101,20 +172,29 @@ const BreathingVisualizer = () => {
           
           <div className="flex gap-4">
             {!isActive ? (
-              <button 
+              <Button 
                 onClick={startBreathing}
                 className="px-6 py-3 rounded-lg bg-primary text-white font-medium hover:bg-mindflow-dark transition-colors"
               >
                 Start Breathing
-              </button>
+              </Button>
             ) : (
-              <button 
+              <Button 
                 onClick={stopBreathing}
                 className="px-6 py-3 rounded-lg bg-secondary border border-primary/30 text-primary font-medium hover:bg-secondary/80 transition-colors"
               >
                 Reset
-              </button>
+              </Button>
             )}
+            
+            <Button
+              variant="outline"
+              onClick={toggleVoice}
+              title={voiceEnabled ? "Disable voice guidance" : "Enable voice guidance"}
+              className="w-10 h-10 p-0 rounded-full"
+            >
+              {voiceEnabled ? <Mic className="h-4 w-4" /> : <MicOff className="h-4 w-4" />}
+            </Button>
           </div>
           
           <div className="mt-8 p-4 rounded-lg bg-white/50 dark:bg-black/10 text-sm text-foreground/70">
@@ -122,6 +202,11 @@ const BreathingVisualizer = () => {
               This 4-4-6-2 breathing pattern (box breathing) is used by many professionals to reduce stress
               and improve focus. Practice daily for best results.
             </p>
+            {voiceEnabled && (
+              <p className="mt-2 text-xs text-primary">
+                Voice guidance is enabled. A calming voice will guide you through each breathing phase.
+              </p>
+            )}
           </div>
         </div>
       </div>
