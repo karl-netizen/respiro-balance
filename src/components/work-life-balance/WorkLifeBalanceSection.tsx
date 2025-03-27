@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import BalanceMeterCard from "./BalanceMeterCard";
 import BreakRemindersCard from "./BreakRemindersCard";
 import FocusModeCard from "./FocusModeCard";
-import BiofeedbackCard from "@/components/BiofeedbackCard";
+import BiofeedbackCard from "@/components/biofeedback";
 import { useUserPreferences } from "@/context/UserPreferencesContext";
 import { Badge } from "@/components/ui/badge";
 import { Users } from "lucide-react";
