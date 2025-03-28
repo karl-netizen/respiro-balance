@@ -12,12 +12,12 @@ export interface UserPreferencesRecord {
   id: string;
   user_id: string;
   preferences_data: {
-    userRole: string;
+    userRole: "client" | "coach" | "admin";
     workDays: string[];
     workStartTime: string;
     workEndTime: string;
-    workEnvironment: string;
-    stressLevel: string;
+    workEnvironment: "office" | "home" | "hybrid";
+    stressLevel: "low" | "moderate" | "high";
     focusChallenges: string[];
     energyPattern: string;
     lunchBreak: boolean;
@@ -25,7 +25,7 @@ export interface UserPreferencesRecord {
     morningExercise: boolean;
     exerciseTime: string;
     bedTime: string;
-    meditationExperience: string;
+    meditationExperience: "none" | "beginner" | "intermediate" | "advanced";
     meditationGoals: string[];
     preferredSessionDuration: number;
     metricsOfInterest: string[];

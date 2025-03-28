@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { UserPreferencesRecord } from '@/types/supabase';
 import { useAuth } from './useAuth';
-import { UserPreferences } from '@/context/types';
+import { UserPreferences, UserRole, WorkDay, WorkEnvironment, StressLevel, MeditationExperience, SubscriptionTier } from '@/context/types';
 import defaultPreferences from '@/context/defaultPreferences';
 
 export function useSupabaseUserPreferences() {
@@ -39,14 +39,42 @@ export function useSupabaseUserPreferences() {
 
   // Convert from database to local format
   const convertToLocalFormat = (record: UserPreferencesRecord): UserPreferences => {
+    // Ensure type safety by explicitly casting string values to their respective types
+    const userRole = record.preferences_data.userRole as UserRole;
+    const workDays = record.preferences_data.workDays as WorkDay[];
+    const workEnvironment = record.preferences_data.workEnvironment as WorkEnvironment;
+    const stressLevel = record.preferences_data.stressLevel as StressLevel;
+    const meditationExperience = record.preferences_data.meditationExperience as MeditationExperience;
+    const subscriptionTier = record.preferences_data.subscriptionTier as SubscriptionTier;
+
     return {
       ...defaultPreferences,
-      ...record.preferences_data,
-      // Convert any properties that need special handling
+      userRole,
+      workDays,
+      workStartTime: record.preferences_data.workStartTime,
+      workEndTime: record.preferences_data.workEndTime,
+      workEnvironment,
+      stressLevel,
+      focusChallenges: record.preferences_data.focusChallenges || defaultPreferences.focusChallenges,
+      energyPattern: record.preferences_data.energyPattern,
+      lunchBreak: record.preferences_data.lunchBreak,
+      lunchTime: record.preferences_data.lunchTime,
+      morningExercise: record.preferences_data.morningExercise,
+      exerciseTime: record.preferences_data.exerciseTime,
+      bedTime: record.preferences_data.bedTime,
+      meditationExperience,
+      meditationGoals: record.preferences_data.meditationGoals || defaultPreferences.meditationGoals,
+      preferredSessionDuration: record.preferences_data.preferredSessionDuration,
+      metricsOfInterest: record.preferences_data.metricsOfInterest || defaultPreferences.metricsOfInterest,
+      subscriptionTier,
+      // Properties not stored in the database
       hasCompletedOnboarding: true,
-      // Reset device properties since they are stored elsewhere
       connectedDevices: [],
       hasWearableDevice: false,
+      enableSessionReminders: defaultPreferences.enableSessionReminders,
+      enableProgressUpdates: defaultPreferences.enableProgressUpdates,
+      enableRecommendations: defaultPreferences.enableRecommendations,
+      businessAttribution: defaultPreferences.businessAttribution
     };
   };
 
