@@ -14,6 +14,7 @@ import Register from "./pages/Register";
 import ResetPassword from "./pages/ResetPassword";
 import Breathe from "./pages/Breathe";
 import Progress from "./pages/Progress";
+import TimeManagement from "./pages/TimeManagement";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,7 @@ const App = () => (
               <Route path="/coach-dashboard" element={<CoachDashboard />} />
               <Route path="/breathe" element={<Breathe />} />
               <Route path="/progress" element={<Progress />} />
+              <Route path="/time-management" element={<TimeManagement />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
