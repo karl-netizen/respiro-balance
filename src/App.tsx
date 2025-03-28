@@ -12,6 +12,8 @@ import CoachDashboard from "./components/coach/CoachDashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ResetPassword from "./pages/ResetPassword";
+import Breathe from "./pages/Breathe";
+import Progress from "./pages/Progress";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +31,8 @@ const App = () => (
               <Route path="/register" element={<Register />} />
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/coach-dashboard" element={<CoachDashboard />} />
+              <Route path="/breathe" element={<Breathe />} />
+              <Route path="/progress" element={<Progress />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
