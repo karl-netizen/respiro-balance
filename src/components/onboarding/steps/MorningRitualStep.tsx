@@ -6,7 +6,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
-import { Alarm, Sun, Coffee, Calendar, Smartphone } from "lucide-react";
+import { AlarmClock, Sun, Coffee, Calendar, Smartphone } from "lucide-react";
 import { MorningDevicesHabit } from "@/context/types";
 
 const MorningRitualStep = () => {
@@ -30,7 +30,7 @@ const MorningRitualStep = () => {
     <div className="space-y-6">
       <div>
         <h3 className="text-sm font-medium mb-3 flex items-center">
-          <Alarm className="w-4 h-4 mr-2 text-primary" />
+          <AlarmClock className="w-4 h-4 mr-2 text-primary" />
           What time do you typically wake up?
         </h3>
         <div className="grid grid-cols-2 gap-4">
