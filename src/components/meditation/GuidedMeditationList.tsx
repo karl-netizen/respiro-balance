@@ -1,0 +1,28 @@
+
+import React from 'react';
+import { MeditationSession } from './MeditationSessionCard';
+import MeditationSessionCard from './MeditationSessionCard';
+
+interface GuidedMeditationListProps {
+  sessions: MeditationSession[];
+  onSelectSession: (session: MeditationSession) => void;
+}
+
+const GuidedMeditationList: React.FC<GuidedMeditationListProps> = ({ 
+  sessions, 
+  onSelectSession 
+}) => {
+  return (
+    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {sessions.map((session) => (
+        <MeditationSessionCard 
+          key={session.id}
+          session={session}
+          onSelect={onSelectSession}
+        />
+      ))}
+    </div>
+  );
+};
+
+export default GuidedMeditationList;
