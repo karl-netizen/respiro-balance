@@ -5,6 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Clock, ListTodo, Bell, MessageSquare } from "lucide-react";
+import { TimeBlockingUsage, WorkBoundaries, TimeManagementStyle } from "@/context/types";
 
 const TimeManagementStep = () => {
   const { preferences, updatePreferences } = useUserPreferences();
@@ -101,7 +102,7 @@ const TimeManagementStep = () => {
         </h3>
         <RadioGroup 
           value={preferences.usesTimeBlocking || "no"} 
-          onValueChange={(value) => updatePreferences({ usesTimeBlocking: value })}
+          onValueChange={(value: TimeBlockingUsage) => updatePreferences({ usesTimeBlocking: value })}
           className="flex flex-col space-y-2"
         >
           <div className="flex items-center space-x-2">
@@ -126,7 +127,7 @@ const TimeManagementStep = () => {
         </h3>
         <RadioGroup 
           value={preferences.workBoundaries || "sometimes"} 
-          onValueChange={(value) => updatePreferences({ workBoundaries: value })}
+          onValueChange={(value: WorkBoundaries) => updatePreferences({ workBoundaries: value })}
           className="flex flex-col space-y-2"
         >
           <div className="flex items-center space-x-2">
@@ -151,7 +152,7 @@ const TimeManagementStep = () => {
         </h3>
         <RadioGroup 
           value={preferences.timeManagementStyle || "flexible"} 
-          onValueChange={(value) => updatePreferences({ timeManagementStyle: value })}
+          onValueChange={(value: TimeManagementStyle) => updatePreferences({ timeManagementStyle: value })}
           className="flex flex-col space-y-2"
         >
           <div className="flex items-center space-x-2">
