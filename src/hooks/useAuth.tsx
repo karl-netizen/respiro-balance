@@ -1,4 +1,3 @@
-
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
@@ -10,7 +9,7 @@ interface AuthContextProps {
   session: Session | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string, firstName?: string) => Promise<void>;
   signOut: () => Promise<void>;
   forgotPassword: (email: string) => Promise<void>;
   resetPassword: (newPassword: string) => Promise<void>;
@@ -63,18 +62,43 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         title: "Sign in failed",
         description: error.message || "There was a problem signing you in.",
       });
+      throw error;
     } finally {
       setLoading(false);
     }
   };
 
-  const signUp = async (email: string, password: string) => {
+  const signUp = async (email: string, password: string, firstName?: string) => {
     try {
       setLoading(true);
-      const { error } = await supabase.auth.signUp({ email, password });
+      const { data, error } = await supabase.auth.signUp({ 
+        email, 
+        password,
+        options: {
+          data: {
+            first_name: firstName || '',
+          },
+        }
+      });
       
       if (error) {
         throw error;
+      }
+
+      if (data.user) {
+        const { error: profileError } = await supabase
+          .from('user_profiles')
+          .insert({
+            id: data.user.id,
+            email: email,
+            first_name: firstName || '',
+            created_at: new Date().toISOString()
+          });
+
+        if (profileError) {
+          console.error("Error creating user profile:", profileError);
+          // We don't throw here to not block signup, but log the error
+        }
       }
       
       toast({
@@ -87,6 +111,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         title: "Sign up failed",
         description: error.message || "There was a problem creating your account.",
       });
+      throw error;
     } finally {
       setLoading(false);
     }

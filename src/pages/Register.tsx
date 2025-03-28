@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/useAuth";
 
 const formSchema = z.object({
+  firstName: z.string().min(1, { message: "First name is required" }),
   email: z.string().email({ message: "Please enter a valid email address" }),
   password: z.string().min(6, { message: "Password must be at least 6 characters" }),
   confirmPassword: z.string().min(6, { message: "Please confirm your password" }),
@@ -36,7 +37,7 @@ const Register = () => {
   const onSubmit = async (data: FormData) => {
     setError(null);
     try {
-      await signUp(data.email, data.password);
+      await signUp(data.email, data.password, data.firstName);
       setSuccess(true);
     } catch (err: any) {
       setError(err.message || "Failed to create account");
@@ -75,6 +76,20 @@ const Register = () => {
           )}
 
           <div className="space-y-4">
+            <div>
+              <Label htmlFor="firstName">First Name</Label>
+              <Input
+                id="firstName"
+                type="text"
+                autoComplete="given-name"
+                {...register("firstName")}
+                className="mt-1"
+              />
+              {errors.firstName && (
+                <p className="mt-1 text-sm text-destructive">{errors.firstName.message}</p>
+              )}
+            </div>
+
             <div>
               <Label htmlFor="email">Email</Label>
               <Input
