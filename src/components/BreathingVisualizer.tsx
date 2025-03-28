@@ -1,3 +1,3 @@
 
-import { BreathingVisualizer } from './breathing';
+import BreathingVisualizer from './breathing/BreathingVisualizer';
 export default BreathingVisualizer;

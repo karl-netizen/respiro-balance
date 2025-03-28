@@ -1,8 +1,8 @@
 
 import React from 'react';
-import { BreathingCircle } from './BreathingCircle';
-import { BreathingControls } from './BreathingControls';
-import { BreathingInfo } from './BreathingInfo';
+import BreathingCircle from './BreathingCircle';
+import BreathingControls from './BreathingControls';
+import BreathingInfo from './BreathingInfo';
 import { useBreathingLogic } from './useBreathingLogic';
 
 const BreathingVisualizer = () => {
