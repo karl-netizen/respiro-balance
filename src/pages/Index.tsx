@@ -6,7 +6,6 @@ import MoodSelector from "@/components/MoodSelector";
 import BreathingVisualizer from "@/components/BreathingVisualizer";
 import MeditationPlayer from "@/components/MeditationPlayer";
 import WorkLifeBalance from "@/components/work-life-balance";
-import TimeManagementCenter from "@/components/time-management";
 import PricingTiers from "@/components/PricingTiers";
 import Footer from "@/components/Footer";
 import OnboardingWizard from "@/components/onboarding/OnboardingWizard";
@@ -83,7 +82,6 @@ const Index = () => {
       
       <BreathingVisualizer />
       <WorkLifeBalance />
-      <TimeManagementCenter />
       <PricingTiers />
       <Footer />
       

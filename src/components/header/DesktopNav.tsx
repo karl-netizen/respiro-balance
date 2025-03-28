@@ -69,14 +69,6 @@ const DesktopNav = () => {
         
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
-            <a href="/time-management" className="text-foreground/80 hover:text-primary px-3 py-2 button-transition">
-              Time Management
-            </a>
-          </NavigationMenuLink>
-        </NavigationMenuItem>
-        
-        <NavigationMenuItem>
-          <NavigationMenuLink asChild>
             <a href="#pricing" className="text-foreground/80 hover:text-primary px-3 py-2 button-transition">
               Pricing
             </a>
