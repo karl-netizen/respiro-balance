@@ -28,6 +28,19 @@ const defaultPreferences: UserPreferences = {
   exerciseTime: "07:00",
   bedTime: "22:00",
   
+  // Morning Ritual
+  weekdayWakeTime: "07:00",
+  weekendWakeTime: "08:00",
+  morningActivities: ["check_phone", "hydration"],
+  morningEnergyLevel: 5,
+  morningDevices: "phone_first",
+  
+  // Time Management
+  timeChallenges: ["digital_distractions", "context_switching"],
+  usesTimeBlocking: "no",
+  workBoundaries: "sometimes",
+  timeManagementStyle: "flexible",
+  
   // Meditation Experience
   meditationExperience: "beginner",
   meditationGoals: ["stress_reduction", "better_focus"],

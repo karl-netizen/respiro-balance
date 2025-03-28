@@ -8,6 +8,10 @@ export type MeditationExperience = "none" | "beginner" | "intermediate" | "advan
 export type SubscriptionTier = "Free" | "Pro" | "Team" | "Enterprise";
 export type BusinessAttribution = "KGP Coaching & Consulting" | "LearnRelaxation" | null;
 export type UserRole = "client" | "coach" | "admin";
+export type TimeBlockingUsage = "yes_regularly" | "yes_occasionally" | "no";
+export type WorkBoundaries = "strict" | "sometimes" | "blended";
+export type TimeManagementStyle = "structured" | "flexible" | "minimalist" | "need_help";
+export type MorningDevicesHabit = "phone_first" | "phone_delayed" | "no_devices";
 
 // Create a mock BluetoothDevice interface since the Web Bluetooth API types aren't available
 export interface BluetoothDevice {
@@ -45,6 +49,19 @@ export interface UserPreferences {
   morningExercise: boolean;
   exerciseTime: string;
   bedTime: string;
+  
+  // Morning Ritual
+  weekdayWakeTime?: string;
+  weekendWakeTime?: string;
+  morningActivities?: string[];
+  morningEnergyLevel?: number;
+  morningDevices?: MorningDevicesHabit;
+  
+  // Time Management
+  timeChallenges?: string[];
+  usesTimeBlocking?: TimeBlockingUsage;
+  workBoundaries?: WorkBoundaries;
+  timeManagementStyle?: TimeManagementStyle;
   
   // Meditation Experience
   meditationExperience: MeditationExperience;

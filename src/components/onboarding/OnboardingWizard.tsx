@@ -9,6 +9,11 @@ import StressFocusStep from "./steps/StressFocusStep";
 import MeditationExperienceStep from "./steps/MeditationExperienceStep";
 import BiofeedbackStep from "./steps/BiofeedbackStep";
 import NotificationPreferencesStep from "./steps/NotificationPreferencesStep";
+import SleepStep from "./steps/SleepStep";
+import MorningRitualStep from "./steps/MorningRitualStep";
+import TimeManagementStep from "./steps/TimeManagementStep";
+import BusinessSelectionStep from "./steps/BusinessSelectionStep";
+import FinalStep from "./steps/FinalStep";
 
 const OnboardingWizard = () => {
   const { preferences, updatePreferences } = useUserPreferences();
@@ -17,14 +22,34 @@ const OnboardingWizard = () => {
 
   const steps = [
     {
+      title: "Welcome",
+      component: <BusinessSelectionStep />,
+      description: "Let's personalize your Respiro Balance experience",
+    },
+    {
       title: "Work Schedule",
       component: <WorkScheduleStep />,
       description: "Tell us about your typical work schedule",
     },
     {
+      title: "Time Management",
+      component: <TimeManagementStep />,
+      description: "How do you currently manage your time during the day?",
+    },
+    {
       title: "Stress & Focus",
       component: <StressFocusStep />,
       description: "Help us understand your stress levels and focus challenges",
+    },
+    {
+      title: "Morning Ritual",
+      component: <MorningRitualStep />,
+      description: "How do you start your day?",
+    },
+    {
+      title: "Sleep Patterns",
+      component: <SleepStep />,
+      description: "Tell us about your sleep habits",
     },
     {
       title: "Meditation Experience",
@@ -40,6 +65,11 @@ const OnboardingWizard = () => {
       title: "Notification Preferences",
       component: <NotificationPreferencesStep />,
       description: "Set up reminders to help you stay consistent",
+    },
+    {
+      title: "Your Profile",
+      component: <FinalStep />,
+      description: "Review your personalized settings",
     },
   ];
 
