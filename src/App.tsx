@@ -15,6 +15,7 @@ import ResetPassword from "./pages/ResetPassword";
 import Breathe from "./pages/Breathe";
 import Progress from "./pages/Progress";
 import Meditate from "./pages/Meditate";
+import FAQ from "./pages/FAQ";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,7 @@ const App = () => (
               <Route path="/breathe" element={<Breathe />} />
               <Route path="/progress" element={<Progress />} />
               <Route path="/meditate" element={<Meditate />} />
+              <Route path="/faq" element={<FAQ />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
