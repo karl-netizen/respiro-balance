@@ -9,6 +9,7 @@ import WorkLifeBalance from "@/components/work-life-balance";
 import PricingTiers from "@/components/PricingTiers";
 import Footer from "@/components/Footer";
 import OnboardingWizard from "@/components/onboarding/OnboardingWizard";
+import DailyQuote from "@/components/DailyQuote";
 import { useUserPreferences } from "@/context";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
@@ -55,6 +56,13 @@ const Index = () => {
           </div>
         </div>
       )}
+      
+      {/* Daily Motivational Quote */}
+      <div className="py-6 px-6">
+        <div className="max-w-3xl mx-auto">
+          <DailyQuote />
+        </div>
+      </div>
       
       <MoodSelector />
       
