@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { useUserPreferences } from "@/context";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -127,7 +126,12 @@ const Footer = () => {
           </div>
           <div className="mt-4 md:mt-0">
             <div className="flex space-x-4">
-              <a href="https://kgpcoaching.com" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
+              <a 
+                href="https://kgpcoaching.com.au/" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="hover:text-primary transition-colors"
+              >
                 KGP Coaching & Consulting
               </a>
               <span>|</span>
