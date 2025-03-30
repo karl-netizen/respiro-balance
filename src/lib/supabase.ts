@@ -14,7 +14,6 @@ if (!supabaseUrl || !supabaseKey) {
   if (import.meta.env.DEV) {
     toast("Supabase configuration missing", {
       description: "Please ensure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are set in your environment.",
-      variant: "destructive",
       duration: 6000
     });
   }
@@ -41,8 +40,7 @@ export const handleSupabaseError = (error: Error, fallbackMessage: string = "An 
   }
   
   toast(fallbackMessage, {
-    description: errorMessage,
-    variant: "destructive"
+    description: errorMessage
   });
   
   return errorMessage;

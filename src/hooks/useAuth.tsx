@@ -84,13 +84,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.log("Sign in successful:", data.user?.email);
       navigate('/dashboard');
       toast("Welcome back!", {
-        description: "You've been successfully signed in.",
+        description: "You've been successfully signed in."
       });
     } catch (error: any) {
       console.error("Sign in error:", error);
       toast("Sign in failed", {
-        description: error.message || "There was a problem signing you in.",
-        variant: "destructive"
+        description: error.message || "There was a problem signing you in."
       });
       throw error;
     } finally {
@@ -139,13 +138,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       
       toast("Account created!", {
-        description: "Please check your email for the confirmation link.",
+        description: "Please check your email for the confirmation link."
       });
     } catch (error: any) {
       console.error("Sign up error:", error);
       toast("Sign up failed", {
-        description: error.message || "There was a problem creating your account.",
-        variant: "destructive"
+        description: error.message || "There was a problem creating your account."
       });
       throw error;
     } finally {
@@ -159,13 +157,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await supabase.auth.signOut();
       navigate('/login');
       toast("Signed out", {
-        description: "You've been successfully signed out.",
+        description: "You've been successfully signed out."
       });
     } catch (error: any) {
       console.error("Error signing out:", error);
       toast("Error signing out", {
-        description: error.message || "There was a problem signing you out.",
-        variant: "destructive"
+        description: error.message || "There was a problem signing you out."
       });
     } finally {
       setLoading(false);
@@ -183,13 +180,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       
       toast("Password reset email sent", {
-        description: "Check your email for a password reset link.",
+        description: "Check your email for a password reset link."
       });
     } catch (error: any) {
       console.error("Failed to send reset email:", error);
       toast("Failed to send reset email", {
-        description: error.message || "There was a problem sending the reset email.",
-        variant: "destructive"
+        description: error.message || "There was a problem sending the reset email."
       });
       throw error;
     } finally {
@@ -208,14 +204,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       
       toast("Password updated", {
-        description: "Your password has been successfully reset.",
+        description: "Your password has been successfully reset."
       });
       navigate('/login');
     } catch (error: any) {
       console.error("Password reset failed:", error);
       toast("Password reset failed", {
-        description: error.message || "There was a problem resetting your password.",
-        variant: "destructive"
+        description: error.message || "There was a problem resetting your password."
       });
       throw error;
     } finally {
