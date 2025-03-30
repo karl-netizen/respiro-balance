@@ -11,13 +11,14 @@ import {
 } from "@/components/ui/accordion";
 
 const FAQ = () => {
+  // Initialize with no expanded items
   const [expandedFaq, setExpandedFaq] = useState<string | undefined>(undefined);
 
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       
-      <main className="flex-1 container mx-auto px-4 py-12">
+      <main className="flex-1 container mx-auto px-4 py-12 mt-16">
         <div className="max-w-3xl mx-auto mb-12">
           <h1 className="text-3xl md:text-4xl font-bold mb-6 text-center">Frequently Asked Questions</h1>
           <p className="text-center text-muted-foreground mb-8">
