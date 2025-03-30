@@ -62,14 +62,6 @@ const MobileMenu = ({ isOpen, toggleMenu }: MobileMenuProps) => {
             </a>
             
             <a 
-              href="/time-management" 
-              className="text-foreground/80 hover:text-primary py-2 button-transition"
-              onClick={toggleMenu}
-            >
-              Time Management
-            </a>
-            
-            <a 
               href="#pricing" 
               className="text-foreground/80 hover:text-primary py-2 button-transition"
               onClick={toggleMenu}
