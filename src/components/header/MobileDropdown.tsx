@@ -5,10 +5,18 @@ import { ChevronDown } from "lucide-react";
 interface MobileDropdownProps {
   title: string;
   items: { label: string; href: string }[];
+  toggleMainMenu?: () => void;
 }
 
-const MobileDropdown = ({ title, items }: MobileDropdownProps) => {
+const MobileDropdown = ({ title, items, toggleMainMenu }: MobileDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
+
+  const handleItemClick = () => {
+    setIsOpen(false);
+    if (toggleMainMenu) {
+      toggleMainMenu();
+    }
+  };
 
   return (
     <div className="relative">
@@ -27,6 +35,7 @@ const MobileDropdown = ({ title, items }: MobileDropdownProps) => {
               key={item.label}
               href={item.href}
               className="block text-foreground/70 hover:text-primary py-1 text-sm button-transition"
+              onClick={handleItemClick}
             >
               {item.label}
             </a>

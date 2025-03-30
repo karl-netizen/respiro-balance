@@ -16,6 +16,7 @@ const MobileMenu = ({ isOpen, toggleMenu }: MobileMenuProps) => {
       <button 
         className="md:hidden text-foreground"
         onClick={toggleMenu}
+        aria-label={isOpen ? "Close menu" : "Open menu"}
       >
         {isOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
@@ -40,6 +41,7 @@ const MobileMenu = ({ isOpen, toggleMenu }: MobileMenuProps) => {
                 { label: "Deep Focus", href: "#deep-focus" },
                 { label: "Meditation Library", href: "/meditate" }
               ]} 
+              toggleMainMenu={toggleMenu}
             />
             
             <MobileDropdown 
@@ -51,6 +53,7 @@ const MobileMenu = ({ isOpen, toggleMenu }: MobileMenuProps) => {
                 { label: "4-7-8 Breathing", href: "/breathe?tab=techniques&technique=478" },
                 { label: "Coherent Breathing", href: "/breathe?tab=techniques&technique=coherent" }
               ]} 
+              toggleMainMenu={toggleMenu}
             />
             
             <a 
@@ -69,10 +72,17 @@ const MobileMenu = ({ isOpen, toggleMenu }: MobileMenuProps) => {
               Pricing
             </a>
             
-            <Button variant="outline" className="border-primary text-primary hover:bg-primary hover:text-white w-full mt-2">
+            <Button 
+              variant="outline" 
+              className="border-primary text-primary hover:bg-primary hover:text-white w-full mt-2"
+              onClick={toggleMenu}
+            >
               Log In
             </Button>
-            <Button className="bg-primary text-white hover:bg-mindflow-dark w-full">
+            <Button 
+              className="bg-primary text-white hover:bg-mindflow-dark w-full"
+              onClick={toggleMenu}
+            >
               Get Started
             </Button>
           </div>

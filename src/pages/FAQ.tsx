@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/accordion";
 
 const FAQ = () => {
-  const [expandedFaq, setExpandedFaq] = useState<string | null>("item-1");
+  const [expandedFaq, setExpandedFaq] = useState<string | undefined>(undefined);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -32,7 +32,7 @@ const FAQ = () => {
           <Accordion
             type="single"
             collapsible
-            value={expandedFaq || undefined}
+            value={expandedFaq}
             onValueChange={(value) => setExpandedFaq(value)}
             className="bg-card rounded-lg shadow-sm"
           >

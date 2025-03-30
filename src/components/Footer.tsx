@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { useUserPreferences } from "@/context";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
