@@ -5,7 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { UserPreferencesProvider } from "@/context";
-import { AuthProvider } from "@/hooks/useAuth";
+import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
@@ -17,8 +17,32 @@ import Breathe from "./pages/Breathe";
 import Progress from "./pages/Progress";
 import Meditate from "./pages/Meditate";
 import FAQ from "./pages/FAQ";
+import { Suspense, lazy } from "react";
 
-const queryClient = new QueryClient();
+// Create a new query client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: import.meta.env.PROD, // Only in production
+    },
+  },
+});
+
+// Protected route component
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { user, loading } = useAuth();
+  
+  if (loading) {
+    return <div className="flex h-screen items-center justify-center">Loading...</div>;
+  }
+  
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
+  
+  return <>{children}</>;
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -29,17 +53,56 @@ const App = () => (
             <Toaster />
             <Sonner />
             <Routes>
+              {/* Public routes */}
               <Route path="/" element={<Index />} />
-              <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/reset-password" element={<ResetPassword />} />
-              <Route path="/coach-dashboard" element={<CoachDashboard />} />
-              <Route path="/breathe" element={<Breathe />} />
-              <Route path="/progress" element={<Progress />} />
-              <Route path="/meditate" element={<Meditate />} />
               <Route path="/faq" element={<FAQ />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              
+              {/* Protected routes */}
+              <Route 
+                path="/dashboard" 
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/coach-dashboard" 
+                element={
+                  <ProtectedRoute>
+                    <CoachDashboard />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/breathe" 
+                element={
+                  <ProtectedRoute>
+                    <Breathe />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/progress" 
+                element={
+                  <ProtectedRoute>
+                    <Progress />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/meditate" 
+                element={
+                  <ProtectedRoute>
+                    <Meditate />
+                  </ProtectedRoute>
+                } 
+              />
+              
+              {/* Catch-all route */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </UserPreferencesProvider>

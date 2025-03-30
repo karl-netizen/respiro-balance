@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   firstName: z.string().min(1, { message: "First name is required" }),
@@ -25,6 +26,7 @@ const Register = () => {
   const { signUp, loading } = useAuth();
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const {
     register,
@@ -39,8 +41,16 @@ const Register = () => {
     try {
       await signUp(data.email, data.password, data.firstName);
       setSuccess(true);
+      toast("Account created successfully", {
+        description: "Please check your email to verify your account"
+      });
+      // In development, auto-redirect after 3 seconds
+      setTimeout(() => {
+        navigate('/login');
+      }, 3000);
     } catch (err: any) {
       setError(err.message || "Failed to create account");
+      console.error("Signup error:", err);
     }
   };
 

@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -19,6 +20,7 @@ type FormData = z.infer<typeof formSchema>;
 const Login = () => {
   const { signIn, loading } = useAuth();
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const {
     register,
@@ -32,7 +34,12 @@ const Login = () => {
     setError(null);
     try {
       await signIn(data.email, data.password);
+      toast("Login successful", {
+        description: "Welcome back to Respiro Balance!",
+      });
+      navigate('/dashboard');
     } catch (err: any) {
+      console.error("Login error:", err);
       setError(err.message || "Failed to sign in");
     }
   };
