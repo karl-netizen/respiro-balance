@@ -1,14 +1,26 @@
 
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 const Hero = () => {
   const [loaded, setLoaded] = useState(false);
+  const navigate = useNavigate();
+  const { user } = useAuth();
   
   useEffect(() => {
     setLoaded(true);
   }, []);
+
+  const handleGetStarted = () => {
+    if (user) {
+      navigate('/dashboard');
+    } else {
+      navigate('/login');
+    }
+  };
 
   return (
     <section className="min-h-screen pt-28 pb-20 px-6 relative overflow-hidden">
@@ -38,10 +50,19 @@ const Hero = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Button size="lg" className="bg-primary text-white hover:bg-mindflow-dark button-transition">
+              <Button 
+                size="lg" 
+                className="bg-primary text-white hover:bg-mindflow-dark button-transition"
+                onClick={handleGetStarted}
+              >
                 Begin Your Respiro Journey
               </Button>
-              <Button size="lg" variant="outline" className="border-primary text-primary hover:bg-primary/10 button-transition">
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="border-primary text-primary hover:bg-primary/10 button-transition"
+                onClick={() => document.getElementById('benefits')?.scrollIntoView({ behavior: 'smooth' })}
+              >
                 Discover More
               </Button>
             </div>
@@ -73,7 +94,11 @@ const Hero = () => {
                     <p className="text-sm text-foreground/70">Take a moment to breathe and restore your balance</p>
                   </div>
                   
-                  <Button variant="outline" className="border-primary text-primary hover:bg-primary/10 rounded-full">
+                  <Button 
+                    variant="outline" 
+                    className="border-primary text-primary hover:bg-primary/10 rounded-full"
+                    onClick={handleGetStarted}
+                  >
                     Begin 5-Min Respiro Session
                   </Button>
                 </div>
@@ -87,7 +112,14 @@ const Hero = () => {
         </div>
         
         <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <a href="#features" className="flex flex-col items-center text-foreground/60 hover:text-primary transition-colors">
+          <a 
+            href="#benefits" 
+            className="flex flex-col items-center text-foreground/60 hover:text-primary transition-colors"
+            onClick={(e) => {
+              e.preventDefault();
+              document.getElementById('benefits')?.scrollIntoView({ behavior: 'smooth' });
+            }}
+          >
             <span className="text-sm mb-2">Explore</span>
             <ChevronDown size={20} />
           </a>

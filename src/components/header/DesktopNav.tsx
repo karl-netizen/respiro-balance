@@ -1,4 +1,6 @@
 
+import { Link } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -10,16 +12,28 @@ import {
 import FeatureItem from "./FeatureItem";
 
 const DesktopNav = () => {
+  const { user } = useAuth();
+
   return (
     <NavigationMenu className="hidden md:flex">
       <NavigationMenuList>
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
-            <a href="/" className="text-foreground/80 hover:text-primary px-3 py-2 button-transition">
+            <Link to="/" className="text-foreground/80 hover:text-primary px-3 py-2 button-transition">
               Home
-            </a>
+            </Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
+        
+        {user && (
+          <NavigationMenuItem>
+            <NavigationMenuLink asChild>
+              <Link to="/dashboard" className="text-foreground/80 hover:text-primary px-3 py-2 button-transition">
+                Dashboard
+              </Link>
+            </NavigationMenuLink>
+          </NavigationMenuItem>
+        )}
         
         <NavigationMenuItem>
           <NavigationMenuTrigger className="text-foreground/80 hover:text-primary bg-transparent hover:bg-transparent focus:bg-transparent">
@@ -53,17 +67,17 @@ const DesktopNav = () => {
         
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
-            <a href="/breathe" className="text-foreground/80 hover:text-primary px-3 py-2 button-transition">
+            <Link to="/breathe" className="text-foreground/80 hover:text-primary px-3 py-2 button-transition">
               Breathe
-            </a>
+            </Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
         
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
-            <a href="/progress" className="text-foreground/80 hover:text-primary px-3 py-2 button-transition">
+            <Link to="/progress" className="text-foreground/80 hover:text-primary px-3 py-2 button-transition">
               Progress
-            </a>
+            </Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
         

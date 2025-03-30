@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { UserPreferencesProvider } from "@/context";
 import { AuthProvider } from "@/hooks/useAuth";
 import Index from "./pages/Index";
+import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import CoachDashboard from "./components/coach/CoachDashboard";
 import Login from "./pages/Login";
@@ -29,6 +30,7 @@ const App = () => (
             <Sonner />
             <Routes>
               <Route path="/" element={<Index />} />
+              <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/reset-password" element={<ResetPassword />} />
