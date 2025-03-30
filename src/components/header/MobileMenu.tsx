@@ -42,13 +42,16 @@ const MobileMenu = ({ isOpen, toggleMenu }: MobileMenuProps) => {
               ]} 
             />
             
-            <a 
-              href="/breathe" 
-              className="text-foreground/80 hover:text-primary py-2 button-transition"
-              onClick={toggleMenu}
-            >
-              Breathe
-            </a>
+            <MobileDropdown 
+              title="Breathe" 
+              items={[
+                { label: "Breathing Visualizer", href: "/breathe" },
+                { label: "Breathing Techniques", href: "/breathe?tab=techniques" },
+                { label: "Box Breathing", href: "/breathe?tab=techniques&technique=box" },
+                { label: "4-7-8 Breathing", href: "/breathe?tab=techniques&technique=478" },
+                { label: "Coherent Breathing", href: "/breathe?tab=techniques&technique=coherent" }
+              ]} 
+            />
             
             <a 
               href="/progress" 

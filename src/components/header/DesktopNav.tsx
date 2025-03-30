@@ -66,11 +66,38 @@ const DesktopNav = () => {
         </NavigationMenuItem>
         
         <NavigationMenuItem>
-          <NavigationMenuLink asChild>
-            <Link to="/breathe" className="text-foreground/80 hover:text-primary px-3 py-2 button-transition">
-              Breathe
-            </Link>
-          </NavigationMenuLink>
+          <NavigationMenuTrigger className="text-foreground/80 hover:text-primary bg-transparent hover:bg-transparent focus:bg-transparent">
+            Breathe
+          </NavigationMenuTrigger>
+          <NavigationMenuContent className="bg-popover/95 backdrop-blur-sm">
+            <ul className="grid gap-3 p-4 md:w-[400px]">
+              <FeatureItem
+                title="Breathing Visualizer"
+                href="/breathe"
+                description="Interactive breathing exercise with visual guidance"
+              />
+              <FeatureItem 
+                title="Breathing Techniques"
+                href="/breathe?tab=techniques"
+                description="Learn different breathing techniques and their benefits"
+              />
+              <FeatureItem
+                title="Box Breathing"
+                href="/breathe?tab=techniques&technique=box"
+                description="Equal inhale, hold, exhale, and pause (4-4-4-4)"
+              />
+              <FeatureItem
+                title="4-7-8 Breathing"
+                href="/breathe?tab=techniques&technique=478"
+                description="Inhale for 4, hold for 7, exhale for 8"
+              />
+              <FeatureItem
+                title="Coherent Breathing"
+                href="/breathe?tab=techniques&technique=coherent"
+                description="Slow, rhythmic breathing at 5-6 breaths per minute (5-5)"
+              />
+            </ul>
+          </NavigationMenuContent>
         </NavigationMenuItem>
         
         <NavigationMenuItem>
