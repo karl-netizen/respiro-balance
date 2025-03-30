@@ -2,17 +2,43 @@
 import { useState, useEffect, useRef } from 'react';
 import { BreathingPhase } from './types';
 
+type BreathingPattern = {
+  inhale: number;
+  hold?: number;
+  exhale: number;
+  rest?: number;
+};
+
+const breathingPatterns: Record<string, BreathingPattern> = {
+  box: { inhale: 4, hold: 4, exhale: 4, rest: 4 },
+  '478': { inhale: 4, hold: 7, exhale: 8 },
+  coherent: { inhale: 5, exhale: 5 },
+};
+
 export function useBreathingLogic() {
   const [breathingPhase, setBreathingPhase] = useState<BreathingPhase>('inhale');
   const [count, setCount] = useState(4);
   const [isActive, setIsActive] = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
+  const [selectedTechnique, setSelectedTechnique] = useState('box');
   const speechSynthesisRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const patternRef = useRef<BreathingPattern>(breathingPatterns.box);
+
+  const selectTechnique = (techniqueId: string) => {
+    if (breathingPatterns[techniqueId]) {
+      setSelectedTechnique(techniqueId);
+      patternRef.current = breathingPatterns[techniqueId];
+      
+      // Reset to inhale phase and appropriate count
+      setBreathingPhase('inhale');
+      setCount(patternRef.current.inhale);
+    }
+  };
 
   const startBreathing = () => {
     setIsActive(true);
     setBreathingPhase('inhale');
-    setCount(4);
+    setCount(patternRef.current.inhale);
     
     if (voiceEnabled) {
       speakBreathingCue('inhale');
@@ -22,7 +48,7 @@ export function useBreathingLogic() {
   const stopBreathing = () => {
     setIsActive(false);
     setBreathingPhase('inhale');
-    setCount(4);
+    setCount(patternRef.current.inhale);
     
     // Cancel any ongoing speech
     if (speechSynthesis && speechSynthesisRef.current) {
@@ -101,30 +127,44 @@ export function useBreathingLogic() {
       setCount((prevCount) => {
         if (prevCount > 1) return prevCount - 1;
         
-        // Change phase
+        // Change phase based on current pattern
         switch (breathingPhase) {
           case 'inhale':
-            const newPhase = 'hold';
-            setBreathingPhase(newPhase);
-            if (voiceEnabled) speakBreathingCue(newPhase);
-            return 4; // Hold for 4 seconds
+            if (patternRef.current.hold) {
+              const newPhase = 'hold';
+              setBreathingPhase(newPhase);
+              if (voiceEnabled) speakBreathingCue(newPhase);
+              return patternRef.current.hold; // Hold duration
+            } else {
+              const newPhase = 'exhale';
+              setBreathingPhase(newPhase);
+              if (voiceEnabled) speakBreathingCue(newPhase);
+              return patternRef.current.exhale; // Exhale duration
+            }
           case 'hold':
             const exhalePhase = 'exhale';
             setBreathingPhase(exhalePhase);
             if (voiceEnabled) speakBreathingCue(exhalePhase);
-            return 6; // Exhale for 6 seconds
+            return patternRef.current.exhale; // Exhale duration
           case 'exhale':
-            const restPhase = 'rest';
-            setBreathingPhase(restPhase);
-            if (voiceEnabled) speakBreathingCue(restPhase);
-            return 2; // Rest for 2 seconds  
+            if (patternRef.current.rest) {
+              const restPhase = 'rest';
+              setBreathingPhase(restPhase);
+              if (voiceEnabled) speakBreathingCue(restPhase);
+              return patternRef.current.rest; // Rest duration
+            } else {
+              const inhalePhase = 'inhale';
+              setBreathingPhase(inhalePhase);
+              if (voiceEnabled) speakBreathingCue(inhalePhase);
+              return patternRef.current.inhale; // Inhale duration
+            }  
           case 'rest':
             const inhalePhase = 'inhale';
             setBreathingPhase(inhalePhase);
             if (voiceEnabled) speakBreathingCue(inhalePhase);
-            return 4; // Inhale for 4 seconds
+            return patternRef.current.inhale; // Inhale duration
           default:
-            return 4;
+            return patternRef.current.inhale;
         }
       });
     }, 1000);
@@ -137,8 +177,10 @@ export function useBreathingLogic() {
     count,
     isActive,
     voiceEnabled,
+    selectedTechnique,
     startBreathing,
     stopBreathing,
-    toggleVoice
+    toggleVoice,
+    selectTechnique
   };
 }

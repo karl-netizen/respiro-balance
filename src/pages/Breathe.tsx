@@ -1,9 +1,9 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BreathingVisualizer from "@/components/BreathingVisualizer";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowRight, Clock, Wind } from "lucide-react";
@@ -33,8 +33,18 @@ const BreatheTechniques = [
 ];
 
 const Breathe = () => {
+  const [searchParams] = useSearchParams();
   const [selectedTechnique, setSelectedTechnique] = useState("box");
-
+  const [activeTab, setActiveTab] = useState("visualizer");
+  
+  // Set initial tab based on URL parameter
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (tab === 'techniques') {
+      setActiveTab('techniques');
+    }
+  }, [searchParams]);
+  
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -53,7 +63,7 @@ const Breathe = () => {
         
         <section className="py-16 px-6">
           <div className="max-w-6xl mx-auto">
-            <Tabs defaultValue="visualizer" className="w-full">
+            <Tabs defaultValue={activeTab} value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="grid w-full grid-cols-2 mb-8">
                 <TabsTrigger value="visualizer">Breathing Visualizer</TabsTrigger>
                 <TabsTrigger value="techniques">Techniques</TabsTrigger>
