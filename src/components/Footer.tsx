@@ -3,10 +3,12 @@ import { Link } from "react-router-dom";
 import { useUserPreferences } from "@/context";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { HelpCircle } from "lucide-react";
+import { useState } from "react";
 
 const Footer = () => {
   const { preferences } = useUserPreferences();
   const currentYear = new Date().getFullYear();
+  const [expandedFaq, setExpandedFaq] = useState<string | undefined>(undefined);
   
   return (
     <footer className="bg-secondary/20 py-10 px-6">
@@ -66,7 +68,13 @@ const Footer = () => {
               <HelpCircle className="h-4 w-4 text-primary" />
               Frequently Asked Questions
             </h4>
-            <Accordion type="single" collapsible className="bg-background/50 rounded-md">
+            <Accordion 
+              type="single" 
+              collapsible 
+              value={expandedFaq}
+              onValueChange={setExpandedFaq}
+              className="bg-background/50 rounded-md"
+            >
               <AccordionItem value="item-1">
                 <AccordionTrigger className="text-sm px-4">
                   How does the breathing exercise feature work?
