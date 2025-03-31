@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -88,6 +89,27 @@ const CorrelationsSection: React.FC<CorrelationsSectionProps> = ({
   const biometricTrends = getBiometricTrends();
   
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+
+  // Calculate average heart rate
+  const calculateAvgHeartRate = () => {
+    return Math.round(
+      biometricTrends.reduce((acc, data) => acc + data.heartRate, 0) / biometricTrends.length
+    );
+  };
+
+  // Calculate average HRV
+  const calculateAvgHRV = () => {
+    return Math.round(
+      biometricTrends.reduce((acc, data) => acc + data.hrv, 0) / biometricTrends.length
+    );
+  };
+
+  // Calculate average stress
+  const calculateAvgStress = () => {
+    return Math.round(
+      biometricTrends.reduce((acc, data) => acc + data.stress, 0) / biometricTrends.length
+    );
+  };
   
   const renderComparisonChart = () => {
     switch (chartType) {
@@ -335,27 +357,21 @@ const CorrelationsSection: React.FC<CorrelationsSectionProps> = ({
                 <div className="text-center">
                   <p className="text-sm text-muted-foreground">Avg. Heart Rate</p>
                   <p className="text-2xl font-bold">
-                    {Math.round(
-                      biometricTrends.reduce((acc, data) => acc + data.heartRate, 0) / biometricTrends.length
-                    )}
+                    {calculateAvgHeartRate()}
                     <span className="text-sm font-normal ml-1">bpm</span>
                   </p>
                 </div>
                 <div className="text-center">
                   <p className="text-sm text-muted-foreground">Avg. HRV</p>
                   <p className="text-2xl font-bold">
-                    {Math.round(
-                      biometricTrends.reduce((acc, data) => acc + data.hrv, 0) / biometricTrends.length
-                    )}
+                    {calculateAvgHRV()}
                     <span className="text-sm font-normal ml-1">ms</span>
                   </p>
                 </div>
                 <div className="text-center">
                   <p className="text-sm text-muted-foreground">Avg. Stress</p>
                   <p className="text-2xl font-bold">
-                    {Math.round(
-                      biometricTrends.reduce((acc, data) => acc + data.stress, 0) / biometricTrends.length
-                    )}
+                    {calculateAvgStress()}
                     <span className="text-sm font-normal ml-1">/100</span>
                   </p>
                 </div>
@@ -388,7 +404,7 @@ const CorrelationsSection: React.FC<CorrelationsSectionProps> = ({
                 >
                   <RadialBar
                     background
-                    clockWise
+                    clockWise={true}
                     dataKey="value"
                     cornerRadius={10}
                   />

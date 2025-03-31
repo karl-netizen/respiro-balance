@@ -48,8 +48,7 @@ const SessionRatingDialog: React.FC<SessionRatingDialogProps> = ({
     
     toast({
       title: "Thank you for your feedback!",
-      description: "Your rating helps us improve our meditation content.",
-      icon: <ThumbsUp className="h-4 w-4" />
+      description: "Your rating helps us improve our meditation content."
     });
   };
 
