@@ -17,6 +17,7 @@ import Breathe from "./pages/Breathe";
 import Progress from "./pages/Progress";
 import Meditate from "./pages/Meditate";
 import FAQ from "./pages/FAQ";
+import MorningRitual from "./pages/MorningRitual";
 import { Suspense, lazy } from "react";
 
 // Create a new query client
@@ -98,6 +99,14 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <Meditate />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/morning-ritual" 
+                element={
+                  <ProtectedRoute>
+                    <MorningRitual />
                   </ProtectedRoute>
                 } 
               />

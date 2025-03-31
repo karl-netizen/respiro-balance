@@ -12,6 +12,8 @@ export type TimeBlockingUsage = "yes_regularly" | "yes_occasionally" | "no";
 export type WorkBoundaries = "strict" | "sometimes" | "blended";
 export type TimeManagementStyle = "structured" | "flexible" | "minimalist" | "need_help";
 export type MorningDevicesHabit = "phone_first" | "phone_delayed" | "no_devices";
+export type RitualStatus = "completed" | "in_progress" | "missed" | "planned";
+export type RitualRecurrence = "daily" | "weekdays" | "weekends" | "custom";
 
 // Create a mock BluetoothDevice interface since the Web Bluetooth API types aren't available
 export interface BluetoothDevice {
@@ -19,6 +21,21 @@ export interface BluetoothDevice {
   name: string;
   type: string;
   connected: boolean;
+}
+
+export interface MorningRitual {
+  id: string;
+  title: string;
+  description?: string;
+  duration: number; // in minutes
+  status: RitualStatus;
+  recurrence: RitualRecurrence;
+  timeOfDay: string; // HH:MM format
+  streak: number;
+  tags: string[];
+  createdAt: string;
+  lastCompleted?: string;
+  daysOfWeek?: WorkDay[]; // For custom recurrence
 }
 
 export interface UserPreferences {
@@ -56,6 +73,7 @@ export interface UserPreferences {
   morningActivities?: string[];
   morningEnergyLevel?: number;
   morningDevices?: MorningDevicesHabit;
+  morningRituals?: MorningRitual[];
   
   // Time Management
   timeChallenges?: string[];
