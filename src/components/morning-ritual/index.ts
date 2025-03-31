@@ -11,5 +11,7 @@ export { default as SuggestionsSection } from './SuggestionsSection';
 export { default as RitualTagSelector } from './RitualTagSelector';
 export { default as RitualRecurrenceSelector } from './RitualRecurrenceSelector';
 export { default as RitualTimeFields } from './RitualTimeFields';
+export { default as RitualFilter } from './RitualFilter';
 export * from './utils';
 export * from './types';
+export * from './filterUtils';
