@@ -1,11 +1,16 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import MeditationPlayer from "@/components/MeditationPlayer";
-import MeditationSessionCard from "@/components/meditation/MeditationSessionCard";
+import { 
+  MeditationSessionCard, 
+  MeditationFilters, 
+  RecentlyPlayedSection,
+  SessionRatingDialog
+} from "@/components/meditation";
 import MeditationBenefits from "@/components/meditation/MeditationBenefits";
 import { useMeditationLibrary } from "@/hooks/useMeditationLibrary";
 
@@ -14,8 +19,22 @@ const Meditate = () => {
     selectedSession, 
     setSelectedSession, 
     handleSelectSession,
-    filterSessionsByCategory 
+    filterSessionsByCategory,
+    recentlyPlayed,
+    handleToggleFavorite,
+    getFavoriteSessions,
+    isFavorite,
+    showRatingDialog,
+    setShowRatingDialog,
+    handleSubmitRating,
+    durationFilter,
+    setDurationFilter,
+    levelFilter,
+    setLevelFilter,
+    resetFilters
   } = useMeditationLibrary();
+  
+  const [activeTab, setActiveTab] = useState('guided');
   
   return (
     <div className="min-h-screen flex flex-col">
@@ -45,23 +64,85 @@ const Meditate = () => {
                 >
                   ← Back to Library
                 </Button>
-                <h2 className="text-2xl font-semibold">{selectedSession.title}</h2>
-                <p className="text-foreground/70 mt-2">{selectedSession.description}</p>
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h2 className="text-2xl font-semibold">{selectedSession.title}</h2>
+                    <p className="text-foreground/70 mt-2">{selectedSession.description}</p>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="icon"
+                    onClick={() => handleToggleFavorite(selectedSession)}
+                  >
+                    {isFavorite(selectedSession.id) ? (
+                      <span className="text-red-500">❤</span>
+                    ) : (
+                      <span>♡</span>
+                    )}
+                  </Button>
+                </div>
               </div>
               
               <MeditationPlayer />
+              
+              {showRatingDialog && selectedSession && (
+                <SessionRatingDialog
+                  isOpen={showRatingDialog}
+                  onClose={() => setShowRatingDialog(false)}
+                  sessionId={selectedSession.id}
+                  sessionTitle={selectedSession.title}
+                  onSubmitRating={handleSubmitRating}
+                />
+              )}
             </div>
           </section>
         ) : (
           <section className="py-12 px-6" id="meditation-tabs">
             <div className="max-w-6xl mx-auto">
-              <Tabs defaultValue="guided" className="w-full">
+              {recentlyPlayed.length > 0 && (
+                <RecentlyPlayedSection 
+                  recentSessions={recentlyPlayed} 
+                  onSelectSession={handleSelectSession} 
+                />
+              )}
+              
+              {getFavoriteSessions().length > 0 && (
+                <div className="mb-8">
+                  <h2 className="text-xl font-semibold mb-4">Favorites</h2>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {getFavoriteSessions().map((session) => (
+                      <MeditationSessionCard 
+                        key={session.id}
+                        session={session}
+                        onSelect={handleSelectSession}
+                        isFavorite={true}
+                        onToggleFavorite={handleToggleFavorite}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              <Tabs 
+                defaultValue="guided" 
+                value={activeTab}
+                onValueChange={setActiveTab}
+                className="w-full"
+              >
                 <TabsList className="grid w-full grid-cols-4 mb-8">
                   <TabsTrigger value="guided">Guided Sessions</TabsTrigger>
                   <TabsTrigger value="quick">Quick Breaks</TabsTrigger>
                   <TabsTrigger value="deep">Deep Focus</TabsTrigger>
                   <TabsTrigger value="sleep">Sleep</TabsTrigger>
                 </TabsList>
+                
+                <MeditationFilters
+                  durationRange={durationFilter}
+                  onDurationChange={setDurationFilter}
+                  selectedLevel={levelFilter}
+                  onLevelChange={setLevelFilter}
+                  onResetFilters={resetFilters}
+                />
                 
                 <TabsContent value="guided" className="mt-0">
                   <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -70,6 +151,8 @@ const Meditate = () => {
                         key={session.id}
                         session={session}
                         onSelect={handleSelectSession}
+                        isFavorite={isFavorite(session.id)}
+                        onToggleFavorite={handleToggleFavorite}
                       />
                     ))}
                   </div>
@@ -82,6 +165,8 @@ const Meditate = () => {
                         key={session.id}
                         session={session}
                         onSelect={handleSelectSession}
+                        isFavorite={isFavorite(session.id)}
+                        onToggleFavorite={handleToggleFavorite}
                       />
                     ))}
                   </div>
@@ -94,6 +179,8 @@ const Meditate = () => {
                         key={session.id}
                         session={session}
                         onSelect={handleSelectSession}
+                        isFavorite={isFavorite(session.id)}
+                        onToggleFavorite={handleToggleFavorite}
                       />
                     ))}
                   </div>
@@ -106,6 +193,8 @@ const Meditate = () => {
                         key={session.id}
                         session={session}
                         onSelect={handleSelectSession}
+                        isFavorite={isFavorite(session.id)}
+                        onToggleFavorite={handleToggleFavorite}
                       />
                     ))}
                   </div>
