@@ -1,7 +1,7 @@
 
 import React from "react";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import RitualHero from "@/components/morning-ritual/RitualHero";
 import RitualTimeline from "@/components/morning-ritual/RitualTimeline";
 import RitualForm from "@/components/morning-ritual/RitualForm";

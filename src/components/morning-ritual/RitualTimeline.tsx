@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useUserPreferences } from "@/context";
 import { MorningRitual, RitualStatus } from "@/context/types";
@@ -21,9 +20,7 @@ const RitualTimeline = () => {
   const { toast } = useToast();
   const rituals = preferences.morningRituals || [];
   
-  // Sort rituals by time of day
   const sortedRituals = [...rituals].sort((a, b) => {
-    // Convert time strings to minutes for comparison
     const timeA = a.timeOfDay.split(':').map(Number);
     const timeB = b.timeOfDay.split(':').map(Number);
     return (timeA[0] * 60 + timeA[1]) - (timeB[0] * 60 + timeB[1]);
@@ -74,10 +71,9 @@ const RitualTimeline = () => {
     const updatedRituals = rituals.map(ritual => {
       if (ritual.id === ritualId) {
         const wasCompleted = ritual.status === "completed";
-        // Toggle between completed and planned
         return { 
           ...ritual, 
-          status: wasCompleted ? "planned" : "completed",
+          status: wasCompleted ? "planned" as RitualStatus : "completed" as RitualStatus,
           lastCompleted: wasCompleted ? undefined : new Date().toISOString(),
           streak: wasCompleted ? ritual.streak - 1 : ritual.streak + 1
         };
@@ -122,7 +118,6 @@ const RitualTimeline = () => {
       </div>
       
       <div className="relative">
-        {/* Timeline line */}
         <div className="absolute left-[19px] top-6 bottom-10 w-[2px] bg-slate-200 z-0"></div>
         
         <div className="space-y-6 relative z-10">

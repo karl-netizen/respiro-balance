@@ -85,7 +85,7 @@ export const shouldDoRitualToday = (
   daysOfWeek?: string[]
 ): boolean => {
   const today = new Date();
-  const dayOfWeek = today.toLocaleDateString('en-US', { weekday: 'lowercase' });
+  const dayOfWeek = today.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
   const isWeekend = dayOfWeek === 'saturday' || dayOfWeek === 'sunday';
   
   switch (recurrence) {
