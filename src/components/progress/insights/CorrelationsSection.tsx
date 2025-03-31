@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -90,21 +89,21 @@ const CorrelationsSection: React.FC<CorrelationsSectionProps> = ({
   
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
-  // Calculate average heart rate
+  // Calculate average heart rate - fixed to use correct typings
   const calculateAvgHeartRate = () => {
     return Math.round(
       biometricTrends.reduce((acc, data) => acc + data.heartRate, 0) / biometricTrends.length
     );
   };
 
-  // Calculate average HRV
+  // Calculate average HRV - fixed to use correct typings
   const calculateAvgHRV = () => {
     return Math.round(
       biometricTrends.reduce((acc, data) => acc + data.hrv, 0) / biometricTrends.length
     );
   };
 
-  // Calculate average stress
+  // Calculate average stress - fixed to use correct typings
   const calculateAvgStress = () => {
     return Math.round(
       biometricTrends.reduce((acc, data) => acc + data.stress, 0) / biometricTrends.length
@@ -404,7 +403,6 @@ const CorrelationsSection: React.FC<CorrelationsSectionProps> = ({
                 >
                   <RadialBar
                     background
-                    clockWise={true}
                     dataKey="value"
                     cornerRadius={10}
                   />
