@@ -5,7 +5,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { UserPreferencesProvider } from "@/context";
-import { AuthProvider, useAuth } from "@/hooks/useAuth";
+import { AuthProvider } from "@/providers/AuthProvider"; // Updated import 
+import { useAuth } from "@/hooks/useAuth";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
@@ -46,10 +47,10 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 };
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <BrowserRouter>
-        <AuthProvider>
+  <BrowserRouter>
+    <AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
           <UserPreferencesProvider>
             <Toaster />
             <Sonner />
@@ -115,10 +116,10 @@ const App = () => (
               <Route path="*" element={<NotFound />} />
             </Routes>
           </UserPreferencesProvider>
-        </AuthProvider>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </AuthProvider>
+  </BrowserRouter>
 );
 
 export default App;
