@@ -8,4 +8,8 @@ export { default as RitualForm } from './RitualForm';
 export { default as RitualEditDialog } from './RitualEditDialog';
 export { default as StreakTracker } from './StreakTracker';
 export { default as SuggestionsSection } from './SuggestionsSection';
+export { default as RitualTagSelector } from './RitualTagSelector';
+export { default as RitualRecurrenceSelector } from './RitualRecurrenceSelector';
+export { default as RitualTimeFields } from './RitualTimeFields';
 export * from './utils';
+export * from './types';
