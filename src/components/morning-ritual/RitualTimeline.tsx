@@ -1,7 +1,7 @@
 
 import React from "react";
 import { useUserPreferences } from "@/context";
-import { RitualStatus } from "@/context/types";
+import { MorningRitual, RitualStatus } from "@/context/types";
 import RitualTimelineItem from "./RitualTimelineItem";
 import EmptyRitualState from "./EmptyRitualState";
 import RitualTimelineHeader from "./RitualTimelineHeader";
@@ -48,6 +48,14 @@ const RitualTimeline = () => {
     });
   };
   
+  const updateRitual = (updatedRitual: MorningRitual) => {
+    const updatedRituals = rituals.map(ritual => 
+      ritual.id === updatedRitual.id ? updatedRitual : ritual
+    );
+    
+    updatePreferences({ morningRituals: updatedRituals });
+  };
+  
   if (rituals.length === 0) {
     return <EmptyRitualState />;
   }
@@ -66,6 +74,7 @@ const RitualTimeline = () => {
               ritual={ritual}
               onComplete={completeRitual}
               onDelete={deleteRitual}
+              onUpdate={updateRitual}
             />
           ))}
         </div>
