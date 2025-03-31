@@ -237,7 +237,6 @@ const CorrelationsSection: React.FC<{
               endAngle={0}
             >
               <RadialBar
-                minAngle={15}
                 background
                 clockWise
                 dataKey="value"
