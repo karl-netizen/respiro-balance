@@ -179,17 +179,12 @@ const TimeManagementStep = () => {
     </div>
   );
 
-  // On mobile, wrap content in ScrollArea to make it scrollable
-  if (isMobile) {
-    return (
-      <ScrollArea className="pr-4 h-full max-h-[250px]">
-        {content}
-      </ScrollArea>
-    );
-  }
-
-  // On desktop, render content normally
-  return content;
+  // On mobile, we'll use the entire component space
+  return (
+    <ScrollArea className="h-full">
+      {content}
+    </ScrollArea>
+  );
 };
 
 export default TimeManagementStep;
