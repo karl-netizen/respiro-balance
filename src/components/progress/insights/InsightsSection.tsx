@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { UserPreferences } from "@/context/types";
-import { InsightsSectionComponent } from './insights';
+import { default as InsightsSectionComponent } from './insights/InsightsSection';
 
 interface InsightsSectionProps {
   preferences: UserPreferences;
