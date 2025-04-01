@@ -182,7 +182,7 @@ const TimeManagementStep = () => {
   // On mobile, wrap content in ScrollArea to make it scrollable
   if (isMobile) {
     return (
-      <ScrollArea className="pr-4 max-h-[60vh]">
+      <ScrollArea className="pr-4 h-full max-h-[250px]">
         {content}
       </ScrollArea>
     );

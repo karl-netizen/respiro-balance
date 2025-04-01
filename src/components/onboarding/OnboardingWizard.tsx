@@ -107,8 +107,8 @@ const OnboardingWizard = () => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className={`sm:max-w-[500px] ${isMobile ? 'p-4' : 'p-6'}`}>
-        <div className="space-y-6">
+      <DialogContent className={`sm:max-w-[500px] ${isMobile ? 'p-4' : 'p-6'} flex flex-col max-h-[90vh]`}>
+        <div className="flex flex-col flex-1 min-h-0">
           <div className="text-center">
             <div className="flex items-center justify-center mb-3">
               <div className="h-1 bg-secondary flex-1 rounded-full overflow-hidden">
@@ -131,11 +131,11 @@ const OnboardingWizard = () => {
             <p className="text-muted-foreground mt-1">{steps[currentStep].description}</p>
           </div>
 
-          <div className={`py-4 ${isMobile ? 'min-h-[200px]' : 'min-h-[240px]'}`}>
+          <div className={`py-4 flex-1 overflow-hidden ${isMobile ? 'min-h-[250px]' : 'min-h-[300px]'}`}>
             {steps[currentStep].component}
           </div>
 
-          <div className="flex justify-between mt-4 pt-2 sticky bottom-0 bg-background">
+          <div className="flex justify-between pt-4 mt-auto border-t">
             {currentStep > 0 ? (
               <Button variant="outline" onClick={handleBack}>
                 Back
