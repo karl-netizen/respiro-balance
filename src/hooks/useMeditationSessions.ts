@@ -1,15 +1,20 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
-import { MeditationSession } from '@/types/supabase';
+import { MeditationSession as SupabaseMeditationSession } from '@/types/supabase';
 import { useAuth } from './useAuth';
+
+interface StartSessionParams {
+  sessionType: string;
+  duration: number;
+}
 
 export function useMeditationSessions() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
   // Fetch recent meditation sessions
-  const fetchRecentSessions = async (): Promise<MeditationSession[]> => {
+  const fetchRecentSessions = async (): Promise<SupabaseMeditationSession[]> => {
     if (!user) throw new Error('User not authenticated');
 
     const { data, error } = await supabase
@@ -24,17 +29,17 @@ export function useMeditationSessions() {
       throw error;
     }
 
-    return data as MeditationSession[];
+    return data as SupabaseMeditationSession[];
   };
 
   // Start a new meditation session
-  const startSession = async (sessionType: string, duration: number): Promise<string> => {
+  const startSession = async (params: StartSessionParams): Promise<string> => {
     if (!user) throw new Error('User not authenticated');
 
     const newSession = {
       user_id: user.id,
-      session_type: sessionType,
-      duration: duration,
+      session_type: params.sessionType,
+      duration: params.duration,
       started_at: new Date().toISOString(),
       completed: false,
     };
@@ -78,8 +83,7 @@ export function useMeditationSessions() {
   });
 
   const startSessionMutation = useMutation({
-    mutationFn: (params: { sessionType: string; duration: number }) => 
-      startSession(params.sessionType, params.duration),
+    mutationFn: startSession,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['meditationSessions', user?.id] });
     },
