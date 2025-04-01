@@ -1,7 +1,15 @@
 
 import { useState, useMemo } from 'react';
 import { useMeditationSessions } from '@/hooks/useMeditationSessions';
-import { format, isWithinLastWeek, isToday, parseISO, differenceInDays, isSameDay } from 'date-fns';
+import { 
+  format, 
+  isToday, 
+  parseISO, 
+  differenceInDays, 
+  isSameDay,
+  subWeeks,
+  isAfter
+} from 'date-fns';
 
 export interface MeditationStats {
   totalSessions: number;
@@ -35,6 +43,12 @@ export interface SessionDay {
   day: string;
   completed: boolean;
   today?: boolean;
+}
+
+// Helper function to check if a date is within the last week
+function isWithinLastWeek(date: Date): boolean {
+  const oneWeekAgo = subWeeks(new Date(), 1);
+  return isAfter(date, oneWeekAgo);
 }
 
 export const useMeditationStats = () => {
