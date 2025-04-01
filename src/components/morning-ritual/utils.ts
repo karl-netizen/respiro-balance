@@ -1,7 +1,8 @@
-
 /**
  * Utility functions for the Morning Ritual Builder
  */
+
+import { MorningRitual, RitualStatus, WorkDay } from "@/context/types";
 
 /**
  * Format time from 24-hour format to 12-hour AM/PM format
@@ -107,21 +108,18 @@ export const shouldDoRitualToday = (
  * @param ritual The ritual to check
  * @returns Boolean indicating if ritual was completed today
  */
-export const wasCompletedToday = (ritual: {
-  status: string;
-  lastCompleted?: string;
-}): boolean => {
-  if (ritual.status !== 'completed' || !ritual.lastCompleted) {
+export const wasCompletedToday = (lastCompleted?: string): boolean => {
+  if (!lastCompleted) {
     return false;
   }
   
   const today = new Date();
-  const lastCompleted = new Date(ritual.lastCompleted);
+  const lastCompletedDate = new Date(lastCompleted);
   
   return (
-    today.getDate() === lastCompleted.getDate() &&
-    today.getMonth() === lastCompleted.getMonth() &&
-    today.getFullYear() === lastCompleted.getFullYear()
+    today.getDate() === lastCompletedDate.getDate() &&
+    today.getMonth() === lastCompletedDate.getMonth() &&
+    today.getFullYear() === lastCompletedDate.getFullYear()
   );
 };
 
@@ -143,6 +141,94 @@ export const getRitualTimeFromPreferences = (
   }
   
   return preferences.weekdayWakeTime || defaultWeekdayTime;
+};
+
+/**
+ * Updates ritual statuses based on current date and completion
+ * @param rituals Array of morning rituals
+ * @returns Updated array of rituals with correct statuses
+ */
+export const updateRitualStatuses = (rituals: MorningRitual[]): MorningRitual[] => {
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  
+  return rituals.map(ritual => {
+    // Skip if already completed today
+    if (ritual.status === 'completed' && wasCompletedToday(ritual.lastCompleted)) {
+      return ritual;
+    }
+    
+    // Check if should be done today
+    const isScheduledToday = shouldDoRitualToday(ritual.recurrence, ritual.daysOfWeek);
+    
+    // If not scheduled for today, leave as is
+    if (!isScheduledToday) {
+      return ritual;
+    }
+    
+    // If it was scheduled yesterday but not completed, mark as missed and reset streak
+    const wasScheduledYesterday = shouldDoRitualYesterday(ritual.recurrence, ritual.daysOfWeek);
+    const wasCompletedYesterday = ritual.lastCompleted && wasCompletedOnDate(ritual.lastCompleted, yesterday);
+    
+    if (wasScheduledYesterday && !wasCompletedYesterday && ritual.status !== 'missed') {
+      return {
+        ...ritual,
+        status: 'missed' as RitualStatus,
+        streak: 0
+      };
+    }
+    
+    // If scheduled for today and not yet marked, set as planned
+    if (ritual.status !== 'planned' && ritual.status !== 'in_progress') {
+      return {
+        ...ritual,
+        status: 'planned' as RitualStatus
+      };
+    }
+    
+    return ritual;
+  });
+};
+
+/**
+ * Check if a ritual was scheduled for yesterday
+ */
+const shouldDoRitualYesterday = (
+  recurrence: string,
+  daysOfWeek?: string[]
+): boolean => {
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  
+  const yesterdayName = yesterday.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+  const isYesterdayWeekend = yesterdayName === 'saturday' || yesterdayName === 'sunday';
+  
+  switch (recurrence) {
+    case 'daily':
+      return true;
+    case 'weekdays':
+      return !isYesterdayWeekend;
+    case 'weekends':
+      return isYesterdayWeekend;
+    case 'custom':
+      return daysOfWeek ? daysOfWeek.includes(yesterdayName) : false;
+    default:
+      return false;
+  }
+};
+
+/**
+ * Check if ritual was completed on a specific date
+ */
+const wasCompletedOnDate = (lastCompleted: string, date: Date): boolean => {
+  const completedDate = new Date(lastCompleted);
+  
+  return (
+    completedDate.getDate() === date.getDate() &&
+    completedDate.getMonth() === date.getMonth() &&
+    completedDate.getFullYear() === date.getFullYear()
+  );
 };
 
 /**

@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import RitualHero from "@/components/morning-ritual/RitualHero";
@@ -11,10 +11,24 @@ import { useUserPreferences } from "@/context";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { Helmet } from "react-helmet";
+import { updateRitualStatuses } from "@/components/morning-ritual/utils";
 
 const MorningRitual = () => {
-  const { preferences } = useUserPreferences();
-  const hasRituals = preferences.morningRituals && preferences.morningRituals.length > 0;
+  const { preferences, updatePreferences } = useUserPreferences();
+  const rituals = preferences.morningRituals || [];
+  const hasRituals = rituals.length > 0;
+
+  // Update ritual statuses on page load
+  useEffect(() => {
+    if (rituals.length > 0) {
+      const updatedRituals = updateRitualStatuses(rituals);
+      // Only update if something actually changed
+      const statusesChanged = JSON.stringify(updatedRituals) !== JSON.stringify(rituals);
+      if (statusesChanged) {
+        updatePreferences({ morningRituals: updatedRituals });
+      }
+    }
+  }, [rituals, updatePreferences]);
 
   return (
     <>

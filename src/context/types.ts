@@ -1,4 +1,43 @@
+
 import { Dispatch, SetStateAction } from 'react';
+
+// Define BluetoothDevice interface
+export interface BluetoothDevice {
+  id: string;
+  name: string;
+  type: string;
+}
+
+// Ritual types
+export interface MorningRitual {
+  id: string;
+  title: string;
+  description?: string;
+  timeOfDay: string;
+  duration: number;
+  recurrence: RitualRecurrence;
+  daysOfWeek?: WorkDay[];
+  status: RitualStatus;
+  streak: number;
+  tags: string[];
+  createdAt: string;
+  lastCompleted?: string;
+}
+
+export type RitualRecurrence = 'daily' | 'weekdays' | 'weekends' | 'custom';
+export type RitualStatus = 'planned' | 'in_progress' | 'completed' | 'missed';
+export type WorkDay = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
+
+// Morning activities and related types
+export type MorningDevicesHabit = 'phone_first' | 'phone_delayed' | 'no_devices';
+export type UserRole = 'user' | 'coach' | 'admin';
+export type TimeManagementStyle = 'pomodoro' | 'timeblocking' | 'deadline' | 'flexible';
+export type WorkBoundaries = 'strict' | 'flexible' | 'blended';
+export type TimeBlockingUsage = 'always' | 'sometimes' | 'never';
+export type MeditationExperience = 'beginner' | 'intermediate' | 'advanced';
+export type StressLevel = 'low' | 'moderate' | 'high' | 'very_high';
+export type WorkEnvironment = 'office' | 'home' | 'hybrid' | 'variable';
+export type SubscriptionTier = 'free' | 'premium' | 'team' | 'enterprise';
 
 export interface UserPreferences {
   theme: 'light' | 'dark' | 'system';
@@ -22,8 +61,44 @@ export interface UserPreferences {
   metricsOfInterest: string[];
   focusChallenges: string[];
   workDays: number[];
-  userRole: 'user' | 'coach' | 'admin';
+  userRole: UserRole;
   meditationGoals: string[];
+  
+  // Morning ritual related
+  morningRituals?: MorningRitual[];
+  morningActivities?: string[];
+  morningEnergyLevel?: number;
+  morningDevices?: MorningDevicesHabit;
+  weekdayWakeTime?: string;
+  weekendWakeTime?: string;
+  
+  // Onboarding related
+  hasCompletedOnboarding?: boolean;
+  stressLevel?: StressLevel;
+  energyPattern?: string;
+  workStartTime?: string;
+  workEndTime?: string;
+  workEnvironment?: WorkEnvironment;
+  lunchBreak?: boolean;
+  lunchTime?: string;
+  morningExercise?: boolean;
+  exerciseTime?: string;
+  bedTime?: string;
+  meditationExperience?: MeditationExperience;
+  preferredSessionDuration?: number;
+  timeChallenges?: string[];
+  usesTimeBlocking?: TimeBlockingUsage;
+  workBoundaries?: WorkBoundaries;
+  timeManagementStyle?: TimeManagementStyle;
+  
+  // Notifications
+  enableSessionReminders?: boolean;
+  enableProgressUpdates?: boolean;
+  enableRecommendations?: boolean;
+  
+  // Business
+  businessAttribution?: string;
+  subscriptionTier?: SubscriptionTier;
 }
 
 export interface UserPreferencesContextType {

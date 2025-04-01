@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useUserPreferences } from "@/context";
 import { MorningRitual, RitualStatus } from "@/context/types";
 import RitualTimelineItem from "./RitualTimelineItem";
@@ -8,6 +8,7 @@ import RitualTimelineHeader from "./RitualTimelineHeader";
 import RitualFilter, { RitualFilters } from "./RitualFilter";
 import { filterRituals, getAllAvailableTags, defaultFilters } from "./filterUtils";
 import { useToast } from "@/hooks/use-toast";
+import { wasCompletedToday } from "./utils";
 
 const RitualTimeline = () => {
   const { preferences, updatePreferences } = useUserPreferences();
@@ -31,21 +32,40 @@ const RitualTimeline = () => {
   const completeRitual = (ritualId: string) => {
     const updatedRituals = rituals.map(ritual => {
       if (ritual.id === ritualId) {
-        const wasCompleted = ritual.status === "completed";
-        return { 
-          ...ritual, 
-          status: wasCompleted ? "planned" as RitualStatus : "completed" as RitualStatus,
-          lastCompleted: wasCompleted ? undefined : new Date().toISOString(),
-          streak: wasCompleted ? ritual.streak - 1 : ritual.streak + 1
-        };
+        const isCompletedToday = ritual.status === "completed" && wasCompletedToday(ritual.lastCompleted);
+        
+        if (isCompletedToday) {
+          // If already completed today, mark as planned again
+          return { 
+            ...ritual, 
+            status: "planned" as RitualStatus,
+            lastCompleted: undefined,
+            streak: Math.max(0, ritual.streak - 1)
+          };
+        } else {
+          // Mark as completed
+          return { 
+            ...ritual, 
+            status: "completed" as RitualStatus,
+            lastCompleted: new Date().toISOString(),
+            streak: ritual.streak + 1
+          };
+        }
       }
       return ritual;
     });
     
     updatePreferences({ morningRituals: updatedRituals });
+    
+    // Show appropriate toast message
+    const ritual = rituals.find(r => r.id === ritualId);
+    const isCompleting = !(ritual?.status === "completed" && wasCompletedToday(ritual?.lastCompleted));
+    
     toast({
-      title: "Ritual updated",
-      description: "Your morning ritual status has been updated",
+      title: isCompleting ? "Ritual completed" : "Ritual status updated",
+      description: isCompleting ? 
+        "Great job! Keep up your morning routine." : 
+        "Your morning ritual status has been updated",
     });
   };
   

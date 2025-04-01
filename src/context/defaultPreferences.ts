@@ -1,4 +1,7 @@
-const defaultPreferences = {
+
+import { UserPreferences } from './types';
+
+const defaultPreferences: UserPreferences = {
   theme: 'light' as 'light' | 'dark' | 'system',
   focusMode: false,
   defaultMeditationDuration: 10,
@@ -34,7 +37,43 @@ const defaultPreferences = {
     'reduce stress',
     'improve focus',
     'better sleep'
-  ]
+  ],
+  
+  // Morning ritual related
+  morningRituals: [],
+  morningActivities: [],
+  morningEnergyLevel: 5,
+  morningDevices: 'phone_first',
+  weekdayWakeTime: '07:00',
+  weekendWakeTime: '08:00',
+  
+  // Onboarding related
+  hasCompletedOnboarding: false,
+  stressLevel: 'moderate',
+  energyPattern: 'morning',
+  workStartTime: '09:00',
+  workEndTime: '17:00',
+  workEnvironment: 'hybrid',
+  lunchBreak: true,
+  lunchTime: '12:00',
+  morningExercise: false,
+  exerciseTime: '06:30',
+  bedTime: '22:30',
+  meditationExperience: 'beginner',
+  preferredSessionDuration: 10,
+  timeChallenges: [],
+  usesTimeBlocking: 'sometimes',
+  workBoundaries: 'flexible',
+  timeManagementStyle: 'flexible',
+  
+  // Notifications
+  enableSessionReminders: true,
+  enableProgressUpdates: true,
+  enableRecommendations: true,
+  
+  // Business
+  businessAttribution: '',
+  subscriptionTier: 'free'
 };
 
 export default defaultPreferences;
