@@ -4,6 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useUserPreferences } from "@/context";
+import { WorkDay } from "@/context/types";
 
 const WorkScheduleStep = () => {
   const { preferences, updatePreferences } = useUserPreferences();
@@ -20,13 +21,13 @@ const WorkScheduleStep = () => {
   const toggleWorkDay = (day: string) => {
     // Ensure workDays is an array before using it
     const workDays = Array.isArray(preferences.workDays) ? preferences.workDays : [];
-    const isSelected = workDays.includes(day as any);
+    const isSelected = workDays.includes(day as WorkDay);
     let newWorkDays;
     
     if (isSelected) {
       newWorkDays = workDays.filter(d => d !== day);
     } else {
-      newWorkDays = [...workDays, day as any];
+      newWorkDays = [...workDays, day as WorkDay];
     }
     
     updatePreferences({ workDays: newWorkDays });
@@ -41,7 +42,7 @@ const WorkScheduleStep = () => {
             <div key={day.id} className="flex items-center space-x-2">
               <Checkbox 
                 id={day.id} 
-                checked={Array.isArray(preferences.workDays) && preferences.workDays.includes(day.id as any)}
+                checked={Array.isArray(preferences.workDays) && preferences.workDays.includes(day.id as WorkDay)}
                 onCheckedChange={() => toggleWorkDay(day.id)}
               />
               <Label htmlFor={day.id}>{day.label}</Label>

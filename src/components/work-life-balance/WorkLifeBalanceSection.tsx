@@ -13,7 +13,7 @@ import { formatTime } from "./utils";
 
 const WorkLifeBalanceSection = () => {
   const { preferences, isCoach } = useUserPreferences();
-  const isTeamOrEnterprise = preferences.subscriptionTier === "Team" || preferences.subscriptionTier === "Enterprise";
+  const isTeamOrEnterprise = preferences.subscriptionTier === "team" || preferences.subscriptionTier === "enterprise";
 
   // Format work days for display
   const formatWorkDays = () => {
@@ -21,7 +21,9 @@ const WorkLifeBalanceSection = () => {
       return "no scheduled";
     }
     
-    const days = preferences.workDays.map(day => day.charAt(0).toUpperCase() + day.slice(1));
+    const days = preferences.workDays.map(day => 
+      day.charAt(0).toUpperCase() + day.slice(1)
+    );
     return days.join(', ');
   };
 
@@ -34,7 +36,7 @@ const WorkLifeBalanceSection = () => {
             {isTeamOrEnterprise && (
               <Badge variant="outline" className="mb-4 py-1 px-3 flex items-center">
                 <Users className="h-3 w-3 mr-1" />
-                <span>{preferences.subscriptionTier} Features Enabled</span>
+                <span>{preferences.subscriptionTier === 'team' ? 'Team' : 'Enterprise'} Features Enabled</span>
               </Badge>
             )}
           </div>

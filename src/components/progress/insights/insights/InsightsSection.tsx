@@ -33,7 +33,7 @@ export const InsightsSection: React.FC<InsightsSectionProps> = ({ preferences })
     // Timing-based insights
     if (meditationStats.monthlyTrend && meditationStats.monthlyTrend.length > 0) {
       // Check if user meditates more in the morning or evening
-      const morningPreference = preferences.workDays.some(day => day === 'monday' as WorkDay);
+      const morningPreference = preferences.workDays.includes('monday' as WorkDay);
       
       if (morningPreference && meditationStats.streak > 3) {
         timingInsights.push({

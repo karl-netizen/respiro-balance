@@ -6,6 +6,7 @@ export interface BluetoothDevice {
   id: string;
   name: string;
   type: string;
+  connected?: boolean; // Added connected property as optional
 }
 
 // Ritual types
@@ -60,7 +61,7 @@ export interface UserPreferences {
   connectedDevices: BluetoothDevice[];
   metricsOfInterest: string[];
   focusChallenges: string[];
-  workDays: number[];
+  workDays: string[]; // Changed from number[] to string[] to match WorkDay type
   userRole: UserRole;
   meditationGoals: string[];
   
@@ -74,6 +75,7 @@ export interface UserPreferences {
   
   // Onboarding related
   hasCompletedOnboarding?: boolean;
+  lastOnboardingCompleted?: string; // Added to fix the error
   stressLevel?: StressLevel;
   energyPattern?: string;
   workStartTime?: string;

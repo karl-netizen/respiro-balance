@@ -31,7 +31,7 @@ const defaultPreferences: UserPreferences = {
     'pomodoro',
     'socialMedia'
   ],
-  workDays: [1, 2, 3, 4, 5], // Mon, Tue, Wed, Thu, Fri
+  workDays: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'], // Changed to string array
   userRole: 'user' as 'user' | 'coach' | 'admin',
   meditationGoals: [
     'reduce stress',

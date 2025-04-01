@@ -1,11 +1,13 @@
+
 import { Check, Users, Building, Star } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useUserPreferences } from "@/context";
+import { SubscriptionTier } from '@/context/types';
 
 const tiers = [
   {
-    id: 'free',
+    id: 'free' as const,
     name: 'Respiro Essentials',
     icon: <div className="p-2 rounded-full bg-secondary w-10 h-10 flex items-center justify-center text-foreground/80"><Star size={20} /></div>,
     price: 'Free',
@@ -23,7 +25,7 @@ const tiers = [
     style: 'border-gray-200'
   },
   {
-    id: 'pro',
+    id: 'premium' as const,
     name: 'Respiro Pro',
     icon: <div className="p-2 rounded-full bg-primary/20 w-10 h-10 flex items-center justify-center text-primary"><Star size={20} /></div>,
     price: '$9.99',
@@ -43,7 +45,7 @@ const tiers = [
     style: 'border-primary'
   },
   {
-    id: 'team',
+    id: 'team' as const,
     name: 'Respiro Teams',
     icon: <div className="p-2 rounded-full bg-secondary w-10 h-10 flex items-center justify-center text-foreground/80"><Users size={20} /></div>,
     price: '$49',
@@ -62,7 +64,7 @@ const tiers = [
     style: 'border-gray-200'
   },
   {
-    id: 'enterprise',
+    id: 'enterprise' as const,
     name: 'Respiro Enterprise',
     icon: <div className="p-2 rounded-full bg-secondary w-10 h-10 flex items-center justify-center text-foreground/80"><Building size={20} /></div>,
     price: '$99',
@@ -89,13 +91,7 @@ const PricingTiers = () => {
 
   const handleSelectTier = (tierId: string) => {
     updatePreferences({ 
-      subscriptionTier: tierId === 'free' 
-        ? 'Free' 
-        : tierId === 'pro' 
-          ? 'Pro' 
-          : tierId === 'team' 
-            ? 'Team' 
-            : 'Enterprise'
+      subscriptionTier: tierId as SubscriptionTier
     });
   };
 
@@ -129,7 +125,7 @@ const PricingTiers = () => {
               
               <div className={cn(
                 "glassmorphism-card border-2 h-full flex flex-col",
-                tier.id === preferences.subscriptionTier?.toLowerCase() 
+                tier.id === preferences.subscriptionTier
                   ? "border-primary ring-2 ring-primary/20" 
                   : tier.popular 
                     ? tier.style 
@@ -165,7 +161,7 @@ const PricingTiers = () => {
                   <Button 
                     className={cn(
                       "w-full", 
-                      tier.id === preferences.subscriptionTier?.toLowerCase()
+                      tier.id === preferences.subscriptionTier
                         ? "bg-secondary text-primary border border-primary"
                         : tier.popular 
                           ? "bg-primary hover:bg-mindflow-dark" 
@@ -173,7 +169,7 @@ const PricingTiers = () => {
                     )}
                     onClick={() => handleSelectTier(tier.id)}
                   >
-                    {tier.id === preferences.subscriptionTier?.toLowerCase()
+                    {tier.id === preferences.subscriptionTier
                       ? "Current Plan"
                       : tier.cta}
                   </Button>

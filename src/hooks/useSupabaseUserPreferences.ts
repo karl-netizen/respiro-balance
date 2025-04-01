@@ -15,12 +15,12 @@ export function useSupabaseUserPreferences() {
     return {
       user_id: user?.id || '',
       preferences_data: {
-        userRole: prefs.userRole,
+        userRole: prefs.userRole === 'user' ? 'client' : prefs.userRole, // Map 'user' to 'client' for DB
         workDays: prefs.workDays,
         workStartTime: prefs.workStartTime,
         workEndTime: prefs.workEndTime,
-        workEnvironment: prefs.workEnvironment,
-        stressLevel: prefs.stressLevel,
+        workEnvironment: prefs.workEnvironment === 'variable' ? 'hybrid' : prefs.workEnvironment, // Map 'variable' to 'hybrid' for DB
+        stressLevel: prefs.stressLevel === 'very_high' ? 'high' : prefs.stressLevel, // Map 'very_high' to 'high' for DB
         focusChallenges: prefs.focusChallenges,
         energyPattern: prefs.energyPattern,
         lunchBreak: prefs.lunchBreak,
@@ -39,11 +39,18 @@ export function useSupabaseUserPreferences() {
 
   // Convert from database to local format
   const convertToLocalFormat = (record: UserPreferencesRecord): UserPreferences => {
-    // Ensure type safety by explicitly casting string values to their respective types
-    const userRole = record.preferences_data.userRole as UserRole;
-    const workDays = record.preferences_data.workDays as WorkDay[];
-    const workEnvironment = record.preferences_data.workEnvironment as WorkEnvironment;
-    const stressLevel = record.preferences_data.stressLevel as StressLevel;
+    // Map DB userRole 'client' to local 'user'
+    const userRole: UserRole = record.preferences_data.userRole === 'client' ? 'user' : 
+      (record.preferences_data.userRole as 'coach' | 'admin');
+    
+    const workDays = record.preferences_data.workDays as string[];
+    
+    // Map DB workEnvironment 'hybrid' to include 'variable' if needed
+    const workEnvironment: WorkEnvironment = record.preferences_data.workEnvironment as WorkEnvironment;
+    
+    // Map DB stressLevel 'high' to include 'very_high' if appropriate
+    const stressLevel: StressLevel = record.preferences_data.stressLevel as StressLevel;
+    
     const meditationExperience = record.preferences_data.meditationExperience as MeditationExperience;
     const subscriptionTier = record.preferences_data.subscriptionTier as SubscriptionTier;
 
