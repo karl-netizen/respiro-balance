@@ -5,12 +5,15 @@ import { Input } from "@/components/ui/input";
 import { Clock } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
 import { RitualFormValues } from "./types";
+import { useRitualTimeFields } from "./hooks/useRitualTimeFields";
 
 interface RitualTimeFieldsProps {
   form: UseFormReturn<RitualFormValues>;
 }
 
 const RitualTimeFields = ({ form }: RitualTimeFieldsProps) => {
+  const { handleDurationChange } = useRitualTimeFields({ form });
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <FormField
@@ -44,8 +47,8 @@ const RitualTimeFields = ({ form }: RitualTimeFieldsProps) => {
                 type="number" 
                 min={1} 
                 max={120}
-                {...field}
-                onChange={e => field.onChange(Number(e.target.value))} 
+                value={field.value} 
+                onChange={(e) => handleDurationChange(e.target.value)}
               />
             </FormControl>
             <FormDescription>

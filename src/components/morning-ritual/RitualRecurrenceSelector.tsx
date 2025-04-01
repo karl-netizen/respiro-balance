@@ -6,13 +6,15 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { UseFormReturn } from "react-hook-form";
 import { RitualFormValues } from "./types";
+import { WorkDay } from "@/context/types";
+import { useRitualRecurrence } from "./hooks/useRitualRecurrence";
 
 interface RitualRecurrenceSelectorProps {
   form: UseFormReturn<RitualFormValues>;
 }
 
 const RitualRecurrenceSelector = ({ form }: RitualRecurrenceSelectorProps) => {
-  const recurrenceWatch = form.watch("recurrence");
+  const { recurrence, availableDays, handleDayToggle } = useRitualRecurrence({ form });
   
   return (
     <div>
@@ -51,7 +53,7 @@ const RitualRecurrenceSelector = ({ form }: RitualRecurrenceSelectorProps) => {
         )}
       />
       
-      {recurrenceWatch === "custom" && (
+      {recurrence === "custom" && (
         <FormField
           control={form.control}
           name="daysOfWeek"
@@ -60,17 +62,13 @@ const RitualRecurrenceSelector = ({ form }: RitualRecurrenceSelectorProps) => {
               <FormLabel>Select Days</FormLabel>
               <FormControl>
                 <div className="flex flex-wrap gap-x-5 gap-y-2 mt-2">
-                  {["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"].map((day) => (
+                  {availableDays.map((day) => (
                     <div key={day} className="flex items-center space-x-2">
                       <Checkbox 
                         id={`day-${day}`}
                         checked={field.value?.includes(day)}
                         onCheckedChange={(checked) => {
-                          const current = field.value || [];
-                          const updated = checked
-                            ? [...current, day]
-                            : current.filter(d => d !== day);
-                          field.onChange(updated);
+                          handleDayToggle(day, checked === true);
                         }}
                       />
                       <label
