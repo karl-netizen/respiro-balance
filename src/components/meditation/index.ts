@@ -14,6 +14,8 @@ import MeditationFilters from './MeditationFilters';
 import DeepFocusList from './DeepFocusList';
 import GuidedMeditationList from './GuidedMeditationList';
 import QuickBreaksList from './QuickBreaksList';
+import PlayerControls from './PlayerControls';
+import BiometricTracker from './BiometricTracker';
 
 export {
   MeditationSessionCard,
@@ -30,7 +32,9 @@ export {
   MeditationFilters,
   DeepFocusList,
   GuidedMeditationList,
-  QuickBreaksList
+  QuickBreaksList,
+  PlayerControls,
+  BiometricTracker
 };
 
 export type { MeditationSession } from './MeditationSessionCard';

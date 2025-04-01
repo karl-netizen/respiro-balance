@@ -2,23 +2,21 @@
 import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Clock, Heart } from "lucide-react";
+import { Clock, Star } from "lucide-react";
 
 export interface MeditationSession {
   id: string;
   title: string;
   description: string;
   duration: number;
-  category: string;
-  image?: string;
-  instructor: string;
-  level: "beginner" | "intermediate" | "advanced";
-  tags: string[];
-  popular?: boolean;
-  icon?: React.ReactNode; // Add icon property for React element icons
+  category: 'guided' | 'quick' | 'deep' | 'sleep';
+  level: 'beginner' | 'intermediate' | 'advanced';
+  icon: React.ReactNode;
+  instructor?: string;
+  tags?: string[];
 }
 
-interface MeditationSessionCardProps {
+export interface MeditationSessionCardProps {
   session: MeditationSession;
   onSelect: (session: MeditationSession) => void;
   isFavorite: boolean;
@@ -31,49 +29,45 @@ const MeditationSessionCard: React.FC<MeditationSessionCardProps> = ({
   isFavorite,
   onToggleFavorite
 }) => {
-  const handleSelect = () => {
-    onSelect(session);
-  };
-
-  const handleToggleFavorite = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onToggleFavorite(session);
-  };
-
   return (
-    <Card 
-      className="h-full cursor-pointer transition-all hover:shadow-md"
-      onClick={handleSelect}
-    >
-      <div className="relative h-40 overflow-hidden">
-        <img 
-          src={session.image || "/placeholder.svg"} 
-          alt={session.title}
-          className="object-cover w-full h-full"
-        />
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute top-2 right-2 bg-black/30 hover:bg-black/50 text-white rounded-full"
-          onClick={handleToggleFavorite}
-        >
-          <Heart className={`h-5 w-5 ${isFavorite ? 'fill-red-500 text-red-500' : ''}`} />
-        </Button>
-      </div>
-      <CardContent className="p-4">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-xs px-2 py-1 rounded-full bg-secondary">
-            {session.category}
-          </span>
-          <div className="flex items-center text-sm text-muted-foreground">
-            <Clock className="h-3 w-3 mr-1" />
+    <Card className="h-full hover:shadow-md transition-shadow">
+      <CardContent className="p-6 flex flex-col h-full">
+        <div className="flex justify-between items-start mb-3">
+          <div className="p-2 bg-primary/10 rounded-md">
+            {session.icon}
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-muted-foreground hover:text-primary"
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleFavorite(session);
+            }}
+          >
+            {isFavorite ? (
+              <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+            ) : (
+              <Star className="h-5 w-5" />
+            )}
+          </Button>
+        </div>
+        
+        <h3 className="font-semibold text-lg mb-2">{session.title}</h3>
+        <p className="text-muted-foreground text-sm mb-4 flex-grow">{session.description}</p>
+        
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-1 text-sm text-muted-foreground">
+            <Clock className="h-4 w-4" />
             <span>{session.duration} min</span>
           </div>
-        </div>
-        <h3 className="font-semibold mb-1">{session.title}</h3>
-        <p className="text-sm text-muted-foreground line-clamp-2">{session.description}</p>
-        <div className="mt-2 text-xs text-muted-foreground">
-          By {session.instructor} • {session.level}
+          
+          <Button 
+            size="sm"
+            onClick={() => onSelect(session)}
+          >
+            Start
+          </Button>
         </div>
       </CardContent>
     </Card>

@@ -1,12 +1,13 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Play, Pause, RotateCcw, Volume2 } from "lucide-react";
 import { MeditationSession } from './MeditationSessionCard';
-import { useBiometricData } from '@/hooks/useBiometricData';
 import { useUserPreferences } from '@/context';
-import BiometricDisplay from './BiometricDisplay';
-import { getBiometricDataFromDevices, calculateBiometricChange } from '@/components/morning-ritual/utils';
+import { useBiometricData } from '@/hooks/useBiometricData';
+import { getBiometricDataFromDevices } from '@/components/morning-ritual/utils';
+import { toast } from "sonner";
+import PlayerControls from './PlayerControls';
+import BiometricTracker from './BiometricTracker';
 
 interface MeditationSessionPlayerProps {
   session: MeditationSession;
@@ -26,13 +27,17 @@ const MeditationSessionPlayer: React.FC<MeditationSessionPlayerProps> = ({
   const [biometricChange, setBiometricChange] = useState<any>(null);
   
   const { preferences } = useUserPreferences();
-  const { addBiometricData, biometricData } = useBiometricData();
+  const { addBiometricData } = useBiometricData();
+  
+  const getInitialBiometrics = () => {
+    return getBiometricDataFromDevices(preferences.connectedDevices);
+  };
   
   useEffect(() => {
     if (isPlaying && !sessionStarted) {
       setSessionStarted(true);
       
-      const initial = getBiometricDataFromDevices(preferences.connectedDevices);
+      const initial = getInitialBiometrics();
       setInitialBiometrics(initial);
       
       if (preferences.hasWearableDevice) {
@@ -40,45 +45,6 @@ const MeditationSessionPlayer: React.FC<MeditationSessionPlayerProps> = ({
       }
     }
   }, [isPlaying, sessionStarted, preferences, addBiometricData]);
-  
-  useEffect(() => {
-    let biometricInterval: NodeJS.Timeout;
-    
-    if (isPlaying && sessionStarted) {
-      biometricInterval = setInterval(() => {
-        const newBiometrics = { ...initialBiometrics };
-        
-        const progress = 1 - (timeRemaining / (session.duration * 60));
-        
-        newBiometrics.heart_rate = Math.max(
-          initialBiometrics.heart_rate - Math.floor(initialBiometrics.heart_rate * 0.15 * progress),
-          60
-        );
-        
-        newBiometrics.hrv = Math.min(
-          initialBiometrics.hrv + Math.floor(initialBiometrics.hrv * 0.3 * progress),
-          100
-        );
-        
-        newBiometrics.respiratory_rate = Math.max(
-          initialBiometrics.respiratory_rate - Math.floor(initialBiometrics.respiratory_rate * 0.25 * progress),
-          8
-        );
-        
-        newBiometrics.stress_score = Math.max(
-          initialBiometrics.stress_score - Math.floor(initialBiometrics.stress_score * 0.4 * progress),
-          20
-        );
-        
-        setCurrentBiometrics(newBiometrics);
-        
-        const changes = calculateBiometricChange(initialBiometrics, newBiometrics);
-        setBiometricChange(changes);
-      }, 10000);
-    }
-    
-    return () => clearInterval(biometricInterval);
-  }, [isPlaying, sessionStarted, initialBiometrics, timeRemaining, session.duration]);
   
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -101,12 +67,6 @@ const MeditationSessionPlayer: React.FC<MeditationSessionPlayerProps> = ({
     }
     return () => clearInterval(timer);
   }, [isPlaying, timeRemaining, session.id, onComplete, preferences, currentBiometrics, addBiometricData]);
-  
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
 
   const handlePlayPause = () => {
     setIsPlaying(prev => !prev);
@@ -120,74 +80,39 @@ const MeditationSessionPlayer: React.FC<MeditationSessionPlayerProps> = ({
     setBiometricChange(null);
   };
 
+  const handleVolumeChange = (newVolume: number) => {
+    setVolume(newVolume);
+  };
+
   return (
     <div className="space-y-6">
       <Card className="w-full">
         <CardContent className="pt-6">
-          <div className="flex flex-col items-center space-y-6">
-            <div className="w-full bg-secondary h-2 rounded-full">
-              <div 
-                className="bg-primary h-2 rounded-full transition-all duration-300"
-                style={{ width: `${(timeRemaining / (session.duration * 60)) * 100}%` }}
-              />
-            </div>
-            
-            <div className="text-3xl font-mono">
-              {formatTime(timeRemaining)}
-            </div>
-            
-            <div className="flex items-center justify-center space-x-6">
-              <Button 
-                variant="outline" 
-                size="icon" 
-                onClick={handleReset}
-                disabled={isPlaying && timeRemaining === session.duration * 60}
-              >
-                <RotateCcw className="h-4 w-4" />
-              </Button>
-              
-              <Button 
-                size="icon" 
-                className="h-12 w-12 rounded-full" 
-                onClick={handlePlayPause}
-              >
-                {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
-              </Button>
-              
-              <div className="flex items-center space-x-2">
-                <Volume2 className="h-4 w-4 text-foreground/70" />
-                <input 
-                  type="range" 
-                  min="0" 
-                  max="100" 
-                  value={volume} 
-                  onChange={(e) => setVolume(parseInt(e.target.value))}
-                  className="w-24"
-                />
-              </div>
-            </div>
-          </div>
+          <PlayerControls 
+            isPlaying={isPlaying}
+            timeRemaining={timeRemaining}
+            totalDuration={session.duration}
+            volume={volume}
+            onPlayPause={handlePlayPause}
+            onReset={handleReset}
+            onVolumeChange={handleVolumeChange}
+          />
         </CardContent>
       </Card>
       
-      {sessionStarted && (
-        <div className="grid gap-6 md:grid-cols-2">
-          {initialBiometrics && (
-            <BiometricDisplay 
-              biometricData={initialBiometrics} 
-              isInitial={true} 
-            />
-          )}
-          
-          {currentBiometrics && (
-            <BiometricDisplay 
-              biometricData={currentBiometrics}
-              showChange={true}
-              change={biometricChange}
-            />
-          )}
-        </div>
-      )}
+      <BiometricTracker 
+        isPlaying={isPlaying}
+        sessionStarted={sessionStarted}
+        timeRemaining={timeRemaining}
+        sessionDuration={session.duration}
+        initialBiometrics={initialBiometrics}
+        setInitialBiometrics={setInitialBiometrics}
+        currentBiometrics={currentBiometrics}
+        setCurrentBiometrics={setCurrentBiometrics}
+        biometricChange={biometricChange}
+        setBiometricChange={setBiometricChange}
+        getInitialBiometrics={getInitialBiometrics}
+      />
     </div>
   );
 };

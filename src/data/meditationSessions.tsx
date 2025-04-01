@@ -11,7 +11,9 @@ export const meditationSessions: MeditationSession[] = [
     duration: 10,
     category: 'guided',
     level: 'beginner',
-    icon: <Sun className="h-5 w-5 text-orange-400" />
+    icon: <Sun className="h-5 w-5 text-orange-400" />,
+    instructor: 'Sarah Johnson',
+    tags: ['morning', 'focus', 'clarity']
   },
   {
     id: 'guided-2',
@@ -20,7 +22,9 @@ export const meditationSessions: MeditationSession[] = [
     duration: 15,
     category: 'guided',
     level: 'intermediate',
-    icon: <Brain className="h-5 w-5 text-blue-400" />
+    icon: <Brain className="h-5 w-5 text-blue-400" />,
+    instructor: 'Michael Chen',
+    tags: ['midday', 'focus', 'energy']
   },
   {
     id: 'guided-3',
@@ -29,7 +33,9 @@ export const meditationSessions: MeditationSession[] = [
     duration: 20,
     category: 'guided',
     level: 'beginner',
-    icon: <Moon className="h-5 w-5 text-indigo-400" />
+    icon: <Moon className="h-5 w-5 text-indigo-400" />,
+    instructor: 'Emily Rodriguez',
+    tags: ['evening', 'relax', 'unwind']
   },
   {
     id: 'quick-1',
@@ -38,7 +44,9 @@ export const meditationSessions: MeditationSession[] = [
     duration: 3,
     category: 'quick',
     level: 'beginner',
-    icon: <ThumbsUp className="h-5 w-5 text-green-400" />
+    icon: <ThumbsUp className="h-5 w-5 text-green-400" />,
+    instructor: 'James Wilson',
+    tags: ['quick', 'focus', 'boost']
   },
   {
     id: 'quick-2',
@@ -47,7 +55,9 @@ export const meditationSessions: MeditationSession[] = [
     duration: 5,
     category: 'quick',
     level: 'beginner',
-    icon: <Leaf className="h-5 w-5 text-green-500" />
+    icon: <Leaf className="h-5 w-5 text-green-500" />,
+    instructor: 'Maya Patel',
+    tags: ['breathing', 'mindfulness', 'quick']
   },
   {
     id: 'deep-1',
@@ -56,7 +66,9 @@ export const meditationSessions: MeditationSession[] = [
     duration: 25,
     category: 'deep',
     level: 'advanced',
-    icon: <Brain className="h-5 w-5 text-purple-500" />
+    icon: <Brain className="h-5 w-5 text-purple-500" />,
+    instructor: 'David Kim',
+    tags: ['concentration', 'focus', 'advanced']
   },
   {
     id: 'deep-2',
@@ -65,7 +77,9 @@ export const meditationSessions: MeditationSession[] = [
     duration: 30,
     category: 'deep',
     level: 'intermediate',
-    icon: <Heart className="h-5 w-5 text-pink-500" />
+    icon: <Heart className="h-5 w-5 text-pink-500" />,
+    instructor: 'Sophia Martinez',
+    tags: ['mindfulness', 'awareness', 'presence']
   },
   {
     id: 'sleep-1',
@@ -74,7 +88,9 @@ export const meditationSessions: MeditationSession[] = [
     duration: 15,
     category: 'sleep',
     level: 'beginner',
-    icon: <Moon className="h-5 w-5 text-blue-300" />
+    icon: <Moon className="h-5 w-5 text-blue-300" />,
+    instructor: 'Nathan Brown',
+    tags: ['sleep', 'relaxation', 'evening']
   },
   // Additional sessions
   {
@@ -84,7 +100,9 @@ export const meditationSessions: MeditationSession[] = [
     duration: 18,
     category: 'guided',
     level: 'beginner',
-    icon: <Sparkles className="h-5 w-5 text-yellow-400" />
+    icon: <Sparkles className="h-5 w-5 text-yellow-400" />,
+    instructor: 'Lisa Thompson',
+    tags: ['body scan', 'relaxation', 'tension']
   },
   {
     id: 'guided-5',
@@ -93,7 +111,9 @@ export const meditationSessions: MeditationSession[] = [
     duration: 12,
     category: 'guided',
     level: 'beginner',
-    icon: <Heart className="h-5 w-5 text-red-400" />
+    icon: <Heart className="h-5 w-5 text-red-400" />,
+    instructor: 'Carlos Mendez',
+    tags: ['gratitude', 'positivity', 'emotions']
   },
   {
     id: 'deep-3',
@@ -102,7 +122,9 @@ export const meditationSessions: MeditationSession[] = [
     duration: 22,
     category: 'deep',
     level: 'intermediate',
-    icon: <Brain className="h-5 w-5 text-indigo-500" />
+    icon: <Brain className="h-5 w-5 text-indigo-500" />,
+    instructor: 'Rachel Lee',
+    tags: ['visualization', 'manifestation', 'goals']
   },
   {
     id: 'sleep-2',
@@ -111,7 +133,9 @@ export const meditationSessions: MeditationSession[] = [
     duration: 45,
     category: 'sleep',
     level: 'intermediate',
-    icon: <CloudMoon className="h-5 w-5 text-indigo-300" />
+    icon: <CloudMoon className="h-5 w-5 text-indigo-300" />,
+    instructor: 'Thomas Moore',
+    tags: ['deep sleep', 'restoration', 'night']
   },
   {
     id: 'quick-3',
@@ -120,7 +144,9 @@ export const meditationSessions: MeditationSession[] = [
     duration: 1,
     category: 'quick',
     level: 'beginner',
-    icon: <Clock className="h-5 w-5 text-gray-500" />
+    icon: <Clock className="h-5 w-5 text-gray-500" />,
+    instructor: 'Olivia Garcia',
+    tags: ['stress relief', 'quick', 'calm']
   },
   {
     id: 'deep-4',
@@ -129,7 +155,9 @@ export const meditationSessions: MeditationSession[] = [
     duration: 40,
     category: 'deep',
     level: 'advanced',
-    icon: <Award className="h-5 w-5 text-amber-500" />
+    icon: <Award className="h-5 w-5 text-amber-500" />,
+    instructor: 'Robert Chen',
+    tags: ['advanced', 'awareness', 'deep practice']
   },
   {
     id: 'guided-6',
@@ -138,7 +166,9 @@ export const meditationSessions: MeditationSession[] = [
     duration: 15,
     category: 'guided',
     level: 'intermediate',
-    icon: <Heart className="h-5 w-5 text-pink-400" />
+    icon: <Heart className="h-5 w-5 text-pink-400" />,
+    instructor: 'Amara Wilson',
+    tags: ['compassion', 'loving-kindness', 'heart']
   },
   {
     id: 'sleep-3',
@@ -147,6 +177,8 @@ export const meditationSessions: MeditationSession[] = [
     duration: 10,
     category: 'sleep',
     level: 'beginner',
-    icon: <Wind className="h-5 w-5 text-blue-300" />
+    icon: <Wind className="h-5 w-5 text-blue-300" />,
+    instructor: 'Samuel Johnson',
+    tags: ['bedtime', 'wind-down', 'sleep']
   }
 ];
