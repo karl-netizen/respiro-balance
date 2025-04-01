@@ -1,6 +1,6 @@
-
 import React from 'react';
-import MeditationSessionCard, { MeditationSession } from "./MeditationSessionCard";
+import MeditationSessionCard from "./MeditationSessionCard";
+import type { MeditationSession } from "./MeditationSessionCard";
 
 interface FavoritesSectionProps {
   favorites: MeditationSession[];

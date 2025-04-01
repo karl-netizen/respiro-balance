@@ -1,7 +1,7 @@
-
 import React from 'react';
 import { TabsContent } from "@/components/ui/tabs";
-import MeditationSessionCard, { MeditationSession } from "./MeditationSessionCard";
+import MeditationSessionCard from "./MeditationSessionCard";
+import type { MeditationSession } from "./MeditationSessionCard";
 
 interface MeditationTabContentProps {
   value: string;
