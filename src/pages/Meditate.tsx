@@ -9,8 +9,13 @@ import {
   MeditationBenefits
 } from "@/components/meditation";
 import { useMeditationLibrary } from "@/hooks/useMeditationLibrary";
+import { useUserPreferences } from "@/context";
+import { useBiometricData } from "@/hooks/useBiometricData";
+import { toast } from "sonner";
 
 const Meditate = () => {
+  const { preferences } = useUserPreferences();
+  const { biometricData, addBiometricData } = useBiometricData();
   const { 
     selectedSession, 
     setSelectedSession, 
@@ -31,6 +36,21 @@ const Meditate = () => {
   } = useMeditationLibrary();
   
   const [activeTab, setActiveTab] = useState('guided');
+  
+  const handleSessionComplete = (sessionId: string) => {
+    if (preferences.hasWearableDevice) {
+      toast.success("Meditation complete", {
+        description: "Your biometric data has been saved."
+      });
+    } else {
+      toast.success("Meditation complete", {
+        description: "Connect a wearable device to track biometrics."
+      });
+    }
+    
+    // Show rating dialog
+    setShowRatingDialog(true);
+  };
   
   return (
     <div className="min-h-screen flex flex-col">

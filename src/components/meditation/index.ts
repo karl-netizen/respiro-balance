@@ -1,14 +1,20 @@
 
-export { default as MeditationSessionCard } from './MeditationSessionCard';
-export { default as MeditationBenefits } from './MeditationBenefits';
-export { default as GuidedMeditationList } from './GuidedMeditationList';
-export { default as QuickBreaksList } from './QuickBreaksList';
-export { default as DeepFocusList } from './DeepFocusList';
-export { default as MeditationFilters } from './MeditationFilters';
-export { default as RecentlyPlayedSection } from './RecentlyPlayedSection';
-export { default as SessionRatingDialog } from './SessionRatingDialog';
-export { default as MeditationHeader } from './MeditationHeader';
-export { default as MeditationSessionView } from './MeditationSessionView';
-export { default as MeditationLibraryBrowser } from './MeditationLibraryBrowser';
-export { default as FavoritesSection } from './FavoritesSection';
-export type { MeditationSession } from './MeditationSessionCard';
+import MeditationSessionCard from './MeditationSessionCard';
+import MeditationLibraryBrowser from './MeditationLibraryBrowser';
+import MeditationHeader from './MeditationHeader';
+import MeditationSessionView from './MeditationSessionView';
+import MeditationBenefits from './MeditationBenefits';
+import SessionRatingDialog from './SessionRatingDialog';
+import MeditationSessionPlayer from './MeditationSessionPlayer';
+import BiometricDisplay from './BiometricDisplay';
+
+export {
+  MeditationSessionCard,
+  MeditationLibraryBrowser,
+  MeditationHeader,
+  MeditationSessionView,
+  MeditationBenefits,
+  SessionRatingDialog,
+  MeditationSessionPlayer,
+  BiometricDisplay
+};
