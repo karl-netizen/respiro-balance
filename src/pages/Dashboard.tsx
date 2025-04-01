@@ -10,7 +10,8 @@ import OnboardingWizard from "@/components/onboarding/OnboardingWizard";
 import DailyQuote from "@/components/DailyQuote";
 import { useUserPreferences } from "@/context";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, UserCircle } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Dashboard = () => {
   const { preferences } = useUserPreferences();
@@ -29,6 +30,32 @@ const Dashboard = () => {
       return () => clearTimeout(timer);
     }
   }, [preferences.hasCompletedOnboarding]);
+
+  // Get greeting based on time of day
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good morning";
+    if (hour < 18) return "Good afternoon";
+    return "Good evening";
+  };
+
+  // Personalize content based on user preferences
+  const getPersonalizedContent = () => {
+    if (!preferences.hasCompletedOnboarding) {
+      return "Complete the onboarding process to personalize your experience.";
+    }
+
+    const timeBasedMessages = {
+      morning: "Start your day with a short meditation session.",
+      afternoon: "Take a quick breathing break to maintain focus.",
+      evening: "Wind down with a relaxation session before bed."
+    };
+
+    const hour = new Date().getHours();
+    if (hour < 12) return timeBasedMessages.morning;
+    if (hour < 18) return timeBasedMessages.afternoon;
+    return timeBasedMessages.evening;
+  };
   
   return (
     <div className="min-h-screen">
@@ -54,10 +81,17 @@ const Dashboard = () => {
         </div>
       )}
       
-      {/* Daily Motivational Quote */}
+      {/* Personalized Hero Section */}
       <div className="py-16 pt-28 px-6">
         <div className="max-w-3xl mx-auto">
-          <h1 className="text-3xl font-bold text-center mb-8">Your Mindfulness Dashboard</h1>
+          <h1 className="text-3xl font-bold text-center mb-3">
+            {getGreeting()}{preferences.hasCompletedOnboarding && preferences.userRole ? `, ${preferences.userRole}` : ""}
+          </h1>
+          
+          <p className="text-center text-muted-foreground mb-6">
+            {getPersonalizedContent()}
+          </p>
+          
           <DailyQuote />
         </div>
       </div>
@@ -77,9 +111,11 @@ const Dashboard = () => {
           
           {preferences.hasCompletedOnboarding && (
             <div className="text-center mt-8">
-              <Button className="bg-primary text-white" size="lg">
-                <span>View Full Meditation Library</span>
-                <ArrowRight className="ml-2 h-4 w-4" />
+              <Button className="bg-primary text-white" size="lg" asChild>
+                <Link to="/meditate">
+                  <span>View Full Meditation Library</span>
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
               </Button>
             </div>
           )}
@@ -87,6 +123,30 @@ const Dashboard = () => {
       </section>
       
       <BreathingVisualizer />
+      
+      {/* Personalized Section based on preferences */}
+      {preferences.hasCompletedOnboarding && preferences.morningRituals && (
+        <section className="py-16 px-6">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">Your Morning Ritual</h2>
+              <p className="text-foreground/70 max-w-2xl mx-auto">
+                Start your day with intention and mindfulness.
+              </p>
+            </div>
+            
+            <div className="text-center mt-8">
+              <Button variant="outline" size="lg" asChild>
+                <Link to="/morning-ritual">
+                  <span>View Morning Ritual</span>
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </section>
+      )}
+      
       <WorkLifeBalance />
       
       <Footer />

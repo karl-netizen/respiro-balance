@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useUserPreferences } from "@/context";
@@ -15,12 +15,40 @@ import TimeManagementStep from "./steps/TimeManagementStep";
 import BusinessSelectionStep from "./steps/BusinessSelectionStep";
 import FinalStep from "./steps/FinalStep";
 import { useIsMobile } from "@/hooks/use-mobile";
+import LunchBreakStep from "./steps/LunchBreakStep";
+import ExerciseStep from "./steps/ExerciseStep";
 
 const OnboardingWizard = () => {
   const { preferences, updatePreferences } = useUserPreferences();
   const [open, setOpen] = useState(!preferences.hasCompletedOnboarding);
   const [currentStep, setCurrentStep] = useState(0);
   const isMobile = useIsMobile();
+
+  // Add effect to reinitialize preferences for onboarding if needed
+  useEffect(() => {
+    // Check if we need to prepare preferences for onboarding
+    if (!preferences.hasCompletedOnboarding && open) {
+      // Ensure all required arrays are initialized
+      const requiredArrays = {
+        workDays: preferences.workDays || [],
+        focusChallenges: preferences.focusChallenges || [],
+        meditationGoals: preferences.meditationGoals || [],
+        metricsOfInterest: preferences.metricsOfInterest || [],
+        connectedDevices: preferences.connectedDevices || [],
+        morningActivities: preferences.morningActivities || [],
+        timeChallenges: preferences.timeChallenges || []
+      };
+      
+      // Update preferences if any arrays need initialization
+      const needsUpdate = Object.entries(requiredArrays).some(
+        ([key, value]) => !Array.isArray(preferences[key]) || preferences[key].length === 0
+      );
+      
+      if (needsUpdate) {
+        updatePreferences(requiredArrays);
+      }
+    }
+  }, [preferences, open, updatePreferences]);
 
   const steps = [
     {
@@ -32,6 +60,16 @@ const OnboardingWizard = () => {
       title: "Work Schedule",
       component: <WorkScheduleStep />,
       description: "Tell us about your typical work schedule",
+    },
+    {
+      title: "Lunch Break",
+      component: <LunchBreakStep />,
+      description: "Let us know about your lunch break habits",
+    },
+    {
+      title: "Exercise",
+      component: <ExerciseStep />,
+      description: "Tell us about your exercise routine",
     },
     {
       title: "Time Management",
@@ -90,7 +128,10 @@ const OnboardingWizard = () => {
   };
 
   const completeOnboarding = () => {
-    updatePreferences({ hasCompletedOnboarding: true });
+    updatePreferences({ 
+      hasCompletedOnboarding: true,
+      lastOnboardingCompleted: new Date().toISOString()
+    });
     setOpen(false);
     toast("Onboarding completed", {
       description: "Your personalized settings have been saved.",

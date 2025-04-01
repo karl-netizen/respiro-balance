@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Clock, Heart } from "lucide-react";
 
@@ -9,77 +9,72 @@ export interface MeditationSession {
   title: string;
   description: string;
   duration: number;
-  category: 'guided' | 'quick' | 'deep' | 'sleep';
-  level: 'beginner' | 'intermediate' | 'advanced';
-  icon: React.ReactNode;
-  rating?: number;
-  userRating?: number;
-  userFeedback?: string;
+  category: string;
+  image?: string;
+  instructor: string;
+  level: "beginner" | "intermediate" | "advanced";
+  tags: string[];
+  popular?: boolean;
 }
 
 interface MeditationSessionCardProps {
   session: MeditationSession;
   onSelect: (session: MeditationSession) => void;
-  isFavorite?: boolean;
-  onToggleFavorite?: (session: MeditationSession) => void;
+  isFavorite: boolean;
+  onToggleFavorite: (session: MeditationSession) => void;
 }
 
-const MeditationSessionCard: React.FC<MeditationSessionCardProps> = ({ 
-  session, 
+const MeditationSessionCard: React.FC<MeditationSessionCardProps> = ({
+  session,
   onSelect,
-  isFavorite = false,
+  isFavorite,
   onToggleFavorite
 }) => {
-  const handleFavoriteClick = (e: React.MouseEvent) => {
+  const handleSelect = () => {
+    onSelect(session);
+  };
+
+  const handleToggleFavorite = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (onToggleFavorite) {
-      onToggleFavorite(session);
-    }
+    onToggleFavorite(session);
   };
 
   return (
     <Card 
-      className="h-full hover:shadow-md transition-shadow cursor-pointer" 
-      onClick={() => onSelect(session)}
+      className="h-full cursor-pointer transition-all hover:shadow-md"
+      onClick={handleSelect}
     >
-      <CardHeader>
-        <div className="flex justify-between items-center">
-          {session.icon}
-          <div className="flex items-center gap-2">
-            <span className={`text-xs font-medium px-2 py-1 bg-secondary rounded-full 
-              ${session.level === 'beginner' ? 'text-green-600' : 
-              session.level === 'intermediate' ? 'text-blue-600' : 'text-purple-600'}`}
-            >
-              {session.level}
-            </span>
-            {onToggleFavorite && (
-              <button 
-                onClick={handleFavoriteClick}
-                className="p-1 rounded-full hover:bg-secondary transition-colors"
-                aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
-              >
-                <Heart 
-                  size={18} 
-                  className={isFavorite ? "fill-red-500 text-red-500" : "text-muted-foreground"} 
-                />
-              </button>
-            )}
+      <div className="relative h-40 overflow-hidden">
+        <img 
+          src={session.image || "/placeholder.svg"} 
+          alt={session.title}
+          className="object-cover w-full h-full"
+        />
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute top-2 right-2 bg-black/30 hover:bg-black/50 text-white rounded-full"
+          onClick={handleToggleFavorite}
+        >
+          <Heart className={`h-5 w-5 ${isFavorite ? 'fill-red-500 text-red-500' : ''}`} />
+        </Button>
+      </div>
+      <CardContent className="p-4">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-xs px-2 py-1 rounded-full bg-secondary">
+            {session.category}
+          </span>
+          <div className="flex items-center text-sm text-muted-foreground">
+            <Clock className="h-3 w-3 mr-1" />
+            <span>{session.duration} min</span>
           </div>
         </div>
-        <CardTitle className="mt-2">{session.title}</CardTitle>
-        <CardDescription className="flex items-center gap-1">
-          <Clock className="h-3 w-3" />
-          {session.duration} minutes
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <p className="text-foreground/70">{session.description}</p>
+        <h3 className="font-semibold mb-1">{session.title}</h3>
+        <p className="text-sm text-muted-foreground line-clamp-2">{session.description}</p>
+        <div className="mt-2 text-xs text-muted-foreground">
+          By {session.instructor} • {session.level}
+        </div>
       </CardContent>
-      <CardFooter>
-        <Button className="w-full">
-          Begin Session
-        </Button>
-      </CardFooter>
     </Card>
   );
 };

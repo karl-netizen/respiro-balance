@@ -1,4 +1,3 @@
-
 // Type definitions for user preferences
 
 export type WorkDay = "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday";
@@ -104,6 +103,7 @@ export interface UserPreferences {
   
   // Onboarding Status
   hasCompletedOnboarding: boolean;
+  lastOnboardingCompleted?: string;
 }
 
 export interface UserPreferencesContextType {

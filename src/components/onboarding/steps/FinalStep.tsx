@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Check } from "lucide-react";
 import { useUserPreferences } from "@/context";
@@ -9,6 +10,19 @@ const FinalStep = () => {
   const formattedWorkDays = (preferences.workDays || [])
     .map(day => day.charAt(0).toUpperCase() + day.slice(1))
     .join(', ');
+  
+  // Format the meditation goals for display
+  const formatMeditationGoals = () => {
+    const goals = preferences.meditationGoals || [];
+    if (goals.length === 0) return "Not specified";
+    
+    return goals.map(goal => {
+      // Convert snake_case to readable text
+      return goal.split('_')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+    }).join(', ');
+  };
   
   return (
     <div className="space-y-6 text-center">
@@ -39,8 +53,21 @@ const FinalStep = () => {
           
           <div className="font-medium">Bedtime:</div>
           <div>{preferences.bedTime || "Not specified"}</div>
+          
+          <div className="font-medium">Meditation Experience:</div>
+          <div className="capitalize">{preferences.meditationExperience || "Not specified"}</div>
+          
+          <div className="font-medium">Meditation Goals:</div>
+          <div>{formatMeditationGoals()}</div>
+          
+          <div className="font-medium">Session Duration:</div>
+          <div>{preferences.preferredSessionDuration || 10} minutes</div>
         </div>
       </div>
+      
+      <p className="text-sm text-muted-foreground">
+        You can update these preferences anytime in your profile settings.
+      </p>
     </div>
   );
 };
