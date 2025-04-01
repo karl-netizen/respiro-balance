@@ -1,9 +1,20 @@
+
 import React, { useMemo } from 'react';
 import { Brain, Activity, TrendingUp, Moon, Sun, Clock, Zap } from "lucide-react";
 import { UserPreferences, WorkDay } from "@/context/types";
 import { InsightCard } from '.';
 import { ProgressReportCard } from '.';
 import { useMeditationStats } from "../../useMeditationStats";
+
+// Define a proper interface for insights
+interface Insight {
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  action: string;
+  relevanceScore: number;
+  tags: string[];
+}
 
 export interface InsightsSectionProps {
   preferences: UserPreferences;
@@ -15,9 +26,9 @@ export const InsightsSection: React.FC<InsightsSectionProps> = ({ preferences })
   // Generate personalized insights based on user data
   const personalizedInsights = useMemo(() => {
     // Arrays for different insight categories
-    const timingInsights = [];
-    const consistencyInsights = [];
-    const techniqueInsights = [];
+    const timingInsights: Insight[] = [];
+    const consistencyInsights: Insight[] = [];
+    const techniqueInsights: Insight[] = [];
     
     // Timing-based insights
     if (meditationStats.monthlyTrend && meditationStats.monthlyTrend.length > 0) {
@@ -96,7 +107,7 @@ export const InsightsSection: React.FC<InsightsSectionProps> = ({ preferences })
     }
     
     // Determine optimal meditation time
-    const bestTimeInsight = {
+    const bestTimeInsight: Insight = {
       title: "Best Time to Meditate",
       description: "Based on your activity patterns, meditating between 7-8am may improve your focus for the day.",
       icon: <Brain className="h-5 w-5 text-primary" />,
@@ -107,7 +118,7 @@ export const InsightsSection: React.FC<InsightsSectionProps> = ({ preferences })
     
     // Combine all insights and sort by relevance score
     return [...timingInsights, ...consistencyInsights, ...techniqueInsights, bestTimeInsight]
-      .sort((a, b) => (b.relevanceScore || 0) - (a.relevanceScore || 0))
+      .sort((a, b) => b.relevanceScore - a.relevanceScore)
       .slice(0, 3); // Get top 3 most relevant insights
   }, [meditationStats, preferences]);
   
