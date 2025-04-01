@@ -1,9 +1,11 @@
 
 import React from 'react';
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MeditationFilters, FavoritesSection, RecentlyPlayedSection } from "@/components/meditation";
+import MeditationFilters from './MeditationFilters';
+import FavoritesSection from './FavoritesSection';
+import RecentlyPlayedSection from './RecentlyPlayedSection';
 import MeditationTabContent from './MeditationTabContent';
-import { MeditationSession } from '@/components/meditation/MeditationSessionCard';
+import { MeditationSession } from './MeditationSessionCard';
 
 interface MeditationLibraryBrowserProps {
   activeTab: string;

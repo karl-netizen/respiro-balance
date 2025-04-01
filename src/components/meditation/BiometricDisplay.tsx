@@ -117,6 +117,15 @@ const BiometricItem: React.FC<BiometricItemProps> = ({
   const isPositiveChange = displayChange && displayChange > 0;
   const isNegativeChange = displayChange && displayChange < 0;
   
+  // Determine progress color based on value and whether metric is inverted
+  const getProgressColor = () => {
+    if (inverted) {
+      return value < 50 ? "bg-emerald-500" : value > 75 ? "bg-rose-500" : "bg-amber-500";
+    } else {
+      return value > 75 ? "bg-emerald-500" : value < 50 ? "bg-rose-500" : "bg-amber-500";
+    }
+  };
+  
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
@@ -133,12 +142,7 @@ const BiometricItem: React.FC<BiometricItemProps> = ({
         <>
           <Progress 
             value={value} 
-            className="h-1.5"
-            // For most metrics like stress score, lower is better
-            indicatorClassName={inverted 
-              ? value < 50 ? "bg-emerald-500" : value > 75 ? "bg-rose-500" : "bg-amber-500"
-              : value > 75 ? "bg-emerald-500" : value < 50 ? "bg-rose-500" : "bg-amber-500"
-            }
+            className={`h-1.5 ${getProgressColor()}`}
           />
           <div className="text-xs text-right">
             {change === 0 ? (

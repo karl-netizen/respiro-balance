@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { MeditationSession, MeditationSessionCard } from "@/components/meditation";
+import MeditationSessionCard, { MeditationSession } from "./MeditationSessionCard";
 
 interface FavoritesSectionProps {
   favorites: MeditationSession[];
