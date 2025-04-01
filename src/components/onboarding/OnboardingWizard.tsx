@@ -14,11 +14,13 @@ import MorningRitualStep from "./steps/MorningRitualStep";
 import TimeManagementStep from "./steps/TimeManagementStep";
 import BusinessSelectionStep from "./steps/BusinessSelectionStep";
 import FinalStep from "./steps/FinalStep";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const OnboardingWizard = () => {
   const { preferences, updatePreferences } = useUserPreferences();
   const [open, setOpen] = useState(!preferences.hasCompletedOnboarding);
   const [currentStep, setCurrentStep] = useState(0);
+  const isMobile = useIsMobile();
 
   const steps = [
     {
@@ -105,7 +107,7 @@ const OnboardingWizard = () => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className={`sm:max-w-[500px] ${isMobile ? 'p-4' : 'p-6'}`}>
         <div className="space-y-6">
           <div className="text-center">
             <div className="flex items-center justify-center mb-3">
@@ -129,9 +131,11 @@ const OnboardingWizard = () => {
             <p className="text-muted-foreground mt-1">{steps[currentStep].description}</p>
           </div>
 
-          <div className="py-4 min-h-[240px]">{steps[currentStep].component}</div>
+          <div className={`py-4 ${isMobile ? 'min-h-[200px]' : 'min-h-[240px]'}`}>
+            {steps[currentStep].component}
+          </div>
 
-          <div className="flex justify-between">
+          <div className="flex justify-between mt-4 pt-2 sticky bottom-0 bg-background">
             {currentStep > 0 ? (
               <Button variant="outline" onClick={handleBack}>
                 Back

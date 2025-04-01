@@ -6,9 +6,12 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Clock, ListTodo, Bell, MessageSquare } from "lucide-react";
 import { TimeBlockingUsage, WorkBoundaries, TimeManagementStyle } from "@/context/types";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const TimeManagementStep = () => {
   const { preferences, updatePreferences } = useUserPreferences();
+  const isMobile = useIsMobile();
 
   const handleTimeChallengeChange = (challenge: string, checked: boolean) => {
     // Ensure timeChallenges exists in preferences
@@ -24,7 +27,7 @@ const TimeManagementStep = () => {
     updatePreferences({ timeChallenges: updatedChallenges });
   };
 
-  return (
+  const content = (
     <div className="space-y-6">
       <div>
         <h3 className="text-sm font-medium mb-3 flex items-center">
@@ -175,6 +178,18 @@ const TimeManagementStep = () => {
       </div>
     </div>
   );
+
+  // On mobile, wrap content in ScrollArea to make it scrollable
+  if (isMobile) {
+    return (
+      <ScrollArea className="pr-4 max-h-[60vh]">
+        {content}
+      </ScrollArea>
+    );
+  }
+
+  // On desktop, render content normally
+  return content;
 };
 
 export default TimeManagementStep;
