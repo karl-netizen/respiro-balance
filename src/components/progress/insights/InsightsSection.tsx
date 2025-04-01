@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { UserPreferences } from "@/context/types";
-import { InsightsSection as DetailedInsightsSection } from './insights/InsightsSection';
+import { InsightsSection as DetailedInsightsSection } from './insights';
 
 interface InsightsSectionProps {
   preferences: UserPreferences;
