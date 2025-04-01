@@ -16,6 +16,9 @@ import GuidedMeditationList from './GuidedMeditationList';
 import QuickBreaksList from './QuickBreaksList';
 import PlayerControls from './PlayerControls';
 import BiometricTracker from './BiometricTracker';
+import HeartRateVariabilityTab from './biometrics/HeartRateVariabilityTab';
+import BrainwavesTab from './biometrics/BrainwavesTab';
+import BreathingTab from './biometrics/BreathingTab';
 
 export {
   MeditationSessionCard,
@@ -34,7 +37,11 @@ export {
   GuidedMeditationList,
   QuickBreaksList,
   PlayerControls,
-  BiometricTracker
+  BiometricTracker,
+  HeartRateVariabilityTab,
+  BrainwavesTab,
+  BreathingTab
 };
 
 export type { MeditationSession } from './MeditationSessionCard';
+export type { BiometricData, BiometricChangeData, BiometricDisplayProps } from './types/BiometricTypes';

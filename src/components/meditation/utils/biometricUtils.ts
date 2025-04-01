@@ -1,7 +1,8 @@
 
 import { getBiometricDataFromDevices } from '@/components/morning-ritual/utils';
+import { BluetoothDevice } from '@/context/types';
 
-export const getInitialBiometricData = (connectedDevices: string[]) => {
+export const getInitialBiometricData = (connectedDevices: BluetoothDevice[]) => {
   return getBiometricDataFromDevices(connectedDevices);
 };
 

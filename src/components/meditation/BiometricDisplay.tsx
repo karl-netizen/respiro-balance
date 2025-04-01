@@ -1,17 +1,14 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useUserPreferences } from '@/context';
 import { Heart, Brain, Activity, Pause, Play } from 'lucide-react';
-
-interface BiometricDisplayProps {
-  biometricData: any;
-  isInitial?: boolean;
-  showChange?: boolean;
-  change?: any;
-}
+import { useSimulationState } from './hooks/useSimulationState';
+import HeartRateVariabilityTab from './biometrics/HeartRateVariabilityTab';
+import BrainwavesTab from './biometrics/BrainwavesTab';
+import BreathingTab from './biometrics/BreathingTab';
+import { BiometricDisplayProps } from './types/BiometricTypes';
 
 const BiometricDisplay: React.FC<BiometricDisplayProps> = ({
   biometricData,
@@ -19,8 +16,8 @@ const BiometricDisplay: React.FC<BiometricDisplayProps> = ({
   showChange = false,
   change
 }) => {
-  const [selectedMetric, setSelectedMetric] = useState('hrv');
-  const [simulationRunning, setSimulationRunning] = useState(true);
+  const [selectedMetric, setSelectedMetric] = React.useState('hrv');
+  const { simulationRunning, toggleSimulation } = useSimulationState();
   const { preferences } = useUserPreferences();
   
   // Check if the user has a wearable device or is interested in certain metrics
@@ -31,33 +28,6 @@ const BiometricDisplay: React.FC<BiometricDisplayProps> = ({
   if (!showWearableData) {
     return null;
   }
-
-  // Convert HRV to a percentage scale for visualization (50-150 ms → 0-100%)
-  const hrvToPercentage = (hrv: number) => {
-    const min = 50;
-    const max = 150;
-    const percentage = ((hrv - min) / (max - min)) * 100;
-    return Math.min(Math.max(percentage, 0), 100);
-  };
-
-  // Convert brainwaves to percentage (for demo purposes)
-  const brainwaveToPercentage = (value: number, type: string) => {
-    // Different types of brainwaves have different typical ranges
-    const ranges = {
-      alpha: { min: 0, max: 10 },
-      beta: { min: 0, max: 20 },
-      theta: { min: 0, max: 8 },
-      delta: { min: 0, max: 4 }
-    };
-    
-    const { min, max } = ranges[type as keyof typeof ranges] || { min: 0, max: 100 };
-    const percentage = ((value - min) / (max - min)) * 100;
-    return Math.min(Math.max(percentage, 0), 100);
-  };
-
-  const toggleSimulation = () => {
-    setSimulationRunning(!simulationRunning);
-  };
 
   return (
     <Card className="shadow-md">
@@ -90,94 +60,24 @@ const BiometricDisplay: React.FC<BiometricDisplayProps> = ({
             </TabsTrigger>
           </TabsList>
           
-          <TabsContent value="hrv" className="space-y-3">
-            <div>
-              <div className="flex justify-between text-sm text-muted-foreground mb-1">
-                <span>Heart Rate Variability</span>
-                <span>{`${biometricData.hrv || 0} ms`}</span>
-              </div>
-              <Progress 
-                value={hrvToPercentage(biometricData.hrv || 0)}
-                className="h-2"
-              />
-              {showChange && change && (
-                <div className="text-xs text-right mt-1">
-                  <span className={change.hrv > 0 ? "text-green-500" : "text-red-500"}>
-                    {change.hrv > 0 ? "+" : ""}{change.hrv}ms
-                  </span>
-                </div>
-              )}
-            </div>
-            <div>
-              <div className="flex justify-between text-sm text-muted-foreground mb-1">
-                <span>Heart Rate</span>
-                <span>{`${biometricData.heartRate || biometricData.heart_rate || 0} bpm`}</span>
-              </div>
-              <Progress 
-                value={((biometricData.heartRate || biometricData.heart_rate || 0) - 50) / 100 * 100}
-                className="h-2"
-              />
-              {showChange && change && (
-                <div className="text-xs text-right mt-1">
-                  <span className={change.heart_rate < 0 ? "text-green-500" : "text-red-500"}>
-                    {change.heart_rate > 0 ? "+" : ""}{change.heart_rate}bpm
-                  </span>
-                </div>
-              )}
-            </div>
+          <TabsContent value="hrv">
+            <HeartRateVariabilityTab 
+              biometricData={biometricData} 
+              showChange={showChange} 
+              change={change} 
+            />
           </TabsContent>
           
-          <TabsContent value="brain" className="space-y-3">
-            <div>
-              <div className="flex justify-between text-sm text-muted-foreground mb-1">
-                <span>Alpha Waves (Relaxation)</span>
-                <span>{`${((biometricData.brainwaves?.alpha || 0)).toFixed(1)} μV`}</span>
-              </div>
-              <Progress 
-                value={brainwaveToPercentage(biometricData.brainwaves?.alpha || 0, 'alpha')}
-                className="h-2"
-              />
-            </div>
-            <div>
-              <div className="flex justify-between text-sm text-muted-foreground mb-1">
-                <span>Theta Waves (Meditation)</span>
-                <span>{`${((biometricData.brainwaves?.theta || 0)).toFixed(1)} μV`}</span>
-              </div>
-              <Progress 
-                value={brainwaveToPercentage(biometricData.brainwaves?.theta || 0, 'theta')}
-                className="h-2"
-              />
-            </div>
+          <TabsContent value="brain">
+            <BrainwavesTab biometricData={biometricData} />
           </TabsContent>
           
-          <TabsContent value="breath" className="space-y-3">
-            <div>
-              <div className="flex justify-between text-sm text-muted-foreground mb-1">
-                <span>Breath Rate</span>
-                <span>{`${(biometricData.breathRate || biometricData.respiratory_rate || 0).toFixed(1)} bpm`}</span>
-              </div>
-              <Progress 
-                value={((biometricData.breathRate || biometricData.respiratory_rate || 0) / 20) * 100}
-                className="h-2"
-              />
-              {showChange && change && (
-                <div className="text-xs text-right mt-1">
-                  <span className={change.respiratory_rate < 0 ? "text-green-500" : "text-red-500"}>
-                    {change.respiratory_rate > 0 ? "+" : ""}{change.respiratory_rate}/min
-                  </span>
-                </div>
-              )}
-            </div>
-            <div>
-              <div className="flex justify-between text-sm text-muted-foreground mb-1">
-                <span>Coherence Score</span>
-                <span>{`${((biometricData.coherence || 0) * 100).toFixed(0)}%`}</span>
-              </div>
-              <Progress 
-                value={(biometricData.coherence || 0) * 100}
-                className="h-2"
-              />
-            </div>
+          <TabsContent value="breath">
+            <BreathingTab 
+              biometricData={biometricData} 
+              showChange={showChange} 
+              change={change} 
+            />
           </TabsContent>
         </Tabs>
         
