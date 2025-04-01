@@ -6,11 +6,15 @@ import MeditationSessionCard from './MeditationSessionCard';
 interface GuidedMeditationListProps {
   sessions: MeditationSession[];
   onSelectSession: (session: MeditationSession) => void;
+  isFavorite: (sessionId: string) => boolean;
+  onToggleFavorite: (session: MeditationSession) => void;
 }
 
 const GuidedMeditationList: React.FC<GuidedMeditationListProps> = ({ 
   sessions, 
-  onSelectSession 
+  onSelectSession,
+  isFavorite,
+  onToggleFavorite
 }) => {
   return (
     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -19,6 +23,8 @@ const GuidedMeditationList: React.FC<GuidedMeditationListProps> = ({
           key={session.id}
           session={session}
           onSelect={onSelectSession}
+          isFavorite={isFavorite(session.id)}
+          onToggleFavorite={onToggleFavorite}
         />
       ))}
     </div>

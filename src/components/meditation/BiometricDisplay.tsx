@@ -6,12 +6,23 @@ import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useUserPreferences } from '@/context';
 import { Heart, Brain, Activity, Pause, Play } from 'lucide-react';
+import { BiometricData } from '@/types/supabase';
 
-const BiometricDisplay = () => {
-  const { data, isLoading } = useBiometricData();
+interface BiometricDisplayProps {
+  biometricData?: any;
+  isInitial?: boolean;
+  showChange?: boolean;
+  change?: any;
+}
+
+const BiometricDisplay: React.FC<BiometricDisplayProps> = (props) => {
+  const { biometricData, isLoading } = useBiometricData();
   const [selectedMetric, setSelectedMetric] = useState('hrv');
   const [simulationRunning, setSimulationRunning] = useState(true);
   const { preferences } = useUserPreferences();
+  
+  // Use props if provided, otherwise use data from hook
+  const data = props.biometricData || biometricData[0] || {};
   
   // Check if the user has a wearable device or is interested in certain metrics
   const showWearableData = preferences.hasWearableDevice || 
@@ -53,7 +64,9 @@ const BiometricDisplay = () => {
     <Card className="shadow-md">
       <CardContent className="p-5">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold">Biometric Feedback</h3>
+          <h3 className="text-lg font-semibold">
+            {props.isInitial ? "Initial Biometrics" : props.showChange ? "Current Biometrics" : "Biometric Feedback"}
+          </h3>
           <button 
             className="p-1 rounded-full bg-secondary/50 hover:bg-secondary"
             onClick={toggleSimulation}
@@ -82,22 +95,36 @@ const BiometricDisplay = () => {
             <div>
               <div className="flex justify-between text-sm text-muted-foreground mb-1">
                 <span>Heart Rate Variability</span>
-                <span>{isLoading ? '...' : `${data.hrv} ms`}</span>
+                <span>{isLoading ? '...' : `${data.hrv || 0} ms`}</span>
               </div>
               <Progress 
-                value={isLoading ? 0 : hrvToPercentage(data.hrv)}
+                value={isLoading ? 0 : hrvToPercentage(data.hrv || 0)}
                 className="h-2"
               />
+              {props.showChange && props.change && (
+                <div className="text-xs text-right mt-1">
+                  <span className={props.change.hrv > 0 ? "text-green-500" : "text-red-500"}>
+                    {props.change.hrv > 0 ? "+" : ""}{props.change.hrv}ms
+                  </span>
+                </div>
+              )}
             </div>
             <div>
               <div className="flex justify-between text-sm text-muted-foreground mb-1">
                 <span>Heart Rate</span>
-                <span>{isLoading ? '...' : `${data.heartRate} bpm`}</span>
+                <span>{isLoading ? '...' : `${data.heartRate || data.heart_rate || 0} bpm`}</span>
               </div>
               <Progress 
-                value={isLoading ? 0 : (data.heartRate - 50) / 100 * 100}
+                value={isLoading ? 0 : ((data.heartRate || data.heart_rate || 0) - 50) / 100 * 100}
                 className="h-2"
               />
+              {props.showChange && props.change && (
+                <div className="text-xs text-right mt-1">
+                  <span className={props.change.heart_rate < 0 ? "text-green-500" : "text-red-500"}>
+                    {props.change.heart_rate > 0 ? "+" : ""}{props.change.heart_rate}bpm
+                  </span>
+                </div>
+              )}
             </div>
           </TabsContent>
           
@@ -105,20 +132,20 @@ const BiometricDisplay = () => {
             <div>
               <div className="flex justify-between text-sm text-muted-foreground mb-1">
                 <span>Alpha Waves (Relaxation)</span>
-                <span>{isLoading ? '...' : `${data.brainwaves.alpha.toFixed(1)} μV`}</span>
+                <span>{isLoading ? '...' : `${(data.brainwaves?.alpha || 0).toFixed(1)} μV`}</span>
               </div>
               <Progress 
-                value={isLoading ? 0 : brainwaveToPercentage(data.brainwaves.alpha, 'alpha')}
+                value={isLoading ? 0 : brainwaveToPercentage(data.brainwaves?.alpha || 0, 'alpha')}
                 className="h-2"
               />
             </div>
             <div>
               <div className="flex justify-between text-sm text-muted-foreground mb-1">
                 <span>Theta Waves (Meditation)</span>
-                <span>{isLoading ? '...' : `${data.brainwaves.theta.toFixed(1)} μV`}</span>
+                <span>{isLoading ? '...' : `${(data.brainwaves?.theta || 0).toFixed(1)} μV`}</span>
               </div>
               <Progress 
-                value={isLoading ? 0 : brainwaveToPercentage(data.brainwaves.theta, 'theta')}
+                value={isLoading ? 0 : brainwaveToPercentage(data.brainwaves?.theta || 0, 'theta')}
                 className="h-2"
               />
             </div>
@@ -128,20 +155,27 @@ const BiometricDisplay = () => {
             <div>
               <div className="flex justify-between text-sm text-muted-foreground mb-1">
                 <span>Breath Rate</span>
-                <span>{isLoading ? '...' : `${data.breathRate.toFixed(1)} bpm`}</span>
+                <span>{isLoading ? '...' : `${(data.breathRate || data.respiratory_rate || 0).toFixed(1)} bpm`}</span>
               </div>
               <Progress 
-                value={isLoading ? 0 : (data.breathRate / 20) * 100}
+                value={isLoading ? 0 : ((data.breathRate || data.respiratory_rate || 0) / 20) * 100}
                 className="h-2"
               />
+              {props.showChange && props.change && (
+                <div className="text-xs text-right mt-1">
+                  <span className={props.change.respiratory_rate < 0 ? "text-green-500" : "text-red-500"}>
+                    {props.change.respiratory_rate > 0 ? "+" : ""}{props.change.respiratory_rate}/min
+                  </span>
+                </div>
+              )}
             </div>
             <div>
               <div className="flex justify-between text-sm text-muted-foreground mb-1">
                 <span>Coherence Score</span>
-                <span>{isLoading ? '...' : `${(data.coherence * 100).toFixed(0)}%`}</span>
+                <span>{isLoading ? '...' : `${((data.coherence || 0) * 100).toFixed(0)}%`}</span>
               </div>
               <Progress 
-                value={isLoading ? 0 : data.coherence * 100}
+                value={isLoading ? 0 : (data.coherence || 0) * 100}
                 className="h-2"
               />
             </div>

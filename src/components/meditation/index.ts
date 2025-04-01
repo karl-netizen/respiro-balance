@@ -11,6 +11,9 @@ import FavoritesSection from './FavoritesSection';
 import RecentlyPlayedSection from './RecentlyPlayedSection';
 import MeditationTabContent from './MeditationTabContent';
 import MeditationFilters from './MeditationFilters';
+import DeepFocusList from './DeepFocusList';
+import GuidedMeditationList from './GuidedMeditationList';
+import QuickBreaksList from './QuickBreaksList';
 
 export {
   MeditationSessionCard,
@@ -24,7 +27,10 @@ export {
   FavoritesSection,
   RecentlyPlayedSection,
   MeditationTabContent,
-  MeditationFilters
+  MeditationFilters,
+  DeepFocusList,
+  GuidedMeditationList,
+  QuickBreaksList
 };
 
 export type { MeditationSession } from './MeditationSessionCard';

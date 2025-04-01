@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -29,39 +28,28 @@ const MeditationSessionPlayer: React.FC<MeditationSessionPlayerProps> = ({
   const { preferences } = useUserPreferences();
   const { addBiometricData, biometricData } = useBiometricData();
   
-  // Initialize biometrics when play is first pressed
   useEffect(() => {
     if (isPlaying && !sessionStarted) {
       setSessionStarted(true);
       
-      // Get initial biometric readings
       const initial = getBiometricDataFromDevices(preferences.connectedDevices);
       setInitialBiometrics(initial);
       
-      // Record the initial biometrics
       if (preferences.hasWearableDevice) {
         addBiometricData(initial);
       }
     }
   }, [isPlaying, sessionStarted, preferences, addBiometricData]);
   
-  // Update current biometrics periodically during meditation
   useEffect(() => {
     let biometricInterval: NodeJS.Timeout;
     
     if (isPlaying && sessionStarted) {
-      // Update biometrics every 10 seconds
       biometricInterval = setInterval(() => {
         const newBiometrics = { ...initialBiometrics };
         
-        // For a meditation session, typically:
-        // - Heart rate decreases
-        // - HRV increases
-        // - Respiratory rate decreases
-        // - Stress score decreases
         const progress = 1 - (timeRemaining / (session.duration * 60));
         
-        // Simulate biometric changes as meditation progresses
         newBiometrics.heart_rate = Math.max(
           initialBiometrics.heart_rate - Math.floor(initialBiometrics.heart_rate * 0.15 * progress),
           60
@@ -84,7 +72,6 @@ const MeditationSessionPlayer: React.FC<MeditationSessionPlayerProps> = ({
         
         setCurrentBiometrics(newBiometrics);
         
-        // Calculate the change between initial and current
         const changes = calculateBiometricChange(initialBiometrics, newBiometrics);
         setBiometricChange(changes);
       }, 10000);
@@ -92,8 +79,7 @@ const MeditationSessionPlayer: React.FC<MeditationSessionPlayerProps> = ({
     
     return () => clearInterval(biometricInterval);
   }, [isPlaying, sessionStarted, initialBiometrics, timeRemaining, session.duration]);
-
-  // Session timer
+  
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (isPlaying && timeRemaining > 0) {
@@ -102,7 +88,6 @@ const MeditationSessionPlayer: React.FC<MeditationSessionPlayerProps> = ({
           if (prev <= 1) {
             setIsPlaying(false);
             
-            // Record final biometrics when session completes
             if (preferences.hasWearableDevice && currentBiometrics) {
               addBiometricData(currentBiometrics);
             }
@@ -116,7 +101,7 @@ const MeditationSessionPlayer: React.FC<MeditationSessionPlayerProps> = ({
     }
     return () => clearInterval(timer);
   }, [isPlaying, timeRemaining, session.id, onComplete, preferences, currentBiometrics, addBiometricData]);
-
+  
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -185,7 +170,6 @@ const MeditationSessionPlayer: React.FC<MeditationSessionPlayerProps> = ({
         </CardContent>
       </Card>
       
-      {/* Only show biometrics if session has started */}
       {sessionStarted && (
         <div className="grid gap-6 md:grid-cols-2">
           {initialBiometrics && (

@@ -15,6 +15,7 @@ export interface MeditationSession {
   level: "beginner" | "intermediate" | "advanced";
   tags: string[];
   popular?: boolean;
+  icon?: React.ReactNode; // Add icon property for React element icons
 }
 
 interface MeditationSessionCardProps {
