@@ -1,5 +1,6 @@
 
-import MeditationSessionCard, { MeditationSession } from './MeditationSessionCard';
+import MeditationSessionCard from './MeditationSessionCard';
+import type { MeditationSession } from './MeditationSessionCard';
 import MeditationLibraryBrowser from './MeditationLibraryBrowser';
 import MeditationHeader from './MeditationHeader';
 import MeditationSessionView from './MeditationSessionView';
@@ -14,7 +15,6 @@ import MeditationFilters from './MeditationFilters';
 
 export {
   MeditationSessionCard,
-  MeditationSession,
   MeditationLibraryBrowser,
   MeditationHeader,
   MeditationSessionView,
@@ -27,3 +27,5 @@ export {
   MeditationTabContent,
   MeditationFilters
 };
+
+export type { MeditationSession };
