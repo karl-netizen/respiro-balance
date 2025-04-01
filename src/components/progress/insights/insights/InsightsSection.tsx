@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 import { Brain, Activity, TrendingUp, Moon, Sun, Clock, Zap } from "lucide-react";
 import { UserPreferences, WorkDay } from "@/context/types";
-import { InsightCard } from '../';
-import { ProgressReportCard } from './';
+import { InsightCard } from '.';
+import { ProgressReportCard } from '.';
 import { useMeditationStats } from "../../useMeditationStats";
 
 export interface InsightsSectionProps {
@@ -22,7 +22,7 @@ export const InsightsSection: React.FC<InsightsSectionProps> = ({ preferences })
     // Timing-based insights
     if (meditationStats.monthlyTrend && meditationStats.monthlyTrend.length > 0) {
       // Check if user meditates more in the morning or evening
-      const morningPreference = preferences.workDays.includes('monday'); // Fixed type error by using a valid WorkDay value
+      const morningPreference = preferences.workDays.some(day => day === 'monday' as WorkDay);
       
       if (morningPreference && meditationStats.streak > 3) {
         timingInsights.push({
