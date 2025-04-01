@@ -1,5 +1,5 @@
 
-import { supabase } from '@/lib/supabase';
+import { supabase, demoAuth, handleSupabaseError } from '@/lib/supabase';
 import { toast } from 'sonner';
 import { NavigateFunction } from 'react-router-dom';
 
@@ -12,6 +12,18 @@ export const signInWithEmail = async (
   try {
     setLoading(true);
     console.log("Signing in with:", email);
+    
+    // In demo mode, simulate a successful sign-in
+    if (demoAuth.isDemo) {
+      await new Promise(resolve => setTimeout(resolve, 800)); // Simulate network delay
+      console.log("Demo mode: Sign in successful");
+      navigate('/dashboard');
+      toast("Demo Mode - Welcome back!", {
+        description: "Using demo account (no actual authentication occurred)"
+      });
+      return;
+    }
+    
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     
     if (error) {
@@ -25,9 +37,7 @@ export const signInWithEmail = async (
     });
   } catch (error: any) {
     console.error("Sign in error:", error);
-    toast("Sign in failed", {
-      description: error.message || "There was a problem signing you in."
-    });
+    handleSupabaseError(error, "Sign in failed");
     throw error;
   } finally {
     setLoading(false);
@@ -43,6 +53,16 @@ export const signUpWithEmail = async (
   try {
     setLoading(true);
     console.log("Signing up with:", email);
+    
+    // In demo mode, simulate a successful sign-up
+    if (demoAuth.isDemo) {
+      await new Promise(resolve => setTimeout(resolve, 800)); // Simulate network delay
+      console.log("Demo mode: Sign up successful");
+      toast("Demo Mode - Account created!", {
+        description: "Simulated account creation (no actual registration occurred)"
+      });
+      return;
+    }
     
     const { data, error } = await supabase.auth.signUp({ 
       email, 
@@ -84,9 +104,7 @@ export const signUpWithEmail = async (
     });
   } catch (error: any) {
     console.error("Sign up error:", error);
-    toast("Sign up failed", {
-      description: error.message || "There was a problem creating your account."
-    });
+    handleSupabaseError(error, "Sign up failed");
     throw error;
   } finally {
     setLoading(false);
@@ -99,6 +117,17 @@ export const signOutUser = async (
 ) => {
   try {
     setLoading(true);
+    
+    // In demo mode, simulate sign out
+    if (demoAuth.isDemo) {
+      await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
+      navigate('/login');
+      toast("Demo Mode - Signed out", {
+        description: "Simulated sign out (no actual authentication occurred)"
+      });
+      return;
+    }
+    
     await supabase.auth.signOut();
     navigate('/login');
     toast("Signed out", {
@@ -106,9 +135,7 @@ export const signOutUser = async (
     });
   } catch (error: any) {
     console.error("Error signing out:", error);
-    toast("Error signing out", {
-      description: error.message || "There was a problem signing you out."
-    });
+    handleSupabaseError(error, "Error signing out");
   } finally {
     setLoading(false);
   }
@@ -121,6 +148,16 @@ export const requestPasswordReset = async (
   try {
     setLoading(true);
     console.log("Sending password reset for:", email);
+    
+    // In demo mode, simulate password reset email
+    if (demoAuth.isDemo) {
+      await new Promise(resolve => setTimeout(resolve, 800)); // Simulate network delay
+      toast("Demo Mode - Reset email sent", {
+        description: "In production, a password reset email would be sent."
+      });
+      return;
+    }
+    
     const { error } = await supabase.auth.resetPasswordForEmail(email);
     
     if (error) {
@@ -132,9 +169,7 @@ export const requestPasswordReset = async (
     });
   } catch (error: any) {
     console.error("Failed to send reset email:", error);
-    toast("Failed to send reset email", {
-      description: error.message || "There was a problem sending the reset email."
-    });
+    handleSupabaseError(error, "Failed to send reset email");
     throw error;
   } finally {
     setLoading(false);
@@ -149,6 +184,17 @@ export const updateUserPassword = async (
   try {
     setLoading(true);
     console.log("Resetting password");
+    
+    // In demo mode, simulate password update
+    if (demoAuth.isDemo) {
+      await new Promise(resolve => setTimeout(resolve, 800)); // Simulate network delay
+      toast("Demo Mode - Password updated", {
+        description: "In production, your password would be updated."
+      });
+      navigate('/login');
+      return;
+    }
+    
     const { error } = await supabase.auth.updateUser({ password: newPassword });
     
     if (error) {
@@ -161,9 +207,7 @@ export const updateUserPassword = async (
     navigate('/login');
   } catch (error: any) {
     console.error("Password reset failed:", error);
-    toast("Password reset failed", {
-      description: error.message || "There was a problem resetting your password."
-    });
+    handleSupabaseError(error, "Password reset failed");
     throw error;
   } finally {
     setLoading(false);

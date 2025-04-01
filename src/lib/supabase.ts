@@ -6,14 +6,19 @@ import { toast } from 'sonner';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// Validate required environment variables
-if (!supabaseUrl || !supabaseKey) {
-  console.error("Supabase environment variables are missing. Make sure to set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.");
+// Flag to enable demo mode when credentials are missing
+const isDemoMode = !supabaseUrl || !supabaseKey;
+
+// Display clear message about missing configuration
+if (isDemoMode) {
+  console.warn(
+    "⚠️ Supabase credentials missing: Running in demo mode. Authentication operations will be simulated."
+  );
   
   // Only show this toast in development to avoid showing to end users
   if (import.meta.env.DEV) {
-    toast("Supabase configuration missing", {
-      description: "Please ensure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are set in your environment.",
+    toast("Running in demo mode", {
+      description: "Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your environment for full functionality.",
       duration: 6000
     });
   }
@@ -25,23 +30,39 @@ export const supabase = createClient(
   supabaseKey || 'placeholder-key'  // Fallback key for development
 );
 
-// Expose a helper to check if Supabase is properly configured
+// Helper to check if Supabase is properly configured
 export const isSupabaseConfigured = () => {
-  return !!(supabaseUrl && supabaseKey);
+  return !isDemoMode;
 };
 
 // Helper function to handle Supabase errors consistently
 export const handleSupabaseError = (error: Error, fallbackMessage: string = "An error occurred") => {
   console.error("Supabase error:", error);
   
-  let errorMessage = fallbackMessage;
-  if (error instanceof Error) {
-    errorMessage = error.message;
-  }
+  // Check if this is a connection error (which is common when keys are not set)
+  const isConnectionError = error.message.includes("Failed to fetch") || 
+                           error.message.includes("NetworkError");
   
-  toast(fallbackMessage, {
+  let errorMessage = isConnectionError && isDemoMode
+    ? "Demo mode active: This operation would connect to Supabase in production."
+    : error.message || fallbackMessage;
+  
+  toast(isConnectionError && isDemoMode ? "Demo Mode" : fallbackMessage, {
     description: errorMessage
   });
   
   return errorMessage;
+};
+
+// In demo mode, provides mock auth functions with simulated responses
+export const demoAuth = {
+  isDemo: isDemoMode,
+  mockSuccessResponse: (data = {}) => ({
+    data: { user: { email: "demo@example.com", id: "demo-user-id" }, ...data },
+    error: null
+  }),
+  mockErrorResponse: (message: string) => ({
+    data: null,
+    error: { message }
+  })
 };

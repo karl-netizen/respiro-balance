@@ -2,7 +2,7 @@
 import { useState, useEffect, ReactNode } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/lib/supabase';
+import { supabase, demoAuth } from '@/lib/supabase';
 import { AuthContext } from '@/context/AuthContext';
 import { 
   signInWithEmail, 
@@ -19,6 +19,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // In demo mode, we'll skip actual Supabase auth checks
+    if (demoAuth.isDemo) {
+      console.log("Demo mode: No authenticated user");
+      setSession(null);
+      setUser(null);
+      setLoading(false);
+      return;
+    }
+
     // Get initial session
     const initialize = async () => {
       try {
