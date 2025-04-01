@@ -2,8 +2,8 @@
 import React, { useMemo } from 'react';
 import { Brain, Activity, TrendingUp, Moon, Sun, Clock, Zap } from "lucide-react";
 import { UserPreferences, WorkDay } from "@/context/types";
-import { InsightCard } from '.';
-import { ProgressReportCard } from '.';
+import { InsightCard } from './InsightCard';
+import { ProgressReportCard } from './ProgressReportCard';
 import { useMeditationStats } from "../../useMeditationStats";
 
 // Define a proper interface for insights

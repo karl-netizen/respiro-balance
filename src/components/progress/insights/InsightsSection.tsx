@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { UserPreferences } from "@/context/types";
-import { InsightsSection as DetailedInsightsSection } from './insights';
+import { InsightsSectionComponent } from './insights';
 
 interface InsightsSectionProps {
   preferences: UserPreferences;
@@ -9,7 +9,7 @@ interface InsightsSectionProps {
 
 const InsightsSection: React.FC<InsightsSectionProps> = ({ preferences }) => {
   return (
-    <DetailedInsightsSection preferences={preferences} />
+    <InsightsSectionComponent preferences={preferences} />
   );
 };
 
