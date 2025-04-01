@@ -1,0 +1,113 @@
+
+import React from 'react';
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { MeditationFilters, FavoritesSection, RecentlyPlayedSection } from "@/components/meditation";
+import MeditationTabContent from './MeditationTabContent';
+import { MeditationSession } from '@/components/meditation/MeditationSessionCard';
+
+interface MeditationLibraryBrowserProps {
+  activeTab: string;
+  setActiveTab: (tab: string) => void;
+  recentlyPlayed: MeditationSession[];
+  getFavoriteSessions: () => MeditationSession[];
+  handleSelectSession: (session: MeditationSession) => void;
+  handleToggleFavorite: (session: MeditationSession) => void;
+  isFavorite: (sessionId: string) => boolean;
+  filterSessionsByCategory: (category: 'guided' | 'quick' | 'deep' | 'sleep') => MeditationSession[];
+  durationFilter: [number, number];
+  setDurationFilter: (value: [number, number]) => void;
+  levelFilter: string | null;
+  setLevelFilter: (level: string | null) => void;
+  resetFilters: () => void;
+}
+
+const MeditationLibraryBrowser: React.FC<MeditationLibraryBrowserProps> = ({
+  activeTab,
+  setActiveTab,
+  recentlyPlayed,
+  getFavoriteSessions,
+  handleSelectSession,
+  handleToggleFavorite,
+  isFavorite,
+  filterSessionsByCategory,
+  durationFilter,
+  setDurationFilter,
+  levelFilter,
+  setLevelFilter,
+  resetFilters
+}) => {
+  return (
+    <section className="py-12 px-6" id="meditation-tabs">
+      <div className="max-w-6xl mx-auto">
+        {recentlyPlayed.length > 0 && (
+          <RecentlyPlayedSection 
+            recentSessions={recentlyPlayed} 
+            onSelectSession={handleSelectSession} 
+          />
+        )}
+        
+        <FavoritesSection 
+          favorites={getFavoriteSessions()}
+          onSelectSession={handleSelectSession}
+          onToggleFavorite={handleToggleFavorite}
+        />
+        
+        <Tabs 
+          defaultValue="guided" 
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="w-full"
+        >
+          <TabsList className="grid w-full grid-cols-4 mb-8">
+            <TabsTrigger value="guided">Guided Sessions</TabsTrigger>
+            <TabsTrigger value="quick">Quick Breaks</TabsTrigger>
+            <TabsTrigger value="deep">Deep Focus</TabsTrigger>
+            <TabsTrigger value="sleep">Sleep</TabsTrigger>
+          </TabsList>
+          
+          <MeditationFilters
+            durationRange={durationFilter}
+            onDurationChange={setDurationFilter}
+            selectedLevel={levelFilter}
+            onLevelChange={setLevelFilter}
+            onResetFilters={resetFilters}
+          />
+          
+          <MeditationTabContent
+            value="guided"
+            sessions={filterSessionsByCategory('guided')}
+            onSelectSession={handleSelectSession}
+            isFavorite={isFavorite}
+            onToggleFavorite={handleToggleFavorite}
+          />
+          
+          <MeditationTabContent
+            value="quick"
+            sessions={filterSessionsByCategory('quick')}
+            onSelectSession={handleSelectSession}
+            isFavorite={isFavorite}
+            onToggleFavorite={handleToggleFavorite}
+          />
+          
+          <MeditationTabContent
+            value="deep"
+            sessions={filterSessionsByCategory('deep')}
+            onSelectSession={handleSelectSession}
+            isFavorite={isFavorite}
+            onToggleFavorite={handleToggleFavorite}
+          />
+          
+          <MeditationTabContent
+            value="sleep"
+            sessions={filterSessionsByCategory('sleep')}
+            onSelectSession={handleSelectSession}
+            isFavorite={isFavorite}
+            onToggleFavorite={handleToggleFavorite}
+          />
+        </Tabs>
+      </div>
+    </section>
+  );
+};
+
+export default MeditationLibraryBrowser;
