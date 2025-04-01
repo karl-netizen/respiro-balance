@@ -31,18 +31,9 @@ const queryClient = new QueryClient({
   },
 });
 
-// Protected route component
+// Modified ProtectedRoute to always allow access in testing mode
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user, loading } = useAuth();
-  
-  if (loading) {
-    return <div className="flex h-screen items-center justify-center">Loading...</div>;
-  }
-  
-  if (!user) {
-    return <Navigate to="/login" />;
-  }
-  
+  // No auth check - simply render children directly
   return <>{children}</>;
 };
 
@@ -56,61 +47,19 @@ const App = () => (
             <Sonner />
             <Routes>
               {/* Public routes */}
-              <Route path="/" element={<Index />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/" element={<Dashboard />} /> {/* Changed to redirect to Dashboard */}
+              <Route path="/login" element={<Navigate to="/dashboard" />} /> {/* Redirect login to dashboard */}
+              <Route path="/register" element={<Navigate to="/dashboard" />} /> {/* Redirect register to dashboard */}
+              <Route path="/reset-password" element={<Navigate to="/dashboard" />} /> {/* Redirect reset to dashboard */}
               <Route path="/faq" element={<FAQ />} />
               
-              {/* Protected routes */}
-              <Route 
-                path="/dashboard" 
-                element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/coach-dashboard" 
-                element={
-                  <ProtectedRoute>
-                    <CoachDashboard />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/breathe" 
-                element={
-                  <ProtectedRoute>
-                    <Breathe />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/progress" 
-                element={
-                  <ProtectedRoute>
-                    <Progress />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/meditate" 
-                element={
-                  <ProtectedRoute>
-                    <Meditate />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/morning-ritual" 
-                element={
-                  <ProtectedRoute>
-                    <MorningRitual />
-                  </ProtectedRoute>
-                } 
-              />
+              {/* All routes are now directly accessible */}
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/coach-dashboard" element={<CoachDashboard />} />
+              <Route path="/breathe" element={<Breathe />} />
+              <Route path="/progress" element={<Progress />} />
+              <Route path="/meditate" element={<Meditate />} />
+              <Route path="/morning-ritual" element={<MorningRitual />} />
               
               {/* Catch-all route */}
               <Route path="*" element={<NotFound />} />

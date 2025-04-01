@@ -12,85 +12,68 @@ import {
   updateUserPassword 
 } from '@/lib/authActions';
 
+// Create a demo user for testing
+const DEMO_USER: User = {
+  id: 'demo-user-id',
+  app_metadata: {},
+  user_metadata: { first_name: 'Demo' },
+  aud: 'authenticated',
+  created_at: new Date().toISOString(),
+  email: 'demo@example.com',
+  role: 'authenticated',
+};
+
+// Create a demo session
+const DEMO_SESSION: Session = {
+  access_token: 'demo-access-token',
+  token_type: 'bearer',
+  refresh_token: 'demo-refresh-token',
+  expires_in: 3600,
+  expires_at: new Date().getTime() + 3600000,
+  user: DEMO_USER,
+};
+
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(DEMO_USER); // Auto-set demo user
+  const [session, setSession] = useState<Session | null>(DEMO_SESSION); // Auto-set demo session
+  const [loading, setLoading] = useState(false); // Set loading to false initially
   const navigate = useNavigate();
 
   useEffect(() => {
-    // In demo mode, we'll skip actual Supabase auth checks
-    if (demoAuth.isDemo) {
-      console.log("Demo mode: No authenticated user");
-      setSession(null);
-      setUser(null);
-      setLoading(false);
-      return;
-    }
+    // Skip all auth checks in testing mode
+    console.log("Testing mode: Using demo user automatically");
+    setSession(DEMO_SESSION);
+    setUser(DEMO_USER);
+    setLoading(false);
 
-    // Get initial session
-    const initialize = async () => {
-      try {
-        const { data, error } = await supabase.auth.getSession();
-        
-        if (error) {
-          console.error("Error getting session:", error);
-          return;
-        }
-        
-        setSession(data.session);
-        setUser(data.session?.user ?? null);
-        
-        // Debug
-        if (data.session?.user) {
-          console.log("User is authenticated:", data.session.user.email);
-        } else {
-          console.log("No authenticated user");
-        }
-      } catch (err) {
-        console.error("Failed to get session:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    initialize();
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      console.log("Auth state changed:", _event);
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      if (_event === 'SIGNED_IN') {
-        console.log("User signed in:", session?.user?.email);
-      } else if (_event === 'SIGNED_OUT') {
-        console.log("User signed out");
-      }
-    });
-
-    return () => subscription.unsubscribe();
+    // Return a no-op cleanup function
+    return () => {};
   }, []);
 
-  // Auth methods
-  const signIn = (email: string, password: string) => {
-    return signInWithEmail(email, password, navigate, setLoading);
+  // Auth methods (these will just be stubs for testing)
+  const signIn = async (email: string, password: string) => {
+    console.log("Test mode: Auto sign-in with:", email);
+    return Promise.resolve();
   };
 
-  const signUp = (email: string, password: string, firstName?: string) => {
-    return signUpWithEmail(email, password, firstName, setLoading);
+  const signUp = async (email: string, password: string, firstName?: string) => {
+    console.log("Test mode: Auto sign-up with:", email);
+    return Promise.resolve();
   };
 
-  const signOut = () => {
-    return signOutUser(navigate, setLoading);
+  const signOut = async () => {
+    console.log("Test mode: Sign out (ignored)");
+    return Promise.resolve();
   };
 
-  const forgotPassword = (email: string) => {
-    return requestPasswordReset(email, setLoading);
+  const forgotPassword = async (email: string) => {
+    console.log("Test mode: Forgot password for:", email);
+    return Promise.resolve();
   };
 
-  const resetPassword = (newPassword: string) => {
-    return updateUserPassword(newPassword, navigate, setLoading);
+  const resetPassword = async (newPassword: string) => {
+    console.log("Test mode: Reset password to:", newPassword);
+    return Promise.resolve();
   };
 
   return (
