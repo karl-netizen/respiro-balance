@@ -101,3 +101,46 @@ export const shouldDoRitualToday = (
       return false;
   }
 };
+
+/**
+ * Check if a ritual was completed today
+ * @param ritual The ritual to check
+ * @returns Boolean indicating if ritual was completed today
+ */
+export const wasCompletedToday = (ritual: {
+  status: string;
+  lastCompleted?: string;
+}): boolean => {
+  if (ritual.status !== 'completed' || !ritual.lastCompleted) {
+    return false;
+  }
+  
+  const today = new Date();
+  const lastCompleted = new Date(ritual.lastCompleted);
+  
+  return (
+    today.getDate() === lastCompleted.getDate() &&
+    today.getMonth() === lastCompleted.getMonth() &&
+    today.getFullYear() === lastCompleted.getFullYear()
+  );
+};
+
+/**
+ * Get the appropriate time for a ritual based on user preferences
+ * @param preferences User preferences object
+ * @param isWeekend Whether the ritual is for a weekend
+ * @returns Appropriate time string in HH:MM format
+ */
+export const getRitualTimeFromPreferences = (
+  preferences: { weekdayWakeTime?: string; weekendWakeTime?: string },
+  isWeekend: boolean = false
+): string => {
+  const defaultWeekdayTime = "07:00";
+  const defaultWeekendTime = "08:00";
+  
+  if (isWeekend) {
+    return preferences.weekendWakeTime || defaultWeekendTime;
+  }
+  
+  return preferences.weekdayWakeTime || defaultWeekdayTime;
+};

@@ -112,11 +112,11 @@ const OnboardingWizard = () => {
         style={{ 
           display: 'flex', 
           flexDirection: 'column',
-          maxHeight: isMobile ? '85vh' : '90vh',
-          height: isMobile ? '85vh' : 'auto'
+          maxHeight: isMobile ? '90vh' : '90vh',
+          height: isMobile ? '90vh' : 'auto'
         }}
       >
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full flex-grow">
           <div className="text-center">
             <div className="flex items-center justify-center mb-3">
               <div className="h-1 bg-secondary flex-1 rounded-full overflow-hidden">
@@ -139,11 +139,11 @@ const OnboardingWizard = () => {
             <p className="text-muted-foreground mt-1">{steps[currentStep].description}</p>
           </div>
 
-          <div className="py-4 flex-1 overflow-auto">
+          <div className="py-4 flex-1 overflow-auto min-h-0">
             {steps[currentStep].component}
           </div>
 
-          <div className="flex justify-between pt-4 border-t mt-2">
+          <div className="flex justify-between pt-4 border-t mt-2 sticky bottom-0 bg-background">
             {currentStep > 0 ? (
               <Button variant="outline" onClick={handleBack}>
                 Back

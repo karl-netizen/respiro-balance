@@ -1,16 +1,41 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useUserPreferences } from "@/context";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { AlarmClock, Sun, Coffee, Calendar, Smartphone } from "lucide-react";
 import { MorningDevicesHabit } from "@/context/types";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const MorningRitualStep = () => {
   const { preferences, updatePreferences } = useUserPreferences();
+  const isMobile = useIsMobile();
+
+  // Initialize default values if they don't exist
+  useEffect(() => {
+    const defaults = {
+      morningActivities: preferences.morningActivities || [],
+      morningEnergyLevel: preferences.morningEnergyLevel || 5,
+      morningDevices: preferences.morningDevices || "phone_first",
+      weekdayWakeTime: preferences.weekdayWakeTime || "07:00",
+      weekendWakeTime: preferences.weekendWakeTime || "08:00"
+    };
+    
+    let needsUpdate = false;
+    for (const [key, value] of Object.entries(defaults)) {
+      if (preferences[key as keyof typeof preferences] === undefined) {
+        needsUpdate = true;
+      }
+    }
+    
+    if (needsUpdate) {
+      updatePreferences(defaults);
+    }
+  }, [preferences, updatePreferences]);
 
   const handleMorningActivityChange = (activity: string, checked: boolean) => {
     // Ensure morningActivities exists in preferences
@@ -26,7 +51,7 @@ const MorningRitualStep = () => {
     updatePreferences({ morningActivities: updatedActivities });
   };
 
-  return (
+  const content = (
     <div className="space-y-6">
       <div>
         <h3 className="text-sm font-medium mb-3 flex items-center">
@@ -159,6 +184,13 @@ const MorningRitualStep = () => {
         </RadioGroup>
       </div>
     </div>
+  );
+
+  // On mobile, wrap in ScrollArea with appropriate height
+  return (
+    <ScrollArea className={isMobile ? "h-[50vh]" : "h-full"}>
+      {content}
+    </ScrollArea>
   );
 };
 
