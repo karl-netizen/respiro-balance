@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { UserPreferences } from "@/context/types";
-import { InsightCard, ProgressReportCard } from './insights';
 import { InsightsSection as DetailedInsightsSection } from './insights/InsightsSection';
 
 interface InsightsSectionProps {

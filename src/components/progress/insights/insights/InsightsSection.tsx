@@ -1,4 +1,3 @@
-
 import React, { useMemo } from 'react';
 import { Brain, Activity, TrendingUp, Moon, Sun, Clock, Zap } from "lucide-react";
 import { UserPreferences, WorkDay } from "@/context/types";
@@ -6,11 +5,11 @@ import { InsightCard } from '../';
 import { ProgressReportCard } from './';
 import { useMeditationStats } from "../../useMeditationStats";
 
-interface InsightsSectionProps {
+export interface InsightsSectionProps {
   preferences: UserPreferences;
 }
 
-const InsightsSection: React.FC<InsightsSectionProps> = ({ preferences }) => {
+export const InsightsSection: React.FC<InsightsSectionProps> = ({ preferences }) => {
   const { meditationStats } = useMeditationStats();
   
   // Generate personalized insights based on user data
