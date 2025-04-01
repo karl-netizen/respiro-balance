@@ -6,9 +6,10 @@ interface MobileDropdownProps {
   title: string;
   items: { label: string; href: string }[];
   toggleMainMenu?: () => void;
+  icon?: React.ReactNode;
 }
 
-const MobileDropdown = ({ title, items, toggleMainMenu }: MobileDropdownProps) => {
+const MobileDropdown = ({ title, items, toggleMainMenu, icon }: MobileDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleItemClick = () => {
@@ -24,7 +25,10 @@ const MobileDropdown = ({ title, items, toggleMainMenu }: MobileDropdownProps) =
         onClick={() => setIsOpen(!isOpen)}
         className="flex w-full items-center justify-between text-foreground/80 hover:text-primary py-2 button-transition"
       >
-        <span>{title}</span>
+        <span className="flex items-center">
+          {icon}
+          {title}
+        </span>
         <ChevronDown size={16} className={`transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
       

@@ -1,66 +1,40 @@
-
-import { UserPreferences } from './types';
-
-const defaultPreferences: UserPreferences = {
-  // User Role
-  userRole: "client",
-  
-  // Business Attribution
-  businessAttribution: null,
-  
-  // Work Schedule
-  workDays: ["monday", "tuesday", "wednesday", "thursday", "friday"],
-  workStartTime: "09:00",
-  workEndTime: "17:00",
-  workEnvironment: "office",
-  
-  // Stress & Focus
-  stressLevel: "moderate",
-  focusChallenges: ["distractions", "afternoon_slump"],
-  energyPattern: "afternoon_dip",
-  
-  // Lunch & Breaks
-  lunchBreak: true,
-  lunchTime: "12:00",
-  
-  // Exercise & Sleep
-  morningExercise: false,
-  exerciseTime: "07:00",
-  bedTime: "22:00",
-  
-  // Morning Ritual
-  weekdayWakeTime: "07:00",
-  weekendWakeTime: "08:00",
-  morningActivities: ["check_phone", "hydration"],
-  morningEnergyLevel: 5,
-  morningDevices: "phone_first",
-  
-  // Time Management
-  timeChallenges: ["digital_distractions", "context_switching"],
-  usesTimeBlocking: "no",
-  workBoundaries: "sometimes",
-  timeManagementStyle: "flexible",
-  
-  // Meditation Experience
-  meditationExperience: "beginner",
-  meditationGoals: ["stress_reduction", "better_focus"],
-  preferredSessionDuration: 10,
-  
-  // Biofeedback & Tracking
+const defaultPreferences = {
+  theme: 'light' as 'light' | 'dark' | 'system',
+  focusMode: false,
+  defaultMeditationDuration: 10,
+  preferredBreathingTechnique: 'box',
+  showBreathingGuide: true,
+  breathingSpeed: 'medium' as 'slow' | 'medium' | 'fast',
+  notificationsEnabled: true,
+  soundEnabled: true,
+  backgroundMusic: 'ambient' as 'nature' | 'ambient' | 'none',
+  focusTimerDuration: 25,
+  breakTimerDuration: 5,
+  weeklyMeditationGoal: 3,
+  autoPlayNextSession: false,
   hasWearableDevice: false,
-  metricsOfInterest: ["stress", "focus"],
+  wearableDeviceType: '',
+  wearableDeviceId: '',
+  lastSyncDate: '',
   connectedDevices: [],
-  
-  // Notifications
-  enableSessionReminders: true,
-  enableProgressUpdates: true,
-  enableRecommendations: true,
-  
-  // Subscription
-  subscriptionTier: "Free",
-  
-  // Onboarding Status
-  hasCompletedOnboarding: false,
+  metricsOfInterest: [
+    'heartRate',
+    'breathingRate',
+    'focusScore',
+    'stress'
+  ],
+  focusChallenges: [
+    'deepWork',
+    'pomodoro',
+    'socialMedia'
+  ],
+  workDays: [1, 2, 3, 4, 5], // Mon, Tue, Wed, Thu, Fri
+  userRole: 'user' as 'user' | 'coach' | 'admin',
+  meditationGoals: [
+    'reduce stress',
+    'improve focus',
+    'better sleep'
+  ]
 };
 
 export default defaultPreferences;
