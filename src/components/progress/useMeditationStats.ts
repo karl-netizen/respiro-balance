@@ -1,11 +1,11 @@
 
 import { useMemo } from 'react';
 import { useMeditationSessions } from '@/hooks/useMeditationSessions';
-import { format, isToday } from 'date-fns';
+import { format, isToday, subDays } from 'date-fns';
 import { MeditationStats, SessionDay } from './types/meditationStats';
 import { isWithinLastWeek } from './utils/dateUtils';
-import { calculateStreak } from './utils/streakUtils';
-import { generateMonthlyTrend } from './utils/trendUtils';
+import { calculateStreak, calculateLongestStreak } from './utils/streakUtils';
+import { generateMonthlyTrend, generateDailyActivity } from './utils/trendUtils';
 import { calculateAchievements } from './utils/achievementUtils';
 import { getDefaultStats } from './utils/defaultStats';
 
@@ -33,8 +33,9 @@ export const useMeditationStats = () => {
       (total, session) => total + session.duration, 0
     );
     
-    // Calculate streak
+    // Calculate streak and longest streak
     const streak = calculateStreak(completedSessions);
+    const longestStreak = calculateLongestStreak(completedSessions);
     
     // Get last session information
     const lastSession = sortedSessions[0];
@@ -53,8 +54,24 @@ export const useMeditationStats = () => {
     // Generate monthly trend (for the chart)
     const monthlyTrend = generateMonthlyTrend(completedSessions);
     
+    // Generate daily activity data
+    const dailyMinutes = generateDailyActivity(completedSessions);
+    
     // Calculate achievement progress
     const achievements = calculateAchievements(completedSessions);
+    const unlockedAchievements = achievements.filter(a => a.unlocked);
+    
+    // Calculate achievement progress
+    const achievementProgress = {
+      unlocked: unlockedAchievements.length,
+      total: achievements.length,
+      recentUnlocked: unlockedAchievements.length > 0 
+        ? unlockedAchievements.sort((a, b) => {
+            if (!a.unlockedDate || !b.unlockedDate) return 0;
+            return a.unlockedDate.localeCompare(b.unlockedDate);
+          }).pop() 
+        : undefined
+    };
     
     // Simplified mock data for correlations (in a real app, this would come from biometric data)
     const mockedCorrelations = {
@@ -74,12 +91,15 @@ export const useMeditationStats = () => {
       totalSessions,
       totalMinutes,
       streak,
+      longestStreak,
       weeklyGoal,
       weeklyCompleted,
       monthlyTrend,
+      dailyMinutes,
       lastSession: lastSessionName,
       lastSessionDate,
       achievements,
+      achievementProgress,
       // We'll still use mock data for these until we have real biometric data
       focusScores: mockedCorrelations.focusScores,
       stressScores: mockedCorrelations.stressScores,

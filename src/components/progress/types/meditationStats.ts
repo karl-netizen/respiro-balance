@@ -19,6 +19,18 @@ export interface MeditationStats {
     withMeditation: number;
     withoutMeditation: number;
   };
+  // New fields for enhanced visualizations
+  longestStreak: number;
+  dailyMinutes: Array<{
+    day: string;
+    minutes: number;
+    sessions: number;
+  }>;
+  achievementProgress: {
+    unlocked: number;
+    total: number;
+    recentUnlocked?: Achievement;
+  };
 }
 
 export interface SessionDay {
@@ -33,4 +45,5 @@ export interface Achievement {
   unlocked: boolean;
   unlockedDate?: string;
   icon?: string;
+  progress?: number; // Progress percentage (0-100)
 }
