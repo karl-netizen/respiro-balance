@@ -7,6 +7,7 @@ export function getDefaultStats(): MeditationStats {
     totalSessions: 0,
     totalMinutes: 0,
     streak: 0,
+    longestStreak: 0,
     weeklyGoal: 5,
     weeklyCompleted: 0,
     monthlyTrend: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -14,6 +15,15 @@ export function getDefaultStats(): MeditationStats {
     lastSessionDate: "None",
     focusScores: [0, 0, 0, 0, 0, 0, 0],
     stressScores: [0, 0, 0, 0, 0, 0, 0],
+    dailyMinutes: [
+      { day: "Mon", minutes: 0, sessions: 0 },
+      { day: "Tue", minutes: 0, sessions: 0 },
+      { day: "Wed", minutes: 0, sessions: 0 },
+      { day: "Thu", minutes: 0, sessions: 0 },
+      { day: "Fri", minutes: 0, sessions: 0 },
+      { day: "Sat", minutes: 0, sessions: 0 },
+      { day: "Sun", minutes: 0, sessions: 0 }
+    ],
     achievements: [
       { name: "First Steps", description: "Complete your first meditation", unlocked: false, icon: "footprints" },
       { name: "Steady Mind", description: "Meditate for 5 days in a row", unlocked: false, icon: "brain" },
@@ -24,6 +34,11 @@ export function getDefaultStats(): MeditationStats {
       { name: "Deep Diver", description: "Complete a 20-minute session", unlocked: false, icon: "anchor" },
       { name: "Zen Master", description: "Achieve a 30-day streak", unlocked: false, icon: "award" }
     ],
+    achievementProgress: {
+      unlocked: 0,
+      total: 8,
+      recentUnlocked: undefined
+    },
     moodCorrelation: {
       withMeditation: 0,
       withoutMeditation: 0
