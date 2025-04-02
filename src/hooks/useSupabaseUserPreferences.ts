@@ -1,14 +1,34 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
+import { supabase, demoAuth, isSupabaseConfigured } from '@/lib/supabase';
 import { UserPreferencesRecord } from '@/types/supabase';
 import { useAuth } from './useAuth';
 import { UserPreferences, UserRole, WorkDay, WorkEnvironment, StressLevel, MeditationExperience, SubscriptionTier } from '@/context/types';
 import defaultPreferences from '@/context/defaultPreferences';
+import { toast } from 'sonner';
 
 export function useSupabaseUserPreferences() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  
+  // Offline sync queue
+  const getSyncQueue = () => {
+    const queue = localStorage.getItem('preferenceSyncQueue');
+    return queue ? JSON.parse(queue) : [];
+  };
+  
+  const addToSyncQueue = (preferences: UserPreferences) => {
+    const queue = getSyncQueue();
+    queue.push({
+      preferences,
+      timestamp: new Date().toISOString()
+    });
+    localStorage.setItem('preferenceSyncQueue', JSON.stringify(queue));
+  };
+  
+  const clearSyncQueue = () => {
+    localStorage.removeItem('preferenceSyncQueue');
+  };
 
   // Convert from local to database format
   const convertToDbFormat = (prefs: UserPreferences): Partial<UserPreferencesRecord> => {
@@ -33,6 +53,7 @@ export function useSupabaseUserPreferences() {
         preferredSessionDuration: prefs.preferredSessionDuration,
         metricsOfInterest: prefs.metricsOfInterest,
         subscriptionTier: prefs.subscriptionTier,
+        morningRituals: prefs.morningRituals || [],
       }
     };
   };
@@ -45,10 +66,10 @@ export function useSupabaseUserPreferences() {
     
     const workDays = record.preferences_data.workDays as string[];
     
-    // Map DB workEnvironment 'hybrid' to include 'variable' if needed
+    // Map DB workEnvironment 'hybrid' to local format
     const workEnvironment: WorkEnvironment = record.preferences_data.workEnvironment as WorkEnvironment;
     
-    // Map DB stressLevel 'high' to include 'very_high' if appropriate
+    // Map DB stressLevel
     const stressLevel: StressLevel = record.preferences_data.stressLevel as StressLevel;
     
     const meditationExperience = record.preferences_data.meditationExperience as MeditationExperience;
@@ -74,6 +95,7 @@ export function useSupabaseUserPreferences() {
       preferredSessionDuration: record.preferences_data.preferredSessionDuration,
       metricsOfInterest: record.preferences_data.metricsOfInterest || defaultPreferences.metricsOfInterest,
       subscriptionTier,
+      morningRituals: record.preferences_data.morningRituals || [],
       // Properties not stored in the database
       hasCompletedOnboarding: true,
       connectedDevices: [],
@@ -85,62 +107,148 @@ export function useSupabaseUserPreferences() {
     };
   };
 
+  // Process any pending offline sync items
+  const processOfflineSync = async () => {
+    if (!user || !isSupabaseConfigured()) return;
+    
+    const queue = getSyncQueue();
+    if (queue.length === 0) return;
+    
+    console.log(`Processing ${queue.length} offline preference updates`);
+    
+    let success = true;
+    
+    for (const item of queue) {
+      try {
+        await updateUserPreferences(item.preferences);
+      } catch (error) {
+        console.error("Error processing offline sync item:", error);
+        success = false;
+        break;
+      }
+    }
+    
+    if (success) {
+      clearSyncQueue();
+      toast("Sync complete", {
+        description: `Successfully synchronized ${queue.length} offline changes`
+      });
+    }
+  };
+
   // Fetch user preferences
   const fetchUserPreferences = async (): Promise<UserPreferences> => {
-    if (!user) throw new Error('User not authenticated');
-
-    const { data, error } = await supabase
-      .from('user_preferences')
-      .select('*')
-      .eq('user_id', user.id)
-      .single();
-
-    if (error) {
-      console.error('Error fetching user preferences:', error);
-      throw error;
-    }
-
-    if (!data) {
+    if (!user) return defaultPreferences;
+    
+    // If not connected to Supabase, return from localStorage
+    if (!isSupabaseConfigured()) {
+      const localPrefs = localStorage.getItem("userPreferences");
+      if (localPrefs) {
+        try {
+          return JSON.parse(localPrefs);
+        } catch (e) {
+          return defaultPreferences;
+        }
+      }
       return defaultPreferences;
     }
 
-    return convertToLocalFormat(data as UserPreferencesRecord);
+    try {
+      const { data, error } = await supabase
+        .from('user_preferences')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
+      if (error) {
+        console.error('Error fetching user preferences:', error);
+        throw error;
+      }
+
+      if (!data) {
+        return defaultPreferences;
+      }
+
+      const prefs = convertToLocalFormat(data as UserPreferencesRecord);
+      
+      // Store in localStorage as offline backup
+      localStorage.setItem("userPreferences", JSON.stringify(prefs));
+      
+      // Process any pending offline changes
+      await processOfflineSync();
+      
+      return prefs;
+    } catch (error) {
+      console.error("Failed to fetch preferences from Supabase:", error);
+      
+      // Fall back to localStorage if available
+      const localPrefs = localStorage.getItem("userPreferences");
+      if (localPrefs) {
+        try {
+          return JSON.parse(localPrefs);
+        } catch (e) {
+          return defaultPreferences;
+        }
+      }
+      
+      return defaultPreferences;
+    }
   };
 
   // Update user preferences
   const updateUserPreferences = async (preferences: UserPreferences): Promise<void> => {
     if (!user) throw new Error('User not authenticated');
+    
+    // Always update localStorage
+    localStorage.setItem("userPreferences", JSON.stringify(preferences));
+    
+    // If Supabase is not configured, add to sync queue and return
+    if (!isSupabaseConfigured()) {
+      addToSyncQueue(preferences);
+      return;
+    }
 
     const dbRecord = convertToDbFormat(preferences);
     
-    // Check if record exists
-    const { data: existingRecord } = await supabase
-      .from('user_preferences')
-      .select('id')
-      .eq('user_id', user.id)
-      .single();
-
-    if (existingRecord) {
-      // Update existing record
-      const { error } = await supabase
+    try {
+      // Check if record exists
+      const { data: existingRecord } = await supabase
         .from('user_preferences')
-        .update(dbRecord)
-        .eq('id', existingRecord.id);
+        .select('id')
+        .eq('user_id', user.id)
+        .single();
 
-      if (error) {
-        console.error('Error updating user preferences:', error);
-        throw error;
-      }
-    } else {
-      // Insert new record
-      const { error } = await supabase
-        .from('user_preferences')
-        .insert(dbRecord);
+      if (existingRecord) {
+        // Update existing record
+        const { error } = await supabase
+          .from('user_preferences')
+          .update(dbRecord)
+          .eq('id', existingRecord.id);
 
-      if (error) {
-        console.error('Error creating user preferences:', error);
-        throw error;
+        if (error) {
+          console.error('Error updating user preferences:', error);
+          // Add to sync queue for later
+          addToSyncQueue(preferences);
+          throw error;
+        }
+      } else {
+        // Insert new record
+        const { error } = await supabase
+          .from('user_preferences')
+          .insert(dbRecord);
+
+        if (error) {
+          console.error('Error creating user preferences:', error);
+          // Add to sync queue for later
+          addToSyncQueue(preferences);
+          throw error;
+        }
       }
+    } catch (error) {
+      console.error("Failed to update preferences in Supabase:", error);
+      // Add to sync queue for later retry
+      addToSyncQueue(preferences);
+      throw error;
     }
   };
 

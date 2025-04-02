@@ -88,7 +88,8 @@ export const signUpWithEmail = async (
           id: data.user.id,
           email: email,
           first_name: firstName || '',
-          created_at: new Date().toISOString()
+          created_at: new Date().toISOString(),
+          last_login: new Date().toISOString()
         });
 
       if (profileError) {
@@ -96,6 +97,39 @@ export const signUpWithEmail = async (
         // We don't throw here to not block signup, but log the error
       } else {
         console.log("User profile created successfully");
+      }
+      
+      // Create initial user preferences
+      const { error: preferencesError } = await supabase
+        .from('user_preferences')
+        .insert({
+          user_id: data.user.id,
+          preferences_data: {
+            userRole: "client",
+            workDays: ["monday", "tuesday", "wednesday", "thursday", "friday"],
+            workStartTime: "09:00",
+            workEndTime: "17:00",
+            workEnvironment: "office",
+            stressLevel: "moderate",
+            focusChallenges: [],
+            energyPattern: "morning",
+            lunchBreak: true,
+            lunchTime: "12:00",
+            morningExercise: false,
+            exerciseTime: "",
+            bedTime: "22:00",
+            meditationExperience: "beginner",
+            meditationGoals: [],
+            preferredSessionDuration: 10,
+            metricsOfInterest: [],
+            subscriptionTier: "free",
+          }
+        });
+        
+      if (preferencesError) {
+        console.error("Error creating initial user preferences:", preferencesError);
+      } else {
+        console.log("Initial user preferences created successfully");
       }
     }
     
@@ -158,7 +192,9 @@ export const requestPasswordReset = async (
       return;
     }
     
-    const { error } = await supabase.auth.resetPasswordForEmail(email);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password?type=recovery`
+    });
     
     if (error) {
       throw error;
@@ -212,4 +248,33 @@ export const updateUserPassword = async (
   } finally {
     setLoading(false);
   }
+};
+
+// New function to get current user profile
+export const fetchUserProfile = async (userId: string) => {
+  if (!userId) return null;
+  
+  if (demoAuth.isDemo) {
+    return {
+      id: 'demo-user-id',
+      email: 'demo@example.com',
+      first_name: 'Demo',
+      last_name: 'User',
+      created_at: new Date().toISOString(),
+      last_login: new Date().toISOString()
+    };
+  }
+  
+  const { data, error } = await supabase
+    .from('user_profiles')
+    .select('*')
+    .eq('id', userId)
+    .single();
+    
+  if (error) {
+    console.error("Error fetching user profile:", error);
+    return null;
+  }
+  
+  return data;
 };

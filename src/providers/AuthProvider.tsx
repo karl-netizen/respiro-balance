@@ -2,7 +2,7 @@
 import { useState, useEffect, ReactNode } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { useNavigate } from 'react-router-dom';
-import { supabase, demoAuth } from '@/lib/supabase';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { AuthContext } from '@/context/AuthContext';
 import { 
   signInWithEmail, 
@@ -11,8 +11,9 @@ import {
   requestPasswordReset, 
   updateUserPassword 
 } from '@/lib/authActions';
+import { toast } from 'sonner';
 
-// Create a demo user for testing
+// Demo user and session for development without Supabase credentials
 const DEMO_USER: User = {
   id: 'demo-user-id',
   app_metadata: {},
@@ -23,7 +24,6 @@ const DEMO_USER: User = {
   role: 'authenticated',
 };
 
-// Create a demo session
 const DEMO_SESSION: Session = {
   access_token: 'demo-access-token',
   token_type: 'bearer',
@@ -34,46 +34,128 @@ const DEMO_SESSION: Session = {
 };
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(DEMO_USER); // Auto-set demo user
-  const [session, setSession] = useState<Session | null>(DEMO_SESSION); // Auto-set demo session
-  const [loading, setLoading] = useState(false); // Set loading to false initially
+  const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Skip all auth checks in testing mode
-    console.log("Testing mode: Using demo user automatically");
-    setSession(DEMO_SESSION);
-    setUser(DEMO_USER);
-    setLoading(false);
+    // If Supabase is not configured, use demo mode
+    if (!isSupabaseConfigured()) {
+      console.log("Supabase not configured: Using demo user automatically");
+      setSession(DEMO_SESSION);
+      setUser(DEMO_USER);
+      setLoading(false);
+      return () => {}; // No cleanup needed for demo mode
+    }
 
-    // Return a no-op cleanup function
-    return () => {};
+    // Get initial session
+    const initializeAuth = async () => {
+      try {
+        // Get current session
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        
+        if (currentSession) {
+          setSession(currentSession);
+          setUser(currentSession.user);
+          
+          // Also update the user's last login time
+          if (currentSession.user) {
+            const { error } = await supabase
+              .from('user_profiles')
+              .update({ last_login: new Date().toISOString() })
+              .eq('id', currentSession.user.id);
+              
+            if (error) {
+              console.error("Error updating last login:", error);
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error initializing auth:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    // Set up auth state change listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, newSession) => {
+        setSession(newSession);
+        setUser(newSession?.user ?? null);
+        
+        // Handle specific auth events
+        if (event === 'SIGNED_IN' && newSession?.user) {
+          // Update last login time
+          try {
+            const { error } = await supabase
+              .from('user_profiles')
+              .update({ last_login: new Date().toISOString() })
+              .eq('id', newSession.user.id);
+              
+            if (error) {
+              console.error("Error updating last login:", error);
+            }
+          } catch (error) {
+            console.error("Error handling sign-in event:", error);
+          }
+        }
+      }
+    );
+
+    // Initialize auth
+    initializeAuth();
+
+    // Cleanup
+    return () => {
+      subscription?.unsubscribe();
+    };
   }, []);
 
-  // Auth methods (these will just be stubs for testing)
+  // Auth methods - now these actually work with Supabase
   const signIn = async (email: string, password: string) => {
-    console.log("Test mode: Auto sign-in with:", email);
-    return Promise.resolve();
+    setLoading(true);
+    try {
+      return await signInWithEmail(email, password, navigate, setLoading);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const signUp = async (email: string, password: string, firstName?: string) => {
-    console.log("Test mode: Auto sign-up with:", email);
-    return Promise.resolve();
+    setLoading(true);
+    try {
+      return await signUpWithEmail(email, password, firstName || '', setLoading);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const signOut = async () => {
-    console.log("Test mode: Sign out (ignored)");
-    return Promise.resolve();
+    setLoading(true);
+    try {
+      return await signOutUser(navigate, setLoading);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const forgotPassword = async (email: string) => {
-    console.log("Test mode: Forgot password for:", email);
-    return Promise.resolve();
+    setLoading(true);
+    try {
+      return await requestPasswordReset(email, setLoading);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const resetPassword = async (newPassword: string) => {
-    console.log("Test mode: Reset password to:", newPassword);
-    return Promise.resolve();
+    setLoading(true);
+    try {
+      return await updateUserPassword(newPassword, navigate, setLoading);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

@@ -5,7 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { UserPreferencesProvider } from "@/context";
-import { AuthProvider } from "@/providers/AuthProvider"; // Updated import 
+import { AuthProvider } from "@/providers/AuthProvider"; 
 import { useAuth } from "@/hooks/useAuth";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
@@ -19,7 +19,7 @@ import Progress from "./pages/Progress";
 import Meditate from "./pages/Meditate";
 import FAQ from "./pages/FAQ";
 import MorningRitual from "./pages/MorningRitual";
-import { Suspense, lazy } from "react";
+import { useEffect } from "react";
 
 // Create a new query client
 const queryClient = new QueryClient({
@@ -31,9 +31,23 @@ const queryClient = new QueryClient({
   },
 });
 
-// Modified ProtectedRoute to always allow access in testing mode
+// ProtectedRoute component to handle authentication
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  // No auth check - simply render children directly
+  const { user, loading } = useAuth();
+  
+  // If we're still loading, show nothing
+  if (loading) {
+    return <div className="flex items-center justify-center h-screen">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+    </div>;
+  }
+  
+  // If not authenticated, redirect to login
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  // If authenticated, render children
   return <>{children}</>;
 };
 
@@ -47,19 +61,43 @@ const App = () => (
             <Sonner />
             <Routes>
               {/* Public routes */}
-              <Route path="/" element={<Dashboard />} /> {/* Changed to redirect to Dashboard */}
-              <Route path="/login" element={<Navigate to="/dashboard" />} /> {/* Redirect login to dashboard */}
-              <Route path="/register" element={<Navigate to="/dashboard" />} /> {/* Redirect register to dashboard */}
-              <Route path="/reset-password" element={<Navigate to="/dashboard" />} /> {/* Redirect reset to dashboard */}
+              <Route path="/" element={<Index />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/faq" element={<FAQ />} />
               
-              {/* All routes are now directly accessible */}
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/coach-dashboard" element={<CoachDashboard />} />
-              <Route path="/breathe" element={<Breathe />} />
-              <Route path="/progress" element={<Progress />} />
-              <Route path="/meditate" element={<Meditate />} />
-              <Route path="/morning-ritual" element={<MorningRitual />} />
+              {/* Protected routes */}
+              <Route path="/dashboard" element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/coach-dashboard" element={
+                <ProtectedRoute>
+                  <CoachDashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/breathe" element={
+                <ProtectedRoute>
+                  <Breathe />
+                </ProtectedRoute>
+              } />
+              <Route path="/progress" element={
+                <ProtectedRoute>
+                  <Progress />
+                </ProtectedRoute>
+              } />
+              <Route path="/meditate" element={
+                <ProtectedRoute>
+                  <Meditate />
+                </ProtectedRoute>
+              } />
+              <Route path="/morning-ritual" element={
+                <ProtectedRoute>
+                  <MorningRitual />
+                </ProtectedRoute>
+              } />
               
               {/* Catch-all route */}
               <Route path="*" element={<NotFound />} />

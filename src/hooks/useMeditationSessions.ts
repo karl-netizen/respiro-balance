@@ -1,35 +1,154 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
+import { supabase, demoAuth, isSupabaseConfigured } from '@/lib/supabase';
 import { MeditationSession as SupabaseMeditationSession } from '@/types/supabase';
 import { useAuth } from './useAuth';
+import { toast } from 'sonner';
 
 interface StartSessionParams {
   sessionType: string;
   duration: number;
 }
 
+// Local storage keys
+const OFFLINE_SESSIONS_KEY = 'offline_meditation_sessions';
+const SESSION_SYNC_QUEUE_KEY = 'meditation_session_sync_queue';
+
 export function useMeditationSessions() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
+  // Offline sync helpers
+  const getOfflineSessions = () => {
+    const sessions = localStorage.getItem(OFFLINE_SESSIONS_KEY);
+    return sessions ? JSON.parse(sessions) : [];
+  };
+
+  const saveOfflineSessions = (sessions: any[]) => {
+    localStorage.setItem(OFFLINE_SESSIONS_KEY, JSON.stringify(sessions));
+  };
+
+  const getSyncQueue = () => {
+    const queue = localStorage.getItem(SESSION_SYNC_QUEUE_KEY);
+    return queue ? JSON.parse(queue) : [];
+  };
+
+  const addToSyncQueue = (operation: string, data: any) => {
+    const queue = getSyncQueue();
+    queue.push({
+      operation,
+      data,
+      timestamp: new Date().toISOString()
+    });
+    localStorage.setItem(SESSION_SYNC_QUEUE_KEY, JSON.stringify(queue));
+  };
+
+  const clearSyncQueue = () => {
+    localStorage.removeItem(SESSION_SYNC_QUEUE_KEY);
+  };
+
+  // Process offline sync
+  const processOfflineSync = async () => {
+    if (!user || !isSupabaseConfigured()) return;
+    
+    const queue = getSyncQueue();
+    if (queue.length === 0) return;
+    
+    console.log(`Processing ${queue.length} offline meditation session operations`);
+    
+    let successCount = 0;
+    
+    for (const item of queue) {
+      try {
+        if (item.operation === 'start') {
+          await supabase
+            .from('meditation_sessions')
+            .insert(item.data);
+          successCount++;
+        } else if (item.operation === 'complete') {
+          // For complete operations, first check if the session exists in Supabase
+          const { data: existingSession } = await supabase
+            .from('meditation_sessions')
+            .select('id')
+            .eq('id', item.data.id)
+            .single();
+            
+          if (existingSession) {
+            // Update existing session
+            await supabase
+              .from('meditation_sessions')
+              .update({ completed: true })
+              .eq('id', item.data.id);
+          } else {
+            // Session doesn't exist in Supabase yet, create it as completed
+            await supabase
+              .from('meditation_sessions')
+              .insert({
+                ...item.data,
+                completed: true
+              });
+          }
+          successCount++;
+        }
+      } catch (error) {
+        console.error(`Error processing offline sync item (${item.operation}):`, error);
+      }
+    }
+    
+    if (successCount > 0) {
+      clearSyncQueue();
+      if (successCount === queue.length) {
+        toast("Sync complete", {
+          description: `Successfully synchronized ${successCount} meditation sessions`
+        });
+      } else {
+        toast("Partial sync complete", {
+          description: `Synchronized ${successCount} of ${queue.length} meditation sessions`
+        });
+      }
+      
+      // Clear offline sessions that have been synced
+      saveOfflineSessions([]);
+      
+      // Refresh the data
+      queryClient.invalidateQueries({ queryKey: ['meditationSessions', user.id] });
+    }
+  };
+
   // Fetch recent meditation sessions
   const fetchRecentSessions = async (): Promise<SupabaseMeditationSession[]> => {
-    if (!user) throw new Error('User not authenticated');
-
-    const { data, error } = await supabase
-      .from('meditation_sessions')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('started_at', { ascending: false })
-      .limit(10);
-
-    if (error) {
-      console.error('Error fetching meditation sessions:', error);
-      throw error;
+    if (!user) return [];
+    
+    // If not connected to Supabase, return from localStorage
+    if (!isSupabaseConfigured()) {
+      return getOfflineSessions();
     }
 
-    return data as SupabaseMeditationSession[];
+    try {
+      const { data, error } = await supabase
+        .from('meditation_sessions')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('started_at', { ascending: false })
+        .limit(10);
+
+      if (error) {
+        console.error('Error fetching meditation sessions:', error);
+        throw error;
+      }
+      
+      // Store sessions in localStorage as backup
+      saveOfflineSessions(data || []);
+      
+      // Process any pending offline changes
+      await processOfflineSync();
+
+      return data as SupabaseMeditationSession[];
+    } catch (error) {
+      console.error('Failed to fetch sessions from Supabase:', error);
+      // Fall back to localStorage
+      return getOfflineSessions();
+    }
   };
 
   // Start a new meditation session
@@ -43,34 +162,114 @@ export function useMeditationSessions() {
       started_at: new Date().toISOString(),
       completed: false,
     };
-
-    const { data, error } = await supabase
-      .from('meditation_sessions')
-      .insert(newSession)
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Error starting meditation session:', error);
-      throw error;
+    
+    // If not connected to Supabase, save to localStorage
+    if (!isSupabaseConfigured()) {
+      // Generate a client-side ID
+      const sessionId = `offline-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      
+      // Add session to offline store
+      const offlineSessions = getOfflineSessions();
+      const sessionWithId = { ...newSession, id: sessionId };
+      offlineSessions.unshift(sessionWithId);
+      saveOfflineSessions(offlineSessions);
+      
+      // Add to sync queue
+      addToSyncQueue('start', newSession);
+      
+      return sessionId;
     }
 
-    return data.id;
+    try {
+      const { data, error } = await supabase
+        .from('meditation_sessions')
+        .insert(newSession)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error starting meditation session:', error);
+        throw error;
+      }
+
+      return data.id;
+    } catch (error) {
+      console.error('Failed to start session in Supabase:', error);
+      
+      // Fall back to offline mode
+      const sessionId = `offline-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      
+      // Add session to offline store
+      const offlineSessions = getOfflineSessions();
+      const sessionWithId = { ...newSession, id: sessionId };
+      offlineSessions.unshift(sessionWithId);
+      saveOfflineSessions(offlineSessions);
+      
+      // Add to sync queue
+      addToSyncQueue('start', newSession);
+      
+      toast("Offline mode", {
+        description: "Session started in offline mode and will sync when connection is restored"
+      });
+      
+      return sessionId;
+    }
   };
 
   // Complete a meditation session
   const completeSession = async (sessionId: string): Promise<void> => {
     if (!user) throw new Error('User not authenticated');
+    
+    // If not connected to Supabase or session ID is an offline ID
+    if (!isSupabaseConfigured() || sessionId.startsWith('offline-')) {
+      // Update offline session
+      const offlineSessions = getOfflineSessions();
+      const updatedSessions = offlineSessions.map(session => {
+        if (session.id === sessionId) {
+          return { ...session, completed: true };
+        }
+        return session;
+      });
+      saveOfflineSessions(updatedSessions);
+      
+      // Add to sync queue
+      addToSyncQueue('complete', { id: sessionId, user_id: user.id });
+      
+      // Refresh local data
+      queryClient.invalidateQueries({ queryKey: ['meditationSessions', user.id] });
+      return;
+    }
 
-    const { error } = await supabase
-      .from('meditation_sessions')
-      .update({ completed: true })
-      .eq('id', sessionId)
-      .eq('user_id', user.id);
+    try {
+      const { error } = await supabase
+        .from('meditation_sessions')
+        .update({ completed: true })
+        .eq('id', sessionId)
+        .eq('user_id', user.id);
 
-    if (error) {
-      console.error('Error completing meditation session:', error);
-      throw error;
+      if (error) {
+        console.error('Error completing meditation session:', error);
+        throw error;
+      }
+    } catch (error) {
+      console.error('Failed to complete session in Supabase:', error);
+      
+      // Fall back to offline mode
+      const offlineSessions = getOfflineSessions();
+      const updatedSessions = offlineSessions.map(session => {
+        if (session.id === sessionId) {
+          return { ...session, completed: true };
+        }
+        return session;
+      });
+      saveOfflineSessions(updatedSessions);
+      
+      // Add to sync queue
+      addToSyncQueue('complete', { id: sessionId, user_id: user.id });
+      
+      toast("Offline mode", {
+        description: "Session completed in offline mode and will sync when connection is restored"
+      });
     }
   };
 
