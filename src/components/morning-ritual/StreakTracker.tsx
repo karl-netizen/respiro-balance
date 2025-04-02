@@ -1,134 +1,87 @@
 
 import React from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Award, Calendar, CheckCircle } from "lucide-react";
 import { useUserPreferences } from "@/context";
-import { 
-  Card, 
-  CardContent, 
-  CardHeader, 
-  CardTitle 
-} from "@/components/ui/card";
-import { Flame, Calendar, Award, TrendingUp } from "lucide-react";
 
-const StreakTracker = () => {
+interface StreakTrackerProps {
+  totalRituals: number;
+  completedToday: number;
+}
+
+const StreakTracker: React.FC<StreakTrackerProps> = ({ 
+  totalRituals, 
+  completedToday 
+}) => {
   const { preferences } = useUserPreferences();
   const rituals = preferences.morningRituals || [];
   
-  // Calculate current streak (max streak across all rituals)
-  const currentStreak = rituals.reduce((max, ritual) => 
-    ritual.streak > max ? ritual.streak : max, 0);
+  // Calculate longest current streak across all rituals
+  const longestCurrentStreak = rituals.reduce((max, ritual) => {
+    return ritual.streak > max ? ritual.streak : max;
+  }, 0);
   
-  // Count completed rituals
-  const completedToday = rituals.filter(ritual => 
-    ritual.status === "completed" && 
-    new Date(ritual.lastCompleted || "").toDateString() === new Date().toDateString()
-  ).length;
-  
-  // Calculate completion rate
-  const totalRituals = rituals.length;
-  const completionRate = totalRituals > 0 
+  // Calculate completion percentage for today
+  const completionPercentage = totalRituals > 0 
     ? Math.round((completedToday / totalRituals) * 100) 
     : 0;
   
-  // Generate past 7 days data for the mini chart
-  const getDayLabel = (daysAgo: number) => {
-    const date = new Date();
-    date.setDate(date.getDate() - daysAgo);
-    return date.toLocaleDateString('en-US', { weekday: 'short' }).charAt(0);
-  };
+  // Get day of the week
+  const today = new Date();
+  const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const dayName = daysOfWeek[today.getDay()];
   
-  const getStreakClass = (streak: number) => {
-    if (streak >= 10) return "text-orange-500";
-    if (streak >= 5) return "text-amber-500";
-    return "text-slate-500";
-  };
-
+  // Format today's date
+  const formattedDate = today.toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric'
+  });
+  
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <Card className="bg-gradient-to-br from-orange-50 to-white">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-lg flex items-center">
-            <Flame className="h-5 w-5 mr-2 text-orange-500" /> 
-            Current Streak
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center">
-            <div className={`text-4xl font-bold ${getStreakClass(currentStreak)}`}>
-              {currentStreak}
-            </div>
-            <div className="ml-2 text-sm text-muted-foreground">days</div>
-          </div>
-          <p className="text-sm text-muted-foreground mt-1">
-            {currentStreak === 0 
-              ? "Start your streak today!" 
-              : `Keep it going! You're doing great!`}
-          </p>
-        </CardContent>
-      </Card>
+    <Card className="overflow-hidden">
+      <div className="bg-primary text-primary-foreground p-4">
+        <h3 className="text-lg font-medium flex items-center">
+          <Calendar className="w-5 h-5 mr-2" />
+          {dayName}, {formattedDate}
+        </h3>
+        <p className="text-sm opacity-90">Your morning ritual progress</p>
+      </div>
       
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-lg flex items-center">
-            <Calendar className="h-5 w-5 mr-2 text-blue-500" /> 
-            Today's Progress
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center">
-            <div className="text-4xl font-bold text-blue-500">
-              {completedToday}
-            </div>
-            <div className="ml-2 text-sm text-muted-foreground">
-              / {totalRituals} completed
-            </div>
+      <CardContent className="grid grid-cols-1 gap-6 md:grid-cols-3 py-6">
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <h4 className="text-sm font-medium text-muted-foreground">Daily Progress</h4>
+            <span className="text-sm font-medium">{completionPercentage}%</span>
           </div>
-          <div className="w-full bg-slate-100 rounded-full h-2.5 mt-3">
-            <div 
-              className="bg-blue-500 h-2.5 rounded-full" 
-              style={{ width: `${completionRate}%` }}
-            ></div>
-          </div>
-          <p className="text-sm text-muted-foreground mt-2">
-            {completionRate}% of today's rituals completed
+          <Progress value={completionPercentage} className="h-2" />
+          <p className="text-sm text-muted-foreground">
+            {completedToday} of {totalRituals} rituals completed today
           </p>
-        </CardContent>
-      </Card>
-      
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-lg flex items-center">
-            <Award className="h-5 w-5 mr-2 text-emerald-500" /> 
-            Achievement
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center text-lg font-medium">
-            {currentStreak >= 10 ? (
-              <span className="text-emerald-500">Morning Master</span>
-            ) : currentStreak >= 5 ? (
-              <span className="text-amber-500">Consistency Builder</span>
-            ) : currentStreak > 0 ? (
-              <span className="text-blue-500">Getting Started</span>
-            ) : (
-              <span className="text-slate-500">Begin Your Journey</span>
-            )}
+        </div>
+        
+        <div className="flex items-center gap-4">
+          <div className="bg-green-100 text-green-700 p-3 rounded-full">
+            <CheckCircle className="h-8 w-8" />
           </div>
-          <p className="text-sm text-muted-foreground mt-1">
-            {currentStreak >= 10 
-              ? "You've mastered your morning routine!" 
-              : currentStreak >= 5
-              ? "You're building excellent consistency!"
-              : "Start building your morning ritual habit"}
-          </p>
-          <div className="flex items-center mt-3">
-            <TrendingUp className="h-4 w-4 text-muted-foreground mr-2" />
-            <span className="text-xs text-muted-foreground">
-              Next milestone: {currentStreak < 5 ? 5 : currentStreak < 10 ? 10 : 30} days
-            </span>
+          <div>
+            <div className="text-2xl font-bold">{completedToday}</div>
+            <div className="text-sm text-muted-foreground">Completed Today</div>
           </div>
-        </CardContent>
-      </Card>
-    </div>
+        </div>
+        
+        <div className="flex items-center gap-4">
+          <div className="bg-amber-100 text-amber-700 p-3 rounded-full">
+            <Award className="h-8 w-8" />
+          </div>
+          <div>
+            <div className="text-2xl font-bold">{longestCurrentStreak}</div>
+            <div className="text-sm text-muted-foreground">Longest Current Streak</div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

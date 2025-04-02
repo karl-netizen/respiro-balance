@@ -1,59 +1,60 @@
 
-import { useState, useEffect } from 'react';
-import DesktopNav from './header/DesktopNav';
-import AccountSection from './header/AccountSection';
-import MobileMenu from './header/MobileMenu';
+import React, { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { cn } from "@/lib/utils";
+import DesktopNav from "./header/DesktopNav";
+import MobileMenu from "./header/MobileMenu";
+import MobileDropdown from "./header/MobileDropdown";
+import AccountSection from "./header/AccountSection";
+import { NotificationBell } from "./notifications";
+import { MenuIcon } from "lucide-react";
 
 const Header = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 10) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen(!mobileMenuOpen);
-  };
+  const location = useLocation();
+  const isHomePage = location.pathname === "/";
+  const isTransparent = isHomePage;
 
   return (
-    <header 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 py-4 px-6 md:px-10 
-      ${isScrolled ? 'glass-morph' : 'bg-transparent'}`}
+    <header
+      className={cn(
+        "sticky top-0 z-50 w-full transition-colors duration-300",
+        isTransparent
+          ? "bg-transparent"
+          : "bg-background border-b shadow-sm"
+      )}
     >
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
+      <div className="container flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
         <div className="flex items-center">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-mindflow to-mindflow-dark flex items-center justify-center">
-            <span className="text-white font-semibold text-lg">R</span>
-          </div>
-          <h1 className="ml-3 text-2xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-mindflow-dark to-mindflow">
-            Respiro Balance
-          </h1>
+          <Link
+            to="/"
+            className="text-xl font-bold tracking-tight hover:text-primary transition-colors"
+          >
+            MindFlow
+          </Link>
         </div>
 
-        {/* Desktop Navigation */}
         <DesktopNav />
 
-        {/* Account and Subscription Elements */}
-        <AccountSection />
-
-        {/* Mobile Menu */}
-        <MobileMenu 
-          isOpen={mobileMenuOpen} 
-          toggleMenu={toggleMobileMenu} 
-        />
+        <div className="flex items-center space-x-4">
+          <NotificationBell />
+          <AccountSection />
+          
+          <button
+            className="p-2 rounded-md lg:hidden"
+            onClick={() => setMobileMenuOpen(true)}
+            aria-controls="mobile-menu"
+            aria-expanded={mobileMenuOpen}
+          >
+            <span className="sr-only">Open main menu</span>
+            <MenuIcon className="w-6 h-6" />
+          </button>
+        </div>
       </div>
+
+      <MobileMenu isOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)}>
+        <MobileDropdown />
+      </MobileMenu>
     </header>
   );
 };

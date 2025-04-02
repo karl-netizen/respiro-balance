@@ -1,112 +1,86 @@
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { UserPreferencesProvider } from "@/context";
-import { AuthProvider } from "@/providers/AuthProvider"; 
-import { useAuth } from "@/hooks/useAuth";
-import Index from "./pages/Index";
-import Dashboard from "./pages/Dashboard";
-import NotFound from "./pages/NotFound";
-import CoachDashboard from "./components/coach/CoachDashboard";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import ResetPassword from "./pages/ResetPassword";
-import Breathe from "./pages/Breathe";
-import Progress from "./pages/Progress";
-import Meditate from "./pages/Meditate";
-import FAQ from "./pages/FAQ";
+import { Toaster } from "@/components/ui/toaster";
+import { UserPreferencesProvider } from '@/context';
+import { NotificationsProvider } from '@/context/NotificationsProvider';
+import { AuthProvider } from "@/hooks/useAuth";
+import LandingPage from "./pages/LandingPage";
+import MeditationLibrary from "./pages/MeditationLibrary";
+import BreathingExercise from "./pages/BreathingExercise";
+import MeditationSessionView from "./pages/MeditationSessionView";
+import ProgressDashboard from "./pages/ProgressDashboard";
+import ErrorPage from "./pages/ErrorPage";
+import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
+import AccountPage from "./pages/AccountPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ResendVerificationPage from "./pages/ResendVerificationPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
+import OnboardingPage from "./pages/OnboardingPage";
+import PrivacyPage from "./pages/PrivacyPage";
+import TermsPage from "./pages/TermsPage";
+import SettingsPage from "./pages/SettingsPage";
+import AppSettings from "./pages/AppSettings";
+import HelpPage from "./pages/HelpPage";
 import MorningRitual from "./pages/MorningRitual";
-import { useEffect } from "react";
+import RequireAuth from "./components/auth/RequireAuth";
+import VerifyEmailPage from "./pages/VerifyEmailPage";
+import "./App.css";
 
-// Create a new query client
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 1,
-      refetchOnWindowFocus: import.meta.env.PROD, // Only in production
+function App() {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 5 * 60 * 1000, // 5 minutes
+        refetchOnWindowFocus: false,
+      },
     },
-  },
-});
+  });
 
-// ProtectedRoute component to handle authentication
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user, loading } = useAuth();
-  
-  // If we're still loading, show nothing
-  if (loading) {
-    return <div className="flex items-center justify-center h-screen">
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-    </div>;
-  }
-  
-  // If not authenticated, redirect to login
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-  
-  // If authenticated, render children
-  return <>{children}</>;
-};
-
-const App = () => (
-  <BrowserRouter>
-    <AuthProvider>
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <UserPreferencesProvider>
-            <Toaster />
-            <Sonner />
-            <Routes>
-              {/* Public routes */}
-              <Route path="/" element={<Index />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              <Route path="/faq" element={<FAQ />} />
-              
-              {/* Protected routes */}
-              <Route path="/dashboard" element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              } />
-              <Route path="/coach-dashboard" element={
-                <ProtectedRoute>
-                  <CoachDashboard />
-                </ProtectedRoute>
-              } />
-              <Route path="/breathe" element={
-                <ProtectedRoute>
-                  <Breathe />
-                </ProtectedRoute>
-              } />
-              <Route path="/progress" element={
-                <ProtectedRoute>
-                  <Progress />
-                </ProtectedRoute>
-              } />
-              <Route path="/meditate" element={
-                <ProtectedRoute>
-                  <Meditate />
-                </ProtectedRoute>
-              } />
-              <Route path="/morning-ritual" element={
-                <ProtectedRoute>
-                  <MorningRitual />
-                </ProtectedRoute>
-              } />
-              
-              {/* Catch-all route */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </UserPreferencesProvider>
-        </TooltipProvider>
-      </QueryClientProvider>
-    </AuthProvider>
-  </BrowserRouter>
-);
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <UserPreferencesProvider>
+          <NotificationsProvider>
+            <Router>
+              <Routes>
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/signup" element={<SignupPage />} />
+                <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                <Route path="/resend-verification" element={<ResendVerificationPage />} />
+                <Route path="/reset-password" element={<ResetPasswordPage />} />
+                <Route path="/verify-email" element={<VerifyEmailPage />} />
+                <Route path="/privacy" element={<PrivacyPage />} />
+                <Route path="/terms" element={<TermsPage />} />
+                <Route path="/help" element={<HelpPage />} />
+                
+                {/* Protected routes */}
+                <Route element={<RequireAuth />}>
+                  <Route path="/meditate" element={<MeditationLibrary />} />
+                  <Route path="/breathe" element={<BreathingExercise />} />
+                  <Route path="/session/:sessionId" element={<MeditationSessionView />} />
+                  <Route path="/progress" element={<ProgressDashboard />} />
+                  <Route path="/settings" element={<SettingsPage />} />
+                  <Route path="/app-settings" element={<AppSettings />} />
+                  <Route path="/account" element={<AccountPage />} />
+                  <Route path="/onboarding" element={<OnboardingPage />} />
+                  <Route path="/morning-ritual" element={<MorningRitual />} />
+                </Route>
+                
+                {/* Fallback route */}
+                <Route path="/error" element={<ErrorPage />} />
+                <Route path="*" element={<Navigate to="/error" />} />
+              </Routes>
+              <Toaster />
+            </Router>
+          </NotificationsProvider>
+        </UserPreferencesProvider>
+      </AuthProvider>
+    </QueryClientProvider>
+  );
+}
 
 export default App;

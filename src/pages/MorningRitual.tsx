@@ -8,13 +8,16 @@ import RitualForm from "@/components/morning-ritual/RitualForm";
 import StreakTracker from "@/components/morning-ritual/StreakTracker";
 import SuggestionsSection from "@/components/morning-ritual/SuggestionsSection";
 import { useUserPreferences } from "@/context";
+import { useNotifications } from "@/context/NotificationsProvider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { Helmet } from "react-helmet";
 import { updateRitualStatuses } from "@/components/morning-ritual/utils";
+import { MorningRitual as MorningRitualType } from "@/context/types";
 
 const MorningRitual = () => {
   const { preferences, updatePreferences } = useUserPreferences();
+  const { addStreakAchievementNotification } = useNotifications();
   const rituals = preferences.morningRituals || [];
   const hasRituals = rituals.length > 0;
 
@@ -22,13 +25,35 @@ const MorningRitual = () => {
   useEffect(() => {
     if (rituals.length > 0) {
       const updatedRituals = updateRitualStatuses(rituals);
+      
+      // Check for streaks to notify about
+      updatedRituals.forEach(ritual => {
+        // Find the corresponding original ritual
+        const originalRitual = rituals.find(r => r.id === ritual.id);
+        
+        // If streak increased, potentially send notification
+        if (originalRitual && ritual.streak > (originalRitual.streak || 0)) {
+          addStreakAchievementNotification(ritual);
+        }
+      });
+      
       // Only update if something actually changed
       const statusesChanged = JSON.stringify(updatedRituals) !== JSON.stringify(rituals);
       if (statusesChanged) {
         updatePreferences({ morningRituals: updatedRituals });
       }
     }
-  }, [rituals, updatePreferences]);
+  }, [rituals, updatePreferences, addStreakAchievementNotification]);
+
+  // Track completed rituals for today
+  const completedToday = rituals.filter(ritual => {
+    if (ritual.lastCompleted) {
+      const lastCompleted = new Date(ritual.lastCompleted);
+      const today = new Date();
+      return lastCompleted.toDateString() === today.toDateString();
+    }
+    return false;
+  }).length;
 
   return (
     <>
@@ -50,7 +75,10 @@ const MorningRitual = () => {
             <TabsContent value="my-rituals" className="space-y-8">
               {hasRituals ? (
                 <>
-                  <StreakTracker />
+                  <StreakTracker 
+                    totalRituals={rituals.length}
+                    completedToday={completedToday}
+                  />
                   <Separator className="my-8" />
                   <RitualTimeline />
                 </>

@@ -1,3 +1,4 @@
+
 import { Dispatch, SetStateAction } from 'react';
 import { BluetoothDevice as SupabaseBluetoothDevice } from '@/types/supabase';
 
@@ -18,11 +19,33 @@ export interface MorningRitual {
   tags: string[];
   createdAt: string;
   lastCompleted?: string;
+  
+  // New fields for enhanced rituals
+  priority?: RitualPriority;
+  reminders?: RitualReminder[];
+  isTemplate?: boolean;
+  associatedGoals?: string[];
+  completionHistory?: CompletionRecord[];
 }
 
+export type RitualPriority = 'low' | 'medium' | 'high';
 export type RitualRecurrence = 'daily' | 'weekdays' | 'weekends' | 'custom';
-export type RitualStatus = 'planned' | 'in_progress' | 'completed' | 'missed';
+export type RitualStatus = 'planned' | 'in_progress' | 'completed' | 'missed' | 'partially_completed';
 export type WorkDay = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
+
+export interface RitualReminder {
+  id: string;
+  time: string; // "HH:MM" format
+  enabled: boolean;
+  type: 'in-app' | 'email' | 'push';
+}
+
+export interface CompletionRecord {
+  date: string; // ISO date string
+  status: RitualStatus;
+  completedAt?: string; // ISO datetime string
+  notes?: string;
+}
 
 // Morning activities and related types
 export type MorningDevicesHabit = 'phone_first' | 'phone_delayed' | 'no_devices';

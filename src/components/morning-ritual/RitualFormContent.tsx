@@ -11,6 +11,8 @@ import { RitualFormValues } from "./types";
 import RitualTagSelector from "./RitualTagSelector";
 import RitualRecurrenceSelector from "./RitualRecurrenceSelector";
 import RitualTimeFields from "./RitualTimeFields";
+import RitualReminderSetting from "./RitualReminderSetting";
+import RitualPrioritySelector from "./RitualPrioritySelector";
 
 interface RitualFormContentProps {
   form: UseFormReturn<RitualFormValues>;
@@ -70,6 +72,10 @@ const RitualFormContent = ({
         />
         
         <RitualRecurrenceSelector form={form} />
+        
+        <RitualPrioritySelector form={form} />
+        
+        <RitualReminderSetting form={form} />
         
         <RitualTagSelector 
           availableTags={availableTags}

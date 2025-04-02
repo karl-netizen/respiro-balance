@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useUserPreferences } from "@/context";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { MorningRitual, RitualRecurrence, WorkDay } from "@/context/types";
+import { MorningRitual, RitualRecurrence, WorkDay, RitualStatus, RitualPriority } from "@/context/types";
 import { RitualFormValues, ritualFormSchema } from "../types";
 import { generateRitualId } from "../utils";
 import { useToast } from "@/hooks/use-toast";
@@ -25,6 +25,10 @@ export const useRitualForm = () => {
       recurrence: "daily",
       daysOfWeek: [],
       tags: [],
+      priority: "medium",
+      reminders: [],
+      isTemplate: false,
+      associatedGoals: []
     },
   });
   
@@ -47,11 +51,16 @@ export const useRitualForm = () => {
       timeOfDay: values.timeOfDay,
       duration: values.duration,
       recurrence: values.recurrence as RitualRecurrence,
-      status: "planned",
+      status: "planned" as RitualStatus,
       streak: 0,
       tags: selectedTags,
       createdAt: new Date().toISOString(),
-      daysOfWeek: values.recurrence === "custom" ? values.daysOfWeek as WorkDay[] : undefined
+      daysOfWeek: values.recurrence === "custom" ? values.daysOfWeek as WorkDay[] : undefined,
+      priority: values.priority as RitualPriority,
+      reminders: values.reminders,
+      isTemplate: values.isTemplate,
+      associatedGoals: values.associatedGoals,
+      completionHistory: []
     };
     
     // Get current rituals or initialize empty array
@@ -79,6 +88,7 @@ export const useRitualForm = () => {
     form.setValue("timeOfDay", preferences.weekdayWakeTime || "07:00");
     form.setValue("duration", 15);
     form.setValue("recurrence", "daily");
+    form.setValue("priority", "medium");
   };
   
   return {

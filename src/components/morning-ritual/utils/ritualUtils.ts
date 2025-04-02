@@ -2,7 +2,7 @@
 /**
  * Utility functions for ritual management
  */
-import { MorningRitual, RitualStatus } from "@/context/types";
+import { MorningRitual, RitualStatus, CompletionRecord } from "@/context/types";
 import { shouldDoRitualToday, shouldDoRitualYesterday, wasCompletedOnDate, wasCompletedToday } from "./dateUtils";
 
 /**
@@ -69,10 +69,18 @@ export const updateRitualStatuses = (rituals: MorningRitual[]): MorningRitual[] 
     const wasCompletedYesterday = ritual.lastCompleted && wasCompletedOnDate(ritual.lastCompleted, yesterday);
     
     if (wasScheduledYesterday && !wasCompletedYesterday && ritual.status !== 'missed') {
+      // Add to completion history
+      const completionHistory = ritual.completionHistory || [];
+      const yesterdayRecord: CompletionRecord = {
+        date: yesterday.toISOString().split('T')[0],
+        status: 'missed'
+      };
+      
       return {
         ...ritual,
         status: 'missed' as RitualStatus,
-        streak: 0
+        streak: 0,
+        completionHistory: [...completionHistory, yesterdayRecord]
       };
     }
     
@@ -86,4 +94,39 @@ export const updateRitualStatuses = (rituals: MorningRitual[]): MorningRitual[] 
     
     return ritual;
   });
+};
+
+/**
+ * Record completion of a ritual
+ * @param ritual The ritual to mark as completed
+ * @param partialCompletion Whether the ritual was only partially completed
+ * @param notes Optional notes about the completion
+ * @returns Updated ritual object with completion record
+ */
+export const recordRitualCompletion = (
+  ritual: MorningRitual, 
+  partialCompletion: boolean = false,
+  notes?: string
+): MorningRitual => {
+  const now = new Date();
+  const today = now.toISOString().split('T')[0];
+  
+  // Create completion record
+  const completionRecord: CompletionRecord = {
+    date: today,
+    status: partialCompletion ? 'partially_completed' : 'completed',
+    completedAt: now.toISOString(),
+    notes
+  };
+  
+  // Update history
+  const completionHistory = ritual.completionHistory || [];
+  
+  return {
+    ...ritual,
+    status: partialCompletion ? 'partially_completed' : 'completed',
+    lastCompleted: now.toISOString(),
+    streak: ritual.streak + 1,
+    completionHistory: [...completionHistory, completionRecord]
+  };
 };

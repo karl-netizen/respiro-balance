@@ -1,5 +1,6 @@
 
 import { z } from "zod";
+import { RitualPriority, RitualReminder } from "@/context/types";
 
 // Form validation schema
 export const ritualFormSchema = z.object({
@@ -18,6 +19,17 @@ export const ritualFormSchema = z.object({
   recurrence: z.enum(["daily", "weekdays", "weekends", "custom"]),
   daysOfWeek: z.array(z.string()).optional(),
   tags: z.array(z.string()).optional(),
+  priority: z.enum(["low", "medium", "high"]).optional(),
+  reminders: z.array(
+    z.object({
+      id: z.string(),
+      time: z.string(),
+      enabled: z.boolean(),
+      type: z.enum(["in-app", "email", "push"])
+    })
+  ).optional(),
+  isTemplate: z.boolean().optional(),
+  associatedGoals: z.array(z.string()).optional(),
 });
 
 export type RitualFormValues = z.infer<typeof ritualFormSchema>;
