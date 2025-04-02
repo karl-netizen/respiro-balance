@@ -81,6 +81,51 @@ const FAQ = () => {
                 Research suggests that meditating for just 10 minutes daily can produce noticeable benefits within 2-3 weeks. Consistency is more important than duration, so we recommend starting with short daily sessions rather than occasional longer ones.
               </AccordionContent>
             </AccordionItem>
+            
+            <AccordionItem value="item-6">
+              <AccordionTrigger className="px-6 py-4 hover:no-underline hover:bg-primary/5">
+                <span className="font-medium">How are achievements unlocked in the app?</span>
+              </AccordionTrigger>
+              <AccordionContent className="px-6 pb-4">
+                Achievements are unlocked by hitting specific milestones in your meditation journey. These include completing a certain number of sessions, maintaining streaks, trying different meditation types, and accumulating meditation minutes. When you unlock an achievement, you'll receive a notification.
+              </AccordionContent>
+            </AccordionItem>
+            
+            <AccordionItem value="item-7">
+              <AccordionTrigger className="px-6 py-4 hover:no-underline hover:bg-primary/5">
+                <span className="font-medium">How does the progress analytics system work?</span>
+              </AccordionTrigger>
+              <AccordionContent className="px-6 pb-4">
+                Our progress analytics system tracks various aspects of your meditation practice and correlates them with your reported well-being metrics. It analyzes patterns in your practice times, duration, frequency, and matches these with changes in your stress levels, focus, and mood. This helps identify which meditation practices work best for your specific needs.
+              </AccordionContent>
+            </AccordionItem>
+            
+            <AccordionItem value="item-8">
+              <AccordionTrigger className="px-6 py-4 hover:no-underline hover:bg-primary/5">
+                <span className="font-medium">Can I share my progress with others?</span>
+              </AccordionTrigger>
+              <AccordionContent className="px-6 pb-4">
+                Yes! The app allows you to generate shareable progress reports that you can download as PDF or image files. You can customize what data to include in these reports before sharing with friends, family, or your wellness coach. All shared reports maintain your privacy by only including the information you choose to share.
+              </AccordionContent>
+            </AccordionItem>
+            
+            <AccordionItem value="item-9">
+              <AccordionTrigger className="px-6 py-4 hover:no-underline hover:bg-primary/5">
+                <span className="font-medium">How accurate are the biometric correlations?</span>
+              </AccordionTrigger>
+              <AccordionContent className="px-6 pb-4">
+                The accuracy of biometric correlations depends on several factors including the quality of your connected devices, consistency of use, and individual physiology. While our algorithms apply scientific research in calculating these correlations, they should be viewed as helpful indicators rather than medical-grade diagnostics. Always consult healthcare professionals for medical advice.
+              </AccordionContent>
+            </AccordionItem>
+            
+            <AccordionItem value="item-10">
+              <AccordionTrigger className="px-6 py-4 hover:no-underline hover:bg-primary/5">
+                <span className="font-medium">What do the different wellness scores mean?</span>
+              </AccordionTrigger>
+              <AccordionContent className="px-6 pb-4">
+                Our wellness scores are composite metrics calculated from various inputs including your meditation consistency, biometric readings, self-reported mood and stress levels, and sleep quality (if tracked). Scores typically range from 0-100, with higher scores indicating better overall well-being. The app provides personalized insights to help you understand what factors are influencing your scores and how to improve them.
+              </AccordionContent>
+            </AccordionItem>
           </Accordion>
         </div>
       </main>

@@ -9,6 +9,7 @@ import {
   OverviewTab, 
   InsightsTab, 
   AchievementsTab,
+  CorrelationsTab,
   useMeditationStats
 } from "@/components/progress";
 
@@ -27,9 +28,10 @@ const ProgressDashboard = () => {
         <section className="py-16 px-6">
           <div className="max-w-6xl mx-auto">
             <Tabs defaultValue="overview" className="w-full" onValueChange={setActiveTab}>
-              <TabsList className="grid w-full grid-cols-3 mb-8">
+              <TabsList className="grid w-full grid-cols-4 mb-8">
                 <TabsTrigger value="overview">Overview</TabsTrigger>
                 <TabsTrigger value="insights">Insights</TabsTrigger>
+                <TabsTrigger value="correlations">Correlations</TabsTrigger>
                 <TabsTrigger value="achievements">Achievements</TabsTrigger>
               </TabsList>
               
@@ -42,6 +44,10 @@ const ProgressDashboard = () => {
               
               <TabsContent value="insights" className="mt-0">
                 <InsightsTab />
+              </TabsContent>
+              
+              <TabsContent value="correlations" className="mt-0">
+                <CorrelationsTab />
               </TabsContent>
               
               <TabsContent value="achievements" className="mt-0">

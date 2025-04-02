@@ -1,152 +1,145 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import { Button } from "@/components/ui/button";
-import { ChevronLeft, Clock, Calendar, Award, Heart } from "lucide-react";
-import { 
-  MeditationSessionPlayer, 
-  SessionRatingDialog, 
-  BiometricDisplay 
-} from "@/components/meditation";
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+import { Button } from '@/components/ui/button';
+import { ChevronLeft, Heart, Clock, Share2 } from 'lucide-react';
 import { useMeditationSessions } from '@/hooks/useMeditationSessions';
-import { useToast } from '@/components/ui/use-toast';
+import { useBiometricData } from '@/hooks/useBiometricData';
+import { toast } from 'sonner';
+import { MeditationSessionPlayer } from '@/components/meditation';
+import { BiometricDisplay } from '@/components/biometrics';
+import { SessionRatingDialog } from '@/components/meditation';
 
 const MeditationSessionView = () => {
   const { sessionId } = useParams<{ sessionId: string }>();
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const { meditationSessions } = useMeditationSessions();
-  const [isRatingDialogOpen, setIsRatingDialogOpen] = useState(false);
-  const [showBiometrics, setShowBiometrics] = useState(false);
+  const { sessions, completeSession } = useMeditationSessions();
+  const [showRatingDialog, setShowRatingDialog] = useState(false);
+  const { biometricData, addBiometricData } = useBiometricData();
   
-  // Find the session by ID
-  const session = sessionId ? 
-    meditationSessions.find(s => s.id === sessionId) : 
-    undefined;
+  // Find the session
+  const session = sessions.find(s => s.id === sessionId);
   
   useEffect(() => {
-    if (!session && sessionId) {
-      toast({
-        title: "Session not found",
-        description: `No meditation session with ID ${sessionId} was found.`,
-        variant: "destructive"
-      });
+    if (!session && sessions.length > 0) {
+      // Session not found, redirect to meditation library
       navigate('/meditate');
+      toast.error('Session not found');
     }
-  }, [session, sessionId, navigate, toast]);
+  }, [session, sessions, navigate]);
+  
+  const handleBackToLibrary = () => {
+    navigate('/meditate');
+  };
   
   const handleSessionComplete = () => {
-    setIsRatingDialogOpen(true);
-    // Additional logic for session completion if needed
+    if (sessionId) {
+      completeSession({ sessionId });
+      
+      // Generate mock biometric data
+      const mockBiometricData = {
+        sessionId,
+        heartRate: {
+          before: Math.floor(Math.random() * 15) + 70, // 70-85
+          during: Math.floor(Math.random() * 10) + 65, // 65-75
+          after: Math.floor(Math.random() * 10) + 60, // 60-70
+        },
+        hrv: {
+          before: Math.floor(Math.random() * 20) + 40, // 40-60
+          during: Math.floor(Math.random() * 30) + 50, // 50-80
+          after: Math.floor(Math.random() * 40) + 60, // 60-100
+        },
+        stress: {
+          before: Math.floor(Math.random() * 20) + 50, // 50-70
+          during: Math.floor(Math.random() * 20) + 30, // 30-50
+          after: Math.floor(Math.random() * 20) + 20, // 20-40
+        }
+      };
+      
+      // Add biometric data
+      addBiometricData(mockBiometricData);
+      
+      // Show rating dialog
+      setShowRatingDialog(true);
+    }
+  };
+  
+  const handleToggleFavorite = () => {
+    toast.success('Added to favorites');
+  };
+  
+  const handleShareSession = () => {
+    navigator.clipboard.writeText(`Check out this meditation: ${window.location.href}`);
+    toast.success('Link copied to clipboard');
   };
   
   const handleRatingSubmit = (rating: number, feedback: string) => {
-    toast({
-      title: "Thanks for your feedback!",
-      description: `You rated this session ${rating} stars.`
-    });
-    setIsRatingDialogOpen(false);
-  };
-  
-  const toggleBiometrics = () => {
-    setShowBiometrics(prev => !prev);
+    toast.success('Thank you for your feedback!');
+    setShowRatingDialog(false);
   };
   
   if (!session) {
-    return null; // Return null while checking for the session
+    return null; // Or a loading state
   }
   
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       
-      <main className="flex-grow pt-20 pb-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="mb-6">
-            <Button
-              variant="ghost"
-              className="flex items-center text-foreground/70 hover:text-foreground"
-              onClick={() => navigate(-1)}
-            >
-              <ChevronLeft className="mr-2 h-4 w-4" />
-              Back to Library
-            </Button>
-          </div>
-          
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold mb-3">{session.title}</h1>
-            <p className="text-foreground/70 max-w-2xl mb-6">{session.description}</p>
+      <main className="flex-grow container max-w-5xl mx-auto px-4 py-8">
+        <Button 
+          variant="ghost" 
+          className="mb-6" 
+          onClick={handleBackToLibrary}
+        >
+          <ChevronLeft className="h-4 w-4 mr-1" />
+          Back to Library
+        </Button>
+        
+        <div className="grid md:grid-cols-2 gap-8 mb-8">
+          <div>
+            <h1 className="text-2xl font-bold mb-2">{session.session_type}</h1>
+            <p className="text-muted-foreground mb-4">{session.description}</p>
             
-            <div className="flex flex-wrap gap-4">
-              <div className="flex items-center text-foreground/70">
-                <Clock className="mr-2 h-4 w-4" />
-                <span>{session.duration} minutes</span>
+            <div className="flex items-center gap-4 mb-6">
+              <div className="flex items-center">
+                <Clock className="h-4 w-4 mr-1 text-muted-foreground" />
+                <span className="text-sm">{session.duration} min</span>
               </div>
-              <div className="flex items-center text-foreground/70">
-                <Calendar className="mr-2 h-4 w-4" />
-                <span>{session.category}</span>
-              </div>
-              <div className="flex items-center text-foreground/70">
-                <Award className="mr-2 h-4 w-4" />
-                <span>{session.level}</span>
-              </div>
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2">
-              <MeditationSessionPlayer 
-                session={session} 
-                onComplete={handleSessionComplete} 
-              />
+              <Button variant="outline" size="sm" onClick={handleToggleFavorite}>
+                <Heart className="h-4 w-4 mr-1" />
+                Favorite
+              </Button>
+              <Button variant="outline" size="sm" onClick={handleShareSession}>
+                <Share2 className="h-4 w-4 mr-1" />
+                Share
+              </Button>
             </div>
             
-            <div className="space-y-6">
-              <div className="bg-card rounded-lg shadow p-6">
-                <h3 className="text-xl font-semibold mb-4">Benefits</h3>
-                <ul className="space-y-2">
-                  {session.benefits.map((benefit, index) => (
-                    <li key={index} className="flex items-start">
-                      <span className="mr-2 text-primary">•</span>
-                      <span>{benefit}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              
-              <div className="bg-card rounded-lg shadow p-6">
-                <h3 className="text-xl font-semibold mb-4">Additional Information</h3>
-                <p className="text-foreground/70 mb-4">{session.additionalInfo}</p>
-                
-                <Button 
-                  variant="outline" 
-                  className="w-full flex items-center justify-center"
-                  onClick={toggleBiometrics}
-                >
-                  <Heart className="mr-2 h-4 w-4" />
-                  {showBiometrics ? "Hide Biometrics" : "Show Biometrics"}
-                </Button>
-              </div>
-            </div>
+            <MeditationSessionPlayer 
+              session={session} 
+              onComplete={handleSessionComplete}
+            />
           </div>
           
-          {showBiometrics && (
-            <div className="mt-8">
-              <BiometricDisplay sessionData={session} />
-            </div>
-          )}
+          <div>
+            <h2 className="text-xl font-semibold mb-4">Biometric Feedback</h2>
+            <BiometricDisplay 
+              sessionId={sessionId} 
+            />
+          </div>
         </div>
       </main>
       
       <Footer />
       
-      <SessionRatingDialog 
-        isOpen={isRatingDialogOpen} 
-        onClose={() => setIsRatingDialogOpen(false)} 
-        onRatingSubmit={handleRatingSubmit}
-        sessionId={session.id}
+      <SessionRatingDialog
+        isOpen={showRatingDialog}
+        onClose={() => setShowRatingDialog(false)}
+        onSubmit={handleRatingSubmit}
+        sessionId={sessionId}
       />
     </div>
   );

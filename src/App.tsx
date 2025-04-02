@@ -28,6 +28,7 @@ import HelpPage from "@/pages/HelpPage";
 import MorningRitual from "@/pages/MorningRitual";
 import RequireAuth from "@/components/auth/RequireAuth";
 import VerifyEmailPage from "@/pages/VerifyEmailPage";
+import FAQPage from "@/pages/FAQ";
 import "./App.css";
 
 // Create a wrapper component to use hooks and pass them to the AuthProvider
@@ -63,6 +64,7 @@ function App() {
                 <Route path="/privacy" element={<PrivacyPage />} />
                 <Route path="/terms" element={<TermsPage />} />
                 <Route path="/help" element={<HelpPage />} />
+                <Route path="/faq" element={<FAQPage />} />
                 
                 {/* Protected routes */}
                 <Route element={<RequireAuth />}>
