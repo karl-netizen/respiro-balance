@@ -63,7 +63,7 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				mindflow: {
+				respiro: {
 					light: '#E0F2F1',
 					DEFAULT: '#4DB6AC',
 					dark: '#00897B',

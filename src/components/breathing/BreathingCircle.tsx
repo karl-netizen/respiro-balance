@@ -14,7 +14,7 @@ const BreathingCircle: React.FC<BreathingCircleProps> = ({ breathingPhase, count
       <div 
         className={`
           absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
-          rounded-full bg-gradient-to-br from-mindflow-light to-mindflow 
+          rounded-full bg-gradient-to-br from-respiro-light to-respiro 
           flex items-center justify-center text-white font-medium
           transition-all duration-1000 ease-in-out
           ${breathingPhase === 'inhale' ? 'w-32 h-32 opacity-80' : ''}
@@ -35,7 +35,7 @@ const BreathingCircle: React.FC<BreathingCircleProps> = ({ breathingPhase, count
       <div 
         className={`
           absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
-          rounded-full border-4 border-mindflow-light/30
+          rounded-full border-4 border-respiro-light/30
           transition-all duration-1000 ease-in-out
           ${breathingPhase === 'inhale' ? 'w-48 h-48 opacity-70' : ''}
           ${breathingPhase === 'hold' ? 'w-60 h-60 opacity-40' : ''}
@@ -46,7 +46,7 @@ const BreathingCircle: React.FC<BreathingCircleProps> = ({ breathingPhase, count
       
       {/* Count display */}
       <div className="absolute top-0 right-0 w-10 h-10 rounded-full bg-white/80 flex items-center justify-center shadow-md">
-        <span className="text-lg font-semibold text-mindflow-dark">{count}</span>
+        <span className="text-lg font-semibold text-respiro-dark">{count}</span>
       </div>
     </div>
   );

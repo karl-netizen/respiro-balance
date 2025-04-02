@@ -16,7 +16,7 @@ const AccountSection = () => {
           <User size={20} />
         </Button>
       </div>
-      <Button className="bg-primary text-white hover:bg-mindflow-dark">
+      <Button className="bg-primary text-white hover:bg-respiro-dark">
         Get Started
       </Button>
     </div>

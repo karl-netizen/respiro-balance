@@ -29,7 +29,7 @@ const Header = () => {
             to="/"
             className="text-xl font-bold tracking-tight hover:text-primary transition-colors"
           >
-            MindFlow
+            Respiro Balance
           </Link>
         </div>
 

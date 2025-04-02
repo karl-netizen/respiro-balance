@@ -80,7 +80,7 @@ const LandingPage = () => {
           <div className="text-center mt-16">
             <Button 
               size="lg" 
-              className="bg-primary text-white hover:bg-mindflow-dark transition-transform"
+              className="bg-primary text-white hover:bg-respiro-dark transition-transform"
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
               onClick={handleGetStarted}
