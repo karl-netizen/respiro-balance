@@ -1,9 +1,30 @@
 
 import { Check, Users, Building, Star } from 'lucide-react';
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useUserPreferences } from "@/context";
 import { SubscriptionTier } from '@/context/types';
+import { isSupabaseConfigured } from '@/lib/supabase';
+import { toast } from 'sonner';
+
+// Helper function to determine if a feature is available based on user's subscription
+const isFeatureAvailable = (
+  userTier: SubscriptionTier,
+  planId: SubscriptionTier,
+  isDemoMode: boolean = false
+): boolean => {
+  // In demo mode, all features are available for testing
+  if (isDemoMode) return true;
+  
+  // If user has the current plan or higher, feature is available
+  const tiers = ['free', 'premium', 'team', 'enterprise'];
+  const userTierIndex = tiers.indexOf(userTier);
+  const planTierIndex = tiers.indexOf(planId);
+  
+  return userTierIndex >= planTierIndex;
+};
 
 const tiers = [
   {
@@ -22,7 +43,8 @@ const tiers = [
     ],
     cta: 'Get Started',
     popular: false,
-    style: 'border-gray-200'
+    style: 'border-gray-200',
+    comingSoon: false
   },
   {
     id: 'premium' as const,
@@ -42,7 +64,8 @@ const tiers = [
     ],
     cta: 'Start Free Trial',
     popular: true,
-    style: 'border-primary'
+    style: 'border-primary',
+    comingSoon: false
   },
   {
     id: 'team' as const,
@@ -61,7 +84,8 @@ const tiers = [
     ],
     cta: 'Contact Sales',
     popular: false,
-    style: 'border-gray-200'
+    style: 'border-gray-200',
+    comingSoon: true
   },
   {
     id: 'enterprise' as const,
@@ -82,16 +106,47 @@ const tiers = [
     ],
     cta: 'Contact Sales',
     popular: false,
-    style: 'border-gray-200'
+    style: 'border-gray-200',
+    comingSoon: true
   },
 ];
 
 const PricingTiers = () => {
   const { preferences, updatePreferences } = useUserPreferences();
+  const isDemoMode = !isSupabaseConfigured();
 
-  const handleSelectTier = (tierId: string) => {
+  const handleSelectTier = (tierId: SubscriptionTier) => {
+    // If the tier is 'team' or 'enterprise' and coming soon, show a toast
+    const tier = tiers.find(t => t.id === tierId);
+    if (tier?.comingSoon) {
+      toast.info(`${tier.name} is coming soon!`, {
+        description: "This plan is not available yet. Please check back later."
+      });
+      return;
+    }
+    
+    // If the tier is 'premium' and not in demo mode, we'd typically initiate a Stripe checkout
+    if (tierId === 'premium' && !isDemoMode) {
+      // Placeholder for Stripe integration
+      toast.info("Stripe Integration", {
+        description: "In production, this would open a Stripe checkout session."
+      });
+      
+      // In a real implementation, we'd call something like:
+      // initStripeCheckout(tierId)
+      //   .then(url => window.location.href = url)
+      //   .catch(error => toast.error("Payment Error", { description: error.message }));
+      
+      return;
+    }
+    
+    // Update the user's subscription tier
     updatePreferences({ 
-      subscriptionTier: tierId as SubscriptionTier
+      subscriptionTier: tierId
+    });
+    
+    toast.success(`Subscription Updated!`, {
+      description: `Your subscription has been changed to ${tierId === 'free' ? 'Free' : tierId}.`
     });
   };
 
@@ -123,8 +178,16 @@ const PricingTiers = () => {
                 </div>
               )}
               
-              <div className={cn(
-                "glassmorphism-card border-2 h-full flex flex-col",
+              {tier.comingSoon && (
+                <div className="absolute top-0 right-0 m-3 z-10">
+                  <Badge variant="secondary" className="bg-secondary/80 text-foreground font-semibold">
+                    Coming Soon
+                  </Badge>
+                </div>
+              )}
+              
+              <Card className={cn(
+                "h-full flex flex-col border-2",
                 tier.id === preferences.subscriptionTier
                   ? "border-primary ring-2 ring-primary/20" 
                   : tier.popular 
@@ -148,12 +211,23 @@ const PricingTiers = () => {
                 
                 <div className="p-6 flex-grow">
                   <ul className="space-y-3 mb-8">
-                    {tier.features.map((feature) => (
-                      <li key={feature} className="flex items-start">
-                        <Check size={16} className="text-primary mr-2 mt-1 flex-shrink-0" />
-                        <span className="text-sm">{feature}</span>
-                      </li>
-                    ))}
+                    {tier.features.map((feature) => {
+                      const isAvailable = isFeatureAvailable(
+                        preferences.subscriptionTier, 
+                        tier.id, 
+                        isDemoMode
+                      );
+                      
+                      return (
+                        <li key={feature} className={cn(
+                          "flex items-start",
+                          !isAvailable && !tier.comingSoon && tier.id !== 'free' && "opacity-50"
+                        )}>
+                          <Check size={16} className="text-primary mr-2 mt-1 flex-shrink-0" />
+                          <span className="text-sm">{feature}</span>
+                        </li>
+                      );
+                    })}
                   </ul>
                 </div>
                 
@@ -164,17 +238,19 @@ const PricingTiers = () => {
                       tier.id === preferences.subscriptionTier
                         ? "bg-secondary text-primary border border-primary"
                         : tier.popular 
-                          ? "bg-primary hover:bg-mindflow-dark" 
-                          : "bg-secondary text-foreground hover:bg-secondary/80"
+                          ? "bg-primary hover:bg-primary/90" 
+                          : "bg-secondary text-foreground hover:bg-secondary/80",
+                      tier.comingSoon && "opacity-70 cursor-not-allowed"
                     )}
                     onClick={() => handleSelectTier(tier.id)}
+                    disabled={tier.comingSoon}
                   >
                     {tier.id === preferences.subscriptionTier
                       ? "Current Plan"
                       : tier.cta}
                   </Button>
                 </div>
-              </div>
+              </Card>
             </div>
           ))}
         </div>
