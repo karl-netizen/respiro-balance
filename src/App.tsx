@@ -1,11 +1,11 @@
 
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { UserPreferencesProvider } from '@/context';
 import { NotificationsProvider } from '@/context/NotificationsProvider';
-import { AuthProvider } from "@/hooks/useAuth";
+import { AuthProvider } from "@/providers/AuthProvider";
 import LandingPage from "@/pages/LandingPage";
 import MeditationLibrary from "@/pages/MeditationLibrary";
 import BreathingExercise from "@/pages/BreathingExercise";
@@ -29,6 +29,12 @@ import RequireAuth from "@/components/auth/RequireAuth";
 import VerifyEmailPage from "@/pages/VerifyEmailPage";
 import "./App.css";
 
+// Create a wrapper component to use hooks and pass them to the AuthProvider
+function AuthProviderWithNavigate({ children }: { children: React.ReactNode }) {
+  const navigate = useNavigate();
+  return <AuthProvider navigate={navigate}>{children}</AuthProvider>;
+}
+
 function App() {
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -42,7 +48,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Router>
-        <AuthProvider>
+        <AuthProviderWithNavigate>
           <UserPreferencesProvider>
             <NotificationsProvider>
               <Routes>
@@ -77,7 +83,7 @@ function App() {
               <Toaster />
             </NotificationsProvider>
           </UserPreferencesProvider>
-        </AuthProvider>
+        </AuthProviderWithNavigate>
       </Router>
     </QueryClientProvider>
   );

@@ -1,7 +1,7 @@
 
 import { useState, useEffect, ReactNode } from 'react';
 import { Session, User } from '@supabase/supabase-js';
-import { useNavigate } from 'react-router-dom';
+import { NavigateFunction } from 'react-router-dom';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { AuthContext } from '@/context/AuthContext';
 import { 
@@ -33,11 +33,15 @@ const DEMO_SESSION: Session = {
   user: DEMO_USER,
 };
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+interface AuthProviderProps {
+  children: ReactNode;
+  navigate: NavigateFunction;
+}
+
+export function AuthProvider({ children, navigate }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
     // If Supabase is not configured, use demo mode
