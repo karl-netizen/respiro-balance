@@ -118,8 +118,8 @@ const MeditationSessionView = () => {
           <div>
             <h2 className="text-xl font-semibold mb-4">Biometric Feedback</h2>
             <BiometricDisplay 
-              biometricData={{}} 
-              sessionId={sessionId}
+              biometricData={biometricData || {}} 
+              sessionId={sessionId || ""}
             />
           </div>
         </div>

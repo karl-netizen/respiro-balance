@@ -1,9 +1,13 @@
 
-import { useState } from 'react';
-import { RitualFormData, RecurrenceType, RitualPriority } from '@/components/morning-ritual/types';
+import { useState, useCallback } from 'react';
+import { RitualFormData, RecurrenceType, RitualPriority, RitualFormValues } from '@/components/morning-ritual/types';
 import { generateId } from '@/components/morning-ritual/utils';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { ritualFormSchema } from '@/components/morning-ritual/types';
 
 export const useRitualForm = () => {
+  // Form state management
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [date, setDate] = useState<Date | undefined>(new Date());
@@ -14,6 +18,22 @@ export const useRitualForm = () => {
   const [reminderEnabled, setReminderEnabled] = useState<boolean>(true);
   const [reminderTime, setReminderTime] = useState<number>(15);
   const [tags, setTags] = useState<string[]>([]);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [submitted, setSubmitted] = useState(false);
+  
+  // Create form using react-hook-form
+  const form = useForm<RitualFormValues>({
+    resolver: zodResolver(ritualFormSchema),
+    defaultValues: {
+      title: '',
+      description: '',
+      timeOfDay: '08:00',
+      duration: 15,
+      recurrence: 'daily',
+      priority: 'medium',
+      tags: [],
+    },
+  });
   
   const resetForm = () => {
     setTitle('');
@@ -26,6 +46,30 @@ export const useRitualForm = () => {
     setReminderEnabled(true);
     setReminderTime(15);
     setTags([]);
+    setSelectedTags([]);
+    form.reset();
+  };
+  
+  const toggleTag = useCallback((tag: string) => {
+    setSelectedTags(prev => {
+      if (prev.includes(tag)) {
+        return prev.filter(t => t !== tag);
+      } else {
+        return [...prev, tag];
+      }
+    });
+  }, []);
+  
+  const onSubmit = (values: RitualFormValues) => {
+    console.log('Form submitted:', values);
+    // Here you would typically save the ritual data to your store/backend
+    setSubmitted(true);
+    
+    // Reset form after a delay
+    setTimeout(() => {
+      resetForm();
+      setSubmitted(false);
+    }, 2000);
   };
   
   const formValues: RitualFormData = {
@@ -67,5 +111,12 @@ export const useRitualForm = () => {
     setTags,
     formValues,
     resetForm,
+    // New properties expected by RitualForm.tsx
+    form,
+    selectedTags,
+    submitted,
+    setSubmitted,
+    toggleTag,
+    onSubmit,
   };
 };

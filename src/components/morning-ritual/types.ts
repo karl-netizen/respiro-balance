@@ -33,3 +33,23 @@ export const ritualFormSchema = z.object({
 });
 
 export type RitualFormValues = z.infer<typeof ritualFormSchema>;
+
+// Add additional exports needed by useRitualForm
+export type RecurrenceType = "daily" | "weekdays" | "weekends" | "custom";
+export type RitualPriority = "low" | "medium" | "high";
+
+export interface RitualFormData {
+  id: string;
+  title: string;
+  description?: string;
+  date?: Date;
+  startTime: string;
+  duration: number;
+  priority: RitualPriority;
+  recurrence: RecurrenceType;
+  reminderEnabled: boolean;
+  reminderTime: number;
+  tags: string[];
+  complete: boolean;
+  createdAt: Date;
+}
