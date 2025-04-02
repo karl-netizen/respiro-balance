@@ -15,10 +15,12 @@ export function useSupabaseUserPreferences() {
     queryFn: () => fetchUserPreferences(user?.id),
     enabled: !!user,
     staleTime: 5 * 60 * 1000, // 5 minutes
-    onSuccess: async (data) => {
-      // Process any pending offline changes after successful fetch
-      if (user?.id) {
-        await processOfflineSync(user.id);
+    meta: {
+      onSuccess: async (data: UserPreferences) => {
+        // Process any pending offline changes after successful fetch
+        if (user?.id) {
+          await processOfflineSync(user.id);
+        }
       }
     }
   });
