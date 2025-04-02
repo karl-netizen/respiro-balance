@@ -41,10 +41,10 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <UserPreferencesProvider>
-          <NotificationsProvider>
-            <Router>
+      <Router>
+        <AuthProvider>
+          <UserPreferencesProvider>
+            <NotificationsProvider>
               <Routes>
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/login" element={<LoginPage />} />
@@ -75,10 +75,10 @@ function App() {
                 <Route path="*" element={<Navigate to="/error" />} />
               </Routes>
               <Toaster />
-            </Router>
-          </NotificationsProvider>
-        </UserPreferencesProvider>
-      </AuthProvider>
+            </NotificationsProvider>
+          </UserPreferencesProvider>
+        </AuthProvider>
+      </Router>
     </QueryClientProvider>
   );
 }
