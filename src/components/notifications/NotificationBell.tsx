@@ -51,7 +51,7 @@ export function NotificationBell() {
       
       {isOpen && (
         <NotificationDropdown 
-          notifications={notifications}
+          notifications={notifications as any[]}
           markAllAsRead={markAllAsRead}
           onClose={() => setIsOpen(false)}
         />

@@ -50,7 +50,7 @@ const Progress = () => {
               <TabsContent value="overview">
                 <OverviewTab 
                   meditationStats={meditationStats} 
-                  sessions={sessions} 
+                  sessions={sessions || []} 
                 />
               </TabsContent>
               

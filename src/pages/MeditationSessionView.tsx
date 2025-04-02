@@ -17,20 +17,20 @@ import {
 const MeditationSessionView = () => {
   const { sessionId } = useParams<{ sessionId: string }>();
   const navigate = useNavigate();
-  const { meditationSessions, completeSession } = useMeditationSessions();
+  const { sessions, completeSession } = useMeditationSessions();
   const [showRatingDialog, setShowRatingDialog] = useState(false);
   const { biometricData, addBiometricData } = useBiometricData();
   
   // Find the session
-  const session = meditationSessions?.find(s => s.id === sessionId);
+  const session = sessions?.find(s => s.id === sessionId);
   
   useEffect(() => {
-    if (!session && meditationSessions?.length > 0) {
+    if (!session && sessions?.length > 0) {
       // Session not found, redirect to meditation library
       navigate('/meditate');
       toast.error('Session not found');
     }
-  }, [session, meditationSessions, navigate]);
+  }, [session, sessions, navigate]);
   
   const handleBackToLibrary = () => {
     navigate('/meditate');
@@ -66,7 +66,7 @@ const MeditationSessionView = () => {
     toast.success('Link copied to clipboard');
   };
   
-  const handleRatingSubmit = (rating: number, feedback: string) => {
+  const handleRatingSubmit = (sessionId: string, rating: number, feedback: string) => {
     toast.success('Thank you for your feedback!');
     setShowRatingDialog(false);
   };

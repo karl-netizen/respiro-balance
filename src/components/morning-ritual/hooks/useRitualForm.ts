@@ -1,130 +1,71 @@
 
-import { useState, useEffect } from 'react';
-import { MorningRitual, RitualReminder } from '@/context/types';
+import { useState } from 'react';
+import { RitualFormData, RecurrenceType, RitualPriority } from '@/components/morning-ritual/types';
 import { generateId } from '@/components/morning-ritual/utils';
 
-export const useRitualForm = (initialRitual?: Partial<MorningRitual>) => {
-  // Default values
-  const [title, setTitle] = useState(initialRitual?.title || '');
-  const [description, setDescription] = useState(initialRitual?.description || '');
-  const [timeOfDay, setTimeOfDay] = useState(initialRitual?.timeOfDay || '07:00');
-  const [duration, setDuration] = useState(initialRitual?.duration || 15);
-  const [recurrence, setRecurrence] = useState(initialRitual?.recurrence || 'daily');
-  const [daysOfWeek, setDaysOfWeek] = useState(initialRitual?.daysOfWeek || []);
-  const [priority, setPriority] = useState(initialRitual?.priority || 'medium');
-  const [tags, setTags] = useState(initialRitual?.tags || []);
-  const [reminders, setReminders] = useState<RitualReminder[]>(
-    initialRitual?.reminders || [
-      { id: generateId(), enabled: true, type: 'in-app', time: '15' },
-    ]
-  );
-
-  // Error states
-  const [errors, setErrors] = useState({
-    title: '',
-    timeOfDay: '',
-  });
-
-  // Handle form validation
-  const validateForm = () => {
-    let isValid = true;
-    const newErrors = {
-      title: '',
-      timeOfDay: '',
-    };
-
-    // Validate title
-    if (!title.trim()) {
-      newErrors.title = 'Title is required';
-      isValid = false;
-    }
-
-    // Validate time of day
-    if (!timeOfDay) {
-      newErrors.timeOfDay = 'Time is required';
-      isValid = false;
-    }
-
-    setErrors(newErrors);
-    return isValid;
-  };
-
-  // Handle reminder changes
-  const handleAddReminder = () => {
-    setReminders([
-      ...reminders,
-      { id: generateId(), enabled: true, type: 'in-app', time: '15' },
-    ]);
-  };
-
-  const handleRemoveReminder = (index: number) => {
-    const newReminders = [...reminders];
-    newReminders.splice(index, 1);
-    setReminders(newReminders);
-  };
-
-  const handleReminderChange = (index: number, field: keyof RitualReminder, value: any) => {
-    const newReminders = [...reminders];
-    newReminders[index] = { ...newReminders[index], [field]: value };
-    setReminders(newReminders);
-  };
-
-  // Get form data
-  const getFormData = (): Partial<MorningRitual> => {
-    return {
-      title,
-      description,
-      timeOfDay,
-      duration,
-      recurrence,
-      daysOfWeek: recurrence === 'custom' ? daysOfWeek : [],
-      priority,
-      tags,
-      reminders,
-    };
-  };
-
-  // Reset form
+export const useRitualForm = () => {
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [startTime, setStartTime] = useState<string>('08:00');
+  const [duration, setDuration] = useState<number>(15);
+  const [priority, setPriority] = useState<RitualPriority>('medium');
+  const [recurrence, setRecurrence] = useState<RecurrenceType>('daily');
+  const [reminderEnabled, setReminderEnabled] = useState<boolean>(true);
+  const [reminderTime, setReminderTime] = useState<number>(15);
+  const [tags, setTags] = useState<string[]>([]);
+  
   const resetForm = () => {
     setTitle('');
     setDescription('');
-    setTimeOfDay('07:00');
+    setDate(new Date());
+    setStartTime('08:00');
     setDuration(15);
-    setRecurrence('daily');
-    setDaysOfWeek([]);
     setPriority('medium');
+    setRecurrence('daily');
+    setReminderEnabled(true);
+    setReminderTime(15);
     setTags([]);
-    setReminders([
-      { id: generateId(), enabled: true, type: 'in-app', time: '15' },
-    ]);
-    setErrors({ title: '', timeOfDay: '' });
   };
-
+  
+  const formValues: RitualFormData = {
+    id: generateId(), // Use the imported generateId function
+    title,
+    description,
+    date,
+    startTime,
+    duration,
+    priority,
+    recurrence,
+    reminderEnabled,
+    reminderTime,
+    tags,
+    complete: false,
+    createdAt: new Date(),
+  };
+  
   return {
     title,
     setTitle,
     description,
     setDescription,
-    timeOfDay,
-    setTimeOfDay,
+    date,
+    setDate,
+    startTime,
+    setStartTime,
     duration,
     setDuration,
-    recurrence,
-    setRecurrence,
-    daysOfWeek,
-    setDaysOfWeek,
     priority,
     setPriority,
+    recurrence,
+    setRecurrence,
+    reminderEnabled,
+    setReminderEnabled,
+    reminderTime,
+    setReminderTime,
     tags,
     setTags,
-    reminders,
-    setReminders,
-    errors,
-    handleAddReminder,
-    handleRemoveReminder,
-    handleReminderChange,
-    validateForm,
-    getFormData,
+    formValues,
     resetForm,
   };
 };

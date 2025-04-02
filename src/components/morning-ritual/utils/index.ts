@@ -1,4 +1,3 @@
-
 /**
  * Export all utility functions from their respective modules
  */
@@ -30,3 +29,7 @@ export {
   calculateBiometricChange,
   getBiometricDataFromDevices
 } from './biometricUtils';
+
+export const generateId = (): string => {
+  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+};
