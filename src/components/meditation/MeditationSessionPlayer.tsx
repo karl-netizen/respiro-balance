@@ -11,7 +11,7 @@ import BiometricTracker from './BiometricTracker';
 
 interface MeditationSessionPlayerProps {
   session: MeditationSession;
-  onComplete: (sessionId: string) => void;
+  onComplete?: (sessionId: string) => void;
 }
 
 const MeditationSessionPlayer: React.FC<MeditationSessionPlayerProps> = ({ 
@@ -58,7 +58,9 @@ const MeditationSessionPlayer: React.FC<MeditationSessionPlayerProps> = ({
               addBiometricData(currentBiometrics);
             }
             
-            onComplete(session.id);
+            if (onComplete) {
+              onComplete(session.id);
+            }
             return 0;
           }
           return prev - 1;

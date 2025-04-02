@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useUserPreferences } from "@/context";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { MorningRitual, RitualRecurrence, WorkDay, RitualStatus, RitualPriority } from "@/context/types";
+import { MorningRitual, RitualRecurrence, WorkDay, RitualStatus, RitualPriority, RitualReminder } from "@/context/types";
 import { RitualFormValues, ritualFormSchema } from "../types";
 import { generateRitualId } from "../utils";
 import { useToast } from "@/hooks/use-toast";
@@ -26,7 +26,7 @@ export const useRitualForm = () => {
       daysOfWeek: [],
       tags: [],
       priority: "medium",
-      reminders: [],
+      reminders: [] as RitualReminder[],
       isTemplate: false,
       associatedGoals: []
     },
@@ -57,7 +57,7 @@ export const useRitualForm = () => {
       createdAt: new Date().toISOString(),
       daysOfWeek: values.recurrence === "custom" ? values.daysOfWeek as WorkDay[] : undefined,
       priority: values.priority as RitualPriority,
-      reminders: values.reminders,
+      reminders: values.reminders as RitualReminder[],
       isTemplate: values.isTemplate,
       associatedGoals: values.associatedGoals,
       completionHistory: []

@@ -1,13 +1,9 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { 
-  MeditationSessionPlayer, 
-  BiometricDisplay,
-  SessionRatingDialog
-} from "@/components/meditation";
+import { MeditationSessionPlayer, BiometricDisplay, SessionRatingDialog } from "@/components/meditation";
 import { useMeditationLibrary } from "@/hooks/useMeditationLibrary";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Heart } from "lucide-react";
@@ -16,7 +12,7 @@ const MeditationSessionView = () => {
   const { sessionId } = useParams();
   const navigate = useNavigate();
   const { 
-    sessions, 
+    meditationSessions, 
     handleToggleFavorite, 
     isFavorite,
     showRatingDialog,
@@ -26,7 +22,7 @@ const MeditationSessionView = () => {
   
   // Find the selected session
   const selectedSession = sessionId 
-    ? sessions.find(session => session.id === sessionId) 
+    ? meditationSessions.find(session => session.id === sessionId) 
     : null;
   
   if (!selectedSession) {
@@ -50,6 +46,12 @@ const MeditationSessionView = () => {
   
   const handleBackClick = () => {
     navigate('/meditate');
+  };
+
+  const handleSessionComplete = (sessionId: string) => {
+    // Placeholder for session completion logic
+    console.log(`Session ${sessionId} completed`);
+    setShowRatingDialog(true);
   };
   
   return (
@@ -100,11 +102,17 @@ const MeditationSessionView = () => {
             </div>
           </div>
           
-          <MeditationSessionPlayer session={selectedSession} />
+          <MeditationSessionPlayer 
+            session={selectedSession} 
+            onComplete={handleSessionComplete}
+          />
           
           <div className="mt-10">
             <h2 className="text-xl font-semibold mb-4">Biometric Feedback</h2>
-            <BiometricDisplay sessionId={selectedSession.id} />
+            <BiometricDisplay 
+              biometricData={null} // You would pass the actual biometric data here
+              sessionId={selectedSession.id} 
+            />
           </div>
         </div>
         
@@ -112,8 +120,11 @@ const MeditationSessionView = () => {
           <SessionRatingDialog 
             isOpen={showRatingDialog}
             onClose={() => setShowRatingDialog(false)}
-            onSubmit={(rating, feedback) => handleSubmitRating(selectedSession.id, rating, feedback)}
-            session={selectedSession}
+            onSubmitRating={(sessionId, rating, feedback) => 
+              handleSubmitRating(sessionId, rating, feedback)
+            }
+            sessionId={selectedSession.id}
+            sessionTitle={selectedSession.title}
           />
         )}
       </main>

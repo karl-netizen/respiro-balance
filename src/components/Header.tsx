@@ -51,7 +51,7 @@ const Header = () => {
         </div>
       </div>
 
-      <MobileMenu isOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
+      <MobileMenu isOpen={mobileMenuOpen} toggleMenu={() => setMobileMenuOpen(false)} />
     </header>
   );
 };

@@ -28,6 +28,17 @@ const NotificationDropdown = ({ onClose }: NotificationDropdownProps) => {
     };
   }, [onClose]);
 
+  // Ensure all notifications have the required 'time' property
+  const validNotifications = notifications.map(notification => {
+    if (!notification.time) {
+      return {
+        ...notification,
+        time: new Date().toISOString() // Add a default time if missing
+      };
+    }
+    return notification;
+  });
+
   return (
     <div
       ref={dropdownRef}
@@ -43,7 +54,7 @@ const NotificationDropdown = ({ onClose }: NotificationDropdownProps) => {
         </Button>
       </div>
 
-      {notifications.length === 0 ? (
+      {validNotifications.length === 0 ? (
         <div className="py-8 px-4 text-center">
           <Info className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
           <h4 className="font-medium mb-1">No notifications</h4>
@@ -55,7 +66,7 @@ const NotificationDropdown = ({ onClose }: NotificationDropdownProps) => {
         <>
           <ScrollArea className="max-h-[400px] overflow-y-auto p-2">
             <div className="space-y-1">
-              {notifications.map((notification) => (
+              {validNotifications.map((notification) => (
                 <NotificationItem key={notification.id} notification={notification} />
               ))}
             </div>

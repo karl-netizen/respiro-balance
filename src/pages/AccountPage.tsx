@@ -26,6 +26,10 @@ const AccountPage = () => {
   const { preferences, updatePreferences } = useUserPreferences();
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
   
+  // Extract first and last name from the user data, if available
+  const firstName = user?.email?.split('@')[0] || '';
+  const lastName = '';
+  
   const {
     register,
     handleSubmit,
@@ -33,8 +37,8 @@ const AccountPage = () => {
   } = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
-      firstName: user?.displayName?.split(' ')[0] || '',
-      lastName: user?.displayName?.split(' ')[1] || '',
+      firstName: firstName,
+      lastName: lastName,
       email: user?.email || '',
     },
   });

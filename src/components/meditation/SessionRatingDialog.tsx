@@ -12,13 +12,16 @@ import {
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { MeditationSession } from './MeditationSessionCard';
 
 interface SessionRatingDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  sessionId: string;
-  sessionTitle: string;
-  onSubmitRating: (sessionId: string, rating: number, feedback: string) => void;
+  onSubmitRating?: (sessionId: string, rating: number, feedback: string) => void;
+  sessionId?: string;
+  sessionTitle?: string;
+  session?: MeditationSession;
+  onSubmit?: (rating: number, feedback: string) => void;
 }
 
 const SessionRatingDialog: React.FC<SessionRatingDialogProps> = ({
@@ -26,7 +29,9 @@ const SessionRatingDialog: React.FC<SessionRatingDialogProps> = ({
   onClose,
   sessionId,
   sessionTitle,
-  onSubmitRating
+  onSubmitRating,
+  session,
+  onSubmit
 }) => {
   const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
@@ -43,7 +48,12 @@ const SessionRatingDialog: React.FC<SessionRatingDialogProps> = ({
       return;
     }
 
-    onSubmitRating(sessionId, rating, feedback);
+    if (onSubmitRating && sessionId) {
+      onSubmitRating(sessionId, rating, feedback);
+    } else if (onSubmit) {
+      onSubmit(rating, feedback);
+    }
+    
     onClose();
     
     toast({
@@ -52,13 +62,15 @@ const SessionRatingDialog: React.FC<SessionRatingDialogProps> = ({
     });
   };
 
+  const title = session?.title || sessionTitle || "this session";
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Rate your experience</DialogTitle>
           <DialogDescription>
-            How was your meditation session: {sessionTitle}?
+            How was your meditation session: {title}?
           </DialogDescription>
         </DialogHeader>
 

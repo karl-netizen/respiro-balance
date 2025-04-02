@@ -10,11 +10,16 @@ import BrainwavesTab from './biometrics/BrainwavesTab';
 import BreathingTab from './biometrics/BreathingTab';
 import { BiometricDisplayProps } from './types/BiometricTypes';
 
-const BiometricDisplay: React.FC<BiometricDisplayProps> = ({
+interface ExtendedBiometricDisplayProps extends BiometricDisplayProps {
+  sessionId?: string;
+}
+
+const BiometricDisplay: React.FC<ExtendedBiometricDisplayProps> = ({
   biometricData,
   isInitial = false,
   showChange = false,
-  change
+  change,
+  sessionId
 }) => {
   const [selectedMetric, setSelectedMetric] = React.useState('hrv');
   const { simulationRunning, toggleSimulation } = useSimulationState();
