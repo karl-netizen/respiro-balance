@@ -3,133 +3,151 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { MeditationSessionPlayer, BiometricDisplay, SessionRatingDialog } from "@/components/meditation";
-import { useMeditationLibrary } from "@/hooks/useMeditationLibrary";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Heart } from "lucide-react";
+import { ChevronLeft, Clock, Calendar, Award, Heart } from "lucide-react";
+import { 
+  MeditationSessionPlayer, 
+  SessionRatingDialog, 
+  BiometricDisplay 
+} from "@/components/meditation";
+import { useMeditationSessions } from '@/hooks/useMeditationSessions';
+import { useToast } from '@/components/ui/use-toast';
 
 const MeditationSessionView = () => {
-  const { sessionId } = useParams();
+  const { sessionId } = useParams<{ sessionId: string }>();
   const navigate = useNavigate();
-  const { 
-    meditationSessions, 
-    handleToggleFavorite, 
-    isFavorite,
-    showRatingDialog,
-    setShowRatingDialog,
-    handleSubmitRating
-  } = useMeditationLibrary();
+  const { toast } = useToast();
+  const { meditationSessions } = useMeditationSessions();
+  const [isRatingDialogOpen, setIsRatingDialogOpen] = useState(false);
+  const [showBiometrics, setShowBiometrics] = useState(false);
   
-  // Find the selected session
-  const selectedSession = sessionId 
-    ? meditationSessions.find(session => session.id === sessionId) 
-    : null;
+  // Find the session by ID
+  const session = sessionId ? 
+    meditationSessions.find(s => s.id === sessionId) : 
+    undefined;
   
-  if (!selectedSession) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-grow flex items-center justify-center">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4">Session Not Found</h2>
-            <p className="mb-6 text-muted-foreground">The meditation session you're looking for doesn't exist.</p>
-            <Button onClick={() => navigate('/meditate')}>
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Meditation Library
-            </Button>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
+  useEffect(() => {
+    if (!session && sessionId) {
+      toast({
+        title: "Session not found",
+        description: `No meditation session with ID ${sessionId} was found.`,
+        variant: "destructive"
+      });
+      navigate('/meditate');
+    }
+  }, [session, sessionId, navigate, toast]);
+  
+  const handleSessionComplete = () => {
+    setIsRatingDialogOpen(true);
+    // Additional logic for session completion if needed
+  };
+  
+  const handleRatingSubmit = (rating: number, feedback: string) => {
+    toast({
+      title: "Thanks for your feedback!",
+      description: `You rated this session ${rating} stars.`
+    });
+    setIsRatingDialogOpen(false);
+  };
+  
+  const toggleBiometrics = () => {
+    setShowBiometrics(prev => !prev);
+  };
+  
+  if (!session) {
+    return null; // Return null while checking for the session
   }
-  
-  const handleBackClick = () => {
-    navigate('/meditate');
-  };
-
-  const handleSessionComplete = (sessionId: string) => {
-    // Placeholder for session completion logic
-    console.log(`Session ${sessionId} completed`);
-    setShowRatingDialog(true);
-  };
   
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       
-      <main className="flex-grow pt-16">
-        <div className="container max-w-5xl mx-auto px-4 py-8">
-          <div className="flex items-center justify-between mb-8">
-            <Button variant="ghost" onClick={handleBackClick}>
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Library
-            </Button>
-            
+      <main className="flex-grow pt-20 pb-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="mb-6">
             <Button
               variant="ghost"
-              onClick={() => handleToggleFavorite(selectedSession.id)}
-              className={isFavorite(selectedSession.id) ? "text-red-500" : ""}
+              className="flex items-center text-foreground/70 hover:text-foreground"
+              onClick={() => navigate(-1)}
             >
-              <Heart 
-                className={`mr-2 h-5 w-5 ${
-                  isFavorite(selectedSession.id) ? "fill-red-500" : ""
-                }`} 
-              />
-              {isFavorite(selectedSession.id) ? "Favorited" : "Add to Favorites"}
+              <ChevronLeft className="mr-2 h-4 w-4" />
+              Back to Library
             </Button>
           </div>
           
-          <div className="mb-10">
-            <h1 className="text-3xl font-bold mb-2">{selectedSession.title}</h1>
-            <p className="text-muted-foreground">{selectedSession.description}</p>
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold mb-3">{session.title}</h1>
+            <p className="text-foreground/70 max-w-2xl mb-6">{session.description}</p>
             
-            <div className="flex flex-wrap gap-2 mt-3">
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
-                {selectedSession.duration} min
-              </span>
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-secondary/20 text-secondary-foreground">
-                {selectedSession.level}
-              </span>
-              {selectedSession.tags?.map(tag => (
-                <span 
-                  key={tag}
-                  className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-muted text-muted-foreground"
-                >
-                  {tag}
-                </span>
-              ))}
+            <div className="flex flex-wrap gap-4">
+              <div className="flex items-center text-foreground/70">
+                <Clock className="mr-2 h-4 w-4" />
+                <span>{session.duration} minutes</span>
+              </div>
+              <div className="flex items-center text-foreground/70">
+                <Calendar className="mr-2 h-4 w-4" />
+                <span>{session.category}</span>
+              </div>
+              <div className="flex items-center text-foreground/70">
+                <Award className="mr-2 h-4 w-4" />
+                <span>{session.level}</span>
+              </div>
             </div>
           </div>
           
-          <MeditationSessionPlayer 
-            session={selectedSession} 
-            onComplete={handleSessionComplete}
-          />
-          
-          <div className="mt-10">
-            <h2 className="text-xl font-semibold mb-4">Biometric Feedback</h2>
-            <BiometricDisplay 
-              biometricData={null} // You would pass the actual biometric data here
-              sessionId={selectedSession.id} 
-            />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2">
+              <MeditationSessionPlayer 
+                session={session} 
+                onComplete={handleSessionComplete} 
+              />
+            </div>
+            
+            <div className="space-y-6">
+              <div className="bg-card rounded-lg shadow p-6">
+                <h3 className="text-xl font-semibold mb-4">Benefits</h3>
+                <ul className="space-y-2">
+                  {session.benefits.map((benefit, index) => (
+                    <li key={index} className="flex items-start">
+                      <span className="mr-2 text-primary">•</span>
+                      <span>{benefit}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              
+              <div className="bg-card rounded-lg shadow p-6">
+                <h3 className="text-xl font-semibold mb-4">Additional Information</h3>
+                <p className="text-foreground/70 mb-4">{session.additionalInfo}</p>
+                
+                <Button 
+                  variant="outline" 
+                  className="w-full flex items-center justify-center"
+                  onClick={toggleBiometrics}
+                >
+                  <Heart className="mr-2 h-4 w-4" />
+                  {showBiometrics ? "Hide Biometrics" : "Show Biometrics"}
+                </Button>
+              </div>
+            </div>
           </div>
+          
+          {showBiometrics && (
+            <div className="mt-8">
+              <BiometricDisplay sessionData={session} />
+            </div>
+          )}
         </div>
-        
-        {showRatingDialog && (
-          <SessionRatingDialog 
-            isOpen={showRatingDialog}
-            onClose={() => setShowRatingDialog(false)}
-            onSubmitRating={(sessionId, rating, feedback) => 
-              handleSubmitRating(sessionId, rating, feedback)
-            }
-            sessionId={selectedSession.id}
-            sessionTitle={selectedSession.title}
-          />
-        )}
       </main>
       
       <Footer />
+      
+      <SessionRatingDialog 
+        isOpen={isRatingDialogOpen} 
+        onClose={() => setIsRatingDialogOpen(false)} 
+        onRatingSubmit={handleRatingSubmit}
+        sessionId={session.id}
+      />
     </div>
   );
 };

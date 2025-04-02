@@ -7,11 +7,12 @@ import { UserPreferencesProvider } from '@/context';
 import { NotificationsProvider } from '@/context/NotificationsProvider';
 import { AuthProvider } from "@/providers/AuthProvider";
 import LandingPage from "@/pages/LandingPage";
+import Dashboard from "@/pages/Dashboard";
 import MeditationLibrary from "@/pages/MeditationLibrary";
 import BreathingExercise from "@/pages/BreathingExercise";
 import MeditationSessionView from "@/pages/MeditationSessionView";
 import ProgressDashboard from "@/pages/ProgressDashboard";
-import ErrorPage from "@/pages/ErrorPage";
+import NotFound from "@/pages/NotFound";
 import LoginPage from "@/pages/LoginPage";
 import SignupPage from "@/pages/SignupPage";
 import AccountPage from "@/pages/AccountPage";
@@ -65,6 +66,7 @@ function App() {
                 
                 {/* Protected routes */}
                 <Route element={<RequireAuth />}>
+                  <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/meditate" element={<MeditationLibrary />} />
                   <Route path="/breathe" element={<BreathingExercise />} />
                   <Route path="/session/:sessionId" element={<MeditationSessionView />} />
@@ -76,9 +78,8 @@ function App() {
                   <Route path="/morning-ritual" element={<MorningRitual />} />
                 </Route>
                 
-                {/* Fallback route */}
-                <Route path="/error" element={<ErrorPage />} />
-                <Route path="*" element={<Navigate to="/error" />} />
+                {/* Use NotFound instead of ErrorPage for 404 errors */}
+                <Route path="*" element={<NotFound />} />
               </Routes>
               <Toaster />
             </NotificationsProvider>

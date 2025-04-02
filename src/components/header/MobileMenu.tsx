@@ -1,10 +1,11 @@
 
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Menu, X, User, Moon, Sun, Bell, Heart, Search, Settings, HelpCircle, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import MobileDropdown from './MobileDropdown';
 import { useUserPreferences } from '@/context/hooks/useUserPreferences';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { useAuth } from '@/hooks/useAuth';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -13,6 +14,7 @@ interface MobileMenuProps {
 
 const MobileMenu = ({ isOpen, toggleMenu }: MobileMenuProps) => {
   const { preferences, updatePreferences } = useUserPreferences();
+  const { user } = useAuth();
   const isDarkMode = preferences.theme === 'dark';
   
   const toggleTheme = () => {
@@ -35,13 +37,23 @@ const MobileMenu = ({ isOpen, toggleMenu }: MobileMenuProps) => {
       {isOpen && (
         <div className="md:hidden absolute top-full left-0 right-0 glass-morph animate-fade-in">
           <div className="flex flex-col space-y-2 p-6">
-            <a 
-              href="/" 
+            <Link 
+              to="/" 
               className="text-foreground/80 hover:text-primary py-2 button-transition"
               onClick={toggleMenu}
             >
               Home
-            </a>
+            </Link>
+            
+            {user && (
+              <Link 
+                to="/dashboard" 
+                className="text-foreground/80 hover:text-primary py-2 button-transition"
+                onClick={toggleMenu}
+              >
+                Dashboard
+              </Link>
+            )}
             
             <MobileDropdown 
               title="Meditate" 
@@ -177,19 +189,25 @@ const MobileMenu = ({ isOpen, toggleMenu }: MobileMenuProps) => {
             </div>
             
             <div className="pt-4 mt-2">
-              <Button 
-                variant="outline" 
-                className="border-primary text-primary hover:bg-primary hover:text-white w-full mt-2"
-                onClick={toggleMenu}
-              >
-                Log In
-              </Button>
-              <Button 
-                className="bg-primary text-white hover:bg-mindflow-dark w-full mt-2"
-                onClick={toggleMenu}
-              >
-                Get Started
-              </Button>
+              {!user && (
+                <>
+                  <Button 
+                    variant="outline" 
+                    className="border-primary text-primary hover:bg-primary hover:text-white w-full mt-2"
+                    onClick={toggleMenu}
+                    asChild
+                  >
+                    <Link to="/login">Log In</Link>
+                  </Button>
+                  <Button 
+                    className="bg-primary text-white hover:bg-respiro-dark w-full mt-2"
+                    onClick={toggleMenu}
+                    asChild
+                  >
+                    <Link to="/signup">Get Started</Link>
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>

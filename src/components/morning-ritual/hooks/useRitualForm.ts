@@ -43,6 +43,14 @@ export const useRitualForm = () => {
   
   // Handle form submission
   const onSubmit = (values: RitualFormValues) => {
+    // Ensure reminders have required properties
+    const processedReminders: RitualReminder[] = (values.reminders || []).map(reminder => ({
+      id: reminder.id || generateRitualId(),
+      enabled: reminder.enabled || false,
+      type: reminder.type || "in-app",
+      time: reminder.time || "08:00"
+    }));
+    
     // Create new ritual object
     const newRitual: MorningRitual = {
       id: generateRitualId(),
@@ -57,7 +65,7 @@ export const useRitualForm = () => {
       createdAt: new Date().toISOString(),
       daysOfWeek: values.recurrence === "custom" ? values.daysOfWeek as WorkDay[] : undefined,
       priority: values.priority as RitualPriority,
-      reminders: values.reminders as RitualReminder[],
+      reminders: processedReminders,
       isTemplate: values.isTemplate,
       associatedGoals: values.associatedGoals,
       completionHistory: []

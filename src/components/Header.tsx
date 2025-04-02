@@ -14,6 +14,10 @@ const Header = () => {
   const isHomePage = location.pathname === "/";
   const isTransparent = isHomePage;
 
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(prev => !prev);
+  };
+
   return (
     <header
       className={cn(
@@ -41,7 +45,7 @@ const Header = () => {
           
           <button
             className="p-2 rounded-md lg:hidden"
-            onClick={() => setMobileMenuOpen(true)}
+            onClick={toggleMobileMenu}
             aria-controls="mobile-menu"
             aria-expanded={mobileMenuOpen}
           >
@@ -51,7 +55,7 @@ const Header = () => {
         </div>
       </div>
 
-      <MobileMenu isOpen={mobileMenuOpen} toggleMenu={() => setMobileMenuOpen(false)} />
+      <MobileMenu isOpen={mobileMenuOpen} toggleMenu={toggleMobileMenu} />
     </header>
   );
 };
