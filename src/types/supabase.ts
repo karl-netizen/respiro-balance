@@ -30,6 +30,7 @@ export interface UserPreferencesRecord {
     preferredSessionDuration: number;
     metricsOfInterest: string[];
     subscriptionTier: string;
+    morningRituals?: any[]; // Add morningRituals to the schema
   };
   created_at: string;
   updated_at: string;
@@ -64,4 +65,12 @@ export interface BalanceMetric {
   stress_level: number;
   recorded_at: string;
   notes?: string;
+}
+
+// Define the same BluetoothDevice interface here to ensure consistency
+export interface BluetoothDevice {
+  id: string;
+  name: string;
+  type: string;
+  connected: boolean; // Make this required to match the connected-devices-list component
 }

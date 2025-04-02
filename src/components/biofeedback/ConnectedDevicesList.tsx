@@ -2,13 +2,7 @@
 import { Activity, Heart, LineChart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-
-interface BluetoothDevice {
-  id: string;
-  name: string;
-  type: string;
-  connected: boolean;
-}
+import { BluetoothDevice } from "@/types/supabase"; // Import from shared type
 
 interface ConnectedDevicesListProps {
   devices: BluetoothDevice[];

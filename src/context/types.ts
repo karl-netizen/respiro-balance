@@ -1,13 +1,8 @@
-
 import { Dispatch, SetStateAction } from 'react';
+import { BluetoothDevice as SupabaseBluetoothDevice } from '@/types/supabase';
 
-// Define BluetoothDevice interface
-export interface BluetoothDevice {
-  id: string;
-  name: string;
-  type: string;
-  connected?: boolean; // Added connected property as optional
-}
+// Define BluetoothDevice interface to match the Supabase type
+export type BluetoothDevice = SupabaseBluetoothDevice;
 
 // Ritual types
 export interface MorningRitual {

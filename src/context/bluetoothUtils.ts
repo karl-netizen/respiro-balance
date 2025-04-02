@@ -1,5 +1,6 @@
 
-import { BluetoothDevice, UserPreferences } from './types';
+import { BluetoothDevice } from '@/types/supabase'; // Import from shared types
+import { UserPreferences } from './types';
 
 // Function to simulate connecting a Bluetooth device
 export const connectBluetoothDevice = async (): Promise<{

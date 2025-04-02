@@ -1,9 +1,9 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase, demoAuth, isSupabaseConfigured } from '@/lib/supabase';
-import { UserPreferencesRecord } from '@/types/supabase';
+import { UserPreferencesRecord, BluetoothDevice } from '@/types/supabase';
 import { useAuth } from './useAuth';
-import { UserPreferences, UserRole, WorkDay, WorkEnvironment, StressLevel, MeditationExperience, SubscriptionTier } from '@/context/types';
+import { UserPreferences, UserRole, WorkDay, WorkEnvironment, StressLevel, MeditationExperience, SubscriptionTier, MorningRitual } from '@/context/types';
 import defaultPreferences from '@/context/defaultPreferences';
 import { toast } from 'sonner';
 
@@ -74,6 +74,9 @@ export function useSupabaseUserPreferences() {
     
     const meditationExperience = record.preferences_data.meditationExperience as MeditationExperience;
     const subscriptionTier = record.preferences_data.subscriptionTier as SubscriptionTier;
+    
+    // Handle morningRituals with proper type casting
+    const morningRituals = record.preferences_data.morningRituals as MorningRitual[] || [];
 
     return {
       ...defaultPreferences,
@@ -95,7 +98,7 @@ export function useSupabaseUserPreferences() {
       preferredSessionDuration: record.preferences_data.preferredSessionDuration,
       metricsOfInterest: record.preferences_data.metricsOfInterest || defaultPreferences.metricsOfInterest,
       subscriptionTier,
-      morningRituals: record.preferences_data.morningRituals || [],
+      morningRituals,
       // Properties not stored in the database
       hasCompletedOnboarding: true,
       connectedDevices: [],
