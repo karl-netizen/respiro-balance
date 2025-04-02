@@ -1,0 +1,153 @@
+
+import React, { useState } from 'react';
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import { useAuth } from "@/hooks/useAuth";
+import { useUserPreferences } from "@/context";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const profileFormSchema = z.object({
+  firstName: z.string().min(1, { message: "First name is required" }),
+  lastName: z.string().optional(),
+  email: z.string().email({ message: "Please enter a valid email address" }).optional(),
+});
+
+type ProfileFormValues = z.infer<typeof profileFormSchema>;
+
+const AccountPage = () => {
+  const { user, updateProfile, loading, signOut } = useAuth();
+  const { preferences, updatePreferences } = useUserPreferences();
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
+  
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ProfileFormValues>({
+    resolver: zodResolver(profileFormSchema),
+    defaultValues: {
+      firstName: user?.displayName?.split(' ')[0] || '',
+      lastName: user?.displayName?.split(' ')[1] || '',
+      email: user?.email || '',
+    },
+  });
+  
+  const onSubmit = async (data: ProfileFormValues) => {
+    try {
+      const displayName = `${data.firstName} ${data.lastName || ''}`.trim();
+      await updateProfile({ displayName });
+      toast.success("Profile updated successfully");
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      toast.error("Failed to update profile");
+    }
+  };
+  
+  const handleDeleteAccount = async () => {
+    setIsDeletingAccount(true);
+    // This would be connected to an actual API in a production app
+    setTimeout(() => {
+      toast.success("Your account has been scheduled for deletion");
+      setIsDeletingAccount(false);
+      signOut();
+    }, 1500);
+  };
+  
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      
+      <main className="flex-grow py-16 px-4">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-3xl font-bold mb-8">Account Settings</h1>
+          
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Profile Information</CardTitle>
+                <CardDescription>
+                  Update your account profile details
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="firstName">First Name</Label>
+                      <Input
+                        id="firstName"
+                        {...register("firstName")}
+                        className="mt-1"
+                      />
+                      {errors.firstName && (
+                        <p className="mt-1 text-sm text-destructive">{errors.firstName.message}</p>
+                      )}
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="lastName">Last Name</Label>
+                      <Input
+                        id="lastName"
+                        {...register("lastName")}
+                        className="mt-1"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      {...register("email")}
+                      disabled
+                      className="mt-1"
+                    />
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Your email address cannot be changed
+                    </p>
+                  </div>
+                  
+                  <Button type="submit" disabled={loading}>
+                    {loading ? "Saving..." : "Save changes"}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle>Delete Account</CardTitle>
+                <CardDescription>
+                  Permanently delete your account and all associated data
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="mb-4 text-muted-foreground">
+                  This action is irreversible and will immediately delete all your data including meditation history, progress, and preferences.
+                </p>
+                <Button 
+                  variant="destructive" 
+                  onClick={handleDeleteAccount}
+                  disabled={isDeletingAccount}
+                >
+                  {isDeletingAccount ? "Processing..." : "Delete my account"}
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </main>
+      
+      <Footer />
+    </div>
+  );
+};
+
+export default AccountPage;
