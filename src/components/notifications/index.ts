@@ -1,4 +1,5 @@
 
-export { default as NotificationBell } from './NotificationBell';
+import { NotificationBell } from './NotificationBell';
+export { NotificationBell };
 export { default as NotificationDropdown } from './NotificationDropdown';
 export { default as NotificationItem } from './NotificationItem';

@@ -1,26 +1,16 @@
 
 import React, { useState } from 'react';
-import { Star, ThumbsUp, MessageSquare } from 'lucide-react';
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle,
-  DialogDescription,
-  DialogFooter
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/hooks/use-toast";
-import { MeditationSession } from './MeditationSessionCard';
+import { Star } from 'lucide-react';
 
-interface SessionRatingDialogProps {
+export interface SessionRatingDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmitRating?: (sessionId: string, rating: number, feedback: string) => void;
-  sessionId?: string;
+  sessionId: string;
   sessionTitle?: string;
-  session?: MeditationSession;
+  onSubmitRating?: (sessionId: string, rating: number, feedback: string) => void;
   onSubmit?: (rating: number, feedback: string) => void;
 }
 
@@ -30,94 +20,68 @@ const SessionRatingDialog: React.FC<SessionRatingDialogProps> = ({
   sessionId,
   sessionTitle,
   onSubmitRating,
-  session,
   onSubmit
 }) => {
-  const [rating, setRating] = useState(0);
-  const [hoveredRating, setHoveredRating] = useState(0);
-  const [feedback, setFeedback] = useState('');
-  const { toast } = useToast();
-
+  const [rating, setRating] = useState<number>(0);
+  const [feedback, setFeedback] = useState<string>('');
+  
   const handleSubmit = () => {
-    if (rating === 0) {
-      toast({
-        title: "Rating required",
-        description: "Please select a star rating before submitting",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (onSubmitRating && sessionId) {
+    if (onSubmitRating) {
       onSubmitRating(sessionId, rating, feedback);
     } else if (onSubmit) {
       onSubmit(rating, feedback);
     }
     
+    setRating(0);
+    setFeedback('');
     onClose();
-    
-    toast({
-      title: "Thank you for your feedback!",
-      description: "Your rating helps us improve our meditation content."
-    });
   };
-
-  const title = session?.title || sessionTitle || "this session";
-
+  
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Rate your experience</DialogTitle>
-          <DialogDescription>
-            How was your meditation session: {title}?
-          </DialogDescription>
+          <DialogTitle>How was your session?</DialogTitle>
         </DialogHeader>
-
-        <div className="flex justify-center mb-4 mt-2">
-          <div className="flex items-center gap-1">
+        
+        <div className="py-4">
+          <p className="text-center mb-4">
+            {sessionTitle || "Rate your meditation experience"}
+          </p>
+          
+          <div className="flex justify-center space-x-2 mb-6">
             {[1, 2, 3, 4, 5].map((star) => (
               <button
                 key={star}
                 type="button"
                 onClick={() => setRating(star)}
-                onMouseEnter={() => setHoveredRating(star)}
-                onMouseLeave={() => setHoveredRating(0)}
-                className="focus:outline-none transition-colors p-1"
+                className="focus:outline-none"
               >
                 <Star
-                  size={32}
-                  className={`${
-                    star <= (hoveredRating || rating)
-                      ? 'text-yellow-400 fill-yellow-400'
-                      : 'text-gray-300'
-                  } transition-colors`}
+                  className={`h-8 w-8 ${
+                    rating >= star
+                      ? "fill-yellow-400 text-yellow-400"
+                      : "text-gray-300"
+                  }`}
                 />
               </button>
             ))}
           </div>
-        </div>
-
-        <div className="space-y-2">
-          <label htmlFor="feedback" className="text-sm font-medium flex items-center gap-2">
-            <MessageSquare size={16} />
-            Share your thoughts (optional)
-          </label>
+          
           <Textarea
-            id="feedback"
-            placeholder="What did you like or dislike about this session?"
+            placeholder="Share your experience or any feedback (optional)"
             value={feedback}
             onChange={(e) => setFeedback(e.target.value)}
-            rows={4}
+            className="min-h-[100px]"
           />
         </div>
-
-        <DialogFooter className="flex justify-end gap-2 mt-4">
+        
+        <DialogFooter className="flex space-x-2 sm:justify-end">
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <Button onClick={handleSubmit}>
-            Submit Feedback
+          <Button type="submit" onClick={handleSubmit} disabled={rating === 0}>
+            Submit
           </Button>
         </DialogFooter>
       </DialogContent>

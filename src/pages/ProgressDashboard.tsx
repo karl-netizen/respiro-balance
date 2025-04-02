@@ -12,11 +12,23 @@ import {
   CorrelationsTab,
   useMeditationStats
 } from "@/components/progress";
+import { Achievement } from '@/types/achievements';
 
 const ProgressDashboard = () => {
   const { preferences } = useUserPreferences();
   const [activeTab, setActiveTab] = useState("overview");
   const { meditationStats, sessions } = useMeditationStats();
+  
+  // Convert achievements to match the expected type
+  const achievements: Achievement[] = meditationStats.achievements.map(achievement => ({
+    id: achievement.name.toLowerCase().replace(/\s+/g, '-'), // Create ID from name
+    name: achievement.name,
+    description: achievement.description,
+    icon: achievement.icon || "award",
+    unlocked: achievement.unlocked,
+    progress: achievement.progress || 0,
+    unlockedDate: achievement.unlockedDate
+  }));
   
   return (
     <div className="min-h-screen flex flex-col">
@@ -51,7 +63,7 @@ const ProgressDashboard = () => {
               </TabsContent>
               
               <TabsContent value="achievements" className="mt-0">
-                <AchievementsTab achievements={meditationStats.achievements} />
+                <AchievementsTab achievements={achievements} />
               </TabsContent>
             </Tabs>
           </div>

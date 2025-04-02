@@ -9,13 +9,26 @@ import {
   OverviewTab, 
   InsightsTab, 
   AchievementsTab,
+  CorrelationsTab,
   useMeditationStats
 } from "@/components/progress";
+import { Achievement } from '@/types/achievements';
 
-const ProgressPage = () => {
+const Progress = () => {
   const { preferences } = useUserPreferences();
   const [activeTab, setActiveTab] = useState("overview");
   const { meditationStats, sessions } = useMeditationStats();
+  
+  // Convert achievements to match the expected type
+  const achievements: Achievement[] = meditationStats.achievements.map(achievement => ({
+    id: achievement.name.toLowerCase().replace(/\s+/g, '-'), // Create ID from name
+    name: achievement.name,
+    description: achievement.description,
+    icon: achievement.icon || "award",
+    unlocked: achievement.unlocked,
+    progress: achievement.progress || 0,
+    unlockedDate: achievement.unlockedDate
+  }));
   
   return (
     <div className="min-h-screen flex flex-col">
@@ -27,9 +40,10 @@ const ProgressPage = () => {
         <section className="py-16 px-6">
           <div className="max-w-6xl mx-auto">
             <Tabs defaultValue="overview" className="w-full" onValueChange={setActiveTab}>
-              <TabsList className="grid w-full grid-cols-3 mb-8">
+              <TabsList className="grid w-full grid-cols-4 mb-8">
                 <TabsTrigger value="overview">Overview</TabsTrigger>
                 <TabsTrigger value="insights">Insights</TabsTrigger>
+                <TabsTrigger value="correlations">Correlations</TabsTrigger>
                 <TabsTrigger value="achievements">Achievements</TabsTrigger>
               </TabsList>
               
@@ -44,8 +58,12 @@ const ProgressPage = () => {
                 <InsightsTab />
               </TabsContent>
               
+              <TabsContent value="correlations" className="mt-0">
+                <CorrelationsTab />
+              </TabsContent>
+              
               <TabsContent value="achievements" className="mt-0">
-                <AchievementsTab achievements={meditationStats.achievements} />
+                <AchievementsTab achievements={achievements} />
               </TabsContent>
             </Tabs>
           </div>
@@ -57,4 +75,4 @@ const ProgressPage = () => {
   );
 };
 
-export default ProgressPage;
+export default Progress;

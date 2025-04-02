@@ -8,27 +8,29 @@ import { ChevronLeft, Heart, Clock, Share2 } from 'lucide-react';
 import { useMeditationSessions } from '@/hooks/useMeditationSessions';
 import { useBiometricData } from '@/hooks/useBiometricData';
 import { toast } from 'sonner';
-import { MeditationSessionPlayer } from '@/components/meditation';
-import { BiometricDisplay } from '@/components/biometrics';
-import { SessionRatingDialog } from '@/components/meditation';
+import { 
+  MeditationSessionPlayer, 
+  BiometricDisplay, 
+  SessionRatingDialog 
+} from '@/components/meditation';
 
 const MeditationSessionView = () => {
   const { sessionId } = useParams<{ sessionId: string }>();
   const navigate = useNavigate();
-  const { sessions, completeSession } = useMeditationSessions();
+  const { meditationSessions, completeSession } = useMeditationSessions();
   const [showRatingDialog, setShowRatingDialog] = useState(false);
   const { biometricData, addBiometricData } = useBiometricData();
   
   // Find the session
-  const session = sessions.find(s => s.id === sessionId);
+  const session = meditationSessions?.find(s => s.id === sessionId);
   
   useEffect(() => {
-    if (!session && sessions.length > 0) {
+    if (!session && meditationSessions?.length > 0) {
       // Session not found, redirect to meditation library
       navigate('/meditate');
       toast.error('Session not found');
     }
-  }, [session, sessions, navigate]);
+  }, [session, meditationSessions, navigate]);
   
   const handleBackToLibrary = () => {
     navigate('/meditate');
@@ -36,26 +38,15 @@ const MeditationSessionView = () => {
   
   const handleSessionComplete = () => {
     if (sessionId) {
-      completeSession({ sessionId });
+      completeSession(sessionId);
       
       // Generate mock biometric data
       const mockBiometricData = {
         sessionId,
-        heartRate: {
-          before: Math.floor(Math.random() * 15) + 70, // 70-85
-          during: Math.floor(Math.random() * 10) + 65, // 65-75
-          after: Math.floor(Math.random() * 10) + 60, // 60-70
-        },
-        hrv: {
-          before: Math.floor(Math.random() * 20) + 40, // 40-60
-          during: Math.floor(Math.random() * 30) + 50, // 50-80
-          after: Math.floor(Math.random() * 40) + 60, // 60-100
-        },
-        stress: {
-          before: Math.floor(Math.random() * 20) + 50, // 50-70
-          during: Math.floor(Math.random() * 20) + 30, // 30-50
-          after: Math.floor(Math.random() * 20) + 20, // 20-40
-        }
+        heart_rate: Math.floor(Math.random() * 15) + 70, // 70-85
+        hrv: Math.floor(Math.random() * 20) + 40, // 40-60
+        respiratory_rate: Math.floor(Math.random() * 10) + 65, // 65-75
+        stress_score: Math.floor(Math.random() * 20) + 50, // 50-70
       };
       
       // Add biometric data
@@ -101,7 +92,7 @@ const MeditationSessionView = () => {
         <div className="grid md:grid-cols-2 gap-8 mb-8">
           <div>
             <h1 className="text-2xl font-bold mb-2">{session.session_type}</h1>
-            <p className="text-muted-foreground mb-4">{session.description}</p>
+            <p className="text-muted-foreground mb-4">{session.description || "No description available"}</p>
             
             <div className="flex items-center gap-4 mb-6">
               <div className="flex items-center">
@@ -127,7 +118,8 @@ const MeditationSessionView = () => {
           <div>
             <h2 className="text-xl font-semibold mb-4">Biometric Feedback</h2>
             <BiometricDisplay 
-              sessionId={sessionId} 
+              biometricData={{}} 
+              sessionId={sessionId}
             />
           </div>
         </div>
@@ -138,8 +130,8 @@ const MeditationSessionView = () => {
       <SessionRatingDialog
         isOpen={showRatingDialog}
         onClose={() => setShowRatingDialog(false)}
-        onSubmit={handleRatingSubmit}
-        sessionId={sessionId}
+        sessionId={sessionId || ""}
+        onSubmitRating={handleRatingSubmit}
       />
     </div>
   );
