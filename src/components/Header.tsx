@@ -4,7 +4,6 @@ import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import DesktopNav from "./header/DesktopNav";
 import MobileMenu from "./header/MobileMenu";
-import MobileDropdown from "./header/MobileDropdown";
 import AccountSection from "./header/AccountSection";
 import { NotificationBell } from "./notifications";
 import { MenuIcon } from "lucide-react";
@@ -52,9 +51,7 @@ const Header = () => {
         </div>
       </div>
 
-      <MobileMenu isOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)}>
-        <MobileDropdown />
-      </MobileMenu>
+      <MobileMenu isOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
     </header>
   );
 };

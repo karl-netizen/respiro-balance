@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
-import { ConnectedDevicesList, NoDevicesView } from "@/components/biofeedback";
+import BiofeedbackCard from "@/components/biofeedback/BiofeedbackCard";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
@@ -21,6 +21,8 @@ const SettingsPage = () => {
       description: `${key} is now ${value ? "enabled" : "disabled"}`
     });
   };
+  
+  const isTeamOrEnterprise = preferences.subscriptionTier === 'team' || preferences.subscriptionTier === 'enterprise';
   
   return (
     <div className="min-h-screen flex flex-col">
@@ -55,7 +57,7 @@ const SettingsPage = () => {
                     </div>
                     <Switch 
                       id="darkMode" 
-                      checked={preferences.darkMode}
+                      checked={preferences.darkMode || false}
                       onCheckedChange={(checked) => handleToggleSetting('darkMode', checked)}
                     />
                   </div>
@@ -87,7 +89,7 @@ const SettingsPage = () => {
                     </div>
                     <Switch 
                       id="showBiometrics" 
-                      checked={preferences.showBiometrics}
+                      checked={preferences.showBiometrics || false}
                       onCheckedChange={(checked) => handleToggleSetting('showBiometrics', checked)}
                     />
                   </div>
@@ -113,7 +115,7 @@ const SettingsPage = () => {
                     </div>
                     <Switch 
                       id="reminders" 
-                      checked={preferences.reminders}
+                      checked={preferences.reminders || false}
                       onCheckedChange={(checked) => handleToggleSetting('reminders', checked)}
                     />
                   </div>
@@ -129,7 +131,7 @@ const SettingsPage = () => {
                     </div>
                     <Switch 
                       id="emailNotifications" 
-                      checked={preferences.emailNotifications}
+                      checked={preferences.emailNotifications || false}
                       onCheckedChange={(checked) => handleToggleSetting('emailNotifications', checked)}
                     />
                   </div>
@@ -145,7 +147,7 @@ const SettingsPage = () => {
                     </div>
                     <Switch 
                       id="achievementNotifications" 
-                      checked={preferences.achievementNotifications}
+                      checked={preferences.achievementNotifications || false}
                       onCheckedChange={(checked) => handleToggleSetting('achievementNotifications', checked)}
                     />
                   </div>
@@ -163,9 +165,11 @@ const SettingsPage = () => {
                 </CardHeader>
                 <CardContent>
                   {preferences.hasWearableDevice ? (
-                    <ConnectedDevicesList />
+                    <BiofeedbackCard />
                   ) : (
-                    <NoDevicesView />
+                    <div className="text-center py-4">
+                      <p className="text-muted-foreground mb-4">No devices connected. Connect a device to track your biofeedback data.</p>
+                    </div>
                   )}
                   
                   <div className="mt-6">

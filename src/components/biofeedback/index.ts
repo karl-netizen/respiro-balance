@@ -1,5 +1,7 @@
 
 import BiofeedbackCard from './BiofeedbackCard';
+import ConnectedDevicesList from './ConnectedDevicesList';
+import NoDevicesView from './NoDevicesView';
 
-export { BiofeedbackCard };
+export { BiofeedbackCard, ConnectedDevicesList, NoDevicesView };
 export default BiofeedbackCard;

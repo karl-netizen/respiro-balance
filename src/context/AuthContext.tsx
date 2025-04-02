@@ -2,7 +2,7 @@
 import { createContext, useContext } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 
-interface AuthContextProps {
+export interface AuthContextProps {
   user: User | null;
   session: Session | null;
   loading: boolean;
@@ -11,6 +11,9 @@ interface AuthContextProps {
   signOut: () => Promise<void>;
   forgotPassword: (email: string) => Promise<void>;
   resetPassword: (newPassword: string) => Promise<void>;
+  verifyEmail: (token: string) => Promise<void>;
+  resendVerificationEmail: (email: string) => Promise<void>;
+  updateProfile?: (data: { displayName?: string; photoURL?: string }) => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextProps | undefined>(undefined);

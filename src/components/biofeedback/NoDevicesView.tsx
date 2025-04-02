@@ -3,10 +3,10 @@ import React from "react";
 import { Check } from "lucide-react";
 
 interface NoDevicesViewProps {
-  isTeamOrEnterprise: boolean;
+  isTeamOrEnterprise?: boolean;
 }
 
-const NoDevicesView: React.FC<NoDevicesViewProps> = ({ isTeamOrEnterprise }) => {
+const NoDevicesView: React.FC<NoDevicesViewProps> = ({ isTeamOrEnterprise = false }) => {
   return (
     <div className="text-center py-4">
       <div className="flex flex-col items-center space-y-2 mb-4">

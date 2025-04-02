@@ -119,6 +119,18 @@ export interface UserPreferences {
   // Business
   businessAttribution?: string;
   subscriptionTier?: SubscriptionTier;
+  
+  // Additional UI preferences
+  darkMode?: boolean;
+  reducedMotion?: boolean;
+  highContrast?: boolean;
+  reminders?: boolean;
+  emailNotifications?: boolean;
+  achievementNotifications?: boolean;
+  showBiometrics?: boolean;
+  enableBackgroundAudio?: boolean;
+  highQualityAudio?: boolean;
+  offlineAccess?: boolean;
 }
 
 export interface UserPreferencesContextType {
@@ -128,4 +140,16 @@ export interface UserPreferencesContextType {
   isCoach: () => boolean;
   connectBluetoothDevice: () => Promise<boolean>;
   disconnectBluetoothDevice: (deviceId: string) => void;
+}
+
+// Add notification interface
+export interface Notification {
+  id: string;
+  title: string;
+  message: string;
+  time: string;
+  read: boolean;
+  type: 'system' | 'reminder' | 'achievement' | 'update';
+  action?: string;
+  actionUrl?: string;
 }

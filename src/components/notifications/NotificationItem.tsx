@@ -1,72 +1,57 @@
 
-import { useState } from "react";
-import { Check, Trash, Trophy } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Notification, useNotifications } from "@/context/NotificationsProvider";
-import { format, isToday, isYesterday } from "date-fns";
+import React from 'react';
+import { Bell, Check, AlertCircle, Info } from 'lucide-react';
+import { useNotifications } from "@/context/NotificationsProvider";
+import { Notification } from '@/context/types';
 
 interface NotificationItemProps {
   notification: Notification;
+  onRead: (id: string) => void;
 }
 
-const NotificationItem = ({ notification }: NotificationItemProps) => {
-  const { markAsRead, clearNotification } = useNotifications();
-  const [isHovering, setIsHovering] = useState(false);
-
-  const getDateDisplay = (timestamp: string) => {
-    const date = new Date(timestamp);
-    if (isToday(date)) {
-      return `Today at ${format(date, "h:mm a")}`;
-    } else if (isYesterday(date)) {
-      return `Yesterday at ${format(date, "h:mm a")}`;
-    } else {
-      return format(date, "MMM d 'at' h:mm a");
+const NotificationItem: React.FC<NotificationItemProps> = ({ notification, onRead }) => {
+  const NotificationIcon = () => {
+    switch (notification.type) {
+      case 'achievement':
+        return <Check className="h-4 w-4 text-green-500" />;
+      case 'reminder':
+        return <Bell className="h-4 w-4 text-blue-500" />;
+      case 'system':
+        return <AlertCircle className="h-4 w-4 text-amber-500" />;
+      default:
+        return <Info className="h-4 w-4 text-gray-500" />;
     }
   };
-
-  const renderIcon = () => {
-    if (notification.type === "achievement") {
-      return <Trophy className="h-5 w-5 text-yellow-500" />;
-    }
-    return null;
-  };
-
+  
   return (
-    <div
-      className={`p-2 rounded-md transition-colors ${
-        notification.read ? "bg-background" : "bg-primary/5"
-      } ${isHovering ? "bg-secondary/20" : ""}`}
-      onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}
+    <div 
+      className={`p-3 border-b last:border-b-0 ${notification.read ? 'bg-background' : 'bg-secondary/10'}`}
+      onClick={() => !notification.read && onRead(notification.id)}
     >
-      <div className="flex gap-3">
-        <div className="flex-shrink-0 mt-1">{renderIcon()}</div>
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium">{notification.title}</p>
-          <p className="text-xs text-muted-foreground">{notification.message}</p>
-          <p className="text-xs text-muted-foreground mt-1">
-            {getDateDisplay(notification.timestamp)}
-          </p>
+      <div className="flex items-start">
+        <div className="mr-3 mt-1">
+          <NotificationIcon />
         </div>
-        <div className="flex flex-col gap-1">
-          {!notification.read && (
-            <Button
-              size="icon"
-              variant="ghost"
-              className="h-6 w-6"
-              onClick={() => markAsRead(notification.id)}
-            >
-              <Check className="h-3 w-3" />
-            </Button>
-          )}
-          <Button
-            size="icon"
-            variant="ghost"
-            className="h-6 w-6"
-            onClick={() => clearNotification(notification.id)}
-          >
-            <Trash className="h-3 w-3" />
-          </Button>
+        <div className="flex-1">
+          <h4 className={`text-sm font-medium ${notification.read ? 'text-foreground/80' : 'text-foreground'}`}>
+            {notification.title}
+          </h4>
+          <p className="text-xs text-muted-foreground mt-1">
+            {notification.message}
+          </p>
+          <div className="flex justify-between items-center mt-2">
+            <span className="text-xs text-muted-foreground">
+              {notification.time}
+            </span>
+            {notification.action && (
+              <a 
+                href={notification.actionUrl || '#'} 
+                className="text-xs text-primary hover:underline"
+              >
+                {notification.action}
+              </a>
+            )}
+          </div>
         </div>
       </div>
     </div>

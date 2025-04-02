@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
@@ -11,7 +11,7 @@ import { useAuth } from "@/hooks/useAuth";
 const LandingPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [isHovered, setIsHovered] = useState(false);
+  const [isHovered, setIsHovered] = React.useState(false);
   
   const handleGetStarted = () => {
     if (user) {

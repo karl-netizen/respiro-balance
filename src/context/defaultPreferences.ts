@@ -73,7 +73,19 @@ const defaultPreferences: UserPreferences = {
   
   // Business
   businessAttribution: '',
-  subscriptionTier: 'free'
+  subscriptionTier: 'free',
+  
+  // UI preferences
+  darkMode: false,
+  reducedMotion: false,
+  highContrast: false,
+  reminders: true,
+  emailNotifications: true,
+  achievementNotifications: true,
+  showBiometrics: false,
+  enableBackgroundAudio: true,
+  highQualityAudio: false,
+  offlineAccess: false,
 };
 
 export default defaultPreferences;
