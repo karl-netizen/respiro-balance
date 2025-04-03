@@ -1,4 +1,3 @@
-
 import MeditationSessionCard from './MeditationSessionCard';
 import MeditationLibraryBrowser from './MeditationLibraryBrowser';
 import MeditationHeader from './MeditationHeader';
@@ -45,3 +44,7 @@ export {
 
 export type { MeditationSession } from './MeditationSessionCard';
 export type { BiometricData, BiometricChangeData, BiometricDisplayProps } from './types/BiometricTypes';
+
+export { default as MeditationAudioPlayer } from './MeditationAudioPlayer';
+export { default as AudioUploader } from './AudioUploader';
+export { default as EnhancedMeditationSessionView } from './EnhancedMeditationSessionView';
