@@ -14,7 +14,7 @@ import MeditationLibrary from '@/pages/MeditationLibrary';
 import MeditationSessionView from '@/pages/MeditationSessionView';
 import Breathe from '@/pages/Breathe';
 import BreathingExercise from '@/pages/BreathingExercise';
-import MorningRituals from '@/pages/MorningRituals';
+import MorningRitual from '@/pages/MorningRitual';
 import Progress from '@/pages/Progress';
 import Settings from '@/pages/Settings';
 import Login from '@/pages/Login';
@@ -44,7 +44,7 @@ function App() {
                   <Route path="/meditate/:sessionId" element={<MeditationSessionView />} />
                   <Route path="/breathing" element={<Breathe />} />
                   <Route path="/breathing/:exerciseId" element={<BreathingExercise />} />
-                  <Route path="/morning-rituals" element={<MorningRituals />} />
+                  <Route path="/morning-rituals" element={<MorningRitual />} />
                   <Route path="/progress" element={<Progress />} />
                   <Route path="/settings" element={<Settings />} />
                   <Route path="/profile" element={<Profile />} />
