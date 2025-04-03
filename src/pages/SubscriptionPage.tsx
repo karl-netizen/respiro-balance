@@ -2,7 +2,7 @@
 import React from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { SubscriptionCard } from '@/components/subscription/SubscriptionCard';
+import { PaymentCard } from '@/components/payment';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
@@ -15,6 +15,24 @@ const SubscriptionPage = () => {
   if (!isLoading && !user) {
     return <Navigate to="/login" />;
   }
+  
+  const premiumFeatures = [
+    { text: 'Unlimited meditation minutes' },
+    { text: 'Advanced meditation techniques' },
+    { text: 'Personalized recommendations' },
+    { text: 'Biometric integration' },
+    { text: 'Advanced analytics' },
+    { text: 'Offline access' },
+  ];
+  
+  const teamFeatures = [
+    { text: 'Everything in Premium' },
+    { text: '5 team member accounts' },
+    { text: 'Team progress dashboard' },
+    { text: 'Group challenges & goals' },
+    { text: 'Admin controls' },
+    { text: 'Team analytics' },
+  ];
   
   return (
     <div className="min-h-screen flex flex-col">
@@ -31,55 +49,33 @@ const SubscriptionPage = () => {
         </div>
         
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Subscription</h1>
+          <h1 className="text-3xl font-bold mb-2">Subscription Options</h1>
           <p className="text-muted-foreground">
-            Manage your subscription and billing details
+            Choose the plan that fits your meditation journey
           </p>
         </div>
         
         <div className="grid md:grid-cols-2 gap-6">
-          {/* Subscription card */}
-          <div className="md:col-span-1">
-            <SubscriptionCard />
-          </div>
+          <PaymentCard
+            title="Premium"
+            price="$9"
+            description="Unlock the full potential of your mindfulness journey"
+            features={premiumFeatures}
+            popular={true}
+          />
           
-          {/* Pricing comparison */}
-          <div className="md:col-span-1">
-            <div className="rounded-lg border p-6">
-              <h2 className="text-xl font-semibold mb-4">Premium Benefits</h2>
-              
-              <ul className="space-y-3">
-                <PremiumBenefit 
-                  title="Unlimited Meditation" 
-                  description="No more monthly limits on meditation minutes" 
-                />
-                <PremiumBenefit 
-                  title="Advanced Techniques" 
-                  description="Access to our full library of specialized techniques" 
-                />
-                <PremiumBenefit 
-                  title="Personalized Recommendations" 
-                  description="AI-powered suggestions tailored to your preferences" 
-                />
-                <PremiumBenefit 
-                  title="Biometric Integration" 
-                  description="Connect with your wearable devices for deeper insights" 
-                />
-                <PremiumBenefit 
-                  title="Advanced Analytics" 
-                  description="Detailed progress tracking and performance metrics" 
-                />
-                <PremiumBenefit 
-                  title="Offline Access" 
-                  description="Download sessions for use without internet connection" 
-                />
-              </ul>
-              
-              <div className="mt-6 text-sm text-muted-foreground">
-                <p>All subscriptions automatically renew. Cancel anytime from your account settings.</p>
-              </div>
-            </div>
-          </div>
+          <PaymentCard
+            title="Team"
+            price="$49"
+            description="Perfect for small teams and organizations"
+            features={teamFeatures}
+            buttonText="Contact Sales"
+          />
+        </div>
+        
+        <div className="mt-8 text-sm text-muted-foreground text-center">
+          <p>All plans include access to our mobile app and web platform. Premium subscription can be canceled at any time.</p>
+          <p className="mt-2">For enterprise solutions or custom pricing, please contact our sales team.</p>
         </div>
       </main>
       
@@ -87,21 +83,5 @@ const SubscriptionPage = () => {
     </div>
   );
 };
-
-// Premium benefit component
-const PremiumBenefit = ({ title, description }: { title: string; description: string }) => (
-  <li className="flex">
-    <div className="flex-shrink-0 flex items-center justify-center h-6 w-6">
-      <Check className="h-5 w-5 text-primary" />
-    </div>
-    <div className="ml-3">
-      <h3 className="text-sm font-medium">{title}</h3>
-      <p className="text-xs text-muted-foreground">{description}</p>
-    </div>
-  </li>
-);
-
-// Import Check icon
-import { Check } from 'lucide-react';
 
 export default SubscriptionPage;

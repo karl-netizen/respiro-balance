@@ -5,32 +5,17 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Check } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
-import { useSubscriptionContext } from '@/context/SubscriptionProvider';
+import { PaymentButton } from '@/components/payment';
 
 const PricingTiers = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { startPremiumCheckout, isPremium, tierName } = useSubscriptionContext();
   
   const handleGetStarted = () => {
     if (user) {
       navigate('/dashboard');
     } else {
       navigate('/register');
-    }
-  };
-  
-  const handleUpgrade = async () => {
-    if (!user) {
-      navigate('/register?intent=premium');
-      return;
-    }
-    
-    try {
-      const checkoutUrl = await startPremiumCheckout();
-      window.location.href = checkoutUrl;
-    } catch (error) {
-      console.error('Error starting checkout:', error);
     }
   };
   
@@ -43,11 +28,6 @@ const PricingTiers = () => {
             Choose the plan that fits your needs. All plans include access to our 
             mobile app and web platform.
           </p>
-          {user && (
-            <p className="mt-2 text-sm font-medium text-primary">
-              You're currently on the {tierName} plan
-            </p>
-          )}
         </div>
         
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
@@ -114,12 +94,9 @@ const PricingTiers = () => {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button 
-                className="w-full" 
-                onClick={handleUpgrade}
-              >
-                {isPremium ? 'Manage Subscription' : 'Upgrade Now'}
-              </Button>
+              <PaymentButton className="w-full">
+                Upgrade Now
+              </PaymentButton>
             </CardFooter>
           </Card>
           
@@ -160,8 +137,8 @@ const PricingTiers = () => {
         
         <div className="mt-16 text-center">
           <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
-            All plans include access to our mobile app and web platform. Premium and Team plans
-            are billed monthly and can be canceled at any time. For enterprise solutions or custom
+            All plans include access to our mobile app and web platform. Premium plan
+            can be canceled at any time. For enterprise solutions or custom
             pricing, please contact our sales team.
           </p>
         </div>
