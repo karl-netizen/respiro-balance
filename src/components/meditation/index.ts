@@ -1,3 +1,4 @@
+
 import MeditationSessionCard from './MeditationSessionCard';
 import MeditationLibraryBrowser from './MeditationLibraryBrowser';
 import MeditationHeader from './MeditationHeader';
@@ -18,6 +19,7 @@ import BiometricTracker from './BiometricTracker';
 import HeartRateVariabilityTab from './biometrics/HeartRateVariabilityTab';
 import BrainwavesTab from './biometrics/BrainwavesTab';
 import BreathingTab from './biometrics/BreathingTab';
+import MeditationSessionDialog from './MeditationSessionDialog';
 
 export {
   MeditationSessionCard,
@@ -39,7 +41,8 @@ export {
   BiometricTracker,
   HeartRateVariabilityTab,
   BrainwavesTab,
-  BreathingTab
+  BreathingTab,
+  MeditationSessionDialog
 };
 
 export type { MeditationSession } from './MeditationSessionCard';

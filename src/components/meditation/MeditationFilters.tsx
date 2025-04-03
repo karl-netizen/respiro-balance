@@ -68,14 +68,14 @@ const MeditationFilters: React.FC<MeditationFiltersProps> = ({
           </div>
           
           <Select 
-            value={selectedLevel || ''} 
-            onValueChange={(value) => onLevelChange(value === '' ? null : value)}
+            value={selectedLevel || 'all'} 
+            onValueChange={(value) => onLevelChange(value === 'all' ? null : value)}
           >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="All Levels" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Levels</SelectItem>
+              <SelectItem value="all">All Levels</SelectItem>
               <SelectItem value="beginner">Beginner</SelectItem>
               <SelectItem value="intermediate">Intermediate</SelectItem>
               <SelectItem value="advanced">Advanced</SelectItem>
