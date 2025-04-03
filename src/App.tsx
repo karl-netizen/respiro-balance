@@ -23,7 +23,7 @@ import ForgotPasswordPage from '@/pages/ForgotPasswordPage';
 import ResetPassword from '@/pages/ResetPassword';
 import OnboardingPage from '@/pages/OnboardingPage';
 import NotFound from '@/pages/NotFound';
-import Profile from '@/pages/Profile';
+import AccountPage from '@/pages/AccountPage'; // Changed to existing AccountPage instead of Profile
 import SubscriptionPage from '@/pages/SubscriptionPage';
 
 // Create React Query client
@@ -47,7 +47,7 @@ function App() {
                   <Route path="/morning-rituals" element={<MorningRitual />} />
                   <Route path="/progress" element={<Progress />} />
                   <Route path="/settings" element={<Settings />} />
-                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/profile" element={<AccountPage />} /> {/* Changed to AccountPage */}
                   <Route path="/subscription" element={<SubscriptionPage />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
