@@ -21,7 +21,7 @@ import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import ForgotPasswordPage from '@/pages/ForgotPasswordPage';
 import ResetPassword from '@/pages/ResetPassword';
-import Onboarding from '@/pages/Onboarding';
+import OnboardingPage from '@/pages/OnboardingPage';
 import NotFound from '@/pages/NotFound';
 import Profile from '@/pages/Profile';
 import SubscriptionPage from '@/pages/SubscriptionPage';
@@ -53,7 +53,7 @@ function App() {
                   <Route path="/register" element={<Register />} />
                   <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                   <Route path="/reset-password" element={<ResetPassword />} />
-                  <Route path="/onboarding" element={<Onboarding />} />
+                  <Route path="/onboarding" element={<OnboardingPage />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </Router>
