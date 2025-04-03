@@ -1,93 +1,67 @@
 
-import React from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "@/components/ui/toaster";
-import { UserPreferencesProvider } from '@/context';
-import { NotificationsProvider } from '@/context/NotificationsProvider';
-import { AuthProvider } from "@/providers/AuthProvider";
-import LandingPage from "@/pages/LandingPage";
-import Dashboard from "@/pages/Dashboard";
-import MeditationLibrary from "@/pages/MeditationLibrary";
-import BreathingExercise from "@/pages/BreathingExercise";
-import MeditationSessionView from "@/pages/MeditationSessionView";
-import ProgressDashboard from "@/pages/ProgressDashboard";
-import NotFound from "@/pages/NotFound";
-import LoginPage from "@/pages/LoginPage";
-import SignupPage from "@/pages/SignupPage";
-import AccountPage from "@/pages/AccountPage";
-import ForgotPasswordPage from "@/pages/ForgotPasswordPage";
-import ResendVerificationPage from "@/pages/ResendVerificationPage";
-import ResetPasswordPage from "@/pages/ResetPasswordPage";
-import OnboardingPage from "@/pages/OnboardingPage";
-import PrivacyPage from "@/pages/PrivacyPage";
-import TermsPage from "@/pages/TermsPage";
-import SettingsPage from "@/pages/SettingsPage";
-import AppSettings from "@/pages/AppSettings";
-import HelpPage from "@/pages/HelpPage";
-import MorningRitual from "@/pages/MorningRitual";
-import RequireAuth from "@/components/auth/RequireAuth";
-import VerifyEmailPage from "@/pages/VerifyEmailPage";
-import FAQPage from "@/pages/FAQ";
-import "./App.css";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Toaster } from 'sonner';
+import { ThemeProvider } from '@/context/ThemeProvider';
+import { AuthProvider } from '@/context/AuthProvider';
+import { UserPreferencesProvider } from '@/context/UserPreferencesProvider';
+import { SubscriptionProvider } from '@/context/SubscriptionProvider';
 
-// Create a wrapper component to use hooks and pass them to the AuthProvider
-function AuthProviderWithNavigate({ children }: { children: React.ReactNode }) {
-  const navigate = useNavigate();
-  return <AuthProvider navigate={navigate}>{children}</AuthProvider>;
-}
+// Pages
+import LandingPage from '@/pages/LandingPage';
+import Dashboard from '@/pages/Dashboard';
+import MeditationLibrary from '@/pages/MeditationLibrary';
+import MeditationSessionView from '@/pages/MeditationSessionView';
+import BreathingExercises from '@/pages/BreathingExercises';
+import BreathingExerciseView from '@/pages/BreathingExerciseView';
+import MorningRituals from '@/pages/MorningRituals';
+import Progress from '@/pages/Progress';
+import Settings from '@/pages/Settings';
+import Login from '@/pages/Login';
+import Register from '@/pages/Register';
+import ForgotPassword from '@/pages/ForgotPassword';
+import ResetPassword from '@/pages/ResetPassword';
+import Onboarding from '@/pages/Onboarding';
+import NotFound from '@/pages/NotFound';
+import Profile from '@/pages/Profile';
+import SubscriptionPage from '@/pages/SubscriptionPage';
+
+// Create React Query client
+const queryClient = new QueryClient();
 
 function App() {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        staleTime: 5 * 60 * 1000, // 5 minutes
-        refetchOnWindowFocus: false,
-      },
-    },
-  });
-
   return (
     <QueryClientProvider client={queryClient}>
-      <Router>
-        <AuthProviderWithNavigate>
+      <ThemeProvider>
+        <AuthProvider>
           <UserPreferencesProvider>
-            <NotificationsProvider>
-              <Routes>
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/signup" element={<SignupPage />} />
-                <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-                <Route path="/resend-verification" element={<ResendVerificationPage />} />
-                <Route path="/reset-password" element={<ResetPasswordPage />} />
-                <Route path="/verify-email" element={<VerifyEmailPage />} />
-                <Route path="/privacy" element={<PrivacyPage />} />
-                <Route path="/terms" element={<TermsPage />} />
-                <Route path="/help" element={<HelpPage />} />
-                <Route path="/faq" element={<FAQPage />} />
-                
-                {/* Protected routes */}
-                <Route element={<RequireAuth />}>
+            <SubscriptionProvider>
+              <Router>
+                <Routes>
+                  <Route path="/" element={<LandingPage />} />
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/meditate" element={<MeditationLibrary />} />
-                  <Route path="/breathe" element={<BreathingExercise />} />
-                  <Route path="/session/:sessionId" element={<MeditationSessionView />} />
-                  <Route path="/progress" element={<ProgressDashboard />} />
-                  <Route path="/settings" element={<SettingsPage />} />
-                  <Route path="/app-settings" element={<AppSettings />} />
-                  <Route path="/account" element={<AccountPage />} />
-                  <Route path="/onboarding" element={<OnboardingPage />} />
-                  <Route path="/morning-ritual" element={<MorningRitual />} />
-                </Route>
-                
-                {/* Use NotFound instead of ErrorPage for 404 errors */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-              <Toaster />
-            </NotificationsProvider>
+                  <Route path="/meditate/:sessionId" element={<MeditationSessionView />} />
+                  <Route path="/breathing" element={<BreathingExercises />} />
+                  <Route path="/breathing/:exerciseId" element={<BreathingExerciseView />} />
+                  <Route path="/morning-rituals" element={<MorningRituals />} />
+                  <Route path="/progress" element={<Progress />} />
+                  <Route path="/settings" element={<Settings />} />
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/subscription" element={<SubscriptionPage />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
+                  <Route path="/forgot-password" element={<ForgotPassword />} />
+                  <Route path="/reset-password" element={<ResetPassword />} />
+                  <Route path="/onboarding" element={<Onboarding />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Router>
+              <Toaster position="top-right" />
+            </SubscriptionProvider>
           </UserPreferencesProvider>
-        </AuthProviderWithNavigate>
-      </Router>
+        </AuthProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }

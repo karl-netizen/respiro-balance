@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase, demoAuth, isSupabaseConfigured } from '@/lib/supabase';
 import { MeditationSession as SupabaseMeditationSession } from '@/types/supabase';
 import { useAuth } from './useAuth';
+import { useSubscriptionContext } from '@/context/SubscriptionProvider';
 import { toast } from 'sonner';
 
 interface StartSessionParams {
@@ -16,6 +17,7 @@ const SESSION_SYNC_QUEUE_KEY = 'meditation_session_sync_queue';
 
 export function useMeditationSessions() {
   const { user } = useAuth();
+  const { updateUsage, hasExceededUsageLimit } = useSubscriptionContext();
   const queryClient = useQueryClient();
 
   // Offline sync helpers
@@ -69,7 +71,7 @@ export function useMeditationSessions() {
           // For complete operations, first check if the session exists in Supabase
           const { data: existingSession } = await supabase
             .from('meditation_sessions')
-            .select('id')
+            .select('id, duration')
             .eq('id', item.data.id)
             .single();
             
@@ -79,6 +81,9 @@ export function useMeditationSessions() {
               .from('meditation_sessions')
               .update({ completed: true })
               .eq('id', item.data.id);
+              
+            // Update usage minutes
+            updateUsage(existingSession.duration);
           } else {
             // Session doesn't exist in Supabase yet, create it as completed
             await supabase
@@ -87,6 +92,11 @@ export function useMeditationSessions() {
                 ...item.data,
                 completed: true
               });
+              
+            // Update usage minutes if duration is available
+            if (item.data.duration) {
+              updateUsage(item.data.duration);
+            }
           }
           successCount++;
         }
@@ -154,6 +164,11 @@ export function useMeditationSessions() {
   // Start a new meditation session
   const startSession = async (params: StartSessionParams): Promise<string> => {
     if (!user) throw new Error('User not authenticated');
+    
+    // Check if user has reached their usage limit
+    if (hasExceededUsageLimit) {
+      throw new Error('You have reached your monthly meditation limit. Please upgrade to continue.');
+    }
 
     const newSession = {
       user_id: user.id,
@@ -224,16 +239,32 @@ export function useMeditationSessions() {
     if (!isSupabaseConfigured() || sessionId.startsWith('offline-')) {
       // Update offline session
       const offlineSessions = getOfflineSessions();
-      const updatedSessions = offlineSessions.map(session => {
-        if (session.id === sessionId) {
-          return { ...session, completed: true };
-        }
-        return session;
-      });
-      saveOfflineSessions(updatedSessions);
+      const sessionToUpdate = offlineSessions.find(session => session.id === sessionId);
       
-      // Add to sync queue
-      addToSyncQueue('complete', { id: sessionId, user_id: user.id });
+      if (sessionToUpdate) {
+        // Update session in offline storage
+        const updatedSessions = offlineSessions.map(session => {
+          if (session.id === sessionId) {
+            return { ...session, completed: true };
+          }
+          return session;
+        });
+        saveOfflineSessions(updatedSessions);
+        
+        // Add to sync queue
+        addToSyncQueue('complete', { 
+          id: sessionId, 
+          user_id: user.id,
+          duration: sessionToUpdate.duration 
+        });
+        
+        // Update usage tracking
+        try {
+          updateUsage(sessionToUpdate.duration);
+        } catch (error) {
+          console.error('Error updating usage in offline mode:', error);
+        }
+      }
       
       // Refresh local data
       queryClient.invalidateQueries({ queryKey: ['meditationSessions', user.id] });
@@ -241,6 +272,20 @@ export function useMeditationSessions() {
     }
 
     try {
+      // First get the session to get its duration
+      const { data: sessionData, error: sessionError } = await supabase
+        .from('meditation_sessions')
+        .select('duration')
+        .eq('id', sessionId)
+        .eq('user_id', user.id)
+        .single();
+        
+      if (sessionError) {
+        console.error('Error fetching session for completion:', sessionError);
+        throw sessionError;
+      }
+      
+      // Update the session to completed
       const { error } = await supabase
         .from('meditation_sessions')
         .update({ completed: true })
@@ -251,21 +296,48 @@ export function useMeditationSessions() {
         console.error('Error completing meditation session:', error);
         throw error;
       }
+      
+      // Update usage tracking
+      try {
+        updateUsage(sessionData.duration);
+      } catch (error) {
+        console.error('Error updating usage after session completion:', error);
+      }
+      
+      // Refresh queries
+      queryClient.invalidateQueries({ queryKey: ['meditationSessions', user.id] });
+      queryClient.invalidateQueries({ queryKey: ['subscription', user.id] });
     } catch (error) {
       console.error('Failed to complete session in Supabase:', error);
       
-      // Fall back to offline mode
+      // Fall back to offline mode for completion
       const offlineSessions = getOfflineSessions();
-      const updatedSessions = offlineSessions.map(session => {
-        if (session.id === sessionId) {
-          return { ...session, completed: true };
-        }
-        return session;
-      });
-      saveOfflineSessions(updatedSessions);
+      const sessionToUpdate = offlineSessions.find(session => session.id === sessionId);
       
-      // Add to sync queue
-      addToSyncQueue('complete', { id: sessionId, user_id: user.id });
+      if (sessionToUpdate) {
+        // Update session in offline storage
+        const updatedSessions = offlineSessions.map(session => {
+          if (session.id === sessionId) {
+            return { ...session, completed: true };
+          }
+          return session;
+        });
+        saveOfflineSessions(updatedSessions);
+        
+        // Add to sync queue
+        addToSyncQueue('complete', { 
+          id: sessionId, 
+          user_id: user.id,
+          duration: sessionToUpdate.duration 
+        });
+        
+        // Try to update usage
+        try {
+          updateUsage(sessionToUpdate.duration);
+        } catch (e) {
+          console.error('Error updating usage in offline fallback:', e);
+        }
+      }
       
       toast("Offline mode", {
         description: "Session completed in offline mode and will sync when connection is restored"

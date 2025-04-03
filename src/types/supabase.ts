@@ -1,76 +1,84 @@
 
+// Define our Supabase database schema types
 export interface UserProfile {
   id: string;
+  created_at: string;
   email: string;
-  first_name?: string;
-  last_name?: string;
+  full_name?: string;
   avatar_url?: string;
-  created_at: string;
-}
-
-export interface UserPreferencesRecord {
-  id: string;
-  user_id: string;
-  preferences_data: {
-    userRole: "client" | "coach" | "admin";
-    workDays: string[];
-    workStartTime: string;
-    workEndTime: string;
-    workEnvironment: "office" | "home" | "hybrid";
-    stressLevel: "low" | "moderate" | "high";
-    focusChallenges: string[];
-    energyPattern: string;
-    lunchBreak: boolean;
-    lunchTime: string;
-    morningExercise: boolean;
-    exerciseTime: string;
-    bedTime: string;
-    meditationExperience: "none" | "beginner" | "intermediate" | "advanced";
-    meditationGoals: string[];
-    preferredSessionDuration: number;
-    metricsOfInterest: string[];
-    subscriptionTier: string;
-    morningRituals?: any[]; // Add morningRituals to the schema
-  };
-  created_at: string;
-  updated_at: string;
-}
-
-export interface BiometricData {
-  id: string;
-  user_id: string;
-  heart_rate?: number;
-  hrv?: number;
-  respiratory_rate?: number;
-  stress_score?: number;
-  recorded_at: string;
-  device_id?: string;
+  subscription_tier: 'free' | 'premium' | 'team' | 'enterprise';
+  subscription_status: 'active' | 'trialing' | 'past_due' | 'canceled' | 'incomplete';
+  subscription_id?: string;
+  subscription_period_end?: string;
+  meditation_minutes_used: number;
+  meditation_minutes_limit: number;
+  biometric_sync_enabled: boolean;
+  last_active: string;
 }
 
 export interface MeditationSession {
   id: string;
   user_id: string;
+  session_type: string;
   duration: number;
   started_at: string;
   completed: boolean;
-  session_type: string;
-  biometric_before?: BiometricData;
-  biometric_after?: BiometricData;
+  rating?: number;
+  feedback?: string;
 }
 
-export interface BalanceMetric {
+export interface BiometricData {
   id: string;
   user_id: string;
-  work_life_ratio: number;
-  stress_level: number;
+  session_id?: string;
   recorded_at: string;
-  notes?: string;
+  heart_rate?: number;
+  hrv?: number;
+  respiratory_rate?: number;
+  stress_score?: number;
+  coherence?: number;
 }
 
-// Define the same BluetoothDevice interface here to ensure consistency
-export interface BluetoothDevice {
+export interface UserPreferencesData {
   id: string;
-  name: string;
-  type: string;
-  connected: boolean; // Make this required to match the connected-devices-list component
+  user_id: string;
+  work_days: string[];
+  work_start_time: string;
+  work_end_time: string;
+  lunch_break: boolean;
+  lunch_time?: string;
+  morning_exercise: boolean;
+  exercise_time?: string;
+  bed_time?: string;
+  meditation_experience: string;
+  meditation_goals: string[];
+  preferred_session_duration: number;
+  stress_level?: string;
+  work_environment?: string;
+  connected_devices?: string[];
+  has_completed_onboarding: boolean;
+  theme?: string;
+  notification_settings?: Record<string, boolean>;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface MorningRitualData {
+  id: string;
+  user_id: string;
+  title: string;
+  description?: string;
+  start_time: string;
+  duration: number;
+  recurrence: string;
+  days_of_week?: string[];
+  priority: string;
+  tags?: string[];
+  reminder_enabled: boolean;
+  reminder_time?: number;
+  created_at: string;
+  updated_at: string;
+  last_completed?: string;
+  streak: number;
+  status: string;
 }
