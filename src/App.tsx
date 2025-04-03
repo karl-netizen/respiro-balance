@@ -1,9 +1,8 @@
-
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 import { ThemeProvider } from '@/context/ThemeProvider';
-import { AuthProvider } from '@/hooks/useAuth';
+import { AuthProvider } from '@/context/AuthProvider';
 import { UserPreferencesProvider } from '@/context/UserPreferencesProvider';
 import { SubscriptionProvider } from '@/context/SubscriptionProvider';
 
