@@ -1,3 +1,4 @@
+
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
@@ -11,8 +12,8 @@ import LandingPage from '@/pages/LandingPage';
 import Dashboard from '@/pages/Dashboard';
 import MeditationLibrary from '@/pages/MeditationLibrary';
 import MeditationSessionView from '@/pages/MeditationSessionView';
-import BreathingExercises from '@/pages/BreathingExercises';
-import BreathingExerciseView from '@/pages/BreathingExerciseView';
+import Breathe from '@/pages/Breathe';
+import BreathingExercise from '@/pages/BreathingExercise';
 import MorningRituals from '@/pages/MorningRituals';
 import Progress from '@/pages/Progress';
 import Settings from '@/pages/Settings';
@@ -41,8 +42,8 @@ function App() {
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/meditate" element={<MeditationLibrary />} />
                   <Route path="/meditate/:sessionId" element={<MeditationSessionView />} />
-                  <Route path="/breathing" element={<BreathingExercises />} />
-                  <Route path="/breathing/:exerciseId" element={<BreathingExerciseView />} />
+                  <Route path="/breathing" element={<Breathe />} />
+                  <Route path="/breathing/:exerciseId" element={<BreathingExercise />} />
                   <Route path="/morning-rituals" element={<MorningRituals />} />
                   <Route path="/progress" element={<Progress />} />
                   <Route path="/settings" element={<Settings />} />
