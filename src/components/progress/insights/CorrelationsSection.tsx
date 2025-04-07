@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MeditationStats } from '../useMeditationStats';
@@ -32,7 +33,7 @@ const CorrelationsSection: React.FC<CorrelationsSectionProps> = ({
     // If we have actual biometric data, use it
     if (biometricData && biometricData.length > 0) {
       return biometricData.map(data => ({
-        date: new Date(data.recorded_at).toLocaleDateString(),
+        date: new Date(data.timestamp || data.created_at || new Date().toISOString()).toLocaleDateString(),
         heartRate: data.heart_rate || 0,
         hrv: data.hrv || 0,
         stress: data.stress_score || 0,

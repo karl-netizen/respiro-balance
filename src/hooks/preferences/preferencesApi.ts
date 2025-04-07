@@ -32,7 +32,9 @@ export const fetchUserPreferences = async (userId?: string): Promise<UserPrefere
       return defaultPreferences;
     }
 
-    const prefs = convertToLocalFormat(data);
+    // Convert database format to application format and merge with default preferences
+    const userPrefs = convertToLocalFormat(data);
+    const prefs = { ...defaultPreferences, ...userPrefs };
     
     // Store in localStorage as offline backup
     savePreferencesToLocalStorage(prefs);
@@ -48,19 +50,23 @@ export const fetchUserPreferences = async (userId?: string): Promise<UserPrefere
 };
 
 // Update user preferences in Supabase
-export const updateUserPreferences = async (preferences: UserPreferences, userId?: string): Promise<void> => {
+export const updateUserPreferences = async (partialPreferences: Partial<UserPreferences>, userId?: string): Promise<void> => {
   if (!userId) throw new Error('User not authenticated');
   
+  // Get the current preferences and merge with the updates
+  const currentPrefs = getPreferencesFromLocalStorage() || defaultPreferences;
+  const updatedPreferences = { ...currentPrefs, ...partialPreferences };
+  
   // Always update localStorage
-  savePreferencesToLocalStorage(preferences);
+  savePreferencesToLocalStorage(updatedPreferences);
   
   // If Supabase is not configured, add to sync queue and return
   if (!isSupabaseConfigured()) {
-    addToSyncQueue(preferences);
+    addToSyncQueue(updatedPreferences);
     return;
   }
 
-  const dbRecord = convertToDbFormat(preferences, userId);
+  const dbRecord = convertToDbFormat(updatedPreferences, userId);
   
   try {
     // Check if record exists
@@ -80,7 +86,7 @@ export const updateUserPreferences = async (preferences: UserPreferences, userId
       if (error) {
         console.error('Error updating user preferences:', error);
         // Add to sync queue for later
-        addToSyncQueue(preferences);
+        addToSyncQueue(updatedPreferences);
         throw error;
       }
     } else {
@@ -92,14 +98,14 @@ export const updateUserPreferences = async (preferences: UserPreferences, userId
       if (error) {
         console.error('Error creating user preferences:', error);
         // Add to sync queue for later
-        addToSyncQueue(preferences);
+        addToSyncQueue(updatedPreferences);
         throw error;
       }
     }
   } catch (error) {
     console.error("Failed to update preferences in Supabase:", error);
     // Add to sync queue for later retry
-    addToSyncQueue(preferences);
+    addToSyncQueue(updatedPreferences);
     throw error;
   }
 };

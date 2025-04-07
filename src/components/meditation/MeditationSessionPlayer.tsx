@@ -1,122 +1,132 @@
 
 import React, { useState, useEffect } from 'react';
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Play, Pause, SkipForward } from 'lucide-react';
 import { MeditationSession } from './MeditationSessionCard';
-import { useUserPreferences } from '@/context';
-import { useBiometricData } from '@/hooks/useBiometricData';
-import { getBiometricDataFromDevices } from '@/components/morning-ritual/utils';
-import { toast } from "sonner";
-import PlayerControls from './PlayerControls';
-import BiometricTracker from './BiometricTracker';
-import { getMeditationAudioUrl } from '@/lib/meditationAudioIntegration';
+import { useToast } from '@/hooks/use-toast';
 
 interface MeditationSessionPlayerProps {
   session: MeditationSession;
-  onComplete?: (sessionId: string) => void;
+  onComplete?: () => void;
 }
 
 const MeditationSessionPlayer: React.FC<MeditationSessionPlayerProps> = ({ 
-  session,
-  onComplete
+  session, 
+  onComplete 
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [timeRemaining, setTimeRemaining] = useState(session.duration * 60); // in seconds
-  const [volume, setVolume] = useState(70);
-  const [sessionStarted, setSessionStarted] = useState(false);
-  const [initialBiometrics, setInitialBiometrics] = useState<any>(null);
-  const [currentBiometrics, setCurrentBiometrics] = useState<any>(null);
-  const [biometricChange, setBiometricChange] = useState<any>(null);
-  
-  const { preferences } = useUserPreferences();
-  const { addBiometricData } = useBiometricData();
-  
-  const getInitialBiometrics = () => {
-    return getBiometricDataFromDevices(preferences.connectedDevices);
+  const [remainingTime, setRemainingTime] = useState(session.duration * 60);
+  const [progress, setProgress] = useState(0);
+  const { toast } = useToast();
+
+  // Format seconds to MM:SS
+  const formatTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
-  
-  useEffect(() => {
-    if (isPlaying && !sessionStarted) {
-      setSessionStarted(true);
-      
-      const initial = getInitialBiometrics();
-      setInitialBiometrics(initial);
-      
-      if (preferences.hasWearableDevice) {
-        addBiometricData(initial);
-      }
+
+  // Toggle play/pause
+  const togglePlayPause = () => {
+    setIsPlaying(!isPlaying);
+    
+    if (!isPlaying) {
+      toast({
+        title: "Meditation started",
+        description: `${session.title} - ${session.duration} minutes`,
+      });
     }
-  }, [isPlaying, sessionStarted, preferences, addBiometricData]);
-  
+  };
+
+  // Skip to end (for testing)
+  const skipToEnd = () => {
+    setRemainingTime(0);
+    setProgress(100);
+    setIsPlaying(false);
+    
+    if (onComplete) {
+      onComplete();
+    }
+    
+    toast({
+      title: "Meditation completed",
+      description: `You've completed ${session.title}`,
+    });
+  };
+
+  // Timer effect
   useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (isPlaying && timeRemaining > 0) {
-      timer = setInterval(() => {
-        setTimeRemaining(prev => {
-          if (prev <= 1) {
-            setIsPlaying(false);
-            
-            if (preferences.hasWearableDevice && currentBiometrics) {
-              addBiometricData(currentBiometrics);
-            }
-            
-            if (onComplete) {
-              onComplete(session.id);
-            }
-            return 0;
-          }
-          return prev - 1;
+    let interval: NodeJS.Timeout;
+    
+    if (isPlaying && remainingTime > 0) {
+      interval = setInterval(() => {
+        setRemainingTime(prev => {
+          const newTime = prev - 1;
+          // Calculate progress percentage
+          const totalSeconds = session.duration * 60;
+          const newProgress = Math.round(((totalSeconds - newTime) / totalSeconds) * 100);
+          setProgress(newProgress);
+          
+          return newTime;
         });
       }, 1000);
+    } else if (remainingTime === 0 && isPlaying) {
+      setIsPlaying(false);
+      if (onComplete) {
+        onComplete();
+      }
+      toast({
+        title: "Meditation completed",
+        description: `You've completed ${session.title}`,
+      });
     }
-    return () => clearInterval(timer);
-  }, [isPlaying, timeRemaining, session.id, onComplete, preferences, currentBiometrics, addBiometricData]);
-
-  const handlePlayPause = () => {
-    setIsPlaying(prev => !prev);
-  };
-
-  const handleReset = () => {
-    setIsPlaying(false);
-    setTimeRemaining(session.duration * 60);
-    setSessionStarted(false);
-    setCurrentBiometrics(null);
-    setBiometricChange(null);
-  };
-
-  const handleVolumeChange = (newVolume: number) => {
-    setVolume(newVolume);
-  };
+    
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isPlaying, remainingTime, session, onComplete, toast]);
 
   return (
-    <div className="space-y-6">
-      <Card className="w-full">
-        <CardContent className="pt-6">
-          <PlayerControls 
-            isPlaying={isPlaying}
-            timeRemaining={timeRemaining}
-            totalDuration={session.duration * 60}
-            volume={volume}
-            onPlayPause={handlePlayPause}
-            onReset={handleReset}
-            onVolumeChange={handleVolumeChange}
-          />
-        </CardContent>
-      </Card>
-      
-      <BiometricTracker 
-        isPlaying={isPlaying}
-        sessionStarted={sessionStarted}
-        timeRemaining={timeRemaining}
-        sessionDuration={session.duration}
-        initialBiometrics={initialBiometrics}
-        setInitialBiometrics={setInitialBiometrics}
-        currentBiometrics={currentBiometrics}
-        setCurrentBiometrics={setCurrentBiometrics}
-        biometricChange={biometricChange}
-        setBiometricChange={setBiometricChange}
-        getInitialBiometrics={getInitialBiometrics}
-      />
-    </div>
+    <Card>
+      <CardContent className="pt-6">
+        <div className="flex flex-col items-center">
+          <div className="w-full bg-secondary rounded-full h-2.5 mb-6">
+            <div 
+              className="bg-primary h-2.5 rounded-full transition-all duration-300"
+              style={{ width: `${progress}%` }}
+            ></div>
+          </div>
+          
+          <div className="text-3xl font-mono mb-8">
+            {formatTime(remainingTime)}
+          </div>
+          
+          <div className="flex items-center gap-4">
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-12 w-12 rounded-full"
+              onClick={togglePlayPause}
+            >
+              {isPlaying ? (
+                <Pause className="h-6 w-6" />
+              ) : (
+                <Play className="h-6 w-6" />
+              )}
+            </Button>
+            
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={skipToEnd}
+            >
+              <SkipForward className="h-5 w-5" />
+            </Button>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

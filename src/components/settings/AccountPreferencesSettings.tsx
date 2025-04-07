@@ -11,7 +11,7 @@ import { MeditationExperience } from '@/context/types';
 const AccountPreferencesSettings = () => {
   const { preferences, updatePreferences } = useUserPreferences();
 
-  const handleThemeChange = (theme: string) => {
+  const handleThemeChange = (theme: "light" | "dark" | "system") => {
     updatePreferences({ theme });
   };
 
