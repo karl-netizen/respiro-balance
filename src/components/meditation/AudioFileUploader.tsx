@@ -6,11 +6,11 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Upload, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/hooks/useAuth';
 
 const AUDIO_BUCKET_NAME = 'meditation-audio';
 
-export const AudioFileUploader = () => {
+const AudioFileUploader = () => {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -56,11 +56,7 @@ export const AudioFileUploader = () => {
         .from(AUDIO_BUCKET_NAME)
         .upload(fileName, file, {
           cacheControl: '3600',
-          upsert: false,
-          onUploadProgress: (progress) => {
-            const percent = Math.round((progress.loaded / progress.total) * 100);
-            setProgress(percent);
-          }
+          upsert: false
         });
         
       if (error) throw error;
@@ -77,6 +73,16 @@ export const AudioFileUploader = () => {
       // Clear the file input
       setFile(null);
       
+      // Simulate progress for UX (since we can't track real progress)
+      let simulatedProgress = 0;
+      const interval = setInterval(() => {
+        simulatedProgress += 10;
+        setProgress(Math.min(simulatedProgress, 100));
+        if (simulatedProgress >= 100) {
+          clearInterval(interval);
+        }
+      }, 200);
+      
     } catch (error: any) {
       toast.error('Upload failed', {
         description: error.message
@@ -84,6 +90,7 @@ export const AudioFileUploader = () => {
       console.error('Error uploading audio file:', error);
     } finally {
       setUploading(false);
+      setProgress(100);
     }
   };
   

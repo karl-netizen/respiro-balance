@@ -1,11 +1,9 @@
 
 import { ReactNode } from 'react';
-import { useNavigate, NavigateFunction as ReactRouterNavigateFunction } from 'react-router-dom';
+import { useNavigate, NavigateFunction } from 'react-router-dom';
 import { AuthContext } from '@/context/AuthContext';
 import { useAuthInitialization } from '@/hooks/useAuthInitialization';
 import { useAuthMethods } from '@/hooks/useAuthMethods';
-
-type NavigateFunction = ReactRouterNavigateFunction;
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -28,6 +26,7 @@ export function AuthProvider({ children, navigate }: AuthProviderProps) {
       user, 
       session, 
       loading,
+      isLoading: loading, // Add isLoading as an alias for loading
       ...authMethods
     }}>
       {children}

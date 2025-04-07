@@ -44,6 +44,7 @@ export interface MeditationSession {
   title?: string;
   audioUrl?: string;
   imageUrl?: string;
+  instructor?: string;
   biometrics?: SessionBiometrics;
   tags?: string[];
 }
@@ -69,4 +70,35 @@ export interface BalanceMetric {
   meditation_minutes: number;
   exercise_minutes: number;
   sleep_minutes: number;
+}
+
+export interface BiometricData {
+  id?: string;
+  user_id?: string;
+  session_id?: string;
+  heart_rate?: number;
+  hrv?: number;
+  respiratory_rate?: number;
+  stress_score?: number;
+  timestamp?: string;
+  created_at?: string;
+}
+
+export interface UserProfile {
+  id: string;
+  user_id: string;
+  email?: string;
+  first_name?: string;
+  last_name?: string;
+  display_name?: string;
+  avatar_url?: string;
+  subscription_id?: string;
+  subscription_status?: string;
+  subscription_tier?: string;
+  subscription_period_start?: string;
+  subscription_period_end?: string;
+  meditation_minutes_used?: number;
+  meditation_minutes_limit?: number;
+  created_at?: string;
+  updated_at?: string;
 }

@@ -1,106 +1,173 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BiometricData } from './types/BiometricTypes';
-import { Heart, Activity, Wind, Brain } from 'lucide-react';
+import { Activity, Heart, HeartPulse, TrendingDown, TrendingUp } from 'lucide-react';
 
-interface BiometricDisplayProps {
-  biometricData: BiometricData;
-  sessionId: string;
+export interface BiometricData {
+  heart_rate?: number;
+  hrv?: number;
+  respiratory_rate?: number;
+  stress_score?: number;
+  sessionId?: string;
+  timestamp?: string;
 }
 
-export const BiometricDisplay: React.FC<BiometricDisplayProps> = ({ 
+export interface BiometricChange {
+  heart_rate?: {
+    value: number;
+    direction: 'up' | 'down' | 'stable';
+    percentage: number;
+  };
+  hrv?: {
+    value: number;
+    direction: 'up' | 'down' | 'stable';
+    percentage: number;
+  };
+  respiratory_rate?: {
+    value: number;
+    direction: 'up' | 'down' | 'stable';
+    percentage: number;
+  };
+  stress_score?: {
+    value: number;
+    direction: 'up' | 'down' | 'stable';
+    percentage: number;
+  };
+}
+
+export interface BiometricDisplayProps {
+  biometricData: BiometricData;
+  sessionId?: string;
+  isInitial?: boolean;
+  showChange?: boolean;
+  change?: BiometricChange;
+}
+
+const BiometricDisplay: React.FC<BiometricDisplayProps> = ({ 
   biometricData, 
-  sessionId 
+  sessionId,
+  isInitial = false,
+  showChange = false,
+  change 
 }) => {
-  const hasData = biometricData && Object.keys(biometricData).length > 0;
-  
-  if (!hasData) {
+  if (!biometricData) {
     return (
-      <Card className="h-full">
+      <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Biometric Data</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <HeartPulse className="h-5 w-5" />
+            Biometric Data
+          </CardTitle>
         </CardHeader>
-        <CardContent className="pt-0">
-          <div className="flex flex-col items-center justify-center h-60">
-            <p className="text-muted-foreground text-center">
-              No biometric data available for this session.
-              <br />
-              Connect a wearable device to track your metrics during meditation.
-            </p>
-          </div>
+        <CardContent>
+          <p className="text-muted-foreground">No biometric data available</p>
         </CardContent>
       </Card>
     );
   }
   
-  // Helper to safely get biometric values
-  const getBiometricValue = (key: keyof BiometricData): number | undefined => {
-    if (!biometricData) return undefined;
+  const renderChangeIndicator = (value?: number, direction?: 'up' | 'down' | 'stable', percentage?: number) => {
+    if (!showChange || !value || !direction || !percentage) return null;
     
-    // Handle different property names
-    if (key === 'heart_rate' && biometricData.heartRate) {
-      return biometricData.heartRate;
-    }
-    if (key === 'respiratory_rate' && biometricData.breathRate) {
-      return biometricData.breathRate;
-    }
-    
-    return biometricData[key] as number | undefined;
+    return (
+      <div className="flex items-center text-xs">
+        {direction === 'up' ? (
+          <TrendingUp className={`h-3 w-3 mr-1 ${direction === 'up' && value < 0 ? 'text-green-500' : 'text-red-500'}`} />
+        ) : direction === 'down' ? (
+          <TrendingDown className={`h-3 w-3 mr-1 ${direction === 'down' && value > 0 ? 'text-red-500' : 'text-green-500'}`} />
+        ) : null}
+        <span className={`${
+          (direction === 'up' && value < 0) || (direction === 'down' && value > 0) 
+            ? 'text-green-500' 
+            : 'text-red-500'
+        }`}>
+          {percentage.toFixed(1)}%
+        </span>
+      </div>
+    );
   };
   
   return (
-    <Card className="h-full">
+    <Card>
       <CardHeader>
-        <CardTitle className="text-lg">Biometric Data</CardTitle>
+        <CardTitle className="flex items-center gap-2">
+          <HeartPulse className="h-5 w-5" />
+          {isInitial ? 'Initial Biometric Data' : 'Current Biometric Data'}
+        </CardTitle>
       </CardHeader>
-      <CardContent className="pt-0">
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-secondary/30 rounded-lg p-4">
-            <div className="flex items-center mb-2">
-              <Heart className="h-5 w-5 mr-2 text-red-500" />
-              <h3 className="text-sm font-medium">Heart Rate</h3>
+      <CardContent>
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <Heart className="h-4 w-4 mr-2 text-red-500" />
+                  <span className="text-sm">Heart Rate</span>
+                </div>
+                {change && renderChangeIndicator(
+                  change.heart_rate?.value, 
+                  change.heart_rate?.direction, 
+                  change.heart_rate?.percentage
+                )}
+              </div>
+              <p className="text-2xl font-bold">
+                {biometricData.heart_rate || '-'} <span className="text-sm font-normal text-muted-foreground">bpm</span>
+              </p>
             </div>
-            <p className="text-2xl font-semibold">
-              {getBiometricValue('heart_rate') || getBiometricValue('heartRate') || '??'} <span className="text-sm font-normal text-muted-foreground">bpm</span>
-            </p>
+            
+            <div className="flex flex-col">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <Activity className="h-4 w-4 mr-2 text-blue-500" />
+                  <span className="text-sm">HRV</span>
+                </div>
+                {change && renderChangeIndicator(
+                  change.hrv?.value, 
+                  change.hrv?.direction, 
+                  change.hrv?.percentage
+                )}
+              </div>
+              <p className="text-2xl font-bold">
+                {biometricData.hrv || '-'} <span className="text-sm font-normal text-muted-foreground">ms</span>
+              </p>
+            </div>
           </div>
           
-          <div className="bg-secondary/30 rounded-lg p-4">
-            <div className="flex items-center mb-2">
-              <Activity className="h-5 w-5 mr-2 text-purple-500" />
-              <h3 className="text-sm font-medium">HRV</h3>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <Activity className="h-4 w-4 mr-2 text-purple-500" />
+                  <span className="text-sm">Respiratory Rate</span>
+                </div>
+                {change && renderChangeIndicator(
+                  change.respiratory_rate?.value, 
+                  change.respiratory_rate?.direction, 
+                  change.respiratory_rate?.percentage
+                )}
+              </div>
+              <p className="text-2xl font-bold">
+                {biometricData.respiratory_rate || '-'} <span className="text-sm font-normal text-muted-foreground">bpm</span>
+              </p>
             </div>
-            <p className="text-2xl font-semibold">
-              {getBiometricValue('hrv') || '??'} <span className="text-sm font-normal text-muted-foreground">ms</span>
-            </p>
-          </div>
-          
-          <div className="bg-secondary/30 rounded-lg p-4">
-            <div className="flex items-center mb-2">
-              <Wind className="h-5 w-5 mr-2 text-blue-500" />
-              <h3 className="text-sm font-medium">Breathing</h3>
+            
+            <div className="flex flex-col">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <Activity className="h-4 w-4 mr-2 text-amber-500" />
+                  <span className="text-sm">Stress Score</span>
+                </div>
+                {change && renderChangeIndicator(
+                  change.stress_score?.value, 
+                  change.stress_score?.direction, 
+                  change.stress_score?.percentage
+                )}
+              </div>
+              <p className="text-2xl font-bold">
+                {biometricData.stress_score || '-'} <span className="text-sm font-normal text-muted-foreground">pts</span>
+              </p>
             </div>
-            <p className="text-2xl font-semibold">
-              {getBiometricValue('respiratory_rate') || getBiometricValue('breathRate') || '??'} <span className="text-sm font-normal text-muted-foreground">br/min</span>
-            </p>
           </div>
-          
-          <div className="bg-secondary/30 rounded-lg p-4">
-            <div className="flex items-center mb-2">
-              <Brain className="h-5 w-5 mr-2 text-amber-500" />
-              <h3 className="text-sm font-medium">Stress Level</h3>
-            </div>
-            <p className="text-2xl font-semibold">
-              {getBiometricValue('stress_score') || '??'} <span className="text-sm font-normal text-muted-foreground">score</span>
-            </p>
-          </div>
-        </div>
-        
-        <div className="mt-6">
-          <p className="text-sm text-center text-muted-foreground">
-            Regular meditation has been shown to reduce stress and improve heart rate variability.
-          </p>
         </div>
       </CardContent>
     </Card>
