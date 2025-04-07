@@ -1,4 +1,3 @@
-
 import { ReactNode } from 'react';
 import { useNavigate, NavigateFunction } from 'react-router-dom';
 import { AuthContext } from '@/context/AuthContext';

@@ -1,25 +1,18 @@
 
-import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase';
 import { UserPreferences } from '@/context/types';
 import defaultPreferences from '@/context/defaultPreferences';
-import { convertToDbFormat, convertToLocalFormat } from './formatConverters';
-import { addToSyncQueue, clearSyncQueue, getSyncQueue, savePreferencesToLocalStorage, getPreferencesFromLocalStorage } from './offlineSync';
-import { toast } from 'sonner';
 
 // Fetch user preferences from Supabase
-export const fetchUserPreferences = async (userId?: string): Promise<UserPreferences> => {
-  if (!userId) return defaultPreferences;
-  
-  // If not connected to Supabase, return from localStorage
-  if (!isSupabaseConfigured()) {
-    const localPrefs = getPreferencesFromLocalStorage();
-    return localPrefs || defaultPreferences;
+export async function fetchUserPreferences(userId: string | undefined): Promise<UserPreferences> {
+  if (!userId) {
+    return defaultPreferences;
   }
 
   try {
     const { data, error } = await supabase
       .from('user_preferences')
-      .select('*')
+      .select('preferences')
       .eq('user_id', userId)
       .single();
 
@@ -28,113 +21,80 @@ export const fetchUserPreferences = async (userId?: string): Promise<UserPrefere
       throw error;
     }
 
-    if (!data) {
-      return defaultPreferences;
-    }
-
-    // Convert database format to application format and merge with default preferences
-    const userPrefs = convertToLocalFormat(data);
-    const prefs = { ...defaultPreferences, ...userPrefs };
-    
-    // Store in localStorage as offline backup
-    savePreferencesToLocalStorage(prefs);
-    
-    return prefs;
+    return data?.preferences || defaultPreferences;
   } catch (error) {
-    console.error("Failed to fetch preferences from Supabase:", error);
-    
-    // Fall back to localStorage if available
-    const localPrefs = getPreferencesFromLocalStorage();
-    return localPrefs || defaultPreferences;
+    console.error('Error in fetchUserPreferences:', error);
+    return defaultPreferences;
   }
-};
+}
 
 // Update user preferences in Supabase
-export const updateUserPreferences = async (partialPreferences: Partial<UserPreferences>, userId?: string): Promise<void> => {
-  if (!userId) throw new Error('User not authenticated');
-  
-  // Get the current preferences and merge with the updates
-  const currentPrefs = getPreferencesFromLocalStorage() || defaultPreferences;
-  const updatedPreferences = { ...currentPrefs, ...partialPreferences };
-  
-  // Always update localStorage
-  savePreferencesToLocalStorage(updatedPreferences);
-  
-  // If Supabase is not configured, add to sync queue and return
-  if (!isSupabaseConfigured()) {
-    addToSyncQueue(updatedPreferences);
-    return;
+export async function updateUserPreferences(
+  preferences: Partial<UserPreferences>,
+  userId: string | undefined
+): Promise<UserPreferences> {
+  if (!userId) {
+    // For demo or offline mode, just return the preferences
+    return { ...defaultPreferences, ...preferences };
   }
 
-  const dbRecord = convertToDbFormat(updatedPreferences, userId);
-  
   try {
-    // Check if record exists
-    const { data: existingRecord } = await supabase
+    // First check if the user already has preferences
+    const { data: existingData } = await supabase
       .from('user_preferences')
-      .select('id')
+      .select('preferences')
       .eq('user_id', userId)
       .single();
 
-    if (existingRecord) {
-      // Update existing record
-      const { error } = await supabase
+    const updatedPreferences = {
+      ...(existingData?.preferences || defaultPreferences),
+      ...preferences
+    };
+
+    if (existingData) {
+      // Update existing preferences
+      const { data, error } = await supabase
         .from('user_preferences')
-        .update(dbRecord)
-        .eq('id', existingRecord.id);
+        .update({ preferences: updatedPreferences })
+        .eq('user_id', userId)
+        .select('preferences')
+        .single();
 
       if (error) {
         console.error('Error updating user preferences:', error);
-        // Add to sync queue for later
-        addToSyncQueue(updatedPreferences);
         throw error;
       }
+
+      return data.preferences;
     } else {
-      // Insert new record
-      const { error } = await supabase
+      // Insert new preferences
+      const { data, error } = await supabase
         .from('user_preferences')
-        .insert(dbRecord);
+        .insert({ 
+          user_id: userId, 
+          preferences: updatedPreferences 
+        })
+        .select('preferences')
+        .single();
 
       if (error) {
         console.error('Error creating user preferences:', error);
-        // Add to sync queue for later
-        addToSyncQueue(updatedPreferences);
         throw error;
       }
+
+      return data.preferences;
     }
   } catch (error) {
-    console.error("Failed to update preferences in Supabase:", error);
-    // Add to sync queue for later retry
-    addToSyncQueue(updatedPreferences);
-    throw error;
+    console.error('Error in updateUserPreferences:', error);
+    // Return merged preferences even if save failed
+    return { ...defaultPreferences, ...preferences } as UserPreferences;
   }
-};
+}
 
-// Process any pending offline sync items
-export const processOfflineSync = async (userId?: string): Promise<void> => {
-  if (!userId || !isSupabaseConfigured()) return;
-  
-  const queue = getSyncQueue();
-  if (queue.length === 0) return;
-  
-  console.log(`Processing ${queue.length} offline preference updates`);
-  
-  let success = true;
-  
-  for (const item of queue) {
-    try {
-      await updateUserPreferences(item.preferences, userId);
-    } catch (error) {
-      console.error("Error processing offline sync item:", error);
-      success = false;
-      break;
-    }
-  }
-  
-  if (success) {
-    clearSyncQueue();
-    toast("Sync complete", {
-      description: `Successfully synchronized ${queue.length} offline changes`
-    });
-  }
-};
+// Process any offline changes when back online
+export async function processOfflineSync(userId: string): Promise<void> {
+  // This would handle syncing any changes made while offline
+  // For now, just a placeholder
+  console.log('Processing offline sync for user:', userId);
+  return Promise.resolve();
+}

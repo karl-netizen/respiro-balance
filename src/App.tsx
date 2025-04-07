@@ -1,11 +1,11 @@
 
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 import { ThemeProvider } from '@/context/ThemeProvider';
 import { AuthProvider } from '@/context/AuthProvider';
 import { UserPreferencesProvider } from '@/context/UserPreferencesProvider';
 import { SubscriptionProvider } from '@/context/SubscriptionProvider';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 // Pages
 import LandingPage from '@/pages/LandingPage';
@@ -23,7 +23,7 @@ import ForgotPasswordPage from '@/pages/ForgotPasswordPage';
 import ResetPassword from '@/pages/ResetPassword';
 import OnboardingPage from '@/pages/OnboardingPage';
 import NotFound from '@/pages/NotFound';
-import AccountPage from '@/pages/AccountPage'; // Changed to existing AccountPage instead of Profile
+import AccountPage from '@/pages/AccountPage';
 import SubscriptionPage from '@/pages/SubscriptionPage';
 
 // Create React Query client
@@ -33,10 +33,10 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <AuthProvider>
-          <UserPreferencesProvider>
-            <SubscriptionProvider>
-              <Router>
+        <Router>
+          <AuthProvider>
+            <UserPreferencesProvider>
+              <SubscriptionProvider>
                 <Routes>
                   <Route path="/" element={<LandingPage />} />
                   <Route path="/dashboard" element={<Dashboard />} />
@@ -47,7 +47,7 @@ function App() {
                   <Route path="/morning-rituals" element={<MorningRitual />} />
                   <Route path="/progress" element={<Progress />} />
                   <Route path="/settings" element={<Settings />} />
-                  <Route path="/profile" element={<AccountPage />} /> {/* Changed to AccountPage */}
+                  <Route path="/profile" element={<AccountPage />} />
                   <Route path="/subscription" element={<SubscriptionPage />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
@@ -56,11 +56,11 @@ function App() {
                   <Route path="/onboarding" element={<OnboardingPage />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
-              </Router>
-              <Toaster position="top-right" />
-            </SubscriptionProvider>
-          </UserPreferencesProvider>
-        </AuthProvider>
+                <Toaster position="top-right" />
+              </SubscriptionProvider>
+            </UserPreferencesProvider>
+          </AuthProvider>
+        </Router>
       </ThemeProvider>
     </QueryClientProvider>
   );

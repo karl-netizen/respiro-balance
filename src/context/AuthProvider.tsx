@@ -1,6 +1,5 @@
 
 import { ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { AuthProvider as BaseAuthProvider } from '@/providers/AuthProvider';
 
 interface AuthProviderProps {
@@ -8,10 +7,9 @@ interface AuthProviderProps {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const navigate = useNavigate();
-  
+  // We don't need useNavigate here anymore as we'll pass it from components inside the Router
   return (
-    <BaseAuthProvider navigate={navigate}>
+    <BaseAuthProvider>
       {children}
     </BaseAuthProvider>
   );

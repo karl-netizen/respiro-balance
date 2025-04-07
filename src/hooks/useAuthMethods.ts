@@ -11,8 +11,8 @@ import {
 } from '@/lib/authActions';
 
 export const useAuthMethods = (
-  navigate: NavigateFunction, 
-  setLoading: (loading: boolean) => void
+  navigate?: NavigateFunction, 
+  setLoading: (loading: boolean) => void = () => {}
 ) => {
   // Auth methods
   const signIn = async (email: string, password: string) => {
