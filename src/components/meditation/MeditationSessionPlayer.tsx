@@ -8,6 +8,7 @@ import { getBiometricDataFromDevices } from '@/components/morning-ritual/utils';
 import { toast } from "sonner";
 import PlayerControls from './PlayerControls';
 import BiometricTracker from './BiometricTracker';
+import { getMeditationAudioUrl } from '@/lib/meditationAudioIntegration';
 
 interface MeditationSessionPlayerProps {
   session: MeditationSession;
@@ -93,7 +94,7 @@ const MeditationSessionPlayer: React.FC<MeditationSessionPlayerProps> = ({
           <PlayerControls 
             isPlaying={isPlaying}
             timeRemaining={timeRemaining}
-            totalDuration={session.duration}
+            totalDuration={session.duration * 60}
             volume={volume}
             onPlayPause={handlePlayPause}
             onReset={handleReset}

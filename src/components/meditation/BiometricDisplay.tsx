@@ -1,96 +1,107 @@
 
 import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useUserPreferences } from '@/context';
-import { Heart, Brain, Activity, Pause, Play } from 'lucide-react';
-import { useSimulationState } from './hooks/useSimulationState';
-import HeartRateVariabilityTab from './biometrics/HeartRateVariabilityTab';
-import BrainwavesTab from './biometrics/BrainwavesTab';
-import BreathingTab from './biometrics/BreathingTab';
-import { BiometricDisplayProps } from './types/BiometricTypes';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { BiometricData } from './types/BiometricTypes';
+import { Heart, Activity, Wind, Brain } from 'lucide-react';
 
-interface ExtendedBiometricDisplayProps extends BiometricDisplayProps {
-  sessionId?: string;
+interface BiometricDisplayProps {
+  biometricData: BiometricData;
+  sessionId: string;
 }
 
-const BiometricDisplay: React.FC<ExtendedBiometricDisplayProps> = ({
-  biometricData,
-  isInitial = false,
-  showChange = false,
-  change,
-  sessionId
+export const BiometricDisplay: React.FC<BiometricDisplayProps> = ({ 
+  biometricData, 
+  sessionId 
 }) => {
-  const [selectedMetric, setSelectedMetric] = React.useState('hrv');
-  const { simulationRunning, toggleSimulation } = useSimulationState();
-  const { preferences } = useUserPreferences();
+  const hasData = biometricData && Object.keys(biometricData).length > 0;
   
-  // Check if the user has a wearable device or is interested in certain metrics
-  const showWearableData = preferences.hasWearableDevice || 
-    (preferences.metricsOfInterest && preferences.metricsOfInterest.length > 0);
-  
-  // If no interest is shown in biometrics, we can skip rendering
-  if (!showWearableData) {
-    return null;
+  if (!hasData) {
+    return (
+      <Card className="h-full">
+        <CardHeader>
+          <CardTitle className="text-lg">Biometric Data</CardTitle>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <div className="flex flex-col items-center justify-center h-60">
+            <p className="text-muted-foreground text-center">
+              No biometric data available for this session.
+              <br />
+              Connect a wearable device to track your metrics during meditation.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    );
   }
-
+  
+  // Helper to safely get biometric values
+  const getBiometricValue = (key: keyof BiometricData): number | undefined => {
+    if (!biometricData) return undefined;
+    
+    // Handle different property names
+    if (key === 'heart_rate' && biometricData.heartRate) {
+      return biometricData.heartRate;
+    }
+    if (key === 'respiratory_rate' && biometricData.breathRate) {
+      return biometricData.breathRate;
+    }
+    
+    return biometricData[key] as number | undefined;
+  };
+  
   return (
-    <Card className="shadow-md">
-      <CardContent className="p-5">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold">
-            {isInitial ? "Initial Biometrics" : showChange ? "Current Biometrics" : "Biometric Feedback"}
-          </h3>
-          <button 
-            className="p-1 rounded-full bg-secondary/50 hover:bg-secondary"
-            onClick={toggleSimulation}
-          >
-            {simulationRunning ? <Pause size={16} /> : <Play size={16} />}
-          </button>
+    <Card className="h-full">
+      <CardHeader>
+        <CardTitle className="text-lg">Biometric Data</CardTitle>
+      </CardHeader>
+      <CardContent className="pt-0">
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-secondary/30 rounded-lg p-4">
+            <div className="flex items-center mb-2">
+              <Heart className="h-5 w-5 mr-2 text-red-500" />
+              <h3 className="text-sm font-medium">Heart Rate</h3>
+            </div>
+            <p className="text-2xl font-semibold">
+              {getBiometricValue('heart_rate') || getBiometricValue('heartRate') || '??'} <span className="text-sm font-normal text-muted-foreground">bpm</span>
+            </p>
+          </div>
+          
+          <div className="bg-secondary/30 rounded-lg p-4">
+            <div className="flex items-center mb-2">
+              <Activity className="h-5 w-5 mr-2 text-purple-500" />
+              <h3 className="text-sm font-medium">HRV</h3>
+            </div>
+            <p className="text-2xl font-semibold">
+              {getBiometricValue('hrv') || '??'} <span className="text-sm font-normal text-muted-foreground">ms</span>
+            </p>
+          </div>
+          
+          <div className="bg-secondary/30 rounded-lg p-4">
+            <div className="flex items-center mb-2">
+              <Wind className="h-5 w-5 mr-2 text-blue-500" />
+              <h3 className="text-sm font-medium">Breathing</h3>
+            </div>
+            <p className="text-2xl font-semibold">
+              {getBiometricValue('respiratory_rate') || getBiometricValue('breathRate') || '??'} <span className="text-sm font-normal text-muted-foreground">br/min</span>
+            </p>
+          </div>
+          
+          <div className="bg-secondary/30 rounded-lg p-4">
+            <div className="flex items-center mb-2">
+              <Brain className="h-5 w-5 mr-2 text-amber-500" />
+              <h3 className="text-sm font-medium">Stress Level</h3>
+            </div>
+            <p className="text-2xl font-semibold">
+              {getBiometricValue('stress_score') || '??'} <span className="text-sm font-normal text-muted-foreground">score</span>
+            </p>
+          </div>
         </div>
         
-        <Tabs defaultValue={selectedMetric} onValueChange={setSelectedMetric}>
-          <TabsList className="grid grid-cols-3 mb-4">
-            <TabsTrigger value="hrv" className="flex items-center space-x-1">
-              <Heart className="h-4 w-4" />
-              <span>HRV</span>
-            </TabsTrigger>
-            <TabsTrigger value="brain" className="flex items-center space-x-1">
-              <Brain className="h-4 w-4" />
-              <span>Brain</span>
-            </TabsTrigger>
-            <TabsTrigger value="breath" className="flex items-center space-x-1">
-              <Activity className="h-4 w-4" />
-              <span>Breath</span>
-            </TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="hrv">
-            <HeartRateVariabilityTab 
-              biometricData={biometricData} 
-              showChange={showChange} 
-              change={change} 
-            />
-          </TabsContent>
-          
-          <TabsContent value="brain">
-            <BrainwavesTab biometricData={biometricData} />
-          </TabsContent>
-          
-          <TabsContent value="breath">
-            <BreathingTab 
-              biometricData={biometricData} 
-              showChange={showChange} 
-              change={change} 
-            />
-          </TabsContent>
-        </Tabs>
-        
-        {simulationRunning ? (
-          <p className="text-xs text-muted-foreground mt-4">Displaying live biometric data</p>
-        ) : (
-          <p className="text-xs text-muted-foreground mt-4">Simulation paused</p>
-        )}
+        <div className="mt-6">
+          <p className="text-sm text-center text-muted-foreground">
+            Regular meditation has been shown to reduce stress and improve heart rate variability.
+          </p>
+        </div>
       </CardContent>
     </Card>
   );

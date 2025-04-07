@@ -6,6 +6,7 @@ import { useMeditationFavorites } from './useMeditationFavorites';
 import { useRecentlyPlayedSessions } from './useRecentlyPlayedSessions';
 import { useMeditationRatings } from './useMeditationRatings';
 import { useMeditationFilters } from './useMeditationFilters';
+import { useMeditationAudio } from './useMeditationAudio';
 import { meditationSessions } from '@/data/meditationSessions';
 
 export const useMeditationLibrary = () => {
@@ -25,6 +26,9 @@ export const useMeditationLibrary = () => {
   const { durationFilter, setDurationFilter, levelFilter, setLevelFilter, 
     filterSessionsByCategory: filterByCategory, resetFilters } = 
     useMeditationFilters();
+    
+  // Integrate audio with meditation sessions
+  const { sessionsWithAudio, audioEnabled, audioFiles } = useMeditationAudio(meditationSessions);
   
   const handleSelectSession = async (session: MeditationSession) => {
     setSelectedSession(session);
@@ -45,11 +49,17 @@ export const useMeditationLibrary = () => {
   };
   
   const filterSessionsByCategory = (category: 'guided' | 'quick' | 'deep' | 'sleep') => {
-    return filterByCategory(meditationSessions, category);
+    // Use sessions with audio if available
+    const sessionsToFilter = audioEnabled ? sessionsWithAudio : meditationSessions;
+    return filterByCategory(sessionsToFilter, category);
+  };
+  
+  const getSessionWithAudio = (sessionId: string): MeditationSession | undefined => {
+    return sessionsWithAudio.find(session => session.id === sessionId);
   };
 
   return {
-    meditationSessions,
+    meditationSessions: audioEnabled ? sessionsWithAudio : meditationSessions,
     selectedSession,
     setSelectedSession,
     handleSelectSession,
@@ -68,6 +78,9 @@ export const useMeditationLibrary = () => {
     setDurationFilter,
     levelFilter,
     setLevelFilter,
-    resetFilters
+    resetFilters,
+    audioEnabled,
+    audioFiles,
+    getSessionWithAudio
   };
 };

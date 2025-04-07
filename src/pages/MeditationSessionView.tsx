@@ -13,7 +13,10 @@ import {
   BiometricDisplay, 
   SessionRatingDialog 
 } from '@/components/meditation';
-import { MeditationSession } from '@/types/supabase';
+import { MeditationSession } from '@/components/meditation/MeditationSessionCard';
+import { MeditationAudioPlayer } from '@/components/meditation/MeditationAudioPlayer';
+import { getMeditationAudioUrl } from '@/lib/meditationAudioIntegration';
+import { BiometricData } from '@/components/meditation/types/BiometricTypes';
 
 const MeditationSessionView = () => {
   const { sessionId } = useParams<{ sessionId: string }>();
@@ -21,6 +24,7 @@ const MeditationSessionView = () => {
   const { sessions, completeSession } = useMeditationSessions();
   const [showRatingDialog, setShowRatingDialog] = useState(false);
   const { biometricData, addBiometricData } = useBiometricData();
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
   
   // Find the session
   const session = sessions?.find(s => s.id === sessionId);
@@ -32,6 +36,28 @@ const MeditationSessionView = () => {
       toast.error('Session not found');
     }
   }, [session, sessions, navigate]);
+
+  // Get audio URL from session or Supabase
+  useEffect(() => {
+    if (session) {
+      // If session has an audioUrl, try to get it from Supabase
+      if (session.audioUrl) {
+        const url = getMeditationAudioUrl(session.audioUrl);
+        setAudioUrl(url);
+      } else {
+        // Try to find a matching audio file by session title or ID
+        const baseFileName = `${session.title.toLowerCase().replace(/\s+/g, '-')}`;
+        const potentialUrl = getMeditationAudioUrl(baseFileName);
+        
+        if (potentialUrl) {
+          setAudioUrl(potentialUrl);
+        } else {
+          // Fallback to null - no audio available
+          setAudioUrl(null);
+        }
+      }
+    }
+  }, [session]);
   
   const handleBackToLibrary = () => {
     navigate('/meditate');
@@ -72,6 +98,11 @@ const MeditationSessionView = () => {
     setShowRatingDialog(false);
   };
   
+  const handleAudioComplete = () => {
+    // Auto-complete the session when audio finishes
+    handleSessionComplete();
+  };
+  
   if (!session) {
     return null; // Or a loading state
   }
@@ -92,7 +123,7 @@ const MeditationSessionView = () => {
         
         <div className="grid md:grid-cols-2 gap-8 mb-8">
           <div>
-            <h1 className="text-2xl font-bold mb-2">{session.session_type}</h1>
+            <h1 className="text-2xl font-bold mb-2">{session.title || session.session_type}</h1>
             <p className="text-muted-foreground mb-4">{session.description || "No description available"}</p>
             
             <div className="flex items-center gap-4 mb-6">
@@ -110,16 +141,27 @@ const MeditationSessionView = () => {
               </Button>
             </div>
             
-            <MeditationSessionPlayer 
-              session={session as any} // TODO: Fix the type mismatch
-              onComplete={handleSessionComplete}
-            />
+            {audioUrl ? (
+              <div className="mb-6">
+                <h2 className="text-lg font-medium mb-3">Audio Meditation</h2>
+                <MeditationAudioPlayer 
+                  audioUrl={audioUrl} 
+                  onComplete={handleAudioComplete} 
+                  autoPlay={false}
+                />
+              </div>
+            ) : (
+              <MeditationSessionPlayer 
+                session={session as MeditationSession} 
+                onComplete={handleSessionComplete}
+              />
+            )}
           </div>
           
           <div>
             <h2 className="text-xl font-semibold mb-4">Biometric Feedback</h2>
             <BiometricDisplay 
-              biometricData={biometricData ? biometricData : {}} 
+              biometricData={biometricData as BiometricData} 
               sessionId={sessionId || ""}
             />
           </div>

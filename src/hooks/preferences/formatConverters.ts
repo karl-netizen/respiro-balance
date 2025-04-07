@@ -42,3 +42,7 @@ export const appToDbFormat = (appData: Partial<UserPreferences>): Partial<UserPr
     has_completed_onboarding: appData.hasCompletedOnboarding,
   };
 };
+
+// Aliases for API compatibility
+export const convertToDbFormat = appToDbFormat;
+export const convertToLocalFormat = dbToAppFormat;

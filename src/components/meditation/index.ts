@@ -1,53 +1,39 @@
 
-import MeditationSessionCard from './MeditationSessionCard';
-import MeditationLibraryBrowser from './MeditationLibraryBrowser';
-import MeditationHeader from './MeditationHeader';
-import MeditationSessionView from './MeditationSessionView';
-import MeditationBenefits from './MeditationBenefits';
-import SessionRatingDialog from './SessionRatingDialog';
-import MeditationSessionPlayer from './MeditationSessionPlayer';
-import BiometricDisplay from './BiometricDisplay';
-import FavoritesSection from './FavoritesSection';
-import RecentlyPlayedSection from './RecentlyPlayedSection';
-import MeditationTabContent from './MeditationTabContent';
-import MeditationFilters from './MeditationFilters';
-import DeepFocusList from './DeepFocusList';
-import GuidedMeditationList from './GuidedMeditationList';
-import QuickBreaksList from './QuickBreaksList';
-import PlayerControls from './PlayerControls';
-import BiometricTracker from './BiometricTracker';
-import HeartRateVariabilityTab from './biometrics/HeartRateVariabilityTab';
-import BrainwavesTab from './biometrics/BrainwavesTab';
-import BreathingTab from './biometrics/BreathingTab';
-import MeditationSessionDialog from './MeditationSessionDialog';
+// Views
+export { default as MeditationLibraryBrowser } from './MeditationLibraryBrowser';
+export { default as MeditationHeader } from './MeditationHeader';
+export { default as MeditationSessionView } from './MeditationSessionView';
+export { default as MeditationBenefits } from './MeditationBenefits';
 
-export {
-  MeditationSessionCard,
-  MeditationLibraryBrowser,
-  MeditationHeader,
-  MeditationSessionView,
-  MeditationBenefits,
-  SessionRatingDialog,
-  MeditationSessionPlayer,
-  BiometricDisplay,
-  FavoritesSection,
-  RecentlyPlayedSection,
-  MeditationTabContent,
-  MeditationFilters,
-  DeepFocusList,
-  GuidedMeditationList,
-  QuickBreaksList,
-  PlayerControls,
-  BiometricTracker,
-  HeartRateVariabilityTab,
-  BrainwavesTab,
-  BreathingTab,
-  MeditationSessionDialog
-};
+// Card components
+export { default as MeditationSessionCard } from './MeditationSessionCard';
+export { default as MeditationSessionDialog } from './MeditationSessionDialog';
 
-export type { MeditationSession } from './MeditationSessionCard';
-export type { BiometricData, BiometricChangeData, BiometricDisplayProps } from './types/BiometricTypes';
+// Sections
+export { default as GuidedMeditationList } from './GuidedMeditationList';
+export { default as QuickBreaksList } from './QuickBreaksList';
+export { default as DeepFocusList } from './DeepFocusList';
+export { default as SleepMeditationList } from './SleepMeditationList';
+export { default as RecentlyPlayedSection } from './RecentlyPlayedSection';
+export { default as FavoritesSection } from './FavoritesSection';
 
+// Player components
+export { default as MeditationSessionPlayer } from './MeditationSessionPlayer';
 export { default as MeditationAudioPlayer } from './MeditationAudioPlayer';
-export { default as AudioUploader } from './AudioUploader';
-export { default as EnhancedMeditationSessionView } from './EnhancedMeditationSessionView';
+export { default as PlayerControls } from './PlayerControls';
+
+// Biometric components
+export { default as BiometricTracker } from './BiometricTracker';
+export { default as BiometricDisplay } from './BiometricDisplay';
+
+// Filtering components
+export { default as MeditationFilters } from './MeditationFilters';
+
+// Rating components
+export { default as SessionRatingDialog } from './SessionRatingDialog';
+
+// Audio management
+export { default as AudioFileUploader } from './AudioFileUploader';
+
+// Export types
+export type { MeditationSession } from './MeditationSessionCard';

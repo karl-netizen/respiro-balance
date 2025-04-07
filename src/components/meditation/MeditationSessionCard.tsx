@@ -3,7 +3,23 @@ import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Clock, Star } from "lucide-react";
-import { MeditationSession } from '@/types/supabase';
+import { MeditationSession as SupabaseMeditationSession } from '@/types/supabase';
+
+// Define the MeditationSession type for use throughout the app
+export interface MeditationSession {
+  id: string;
+  title: string;
+  description: string;
+  duration: number;
+  category: string;
+  level?: string;
+  icon?: React.ReactNode;
+  audioUrl?: string;
+  imageUrl?: string;
+  instructor?: string;
+  tags?: string[];
+  premium?: boolean;
+}
 
 export interface MeditationSessionCardProps {
   session: MeditationSession;
