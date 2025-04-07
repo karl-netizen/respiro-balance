@@ -3,38 +3,31 @@ import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Clock, Star } from "lucide-react";
-
-export interface MeditationSession {
-  id: string;
-  title: string;
-  description: string;
-  duration: number;
-  category: 'guided' | 'quick' | 'deep' | 'sleep';
-  level: 'beginner' | 'intermediate' | 'advanced';
-  icon: React.ReactNode;
-  instructor?: string;
-  tags?: string[];
-}
+import { MeditationSession } from '@/types/supabase';
 
 export interface MeditationSessionCardProps {
   session: MeditationSession;
   onSelect: (session: MeditationSession) => void;
   isFavorite: boolean;
   onToggleFavorite: (session: MeditationSession) => void;
+  disabled?: boolean;
+  isPremiumLocked?: boolean;
 }
 
-const MeditationSessionCard: React.FC<MeditationSessionCardProps> = ({
+export const MeditationSessionCard: React.FC<MeditationSessionCardProps> = ({
   session,
   onSelect,
   isFavorite,
-  onToggleFavorite
+  onToggleFavorite,
+  disabled,
+  isPremiumLocked
 }) => {
   return (
     <Card className="h-full hover:shadow-md transition-shadow">
       <CardContent className="p-6 flex flex-col h-full">
         <div className="flex justify-between items-start mb-3">
           <div className="p-2 bg-primary/10 rounded-md">
-            {session.icon}
+            {session.icon || <Clock className="h-5 w-5 text-primary" />}
           </div>
           <Button
             variant="ghost"
@@ -65,8 +58,9 @@ const MeditationSessionCard: React.FC<MeditationSessionCardProps> = ({
           <Button 
             size="sm"
             onClick={() => onSelect(session)}
+            disabled={disabled || isPremiumLocked}
           >
-            Start
+            {isPremiumLocked ? 'Premium' : 'Start'}
           </Button>
         </div>
       </CardContent>
@@ -74,4 +68,5 @@ const MeditationSessionCard: React.FC<MeditationSessionCardProps> = ({
   );
 };
 
+// Export both the component and the type
 export default MeditationSessionCard;

@@ -2,7 +2,7 @@
 import { Dispatch, SetStateAction } from 'react';
 import { BluetoothDevice as SupabaseBluetoothDevice } from '@/types/supabase';
 
-// Define BluetoothDevice interface to match the Supabase type
+// Use the imported type directly
 export type BluetoothDevice = SupabaseBluetoothDevice;
 
 // Ritual types
@@ -152,4 +152,17 @@ export interface Notification {
   type: 'system' | 'reminder' | 'achievement' | 'update';
   action?: string;
   actionUrl?: string;
+}
+
+export interface AuthContextProps {
+  user: any;
+  session: any;
+  loading: boolean;
+  isLoading: boolean; // Added for compatibility
+  signIn: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string, metadata?: any) => Promise<void>;
+  signOut: () => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
+  updatePassword: (password: string) => Promise<void>;
+  refreshSession: () => Promise<void>;
 }

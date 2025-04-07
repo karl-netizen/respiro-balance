@@ -1,84 +1,44 @@
 
-import { UserPreferencesRecord } from '@/types/supabase';
-import { UserPreferences, UserRole, WorkEnvironment, StressLevel, MeditationExperience, SubscriptionTier, MorningRitual } from '@/context/types';
-import defaultPreferences from '@/context/defaultPreferences';
+import { UserPreferences } from '@/context/types';
+import { UserPreferencesData } from '@/types/supabase';
 
-// Convert from local UserPreferences to database UserPreferencesRecord format
-export const convertToDbFormat = (prefs: UserPreferences, userId: string): Partial<UserPreferencesRecord> => {
+// Convert from database format to application format
+export const dbToAppFormat = (dbData: UserPreferencesData): Partial<UserPreferences> => {
   return {
-    user_id: userId,
-    preferences_data: {
-      userRole: prefs.userRole === 'user' ? 'client' : prefs.userRole, // Map 'user' to 'client' for DB
-      workDays: prefs.workDays,
-      workStartTime: prefs.workStartTime,
-      workEndTime: prefs.workEndTime,
-      workEnvironment: prefs.workEnvironment === 'variable' ? 'hybrid' : prefs.workEnvironment, // Map 'variable' to 'hybrid' for DB
-      stressLevel: prefs.stressLevel === 'very_high' ? 'high' : prefs.stressLevel, // Map 'very_high' to 'high' for DB
-      focusChallenges: prefs.focusChallenges,
-      energyPattern: prefs.energyPattern,
-      lunchBreak: prefs.lunchBreak,
-      lunchTime: prefs.lunchTime,
-      morningExercise: prefs.morningExercise,
-      exerciseTime: prefs.exerciseTime,
-      bedTime: prefs.bedTime,
-      meditationExperience: prefs.meditationExperience,
-      meditationGoals: prefs.meditationGoals,
-      preferredSessionDuration: prefs.preferredSessionDuration,
-      metricsOfInterest: prefs.metricsOfInterest,
-      subscriptionTier: prefs.subscriptionTier,
-      morningRituals: prefs.morningRituals || [],
-    }
+    theme: dbData.theme as 'light' | 'dark' | 'system',
+    weeklyMeditationGoal: 150, // Default value
+    defaultMeditationDuration: dbData.preferred_session_duration,
+    workDays: dbData.work_days,
+    meditationExperience: dbData.meditation_experience as any,
+    stressLevel: dbData.stress_level as any,
+    workEnvironment: dbData.work_environment as any,
+    workStartTime: dbData.work_start_time,
+    workEndTime: dbData.work_end_time,
+    lunchBreak: dbData.lunch_break,
+    lunchTime: dbData.lunch_time,
+    morningExercise: dbData.morning_exercise,
+    exerciseTime: dbData.exercise_time,
+    bedTime: dbData.bed_time,
+    hasCompletedOnboarding: dbData.has_completed_onboarding,
   };
 };
 
-// Convert from database UserPreferencesRecord to local UserPreferences format
-export const convertToLocalFormat = (record: UserPreferencesRecord): UserPreferences => {
-  // Map DB userRole 'client' to local 'user'
-  const userRole: UserRole = record.preferences_data.userRole === 'client' ? 'user' : 
-    (record.preferences_data.userRole as 'coach' | 'admin');
-  
-  const workDays = record.preferences_data.workDays as string[];
-  
-  // Map DB workEnvironment 'hybrid' to local format
-  const workEnvironment: WorkEnvironment = record.preferences_data.workEnvironment as WorkEnvironment;
-  
-  // Map DB stressLevel
-  const stressLevel: StressLevel = record.preferences_data.stressLevel as StressLevel;
-  
-  const meditationExperience = record.preferences_data.meditationExperience as MeditationExperience;
-  const subscriptionTier = record.preferences_data.subscriptionTier as SubscriptionTier;
-  
-  // Handle morningRituals with proper type casting
-  const morningRituals = record.preferences_data.morningRituals as MorningRitual[] || [];
-
+// Convert from application format to database format
+export const appToDbFormat = (appData: Partial<UserPreferences>): Partial<UserPreferencesData> => {
   return {
-    ...defaultPreferences,
-    userRole,
-    workDays,
-    workStartTime: record.preferences_data.workStartTime,
-    workEndTime: record.preferences_data.workEndTime,
-    workEnvironment,
-    stressLevel,
-    focusChallenges: record.preferences_data.focusChallenges || defaultPreferences.focusChallenges,
-    energyPattern: record.preferences_data.energyPattern,
-    lunchBreak: record.preferences_data.lunchBreak,
-    lunchTime: record.preferences_data.lunchTime,
-    morningExercise: record.preferences_data.morningExercise,
-    exerciseTime: record.preferences_data.exerciseTime,
-    bedTime: record.preferences_data.bedTime,
-    meditationExperience,
-    meditationGoals: record.preferences_data.meditationGoals || defaultPreferences.meditationGoals,
-    preferredSessionDuration: record.preferences_data.preferredSessionDuration,
-    metricsOfInterest: record.preferences_data.metricsOfInterest || defaultPreferences.metricsOfInterest,
-    subscriptionTier,
-    morningRituals,
-    // Properties not stored in the database
-    hasCompletedOnboarding: true,
-    connectedDevices: [],
-    hasWearableDevice: false,
-    enableSessionReminders: defaultPreferences.enableSessionReminders,
-    enableProgressUpdates: defaultPreferences.enableProgressUpdates,
-    enableRecommendations: defaultPreferences.enableRecommendations,
-    businessAttribution: defaultPreferences.businessAttribution
+    theme: appData.theme,
+    preferred_session_duration: appData.defaultMeditationDuration,
+    work_days: appData.workDays,
+    meditation_experience: appData.meditationExperience as string,
+    stress_level: appData.stressLevel as string,
+    work_environment: appData.workEnvironment as string,
+    work_start_time: appData.workStartTime,
+    work_end_time: appData.workEndTime,
+    lunch_break: appData.lunchBreak,
+    lunch_time: appData.lunchTime,
+    morning_exercise: appData.morningExercise,
+    exercise_time: appData.exerciseTime,
+    bed_time: appData.bedTime,
+    has_completed_onboarding: appData.hasCompletedOnboarding,
   };
 };

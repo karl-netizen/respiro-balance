@@ -25,6 +25,17 @@ export interface MeditationSession {
   completed: boolean;
   rating?: number;
   feedback?: string;
+  // Adding missing fields to fix type errors
+  title: string;
+  description: string;
+  category: 'guided' | 'quick' | 'deep' | 'sleep';
+  level: 'beginner' | 'intermediate' | 'advanced';
+  icon?: React.ReactNode;
+  instructor?: string;
+  tags?: string[];
+  imageUrl?: string;
+  premium?: boolean;
+  favorite?: boolean;
 }
 
 export interface BiometricData {
@@ -37,6 +48,22 @@ export interface BiometricData {
   respiratory_rate?: number;
   stress_score?: number;
   coherence?: number;
+  // Adding additional fields needed from BiometricTypes
+  heartRate?: number;
+  breathRate?: number;
+  brainwaves?: {
+    alpha?: number;
+    beta?: number;
+    theta?: number;
+    delta?: number;
+  };
+}
+
+export interface BluetoothDevice {
+  id: string;
+  name: string;
+  type: string;
+  connected: boolean;
 }
 
 export interface UserPreferencesData {
@@ -63,6 +90,9 @@ export interface UserPreferencesData {
   updated_at: string;
 }
 
+// Alias for backwards compatibility
+export type UserPreferencesRecord = UserPreferencesData;
+
 export interface MorningRitualData {
   id: string;
   user_id: string;
@@ -81,4 +111,15 @@ export interface MorningRitualData {
   last_completed?: string;
   streak: number;
   status: string;
+}
+
+// Add BalanceMetric interface
+export interface BalanceMetric {
+  id: string;
+  user_id: string;
+  work_life_ratio: number;
+  stress_level: number;
+  notes?: string;
+  recorded_at: string;
+  created_at: string;
 }

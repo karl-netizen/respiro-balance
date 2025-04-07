@@ -7,8 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
 import { useMeditationLibrary } from '@/hooks/useMeditationLibrary';
-import { MeditationSessionCard } from '@/components/meditation/MeditationSessionCard';
-import { MeditationSessionDialog } from '@/components/meditation/MeditationSessionDialog';
+import MeditationSessionCard from '@/components/meditation/MeditationSessionCard';
+import MeditationSessionDialog from '@/components/meditation/MeditationSessionDialog';
 import SubscriptionBanner from '@/components/subscription/SubscriptionBanner';
 import { useSubscriptionContext } from '@/context/SubscriptionProvider';
 

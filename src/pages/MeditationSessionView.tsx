@@ -13,6 +13,7 @@ import {
   BiometricDisplay, 
   SessionRatingDialog 
 } from '@/components/meditation';
+import { MeditationSession } from '@/types/supabase';
 
 const MeditationSessionView = () => {
   const { sessionId } = useParams<{ sessionId: string }>();
@@ -110,7 +111,7 @@ const MeditationSessionView = () => {
             </div>
             
             <MeditationSessionPlayer 
-              session={session} 
+              session={session as any} // TODO: Fix the type mismatch
               onComplete={handleSessionComplete}
             />
           </div>
@@ -118,7 +119,7 @@ const MeditationSessionView = () => {
           <div>
             <h2 className="text-xl font-semibold mb-4">Biometric Feedback</h2>
             <BiometricDisplay 
-              biometricData={biometricData || {}} 
+              biometricData={biometricData ? biometricData : {}} 
               sessionId={sessionId || ""}
             />
           </div>

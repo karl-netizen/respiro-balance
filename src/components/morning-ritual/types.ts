@@ -1,6 +1,7 @@
 
 import { z } from "zod";
-import { RitualPriority, RitualReminder } from "@/context/types";
+// Remove the conflicting import
+// import { RitualPriority, RitualReminder } from "@/context/types";
 
 // Form validation schema
 export const ritualFormSchema = z.object({
@@ -53,3 +54,10 @@ export interface RitualFormData {
   complete: boolean;
   createdAt: Date;
 }
+
+export type RitualReminder = {
+  id: string;
+  time: string;
+  enabled: boolean;
+  type: 'in-app' | 'email' | 'push';
+};

@@ -1,5 +1,5 @@
 
-import { BluetoothDevice } from '@/types/supabase'; // Import from shared types
+import { BluetoothDevice } from '@/types/supabase';
 import { UserPreferences } from './types';
 
 // Function to simulate connecting a Bluetooth device
