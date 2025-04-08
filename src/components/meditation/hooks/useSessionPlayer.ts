@@ -48,8 +48,7 @@ export const useSessionPlayer = ({
       setHasStarted(true);
       if (onStart) onStart();
       
-      toast({
-        title: session.title,
+      toast(session.title, {
         description: `${session.duration} minutes`
       });
     }
@@ -72,8 +71,7 @@ export const useSessionPlayer = ({
       onComplete();
     }
     
-    toast({
-      title: "Session completed",
+    toast("Session completed", {
       description: `You've completed ${session.title}`
     });
   };
