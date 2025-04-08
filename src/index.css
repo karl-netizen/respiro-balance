@@ -98,7 +98,7 @@
   }
 }
 
-/* Ensure text is visible in dark mode */
+/* Fix dark mode text visibility */
 .dark .text-foreground-70,
 .dark .text-foreground\/70,
 .dark .text-foreground\/60,
@@ -110,6 +110,18 @@
   @apply text-gray-300;
 }
 
+/* Fix card texts and backgrounds in dark mode */
+.dark .card-content,
+.dark .card-title,
+.dark .card-description {
+  @apply text-gray-100;
+}
+
+.dark .card-subtitle {
+  @apply text-gray-300;
+}
+
+/* Glass morphism */
 .glass-morph {
   @apply bg-white/30 backdrop-blur-lg border border-white/40 shadow-lg;
 }
@@ -124,6 +136,27 @@
 
 .dark .glassmorphism-card {
   @apply bg-black/30 backdrop-blur-md border border-white/10 shadow-md;
+}
+
+/* Make gradient backgrounds more visible in dark mode */
+.dark .bg-gradient-to-b,
+.dark .bg-gradient-to-r,
+.dark .bg-gradient-to-br {
+  @apply from-gray-800/80 to-gray-900;
+}
+
+.dark .bg-secondary\/20 {
+  @apply bg-gray-800/40;
+}
+
+/* Fix feature cards in dark mode */
+.dark .feature-card {
+  @apply bg-gray-800/60 border-gray-700;
+}
+
+.dark .feature-card h3,
+.dark .feature-card p {
+  @apply text-gray-100;
 }
 
 .breathe-circle {
@@ -211,4 +244,24 @@
   opacity: 0;
   transform: translateY(-20px);
   transition: opacity 300ms, transform 300ms;
+}
+
+/* Work-life balance cards dark mode fix */
+.dark .work-life-card {
+  @apply bg-gray-800/60 border-gray-700;
+}
+
+.dark .work-life-card h3,
+.dark .work-life-card h4,
+.dark .work-life-card p {
+  @apply text-gray-100;
+}
+
+/* Fix dropdown menus in dark mode */
+.dark .dropdown-menu {
+  @apply bg-gray-800 border-gray-700;
+}
+
+.dark .dropdown-item {
+  @apply text-gray-200 hover:bg-gray-700;
 }
