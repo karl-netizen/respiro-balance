@@ -15,11 +15,11 @@ export const ViewportToggle = () => {
       if (viewMode === 'mobile') {
         viewport.setAttribute('content', 'width=375, initial-scale=1');
         document.body.classList.add('mobile-preview-mode');
-        toast({ description: "Mobile preview enabled" });
+        toast("Mobile preview enabled");
       } else {
         viewport.setAttribute('content', 'width=device-width, initial-scale=1');
         document.body.classList.remove('mobile-preview-mode');
-        toast({ description: "Desktop view enabled" });
+        toast("Desktop view enabled");
       }
     }
     
