@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Users, User, Activity, BarChart, Clock, Calendar, Bell, Shield } from "lucide-react";
 import { useUserPreferences } from "@/context";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import ClientManagementTab from "./client-management/ClientManagementTab";
 import TeamMetricsTab from "./team-metrics/TeamMetricsTab";
 import ReportingTab from "./reporting/ReportingTab";
@@ -29,7 +29,7 @@ const CoachDashboard = () => {
     toast({
       title: "Add Client Feature",
       description: "This feature will be implemented in the next phase.",
-      duration: 3000,
+      variant: "default",
     });
   };
 
