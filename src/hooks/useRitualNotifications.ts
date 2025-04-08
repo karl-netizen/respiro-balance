@@ -1,90 +1,82 @@
 
 import { useState, useEffect } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-import { useUserPreferences } from '@/context';
 
 export interface Notification {
   id: string;
   title: string;
   message: string;
-  timestamp: string;
+  type: 'achievement' | 'reminder' | 'update' | 'general';
   read: boolean;
-  type: 'ritual' | 'achievement' | 'reminder' | 'system';
-  actionUrl?: string;
+  createdAt: string;
 }
 
-export const useRitualNotifications = () => {
-  const { preferences } = useUserPreferences();
+export function useRitualNotifications() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  
+  // Calculate unread count
   const unreadCount = notifications.filter(n => !n.read).length;
-
-  // Load notifications from localStorage on initial load
+  
+  // Load notifications on mount (would connect to backend in real app)
   useEffect(() => {
-    const savedNotifications = localStorage.getItem('notifications');
-    if (savedNotifications) {
-      try {
-        setNotifications(JSON.parse(savedNotifications));
-      } catch (err) {
-        console.error('Error parsing notifications from localStorage:', err);
+    // Mock notifications for demo
+    const demoNotifications: Notification[] = [
+      {
+        id: '1',
+        title: 'Welcome to Respiro Balance',
+        message: 'Start your journey to mindfulness and better work-life balance.',
+        type: 'general',
+        read: false,
+        createdAt: new Date().toISOString()
+      },
+      {
+        id: '2',
+        title: 'Morning Ritual Reminder',
+        message: 'Your morning meditation session is scheduled in 15 minutes.',
+        type: 'reminder',
+        read: false,
+        createdAt: new Date(Date.now() - 3600000).toISOString()
       }
-    }
+    ];
+    
+    setNotifications(demoNotifications);
   }, []);
-
-  // Save notifications to localStorage when they change
-  useEffect(() => {
-    localStorage.setItem('notifications', JSON.stringify(notifications));
-  }, [notifications]);
-
+  
+  // Mark a notification as read
   const markAsRead = (notificationId: string) => {
-    setNotifications(prevNotifications =>
-      prevNotifications.map(notification =>
-        notification.id === notificationId
-          ? { ...notification, read: true }
-          : notification
-      )
-    );
+    setNotifications(notifications.map(n => 
+      n.id === notificationId ? { ...n, read: true } : n
+    ));
   };
-
+  
+  // Mark all notifications as read
   const markAllAsRead = () => {
-    setNotifications(prevNotifications =>
-      prevNotifications.map(notification => ({ ...notification, read: true }))
-    );
+    setNotifications(notifications.map(n => ({ ...n, read: true })));
   };
-
+  
+  // Remove a notification
   const clearNotification = (notificationId: string) => {
-    setNotifications(prevNotifications =>
-      prevNotifications.filter(notification => notification.id !== notificationId)
-    );
+    setNotifications(notifications.filter(n => n.id !== notificationId));
   };
-
+  
+  // Remove all notifications
   const clearAllNotifications = () => {
     setNotifications([]);
   };
-
-  const addNotification = (notification: Omit<Notification, 'id' | 'timestamp' | 'read'>) => {
-    const newNotification: Notification = {
-      id: uuidv4(),
-      timestamp: new Date().toISOString(),
-      read: false,
-      ...notification,
-    };
-
-    setNotifications(prev => [newNotification, ...prev]);
-    return newNotification.id;
-  };
-
+  
+  // Add a streak achievement notification
   const addStreakAchievementNotification = (ritual: any) => {
-    // Only add streak notifications for significant milestones (5, 10, 15, etc)
-    if (ritual.streak % 5 === 0 && ritual.streak > 0) {
-      addNotification({
-        title: `${ritual.streak} Day Streak!`,
-        message: `You've completed "${ritual.title}" for ${ritual.streak} days in a row. Keep it up!`,
-        type: 'achievement',
-        actionUrl: '/morning-ritual'
-      });
-    }
+    const newNotification: Notification = {
+      id: Date.now().toString(),
+      title: 'New Streak Achievement!',
+      message: `You've completed ${ritual.streak} consecutive days of ${ritual.name}. Keep it up!`,
+      type: 'achievement',
+      read: false,
+      createdAt: new Date().toISOString()
+    };
+    
+    setNotifications([newNotification, ...notifications]);
   };
-
+  
   return {
     notifications,
     unreadCount,
@@ -92,7 +84,6 @@ export const useRitualNotifications = () => {
     markAllAsRead,
     clearNotification,
     clearAllNotifications,
-    addNotification,
     addStreakAchievementNotification
   };
-};
+}

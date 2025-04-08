@@ -5,6 +5,7 @@ import { ThemeProvider } from '@/context/ThemeProvider';
 import { AuthProvider } from '@/context/AuthProvider';
 import { UserPreferencesProvider } from '@/context/UserPreferencesProvider';
 import { SubscriptionProvider } from '@/context/SubscriptionProvider';
+import { NotificationsProvider } from '@/context/NotificationsProvider';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 // Pages
@@ -37,26 +38,28 @@ function App() {
           <AuthProvider>
             <UserPreferencesProvider>
               <SubscriptionProvider>
-                <Routes>
-                  <Route path="/" element={<LandingPage />} />
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/meditate" element={<MeditationLibrary />} />
-                  <Route path="/meditate/:sessionId" element={<MeditationSessionView />} />
-                  <Route path="/breathing" element={<Breathe />} />
-                  <Route path="/breathing/:exerciseId" element={<BreathingExercise />} />
-                  <Route path="/morning-rituals" element={<MorningRitual />} />
-                  <Route path="/progress" element={<Progress />} />
-                  <Route path="/settings" element={<Settings />} />
-                  <Route path="/profile" element={<AccountPage />} />
-                  <Route path="/subscription" element={<SubscriptionPage />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/register" element={<Register />} />
-                  <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-                  <Route path="/reset-password" element={<ResetPassword />} />
-                  <Route path="/onboarding" element={<OnboardingPage />} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-                <Toaster position="top-right" />
+                <NotificationsProvider>
+                  <Routes>
+                    <Route path="/" element={<LandingPage />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/meditate" element={<MeditationLibrary />} />
+                    <Route path="/meditate/:sessionId" element={<MeditationSessionView />} />
+                    <Route path="/breathing" element={<Breathe />} />
+                    <Route path="/breathing/:exerciseId" element={<BreathingExercise />} />
+                    <Route path="/morning-rituals" element={<MorningRitual />} />
+                    <Route path="/progress" element={<Progress />} />
+                    <Route path="/settings" element={<Settings />} />
+                    <Route path="/profile" element={<AccountPage />} />
+                    <Route path="/subscription" element={<SubscriptionPage />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                    <Route path="/reset-password" element={<ResetPassword />} />
+                    <Route path="/onboarding" element={<OnboardingPage />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                  <Toaster position="top-right" />
+                </NotificationsProvider>
               </SubscriptionProvider>
             </UserPreferencesProvider>
           </AuthProvider>

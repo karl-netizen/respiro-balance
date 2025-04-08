@@ -17,6 +17,7 @@ interface BiometricTrackerProps {
   biometricChange: any;
   setBiometricChange: (data: any) => void;
   getInitialBiometrics: () => any;
+  sessionId: string; // Adding the sessionId prop
 }
 
 const BiometricTracker: React.FC<BiometricTrackerProps> = ({
@@ -30,7 +31,8 @@ const BiometricTracker: React.FC<BiometricTrackerProps> = ({
   setCurrentBiometrics,
   biometricChange,
   setBiometricChange,
-  getInitialBiometrics
+  getInitialBiometrics,
+  sessionId // Use the sessionId prop
 }) => {
   const { preferences } = useUserPreferences();
 
@@ -90,6 +92,7 @@ const BiometricTracker: React.FC<BiometricTrackerProps> = ({
           biometricData={initialBiometrics} 
           isInitial={true} 
           showChange={false}
+          sessionId={sessionId}
         />
       )}
       
@@ -99,6 +102,7 @@ const BiometricTracker: React.FC<BiometricTrackerProps> = ({
           showChange={true}
           change={biometricChange}
           isInitial={false}
+          sessionId={sessionId}
         />
       )}
     </div>
