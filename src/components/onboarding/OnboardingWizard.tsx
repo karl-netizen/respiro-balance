@@ -17,12 +17,14 @@ import FinalStep from "./steps/FinalStep";
 import { useIsMobile } from "@/hooks/use-mobile";
 import LunchBreakStep from "./steps/LunchBreakStep";
 import ExerciseStep from "./steps/ExerciseStep";
+import { useNavigate } from "react-router-dom";
 
 const OnboardingWizard = () => {
   const { preferences, updatePreferences } = useUserPreferences();
   const [open, setOpen] = useState(!preferences.hasCompletedOnboarding);
   const [currentStep, setCurrentStep] = useState(0);
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
 
   // Add effect to reinitialize preferences for onboarding if needed
   useEffect(() => {
@@ -137,6 +139,8 @@ const OnboardingWizard = () => {
       title: "Onboarding completed",
       description: "Your personalized settings have been saved."
     });
+    // Navigate to dashboard when onboarding completes
+    navigate('/dashboard');
   };
 
   const skipOnboarding = () => {
@@ -146,6 +150,8 @@ const OnboardingWizard = () => {
       title: "Onboarding skipped",
       description: "You can update your preferences anytime in settings."
     });
+    // Navigate to dashboard when onboarding is skipped
+    navigate('/dashboard');
   };
 
   return (

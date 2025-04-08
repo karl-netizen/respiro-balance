@@ -1,71 +1,66 @@
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Toaster } from 'sonner';
-import { ThemeProvider } from '@/context/ThemeProvider';
-import { AuthProvider } from '@/context/AuthProvider';
-import { UserPreferencesProvider } from '@/context/UserPreferencesProvider';
-import { SubscriptionProvider } from '@/context/SubscriptionProvider';
-import { NotificationsProvider } from '@/context/NotificationsProvider';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-
-// Pages
-import LandingPage from '@/pages/LandingPage';
-import Dashboard from '@/pages/Dashboard';
-import MeditationLibrary from '@/pages/MeditationLibrary';
-import MeditationSessionView from '@/pages/MeditationSessionView';
-import Breathe from '@/pages/Breathe';
-import BreathingExercise from '@/pages/BreathingExercise';
-import MorningRitual from '@/pages/MorningRitual';
-import Progress from '@/pages/Progress';
-import Settings from '@/pages/Settings';
-import Login from '@/pages/Login';
-import Register from '@/pages/Register';
-import ForgotPasswordPage from '@/pages/ForgotPasswordPage';
-import ResetPassword from '@/pages/ResetPassword';
-import OnboardingPage from '@/pages/OnboardingPage';
-import NotFound from '@/pages/NotFound';
-import AccountPage from '@/pages/AccountPage';
-import SubscriptionPage from '@/pages/SubscriptionPage';
-
-// Create React Query client
-const queryClient = new QueryClient();
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import "./App.css";
+import Dashboard from "./pages/Dashboard";
+import RequireAuth from "./components/auth/RequireAuth";
+import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
+import LandingPage from "./pages/LandingPage";
+import NotFound from "./pages/NotFound";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
+import VerifyEmailPage from "./pages/VerifyEmailPage";
+import ResendVerificationPage from "./pages/ResendVerificationPage";
+import PrivacyPage from "./pages/PrivacyPage";
+import TermsPage from "./pages/TermsPage";
+import SettingsPage from "./pages/SettingsPage";
+import SubscriptionPage from "./pages/SubscriptionPage";
+import MorningRitual from "./pages/MorningRitual";
+import Meditate from "./pages/Meditate";
+import BreathingExercise from "./pages/BreathingExercise";
+import Progress from "./pages/Progress";
+import ViewportToggle from "./components/layout/ViewportToggle"; // Add this import
+import OnboardingPage from "./pages/OnboardingPage";
+import HelpPage from "./pages/HelpPage";
+import MeditationSessionView from "./pages/MeditationSessionView";
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <Router>
-          <AuthProvider>
-            <UserPreferencesProvider>
-              <SubscriptionProvider>
-                <NotificationsProvider>
-                  <Routes>
-                    <Route path="/" element={<LandingPage />} />
-                    <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/meditate" element={<MeditationLibrary />} />
-                    <Route path="/meditate/:sessionId" element={<MeditationSessionView />} />
-                    <Route path="/breathing" element={<Breathe />} />
-                    <Route path="/breathing/:exerciseId" element={<BreathingExercise />} />
-                    <Route path="/morning-rituals" element={<MorningRitual />} />
-                    <Route path="/progress" element={<Progress />} />
-                    <Route path="/settings" element={<Settings />} />
-                    <Route path="/profile" element={<AccountPage />} />
-                    <Route path="/subscription" element={<SubscriptionPage />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/register" element={<Register />} />
-                    <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-                    <Route path="/reset-password" element={<ResetPassword />} />
-                    <Route path="/onboarding" element={<OnboardingPage />} />
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                  <Toaster position="top-right" />
-                </NotificationsProvider>
-              </SubscriptionProvider>
-            </UserPreferencesProvider>
-          </AuthProvider>
-        </Router>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <>
+      <Routes>
+        {/* Public routes */}
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/verify-email" element={<VerifyEmailPage />} />
+        <Route path="/resend-verification" element={<ResendVerificationPage />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
+        <Route path="/terms" element={<TermsPage />} />
+        <Route path="/help" element={<HelpPage />} />
+        <Route path="/onboarding" element={<OnboardingPage />} />
+
+        {/* Protected routes */}
+        <Route element={<RequireAuth />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/subscription" element={<SubscriptionPage />} />
+          <Route path="/morning-ritual" element={<MorningRitual />} />
+          <Route path="/meditate" element={<Meditate />} />
+          <Route path="/breathing" element={<BreathingExercise />} />
+          <Route path="/progress" element={<Progress />} />
+          <Route path="/meditation-session/:id" element={<MeditationSessionView />} />
+        </Route>
+
+        {/* 404 route */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+      
+      {/* Add the ViewportToggle component */}
+      <ViewportToggle />
+    </>
   );
 }
 
