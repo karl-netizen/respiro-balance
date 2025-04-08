@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -57,7 +58,6 @@ const MeditationSessionPlayer: React.FC<MeditationSessionPlayerProps> = ({
       if (onStart) onStart();
       
       toast({
-        title: "Meditation started",
         description: `${session.title} - ${session.duration} minutes`,
       });
     }
@@ -81,7 +81,6 @@ const MeditationSessionPlayer: React.FC<MeditationSessionPlayerProps> = ({
     }
     
     toast({
-      title: "Meditation completed",
       description: `You've completed ${session.title}`,
     });
   };

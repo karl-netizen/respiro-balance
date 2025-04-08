@@ -98,6 +98,18 @@
   }
 }
 
+/* Ensure text is visible in dark mode */
+.dark .text-foreground-70,
+.dark .text-foreground\/70,
+.dark .text-foreground\/60,
+.dark .text-foreground\/80 {
+  @apply text-gray-200/80;
+}
+
+.dark .text-muted-foreground {
+  @apply text-gray-300;
+}
+
 .glass-morph {
   @apply bg-white/30 backdrop-blur-lg border border-white/40 shadow-lg;
 }

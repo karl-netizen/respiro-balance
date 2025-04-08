@@ -61,6 +61,12 @@ const Meditate = () => {
       });
     }
   }, [meditationSessions]);
+
+  // Handle tab change
+  const handleTabChange = (tabValue: string) => {
+    console.log("Tab changed to:", tabValue);
+    setActiveTab(tabValue);
+  };
   
   const handleSessionComplete = (sessionId: string) => {
     if (preferences.hasWearableDevice) {
@@ -97,7 +103,7 @@ const Meditate = () => {
         ) : (
           <MeditationLibraryBrowser 
             activeTab={activeTab}
-            setActiveTab={setActiveTab}
+            setActiveTab={handleTabChange}
             recentlyPlayed={recentlyPlayed}
             getFavoriteSessions={getFavoriteSessions}
             handleSelectSession={handleSelectSession}

@@ -80,6 +80,7 @@ const MeditationLibraryBrowser: React.FC<MeditationLibraryBrowserProps> = ({
               onSelectSession={handleSelectSession}
               isFavorite={isFavorite}
               onToggleFavorite={handleToggleFavorite}
+              value="guided"
             />
           </TabsContent>
           
@@ -89,6 +90,7 @@ const MeditationLibraryBrowser: React.FC<MeditationLibraryBrowserProps> = ({
               onSelectSession={handleSelectSession}
               isFavorite={isFavorite}
               onToggleFavorite={handleToggleFavorite}
+              value="quick"
             />
           </TabsContent>
           
@@ -98,6 +100,7 @@ const MeditationLibraryBrowser: React.FC<MeditationLibraryBrowserProps> = ({
               onSelectSession={handleSelectSession}
               isFavorite={isFavorite}
               onToggleFavorite={handleToggleFavorite}
+              value="deep"
             />
           </TabsContent>
           
@@ -107,6 +110,7 @@ const MeditationLibraryBrowser: React.FC<MeditationLibraryBrowserProps> = ({
               onSelectSession={handleSelectSession}
               isFavorite={isFavorite}
               onToggleFavorite={handleToggleFavorite}
+              value="sleep"
             />
           </TabsContent>
         </Tabs>
