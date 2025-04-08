@@ -18,7 +18,7 @@ const Home = () => {
         </Button>
         
         <Button variant="outline" asChild size="lg">
-          <Link to="/register">Create Account</Link>
+          <Link to="/signup">Create Account</Link>
         </Button>
       </div>
     </div>
