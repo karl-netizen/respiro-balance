@@ -5,11 +5,10 @@ import ViewportToggle from '@/components/layout/ViewportToggle';
 import { cn } from '@/lib/utils';
 import RequireAuth from '@/components/auth/RequireAuth';
 
-// Import your pages here
-// For example:
-// import Dashboard from '@/pages/Dashboard';
-// import Login from '@/pages/Login';
-// import Register from '@/pages/Register';
+// Import pages
+import Home from '@/pages/Home';
+import Login from '@/pages/Login';
+import Dashboard from '@/pages/Dashboard';
 
 const App: React.FC = () => {
   const [isMobileView, setIsMobileView] = useState(false);
@@ -38,17 +37,18 @@ const App: React.FC = () => {
       <ViewportToggle />
       <Routes>
         {/* Public routes */}
-        {/* <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} /> */}
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
         
         {/* Protected routes */}
-        {/* <Route path="/dashboard" element={
+        <Route path="/dashboard" element={
           <RequireAuth>
             <Dashboard />
           </RequireAuth>
-        } /> */}
+        } />
         
-        {/* Add more routes as needed */}
+        {/* Redirect any unknown routes to home */}
+        <Route path="*" element={<Home />} />
       </Routes>
     </div>
   );
