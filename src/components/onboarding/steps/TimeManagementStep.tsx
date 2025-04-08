@@ -179,11 +179,12 @@ const TimeManagementStep = () => {
     </div>
   );
 
-  // On mobile, we'll use the entire component space
   return (
-    <ScrollArea className="h-full">
-      {content}
-    </ScrollArea>
+    <div className="w-full h-full overflow-hidden">
+      <ScrollArea className="h-[60vh] pr-4">
+        {content}
+      </ScrollArea>
+    </div>
   );
 };
 

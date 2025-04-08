@@ -133,16 +133,18 @@ const OnboardingWizard = () => {
       lastOnboardingCompleted: new Date().toISOString()
     });
     setOpen(false);
-    toast("Onboarding completed", {
-      description: "Your personalized settings have been saved.",
+    toast({
+      title: "Onboarding completed",
+      description: "Your personalized settings have been saved."
     });
   };
 
   const skipOnboarding = () => {
     updatePreferences({ hasCompletedOnboarding: true });
     setOpen(false);
-    toast("Onboarding skipped", {
-      description: "You can update your preferences anytime in settings.",
+    toast({
+      title: "Onboarding skipped",
+      description: "You can update your preferences anytime in settings."
     });
   };
 
@@ -151,13 +153,12 @@ const OnboardingWizard = () => {
       <DialogContent 
         className={`sm:max-w-[500px] ${isMobile ? 'p-4' : 'p-6'}`}
         style={{ 
+          maxHeight: '90vh',
           display: 'flex', 
           flexDirection: 'column',
-          maxHeight: isMobile ? '90vh' : '90vh',
-          height: isMobile ? '90vh' : 'auto'
         }}
       >
-        <div className="flex flex-col h-full flex-grow">
+        <div className="flex flex-col h-full">
           <div className="text-center">
             <div className="flex items-center justify-center mb-3">
               <div className="h-1 bg-secondary flex-1 rounded-full overflow-hidden">
@@ -180,11 +181,11 @@ const OnboardingWizard = () => {
             <p className="text-muted-foreground mt-1">{steps[currentStep].description}</p>
           </div>
 
-          <div className="py-4 flex-1 overflow-auto min-h-0">
+          <div className="py-4 flex-grow overflow-hidden min-h-0">
             {steps[currentStep].component}
           </div>
 
-          <div className="flex justify-between pt-4 border-t mt-2 sticky bottom-0 bg-background">
+          <div className="flex justify-between pt-4 border-t mt-2 bg-background">
             {currentStep > 0 ? (
               <Button variant="outline" onClick={handleBack}>
                 Back
