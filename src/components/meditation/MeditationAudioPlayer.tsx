@@ -8,12 +8,16 @@ import { toast } from 'sonner';
 interface MeditationAudioPlayerProps {
   audioUrl: string;
   onComplete?: () => void;
+  onPlay?: () => void;
+  onPause?: () => void;
   autoPlay?: boolean;
 }
 
 export const MeditationAudioPlayer: React.FC<MeditationAudioPlayerProps> = ({
   audioUrl,
   onComplete,
+  onPlay,
+  onPause,
   autoPlay = false,
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -22,50 +26,79 @@ export const MeditationAudioPlayer: React.FC<MeditationAudioPlayerProps> = ({
   const [volume, setVolume] = useState(0.7);
   const [isMuted, setIsMuted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Log the audio URL being used
+  useEffect(() => {
+    console.log("MeditationAudioPlayer: Using audio URL:", audioUrl);
+  }, [audioUrl]);
 
   useEffect(() => {
     const audio = new Audio(audioUrl);
     audioRef.current = audio;
     
     audio.volume = volume;
+    setIsLoading(true);
+    setError(null);
     
-    audio.addEventListener('loadedmetadata', () => {
+    const handleLoadedMetadata = () => {
+      console.log("Audio metadata loaded. Duration:", audio.duration);
       setDuration(audio.duration);
       setIsLoading(false);
       if (autoPlay) {
         handlePlay();
       }
-    });
+    };
     
-    audio.addEventListener('timeupdate', () => {
+    const handleTimeUpdate = () => {
       setCurrentTime(audio.currentTime);
-    });
+    };
     
-    audio.addEventListener('ended', () => {
+    const handleEnded = () => {
+      console.log("Audio playback ended");
       setIsPlaying(false);
       setCurrentTime(0);
       if (onComplete) {
         onComplete();
       }
-    });
+    };
     
-    audio.addEventListener('error', (e) => {
-      console.error('Audio error:', e);
-      toast.error('Error loading audio file');
+    const handleError = (e: any) => {
+      console.error("Audio loading error:", e);
+      const errorMessage = "Error loading audio file. Please try another meditation.";
+      setError(errorMessage);
+      toast.error(errorMessage);
       setIsLoading(false);
-    });
+    };
+    
+    // Add event listeners
+    audio.addEventListener('loadedmetadata', handleLoadedMetadata);
+    audio.addEventListener('timeupdate', handleTimeUpdate);
+    audio.addEventListener('ended', handleEnded);
+    audio.addEventListener('error', handleError);
+    
+    // Set a timeout to check if loading takes too long
+    const loadingTimeout = setTimeout(() => {
+      if (isLoading && !audio.duration) {
+        console.warn("Audio loading timeout");
+        setError("Audio file is taking too long to load. It may be unavailable.");
+        setIsLoading(false);
+      }
+    }, 10000);
     
     return () => {
+      // Clean up
+      clearTimeout(loadingTimeout);
       audio.pause();
       audio.src = '';
       
-      audio.removeEventListener('loadedmetadata', () => {});
-      audio.removeEventListener('timeupdate', () => {});
-      audio.removeEventListener('ended', () => {});
-      audio.removeEventListener('error', () => {});
+      audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      audio.removeEventListener('timeupdate', handleTimeUpdate);
+      audio.removeEventListener('ended', handleEnded);
+      audio.removeEventListener('error', handleError);
     };
-  }, [audioUrl, autoPlay, onComplete]);
+  }, [audioUrl, autoPlay, onComplete, volume]);
 
   useEffect(() => {
     if (audioRef.current) {
@@ -75,14 +108,19 @@ export const MeditationAudioPlayer: React.FC<MeditationAudioPlayerProps> = ({
 
   const handlePlay = () => {
     if (audioRef.current) {
-      audioRef.current.play()
-        .then(() => {
-          setIsPlaying(true);
-        })
-        .catch((error) => {
-          console.error('Error playing audio:', error);
-          toast.error('Could not play the audio');
-        });
+      const playPromise = audioRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            console.log("Audio playback started");
+            setIsPlaying(true);
+            if (onPlay) onPlay();
+          })
+          .catch((error) => {
+            console.error("Error playing audio:", error);
+            toast.error("Could not play the audio. Please try again.");
+          });
+      }
     }
   };
 
@@ -90,6 +128,7 @@ export const MeditationAudioPlayer: React.FC<MeditationAudioPlayerProps> = ({
     if (audioRef.current) {
       audioRef.current.pause();
       setIsPlaying(false);
+      if (onPause) onPause();
     }
   };
 
@@ -127,6 +166,17 @@ export const MeditationAudioPlayer: React.FC<MeditationAudioPlayerProps> = ({
       {isLoading ? (
         <div className="flex justify-center items-center h-24">
           <div className="animate-pulse text-primary">Loading audio...</div>
+        </div>
+      ) : error ? (
+        <div className="text-center p-4 border border-red-200 bg-red-50 rounded-md text-red-600">
+          <p className="mb-2">{error}</p>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => window.location.reload()}
+          >
+            Try Again
+          </Button>
         </div>
       ) : (
         <>

@@ -10,12 +10,13 @@ import { useBiometricData } from '@/hooks/useBiometricData';
 import { toast } from 'sonner';
 import { 
   MeditationSessionPlayer, 
-  BiometricDisplay, 
+  BiometricTracker,
   SessionRatingDialog 
 } from '@/components/meditation';
 import { MeditationSession } from '@/components/meditation/MeditationSessionCard';
 import { MeditationAudioPlayer } from '@/components/meditation/MeditationAudioPlayer';
 import { getMeditationAudioUrl } from '@/lib/meditationAudioIntegration';
+import { meditationSessions } from '@/data/meditationSessions';
 import { BiometricData } from '@/components/meditation/types/BiometricTypes';
 
 const MeditationSessionView = () => {
@@ -25,36 +26,92 @@ const MeditationSessionView = () => {
   const [showRatingDialog, setShowRatingDialog] = useState(false);
   const { biometricData, addBiometricData } = useBiometricData();
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [session, setSession] = useState<MeditationSession | null>(null);
+  const [initialBiometrics, setInitialBiometrics] = useState<any>(null);
+  const [currentBiometrics, setCurrentBiometrics] = useState<any>(null);
+  const [biometricChange, setBiometricChange] = useState<any>(null);
+  const [sessionStarted, setSessionStarted] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState(0);
   
-  // Find the session
-  const session = sessions?.find(s => s.id === sessionId);
-  
+  // Find the session from our local data first
   useEffect(() => {
-    if (!session && sessions?.length > 0) {
-      // Session not found, redirect to meditation library
-      navigate('/meditate');
-      toast.error('Session not found');
+    if (sessionId) {
+      // Look in the meditationSessions array first
+      let foundSession = meditationSessions.find(s => s.id === sessionId);
+      
+      if (foundSession) {
+        console.log("Found session in local data:", foundSession);
+        setSession(foundSession);
+        if (foundSession.duration) {
+          setTimeRemaining(foundSession.duration * 60);
+        }
+      } else if (sessions?.length > 0) {
+        // Fallback to API sessions if not found locally
+        foundSession = sessions.find(s => s.id === sessionId) as unknown as MeditationSession;
+        if (foundSession) {
+          console.log("Found session in API data:", foundSession);
+          setSession(foundSession);
+          if (foundSession.duration) {
+            setTimeRemaining(foundSession.duration * 60);
+          }
+        }
+      }
+      
+      if (!foundSession) {
+        console.error("Session not found:", sessionId);
+        toast.error('Session not found');
+        navigate('/meditate');
+      }
     }
-  }, [session, sessions, navigate]);
+  }, [sessionId, sessions, navigate]);
 
-  // Get audio URL from session or Supabase
+  // Generate mock biometric data when the session starts
+  const getInitialBiometrics = () => {
+    const mockBiometricData = {
+      heart_rate: Math.floor(Math.random() * 15) + 70, // 70-85
+      hrv: Math.floor(Math.random() * 20) + 40, // 40-60
+      respiratory_rate: Math.floor(Math.random() * 5) + 12, // 12-17
+      stress_score: Math.floor(Math.random() * 20) + 50, // 50-70
+    };
+    return mockBiometricData;
+  };
+
+  // Get audio URL from session or try to find a matching file
   useEffect(() => {
     if (session) {
-      // If session has an audioUrl, try to get it from Supabase
+      console.log("Attempting to get audio URL for session:", session.title);
+      
+      // If session has an explicit audioUrl property
       if (session.audioUrl) {
+        console.log("Session has audioUrl property:", session.audioUrl);
         const url = getMeditationAudioUrl(session.audioUrl);
+        console.log("Generated audio URL:", url);
         setAudioUrl(url);
+        return;
+      }
+      
+      // Try to match by session ID
+      const idBasedFileName = `${session.id}.mp3`;
+      console.log("Trying to find audio by session ID:", idBasedFileName);
+      const idBasedUrl = getMeditationAudioUrl(idBasedFileName);
+      
+      // Try to match by session title
+      const titleBasedFileName = `${session.title.toLowerCase().replace(/\s+/g, '-')}.mp3`;
+      console.log("Trying to find audio by session title:", titleBasedFileName);
+      const titleBasedUrl = getMeditationAudioUrl(titleBasedFileName);
+      
+      // Set whichever URL we can find, with ID-based taking precedence
+      if (idBasedUrl) {
+        console.log("Using ID-based audio URL");
+        setAudioUrl(idBasedUrl);
+      } else if (titleBasedUrl) {
+        console.log("Using title-based audio URL");
+        setAudioUrl(titleBasedUrl);
       } else {
-        // Try to find a matching audio file by session title or ID
-        const baseFileName = `${session.title.toLowerCase().replace(/\s+/g, '-')}`;
-        const potentialUrl = getMeditationAudioUrl(baseFileName);
-        
-        if (potentialUrl) {
-          setAudioUrl(potentialUrl);
-        } else {
-          // Fallback to null - no audio available
-          setAudioUrl(null);
-        }
+        console.log("No matching audio found for session:", session.title);
+        setAudioUrl(null);
+        toast.warning('No audio found for this meditation');
       }
     }
   }, [session]);
@@ -63,21 +120,31 @@ const MeditationSessionView = () => {
     navigate('/meditate');
   };
   
+  const handleSessionStart = () => {
+    if (!sessionStarted) {
+      const initialData = getInitialBiometrics();
+      setInitialBiometrics(initialData);
+      setCurrentBiometrics(initialData);
+      setSessionStarted(true);
+      
+      if (sessionId) {
+        // Log that the session has started
+        console.log("Session started:", sessionId);
+      }
+    }
+  };
+  
   const handleSessionComplete = () => {
     if (sessionId) {
       completeSession(sessionId);
       
-      // Generate mock biometric data
-      const mockBiometricData = {
-        sessionId,
-        heart_rate: Math.floor(Math.random() * 15) + 70, // 70-85
-        hrv: Math.floor(Math.random() * 20) + 40, // 40-60
-        respiratory_rate: Math.floor(Math.random() * 10) + 65, // 65-75
-        stress_score: Math.floor(Math.random() * 20) + 50, // 50-70
-      };
-      
       // Add biometric data
-      addBiometricData(mockBiometricData);
+      if (currentBiometrics) {
+        addBiometricData({
+          ...currentBiometrics,
+          sessionId
+        });
+      }
       
       // Show rating dialog
       setShowRatingDialog(true);
@@ -98,13 +165,33 @@ const MeditationSessionView = () => {
     setShowRatingDialog(false);
   };
   
+  const handleAudioPlay = () => {
+    setIsPlaying(true);
+    handleSessionStart();
+  };
+  
+  const handleAudioPause = () => {
+    setIsPlaying(false);
+  };
+  
   const handleAudioComplete = () => {
     // Auto-complete the session when audio finishes
     handleSessionComplete();
   };
   
   if (!session) {
-    return null; // Or a loading state
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-grow container max-w-5xl mx-auto px-4 py-8 flex justify-center items-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p>Loading meditation session...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
   }
   
   return (
@@ -123,8 +210,8 @@ const MeditationSessionView = () => {
         
         <div className="grid md:grid-cols-2 gap-8 mb-8">
           <div>
-            <h1 className="text-2xl font-bold mb-2">{session.title || session.session_type}</h1>
-            <p className="text-muted-foreground mb-4">{session.description || "No description available"}</p>
+            <h1 className="text-2xl font-bold mb-2">{session.title}</h1>
+            <p className="text-muted-foreground mb-4">{session.description}</p>
             
             <div className="flex items-center gap-4 mb-6">
               <div className="flex items-center">
@@ -146,24 +233,40 @@ const MeditationSessionView = () => {
                 <h2 className="text-lg font-medium mb-3">Audio Meditation</h2>
                 <MeditationAudioPlayer 
                   audioUrl={audioUrl} 
-                  onComplete={handleAudioComplete} 
+                  onComplete={handleAudioComplete}
+                  onPlay={handleAudioPlay}
+                  onPause={handleAudioPause}
                   autoPlay={false}
                 />
               </div>
             ) : (
               <MeditationSessionPlayer 
-                session={session as MeditationSession} 
+                session={session} 
                 onComplete={handleSessionComplete}
+                onStart={handleSessionStart}
+                onPlayStateChange={setIsPlaying}
               />
             )}
           </div>
           
           <div>
             <h2 className="text-xl font-semibold mb-4">Biometric Feedback</h2>
-            <BiometricDisplay 
-              biometricData={biometricData as BiometricData} 
-              sessionId={sessionId || ""}
-            />
+            {session && (
+              <BiometricTracker
+                isPlaying={isPlaying}
+                sessionStarted={sessionStarted}
+                timeRemaining={timeRemaining}
+                sessionDuration={session.duration}
+                initialBiometrics={initialBiometrics}
+                setInitialBiometrics={setInitialBiometrics}
+                currentBiometrics={currentBiometrics} 
+                setCurrentBiometrics={setCurrentBiometrics}
+                biometricChange={biometricChange}
+                setBiometricChange={setBiometricChange}
+                getInitialBiometrics={getInitialBiometrics}
+                sessionId={sessionId || ""}
+              />
+            )}
           </div>
         </div>
       </main>
@@ -174,6 +277,7 @@ const MeditationSessionView = () => {
         isOpen={showRatingDialog}
         onClose={() => setShowRatingDialog(false)}
         sessionId={sessionId || ""}
+        sessionTitle={session.title}
         onSubmitRating={handleRatingSubmit}
       />
     </div>

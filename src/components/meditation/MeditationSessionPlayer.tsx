@@ -4,21 +4,25 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Play, Pause, SkipForward } from 'lucide-react';
 import { MeditationSession } from './MeditationSessionCard';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 interface MeditationSessionPlayerProps {
   session: MeditationSession;
   onComplete?: () => void;
+  onStart?: () => void;
+  onPlayStateChange?: (isPlaying: boolean) => void;
 }
 
 const MeditationSessionPlayer: React.FC<MeditationSessionPlayerProps> = ({ 
   session, 
-  onComplete 
+  onComplete,
+  onStart,
+  onPlayStateChange
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [remainingTime, setRemainingTime] = useState(session.duration * 60);
   const [progress, setProgress] = useState(0);
-  const { toast } = useToast();
+  const [hasStarted, setHasStarted] = useState(false);
 
   // Format seconds to MM:SS
   const formatTime = (seconds: number): string => {
@@ -29,9 +33,17 @@ const MeditationSessionPlayer: React.FC<MeditationSessionPlayerProps> = ({
 
   // Toggle play/pause
   const togglePlayPause = () => {
-    setIsPlaying(!isPlaying);
+    const newPlayState = !isPlaying;
+    setIsPlaying(newPlayState);
     
-    if (!isPlaying) {
+    if (onPlayStateChange) {
+      onPlayStateChange(newPlayState);
+    }
+    
+    if (newPlayState && !hasStarted) {
+      setHasStarted(true);
+      if (onStart) onStart();
+      
       toast({
         title: "Meditation started",
         description: `${session.title} - ${session.duration} minutes`,
@@ -44,6 +56,14 @@ const MeditationSessionPlayer: React.FC<MeditationSessionPlayerProps> = ({
     setRemainingTime(0);
     setProgress(100);
     setIsPlaying(false);
+    
+    if (onPlayStateChange) {
+      onPlayStateChange(false);
+    }
+    
+    if (!hasStarted && onStart) {
+      onStart();
+    }
     
     if (onComplete) {
       onComplete();
@@ -73,9 +93,15 @@ const MeditationSessionPlayer: React.FC<MeditationSessionPlayerProps> = ({
       }, 1000);
     } else if (remainingTime === 0 && isPlaying) {
       setIsPlaying(false);
+      
+      if (onPlayStateChange) {
+        onPlayStateChange(false);
+      }
+      
       if (onComplete) {
         onComplete();
       }
+      
       toast({
         title: "Meditation completed",
         description: `You've completed ${session.title}`,
@@ -85,7 +111,7 @@ const MeditationSessionPlayer: React.FC<MeditationSessionPlayerProps> = ({
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isPlaying, remainingTime, session, onComplete, toast]);
+  }, [isPlaying, remainingTime, session, onComplete, onPlayStateChange]);
 
   return (
     <Card>
