@@ -1,9 +1,10 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import MeditationPlayer from "@/components/MeditationPlayer";
+import { MeditationSession } from './MeditationSessionCard';
 import { SessionRatingDialog } from "@/components/meditation";
-import { MeditationSession } from '@/components/meditation/MeditationSessionCard';
+import MeditationSessionPlayer from './MeditationSessionPlayer';
+import { getMeditationAudioUrl } from '@/lib/meditationAudioIntegration';
 
 interface MeditationSessionViewProps {
   selectedSession: MeditationSession;
@@ -24,6 +25,13 @@ const MeditationSessionView: React.FC<MeditationSessionViewProps> = ({
   setShowRatingDialog,
   handleSubmitRating
 }) => {
+  // Handle session completion
+  const handleSessionComplete = () => {
+    if (handleSubmitRating) {
+      setShowRatingDialog(true);
+    }
+  };
+
   return (
     <section className="py-12 px-6" id="player">
       <div className="max-w-4xl mx-auto">
@@ -54,7 +62,10 @@ const MeditationSessionView: React.FC<MeditationSessionViewProps> = ({
           </div>
         </div>
         
-        <MeditationPlayer />
+        <MeditationSessionPlayer 
+          session={selectedSession} 
+          onComplete={handleSessionComplete}
+        />
         
         {showRatingDialog && selectedSession && (
           <SessionRatingDialog

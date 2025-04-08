@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import MeditationFilters from './MeditationFilters';
 import FavoritesSection from './FavoritesSection';
 import RecentlyPlayedSection from './RecentlyPlayedSection';
@@ -55,7 +55,6 @@ const MeditationLibraryBrowser: React.FC<MeditationLibraryBrowserProps> = ({
         />
         
         <Tabs 
-          defaultValue="guided" 
           value={activeTab}
           onValueChange={setActiveTab}
           className="w-full"
@@ -75,37 +74,41 @@ const MeditationLibraryBrowser: React.FC<MeditationLibraryBrowserProps> = ({
             onResetFilters={resetFilters}
           />
           
-          <MeditationTabContent
-            value="guided"
-            sessions={filterSessionsByCategory('guided')}
-            onSelectSession={handleSelectSession}
-            isFavorite={isFavorite}
-            onToggleFavorite={handleToggleFavorite}
-          />
+          <TabsContent value="guided">
+            <MeditationTabContent
+              sessions={filterSessionsByCategory('guided')}
+              onSelectSession={handleSelectSession}
+              isFavorite={isFavorite}
+              onToggleFavorite={handleToggleFavorite}
+            />
+          </TabsContent>
           
-          <MeditationTabContent
-            value="quick"
-            sessions={filterSessionsByCategory('quick')}
-            onSelectSession={handleSelectSession}
-            isFavorite={isFavorite}
-            onToggleFavorite={handleToggleFavorite}
-          />
+          <TabsContent value="quick">
+            <MeditationTabContent
+              sessions={filterSessionsByCategory('quick')}
+              onSelectSession={handleSelectSession}
+              isFavorite={isFavorite}
+              onToggleFavorite={handleToggleFavorite}
+            />
+          </TabsContent>
           
-          <MeditationTabContent
-            value="deep"
-            sessions={filterSessionsByCategory('deep')}
-            onSelectSession={handleSelectSession}
-            isFavorite={isFavorite}
-            onToggleFavorite={handleToggleFavorite}
-          />
+          <TabsContent value="deep">
+            <MeditationTabContent
+              sessions={filterSessionsByCategory('deep')}
+              onSelectSession={handleSelectSession}
+              isFavorite={isFavorite}
+              onToggleFavorite={handleToggleFavorite}
+            />
+          </TabsContent>
           
-          <MeditationTabContent
-            value="sleep"
-            sessions={filterSessionsByCategory('sleep')}
-            onSelectSession={handleSelectSession}
-            isFavorite={isFavorite}
-            onToggleFavorite={handleToggleFavorite}
-          />
+          <TabsContent value="sleep">
+            <MeditationTabContent
+              sessions={filterSessionsByCategory('sleep')}
+              onSelectSession={handleSelectSession}
+              isFavorite={isFavorite}
+              onToggleFavorite={handleToggleFavorite}
+            />
+          </TabsContent>
         </Tabs>
       </div>
     </section>

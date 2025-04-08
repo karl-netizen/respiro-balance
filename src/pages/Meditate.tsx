@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { 
@@ -12,11 +12,13 @@ import { useMeditationLibrary } from "@/hooks/useMeditationLibrary";
 import { useUserPreferences } from "@/context";
 import { useBiometricData } from "@/hooks/useBiometricData";
 import { toast } from "sonner";
+import { debugAllSessionAudio, analyzeSessionAudio, logAudioMappingStatus } from "@/lib/meditationAudioIntegration";
 
 const Meditate = () => {
   const { preferences } = useUserPreferences();
   const { biometricData, addBiometricData } = useBiometricData();
   const { 
+    meditationSessions,
     selectedSession, 
     setSelectedSession, 
     handleSelectSession,
@@ -36,6 +38,29 @@ const Meditate = () => {
   } = useMeditationLibrary();
   
   const [activeTab, setActiveTab] = useState('guided');
+  
+  // Run audio diagnosis on first load
+  useEffect(() => {
+    if (meditationSessions && meditationSessions.length > 0) {
+      // Output debug info to console
+      debugAllSessionAudio(meditationSessions);
+      
+      // Log audio mapping status
+      logAudioMappingStatus();
+      
+      // Analyze sessions
+      const { withAudio, withoutAudio, summary } = analyzeSessionAudio(meditationSessions);
+      
+      console.log("Audio mapping summary:", summary);
+      console.log("Sessions WITH audio:", withAudio.map(s => s.title));
+      console.log("Sessions WITHOUT audio:", withoutAudio.map(s => s.title));
+      
+      // Show toast with results
+      toast.info("Audio mapping analysis", {
+        description: summary
+      });
+    }
+  }, [meditationSessions]);
   
   const handleSessionComplete = (sessionId: string) => {
     if (preferences.hasWearableDevice) {

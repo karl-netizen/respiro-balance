@@ -37,14 +37,20 @@ export const getMeditationAudioUrl = (filePath: string): string | null => {
       return demoAudioMap[fileName];
     }
     
-    // For session IDs, try to match with our demo mappings
-    const sessionIdMatch = Object.keys(demoAudioMap).find(key => 
-      key.includes(filePath) || filePath.includes(key.replace('.mp3', ''))
-    );
-    
-    if (sessionIdMatch) {
-      console.log("getMeditationAudioUrl: Found matching demo audio for session ID:", filePath);
-      return demoAudioMap[sessionIdMatch];
+    // For session IDs, try to map to our demo files based on category and number
+    if (filePath.includes('-')) {
+      // Try to extract category and number from session ID
+      const parts = filePath.replace('.mp3', '').split('-');
+      if (parts.length >= 2) {
+        const category = parts[0];
+        const number = parts[parts.length - 1]; 
+        const demoKey = `${category}-${number}.mp3`;
+        
+        if (demoAudioMap[demoKey]) {
+          console.log(`getMeditationAudioUrl: Mapped ${filePath} to demo file ${demoKey}`);
+          return demoAudioMap[demoKey];
+        }
+      }
     }
     
     // Otherwise try to get from Supabase
@@ -128,8 +134,16 @@ export const mapAudioFilesToSessions = (
     const sessionTitle = session.title.toLowerCase().replace(/\s+/g, '-');
     const titleMatch = audioFiles.find(file => file.toLowerCase().includes(sessionTitle));
     
-    // Use ID match preferentially, then title match
-    const matchingAudio = idMatch || titleMatch;
+    // Try to find a matching audio file by category and a number
+    const categoryMatch = audioFiles.find(file => {
+      const fileName = file.toLowerCase();
+      const sessionCategory = session.category.toLowerCase();
+      return fileName.startsWith(sessionCategory) && 
+             (fileName.includes('1') || fileName.includes('2') || fileName.includes('3'));
+    });
+    
+    // Use ID match preferentially, then title match, then category match
+    const matchingAudio = idMatch || titleMatch || categoryMatch;
     
     if (matchingAudio) {
       console.log(`Found audio match for session "${session.title}":`, matchingAudio);
@@ -190,13 +204,105 @@ export const debugAllSessionAudio = (sessions: MeditationSession[]): void => {
   sessions.forEach(session => {
     const sessionIdUrl = getMeditationAudioUrl(`${session.id}.mp3`);
     const titleUrl = getMeditationAudioUrl(`${session.title.toLowerCase().replace(/\s+/g, '-')}.mp3`);
+    const categoryMatch = getMeditationAudioUrl(`${session.category.toLowerCase()}-1.mp3`);
     
     console.log(`Session: ${session.title} (${session.id})`);
+    console.log(`- Category: ${session.category}`);
     console.log(`- Direct audioUrl: ${session.audioUrl || 'none'}`);
     console.log(`- ID-based URL: ${sessionIdUrl || 'none'}`);
     console.log(`- Title-based URL: ${titleUrl || 'none'}`);
+    console.log(`- Category-based URL: ${categoryMatch || 'none'}`);
     console.log("---");
   });
   
   console.log("=====================================");
 }
+
+/**
+ * Analyze sessions and report which ones have working audio files
+ * Returns an object with arrays of sessions with and without audio
+ */
+export const analyzeSessionAudio = (sessions: MeditationSession[]): { 
+  withAudio: MeditationSession[], 
+  withoutAudio: MeditationSession[],
+  summary: string 
+} => {
+  const withAudio: MeditationSession[] = [];
+  const withoutAudio: MeditationSession[] = [];
+  
+  sessions.forEach(session => {
+    // Check for direct audioUrl
+    if (session.audioUrl && getMeditationAudioUrl(session.audioUrl)) {
+      withAudio.push({
+        ...session,
+        audioSource: 'Direct URL'
+      });
+      return;
+    }
+    
+    // Check for ID-based match
+    const idUrl = getMeditationAudioUrl(`${session.id}.mp3`);
+    if (idUrl) {
+      withAudio.push({
+        ...session,
+        audioUrl: `${session.id}.mp3`,
+        audioSource: 'ID-based'
+      });
+      return;
+    }
+    
+    // Check for title-based match
+    const titleKey = `${session.title.toLowerCase().replace(/\s+/g, '-')}.mp3`;
+    const titleUrl = getMeditationAudioUrl(titleKey);
+    if (titleUrl) {
+      withAudio.push({
+        ...session,
+        audioUrl: titleKey,
+        audioSource: 'Title-based'
+      });
+      return;
+    }
+    
+    // Check for category-based match
+    const categoryKey = `${session.category.toLowerCase()}-1.mp3`;
+    const categoryUrl = getMeditationAudioUrl(categoryKey);
+    if (categoryUrl) {
+      withAudio.push({
+        ...session,
+        audioUrl: categoryKey,
+        audioSource: 'Category-based'
+      });
+      return;
+    }
+    
+    // If we got here, no audio URL was found
+    withoutAudio.push(session);
+  });
+  
+  // Generate summary
+  const summary = `Found ${withAudio.length} sessions with audio and ${withoutAudio.length} sessions without audio.`;
+  
+  return { withAudio, withoutAudio, summary };
+};
+
+// Add these categories to our demo audio map to ensure proper mapping
+const categoryToAudioMap = {
+  'guided': ['guided-1.mp3', 'guided-2.mp3', 'guided-3.mp3'],
+  'quick': ['quick-1.mp3', 'quick-2.mp3', 'quick-3.mp3'],
+  'deep': ['deep-1.mp3', 'deep-2.mp3'],
+  'sleep': ['sleep-1.mp3']
+};
+
+/**
+ * Log audio mapping status to console
+ */
+export const logAudioMappingStatus = () => {
+  console.log("===== MEDITATION AUDIO MAPPING STATUS =====");
+  console.log("Available demo audio files by category:");
+  
+  Object.entries(categoryToAudioMap).forEach(([category, files]) => {
+    console.log(`${category}: ${files.join(', ')}`);
+  });
+  
+  console.log("==========================================");
+};
