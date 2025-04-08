@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAuth } from "@/hooks/useAuth";
+import { signUpWithEmail } from "@/lib/authActions";
 import { toast } from "sonner";
 
 const formSchema = z.object({
@@ -23,7 +23,7 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 const SignupPage = () => {
-  const { signUp, loading } = useAuth();
+  const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -38,12 +38,17 @@ const SignupPage = () => {
 
   const onSubmit = async (data: FormData) => {
     setError(null);
+    setLoading(true);
+    
     try {
-      await signUp(data.email, data.password, data.firstName);
+      // Direct call to the signUpWithEmail function from authActions
+      await signUpWithEmail(data.email, data.password, data.firstName, setLoading);
+      
       setSuccess(true);
       toast("Account created successfully", {
         description: "Please check your email to verify your account"
       });
+      
       // In development, auto-redirect after 3 seconds
       setTimeout(() => {
         navigate('/login');
@@ -51,6 +56,12 @@ const SignupPage = () => {
     } catch (err: any) {
       setError(err.message || "Failed to create account");
       console.error("Signup error:", err);
+      toast("Signup failed", {
+        description: err.message || "There was a problem creating your account",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
