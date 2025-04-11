@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import ViewportToggle from '@/components/layout/ViewportToggle';
 import { cn } from '@/lib/utils';
 import RequireAuth from '@/components/auth/RequireAuth';
@@ -57,7 +57,7 @@ const App: React.FC = () => {
         } />
         
         {/* Redirect any unknown routes to landing page */}
-        <Route path="*" element={<LandingPage />} />
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
       <Toaster />
     </div>

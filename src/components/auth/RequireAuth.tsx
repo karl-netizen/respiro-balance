@@ -12,6 +12,7 @@ const RequireAuth = ({ children }: RequireAuthProps) => {
   const location = useLocation();
 
   // BYPASS AUTHENTICATION - Force display content immediately without loading state
+  // This allows testing access to protected pages without being logged in
   console.log("Auth check completely bypassed for testing");
   return <>{children}</>;
   
