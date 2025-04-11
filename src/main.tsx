@@ -6,13 +6,19 @@ import App from './App.tsx'
 import './index.css'
 import { AuthProvider } from './providers/AuthProvider'
 import { Toaster } from './components/ui/toaster'
+import { UserPreferencesProvider } from './context/UserPreferencesProvider'
+import { NotificationsProvider } from './context/NotificationsProvider'
 
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <App />
-        <Toaster />
+        <UserPreferencesProvider>
+          <NotificationsProvider>
+            <App />
+            <Toaster />
+          </NotificationsProvider>
+        </UserPreferencesProvider>
       </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>
