@@ -44,14 +44,15 @@ const Login = () => {
   };
 
   const bypassAuth = () => {
-    console.log("Bypassing auth and redirecting to dashboard");
+    console.log("DIRECT BYPASS: Sending user to dashboard");
+    
+    // Notify user
     toast("Test Mode Active", {
       description: "Bypassed authentication for testing"
     });
-    // Force the navigation to happen synchronously and immediately
-    setTimeout(() => {
-      navigate('/dashboard');
-    }, 100);
+    
+    // Direct navigation - hardcoded approach
+    window.location.href = '/dashboard';
   };
 
   return (
