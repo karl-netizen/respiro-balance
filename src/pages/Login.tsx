@@ -44,10 +44,14 @@ const Login = () => {
   };
 
   const bypassAuth = () => {
-    navigate('/dashboard');
+    console.log("Bypassing auth and redirecting to dashboard");
     toast("Test Mode Active", {
       description: "Bypassed authentication for testing"
     });
+    // Force the navigation to happen synchronously and immediately
+    setTimeout(() => {
+      navigate('/dashboard');
+    }, 100);
   };
 
   return (
