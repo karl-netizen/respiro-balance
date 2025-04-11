@@ -57,8 +57,7 @@ const SignupPage = () => {
       setError(err.message || "Failed to create account");
       console.error("Signup error:", err);
       toast("Signup failed", {
-        description: err.message || "There was a problem creating your account",
-        variant: "destructive"
+        description: err.message || "There was a problem creating your account"
       });
     } finally {
       setLoading(false);
@@ -177,3 +176,4 @@ const SignupPage = () => {
 };
 
 export default SignupPage;
+
