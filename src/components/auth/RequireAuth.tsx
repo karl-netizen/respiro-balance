@@ -1,6 +1,6 @@
 
 import { ReactNode } from "react";
-import { Navigate, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 
 interface RequireAuthProps {
@@ -20,13 +20,18 @@ const RequireAuth = ({ children }: RequireAuthProps) => {
     );
   }
 
-  // Redirect if not authenticated
+  // TEMPORARILY DISABLED: Authentication check for testing
+  // Always render children regardless of authentication status
+  console.log("Auth check bypassed for testing");
+  return <>{children}</>;
+  
+  // Original authentication logic - commented out for testing
+  /*
   if (!user) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
-
-  // User is authenticated, render children
   return <>{children}</>;
+  */
 };
 
 export default RequireAuth;

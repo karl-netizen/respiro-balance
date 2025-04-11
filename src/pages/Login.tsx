@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { signInWithEmail } from "@/lib/authActions";
 import { toast } from "sonner";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -42,6 +43,13 @@ const Login = () => {
     }
   };
 
+  const bypassAuth = () => {
+    navigate('/dashboard');
+    toast("Test Mode Active", {
+      description: "Bypassed authentication for testing"
+    });
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-white to-secondary/10 px-4 py-12">
       <div className="w-full max-w-md space-y-8">
@@ -49,6 +57,12 @@ const Login = () => {
           <h1 className="text-3xl font-bold tracking-tight text-primary">Welcome back</h1>
           <p className="mt-2 text-lg text-muted-foreground">Sign in to your Respiro Balance account</p>
         </div>
+
+        <Alert className="bg-amber-50 border-amber-200">
+          <AlertDescription className="text-amber-800">
+            Authentication is currently disabled for testing. You can click "Test Access" to bypass the login.
+          </AlertDescription>
+        </Alert>
 
         <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-6">
           {error && (
@@ -93,13 +107,23 @@ const Login = () => {
             </Link>
           </div>
 
-          <Button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-primary text-white hover:bg-primary/90"
-          >
-            {loading ? "Signing in..." : "Sign in"}
-          </Button>
+          <div className="space-y-4">
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-primary text-white hover:bg-primary/90"
+            >
+              {loading ? "Signing in..." : "Sign in"}
+            </Button>
+            
+            <Button
+              type="button"
+              onClick={bypassAuth}
+              className="w-full bg-amber-500 hover:bg-amber-600 text-white"
+            >
+              Test Access
+            </Button>
+          </div>
 
           <div className="text-center text-sm">
             <p>
