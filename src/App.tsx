@@ -12,6 +12,8 @@ import Login from '@/pages/Login';
 import Dashboard from '@/pages/Dashboard';
 import SignupPage from '@/pages/SignupPage';
 import ForgotPasswordPage from '@/pages/ForgotPasswordPage';
+import LandingPage from '@/pages/LandingPage';
+import OnboardingPage from '@/pages/OnboardingPage';
 
 const App: React.FC = () => {
   const [isMobileView, setIsMobileView] = useState(false);
@@ -40,20 +42,22 @@ const App: React.FC = () => {
       <ViewportToggle />
       <Routes>
         {/* Public routes */}
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/home" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/reset-password" element={<ForgotPasswordPage />} />
+        <Route path="/onboarding" element={<OnboardingPage />} />
         
-        {/* Protected routes */}
+        {/* Protected routes - auth is bypassed for testing */}
         <Route path="/dashboard" element={
           <RequireAuth>
             <Dashboard />
           </RequireAuth>
         } />
         
-        {/* Redirect any unknown routes to home */}
-        <Route path="*" element={<Home />} />
+        {/* Redirect any unknown routes to landing page */}
+        <Route path="*" element={<LandingPage />} />
       </Routes>
       <Toaster />
     </div>
