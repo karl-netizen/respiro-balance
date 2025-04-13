@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { CircleDot } from "lucide-react"; // Import a green circle icon
 import DesktopNav from "./header/DesktopNav";
 import MobileMenu from "./header/MobileMenu";
 import AccountSection from "./header/AccountSection";
@@ -31,9 +32,13 @@ const Header = () => {
         <div className="flex items-center">
           <Link
             to="/"
-            className="text-xl font-bold tracking-tight hover:text-primary transition-colors"
+            className="flex items-center text-xl font-bold tracking-tight hover:text-primary transition-colors"
           >
-            Respiro Balance
+            <CircleDot 
+              className="mr-2 text-respiro-dark" 
+              size={24} 
+            />
+            <span className="text-respiro-dark">Respiro Balance</span>
           </Link>
         </div>
 
