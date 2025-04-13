@@ -7,7 +7,7 @@ interface GuidedMeditationListProps {
   sessions: MeditationSession[];
   onSelectSession: (session: MeditationSession) => void;
   isFavorite: (sessionId: string) => boolean;
-  onToggleFavorite: (id: string) => void;
+  onToggleFavorite: (sessionId: string) => void;
 }
 
 const GuidedMeditationList: React.FC<GuidedMeditationListProps> = ({ 
@@ -22,9 +22,9 @@ const GuidedMeditationList: React.FC<GuidedMeditationListProps> = ({
         <MeditationSessionCard 
           key={session.id}
           session={session}
-          onSelect={onSelectSession}
+          onSelect={() => onSelectSession(session)}
           isFavorite={isFavorite(session.id)}
-          onToggleFavorite={onToggleFavorite}
+          onToggleFavorite={() => onToggleFavorite(session.id)}
         />
       ))}
     </div>

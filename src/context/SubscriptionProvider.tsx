@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext } from 'react';
 import { useSubscription, SubscriptionTier } from '@/hooks/useSubscription';
 import { UserProfile } from '@/types/supabase';
@@ -15,15 +14,7 @@ interface SubscriptionContextValue {
   getFeatureAccess: (featureKey: string) => boolean;
 }
 
-const SubscriptionContext = createContext<SubscriptionContextValue | undefined>(undefined);
-
-export const useSubscriptionContext = () => {
-  const context = useContext(SubscriptionContext);
-  if (context === undefined) {
-    throw new Error('useSubscriptionContext must be used within a SubscriptionProvider');
-  }
-  return context;
-};
+export const SubscriptionContext = createContext<SubscriptionContextValue | undefined>(undefined);
 
 // Define feature access for different subscription tiers
 const SUBSCRIPTION_FEATURES: Record<SubscriptionTier, string[]> = {
@@ -44,7 +35,6 @@ const SUBSCRIPTION_FEATURES: Record<SubscriptionTier, string[]> = {
     'offline_access',
   ],
   team: [
-    // Include all premium features plus team features
     'basic_meditation',
     'unlimited_sessions',
     'advanced_meditation',
@@ -58,7 +48,6 @@ const SUBSCRIPTION_FEATURES: Record<SubscriptionTier, string[]> = {
     'admin_dashboard',
   ],
   enterprise: [
-    // All features
     'basic_meditation',
     'unlimited_sessions',
     'advanced_meditation',

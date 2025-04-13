@@ -48,6 +48,7 @@ const MeditationSession = () => {
         sessionType: session.category,
         duration: session.duration
       });
+      
       if (dbSessionId) {
         setSessionDbId(dbSessionId);
         toast.success('Session started');
