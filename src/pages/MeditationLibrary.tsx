@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -58,15 +57,9 @@ const MeditationLibrary = () => {
     setShowRatingDialog(true);
   };
 
-  // Create type-safe wrapper functions
-  const handleSelectSessionSafe = (session: UIMeditationSession) => {
-    handleSelectSession(session);
-  };
-
   // Fix the type signature for handleToggleFavorite
-  const handleToggleFavoriteSafe = (sessionId: string) => {
-    // For MeditationSessionCard, we're receiving the sessionId directly
-    handleToggleFavorite({ id: sessionId } as UIMeditationSession);
+  const handleToggleFavoriteSafe = (session: UIMeditationSession) => {
+    handleToggleFavorite(session);
   };
   
   return (
@@ -92,7 +85,7 @@ const MeditationLibrary = () => {
             setActiveTab={setActiveTab}
             recentlyPlayed={recentlyPlayed}
             getFavoriteSessions={getFavoriteSessions}
-            handleSelectSession={handleSelectSessionSafe}
+            handleSelectSession={handleSelectSession}
             handleToggleFavorite={handleToggleFavoriteSafe}
             isFavorite={isFavorite}
             filterSessionsByCategory={filterSessionsByCategory}

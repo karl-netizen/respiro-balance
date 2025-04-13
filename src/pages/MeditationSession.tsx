@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { meditationSessions } from '@/data/meditationSessions';
@@ -49,8 +48,7 @@ const MeditationSession = () => {
         duration: session.duration
       });
       
-      // Fix the truthiness check for dbSessionId
-      if (dbSessionId !== undefined && dbSessionId !== null) {
+      if (dbSessionId) {
         setSessionDbId(dbSessionId);
         toast.success('Session started');
       }

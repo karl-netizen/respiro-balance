@@ -84,9 +84,8 @@ const Meditate = () => {
   };
   
   // Fix the type signature for handleToggleFavorite
-  const handleToggleFavoriteWrapper = (sessionId: string) => {
-    // For MeditationSessionCard, we're receiving the sessionId directly
-    handleToggleFavorite({ id: sessionId } as MeditationSession);
+  const handleToggleFavoriteWrapper = (session: MeditationSession) => {
+    handleToggleFavorite(session);
   };
   
   return (
