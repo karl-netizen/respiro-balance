@@ -2,13 +2,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { meditationSessions } from '@/data/meditationSessions';
-import { MeditationSessionPlayer } from '@/components/meditation/MeditationSessionPlayer';
+import MeditationSessionPlayer from '@/components/meditation/MeditationSessionPlayer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Clock, User } from 'lucide-react';
 import { toast } from 'sonner';
-import { useSubscriptionContext } from '@/context/SubscriptionProvider';
+import { useSubscriptionContext } from '@/hooks/useSubscriptionContext';
 import { useMeditationSessions } from '@/hooks/useMeditationSessions';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -48,8 +48,10 @@ const MeditationSession = () => {
         sessionType: session.category,
         duration: session.duration
       });
-      setSessionDbId(dbSessionId);
-      toast.success('Session started');
+      if (dbSessionId) {
+        setSessionDbId(dbSessionId);
+        toast.success('Session started');
+      }
     } catch (error) {
       console.error('Failed to start session:', error);
       toast.error('Failed to start session');

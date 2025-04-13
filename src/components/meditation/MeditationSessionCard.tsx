@@ -4,7 +4,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link } from 'react-router-dom';
-import { Clock } from 'lucide-react';
+import { Clock, Heart } from 'lucide-react';
 
 export interface MeditationSession {
   id: string;
@@ -17,6 +17,8 @@ export interface MeditationSession {
   imageUrl?: string;
   audioUrl?: string;
   benefits?: string[];
+  tags?: string[];
+  isFeatured?: boolean;
 }
 
 interface MeditationSessionCardProps {
@@ -35,6 +37,14 @@ const MeditationSessionCard: React.FC<MeditationSessionCardProps> = ({
   const handleSelect = () => {
     if (onSelect) {
       onSelect(session);
+    }
+  };
+  
+  const handleToggleFavorite = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (onToggleFavorite) {
+      onToggleFavorite(session.id);
     }
   };
   
@@ -61,15 +71,17 @@ const MeditationSessionCard: React.FC<MeditationSessionCardProps> = ({
       </CardContent>
       
       <CardFooter className="pt-0">
-        <Link 
-          to={`/meditate/session/${session.id}`}
-          className="w-full"
-          onClick={handleSelect}
-        >
-          <Button variant="default" className="w-full" onClick={handleSelect}>
-            Start Session
-          </Button>
-        </Link>
+        <div className="w-full">
+          <Link 
+            to={`/meditate/session/${session.id}`}
+            className="w-full"
+            onClick={handleSelect}
+          >
+            <Button variant="default" className="w-full">
+              Start Session
+            </Button>
+          </Link>
+        </div>
       </CardFooter>
     </Card>
   );

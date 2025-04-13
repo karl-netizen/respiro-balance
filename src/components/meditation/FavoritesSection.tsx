@@ -1,3 +1,4 @@
+
 import React from 'react';
 import MeditationSessionCard from "./MeditationSessionCard";
 import type { MeditationSession } from "./MeditationSessionCard";
@@ -5,7 +6,7 @@ import type { MeditationSession } from "./MeditationSessionCard";
 interface FavoritesSectionProps {
   favorites: MeditationSession[];
   onSelectSession: (session: MeditationSession) => void;
-  onToggleFavorite: (session: MeditationSession) => void;
+  onToggleFavorite: (id: string) => void;
 }
 
 const FavoritesSection: React.FC<FavoritesSectionProps> = ({

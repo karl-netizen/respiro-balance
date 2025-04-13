@@ -4,12 +4,11 @@ import { Button } from "@/components/ui/button";
 import { MeditationSession } from './MeditationSessionCard';
 import { SessionRatingDialog } from "@/components/meditation";
 import MeditationSessionPlayer from './MeditationSessionPlayer';
-import { getMeditationAudioUrl } from '@/lib/meditationAudioIntegration';
 
 interface MeditationSessionViewProps {
   selectedSession: MeditationSession;
   onBackToLibrary: () => void;
-  handleToggleFavorite: (session: MeditationSession) => void;
+  handleToggleFavorite: (id: string) => void;
   isFavorite: (sessionId: string) => boolean;
   showRatingDialog: boolean;
   setShowRatingDialog: (show: boolean) => void;
@@ -51,7 +50,7 @@ const MeditationSessionView: React.FC<MeditationSessionViewProps> = ({
             <Button 
               variant="outline" 
               size="icon"
-              onClick={() => handleToggleFavorite(selectedSession)}
+              onClick={() => handleToggleFavorite(selectedSession.id)}
             >
               {isFavorite(selectedSession.id) ? (
                 <span className="text-red-500">❤</span>

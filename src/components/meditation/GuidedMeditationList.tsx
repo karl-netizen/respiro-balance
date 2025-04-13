@@ -7,7 +7,7 @@ interface GuidedMeditationListProps {
   sessions: MeditationSession[];
   onSelectSession: (session: MeditationSession) => void;
   isFavorite: (sessionId: string) => boolean;
-  onToggleFavorite: (session: MeditationSession) => void;
+  onToggleFavorite: (id: string) => void;
 }
 
 const GuidedMeditationList: React.FC<GuidedMeditationListProps> = ({ 
