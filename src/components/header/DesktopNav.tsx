@@ -117,16 +117,16 @@ const DesktopNav = () => {
         
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
-            <Link to="/terms" className={cn("text-foreground/80 hover:text-primary px-3 py-2 button-transition", isActive('/terms') && "text-primary font-medium")}>
-              Terms
+            <Link to="/account" className={cn("text-foreground/80 hover:text-primary px-3 py-2 button-transition", isActive('/account') && "text-primary font-medium")}>
+              Account
             </Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
         
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
-            <Link to="/privacy" className={cn("text-foreground/80 hover:text-primary px-3 py-2 button-transition", isActive('/privacy') && "text-primary font-medium")}>
-              Privacy
+            <Link to="/morning-ritual" className={cn("text-foreground/80 hover:text-primary px-3 py-2 button-transition", isActive('/morning-ritual') && "text-primary font-medium")}>
+              Morning Ritual
             </Link>
           </NavigationMenuLink>
         </NavigationMenuItem>

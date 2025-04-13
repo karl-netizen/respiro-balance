@@ -19,6 +19,8 @@ import Meditate from '@/pages/Meditate';
 import Progress from '@/pages/Progress';
 import MeditationSession from '@/pages/MeditationSession';
 import Account from '@/pages/Account';
+import MorningRitual from '@/pages/MorningRitual';
+import Settings from '@/pages/Settings';
 import TermsPage from '@/pages/TermsPage';
 import PrivacyPage from '@/pages/PrivacyPage';
 
@@ -72,6 +74,10 @@ const App: React.FC = () => {
         
         {/* Account routes */}
         <Route path="/account" element={<Account />} />
+        <Route path="/settings" element={<Settings />} />
+        
+        {/* Morning Ritual routes */}
+        <Route path="/morning-ritual" element={<MorningRitual />} />
         
         {/* Protected routes - auth is bypassed for testing */}
         <Route path="/dashboard" element={

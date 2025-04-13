@@ -7,7 +7,10 @@ import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-import { LogOut, Settings, User, Crown, Home, Gauge, LineChart, Clock, BookOpen, Heart, FileText, Lock } from "lucide-react";
+import { 
+  LogOut, Settings, User, Crown, Home, Gauge, LineChart, 
+  Clock, BookOpen, Heart, Coffee, Calendar, Sunrise
+} from "lucide-react";
 import MobileDropdown from "./MobileDropdown";
 import { useSubscriptionContext } from "@/hooks/useSubscriptionContext";
 import SubscriptionBadge from "@/components/subscription/SubscriptionBadge";
@@ -150,21 +153,21 @@ const MobileMenu = ({ isOpen, toggleMenu }: MobileMenuProps) => {
             </Link>
             
             <Link
-              to="/terms"
-              className={cn("flex items-center gap-2 text-foreground/80 hover:text-primary py-2 button-transition", isActive('/terms') && "text-primary font-medium")}
+              to="/account"
+              className={cn("flex items-center gap-2 text-foreground/80 hover:text-primary py-2 button-transition", isActive('/account') && "text-primary font-medium")}
               onClick={toggleMenu}
             >
-              <FileText className="h-4 w-4" />
-              <span>Terms</span>
+              <Settings className="h-4 w-4" />
+              <span>Account</span>
             </Link>
             
             <Link
-              to="/privacy"
-              className={cn("flex items-center gap-2 text-foreground/80 hover:text-primary py-2 button-transition", isActive('/privacy') && "text-primary font-medium")}
+              to="/morning-ritual"
+              className={cn("flex items-center gap-2 text-foreground/80 hover:text-primary py-2 button-transition", isActive('/morning-ritual') && "text-primary font-medium")}
               onClick={toggleMenu}
             >
-              <Lock className="h-4 w-4" />
-              <span>Privacy</span>
+              <Sunrise className="h-4 w-4" />
+              <span>Morning Ritual</span>
             </Link>
 
             <Link
@@ -186,8 +189,8 @@ const MobileMenu = ({ isOpen, toggleMenu }: MobileMenuProps) => {
                   className="flex items-center gap-2 text-foreground/80 hover:text-primary py-2 button-transition"
                   onClick={toggleMenu}
                 >
-                  <Settings className="h-4 w-4" />
-                  <span>Account Settings</span>
+                  <User className="h-4 w-4" />
+                  <span>Profile Settings</span>
                 </Link>
                 
                 {isPremium && (
