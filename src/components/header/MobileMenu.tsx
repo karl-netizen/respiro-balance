@@ -1,13 +1,13 @@
 
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-import { LogOut, Settings, User, Crown, Home, Gauge, LineChart, Clock, BookOpen, Heart } from "lucide-react";
+import { LogOut, Settings, User, Crown, Home, Gauge, LineChart, Clock, BookOpen, Heart, FileText, Lock } from "lucide-react";
 import MobileDropdown from "./MobileDropdown";
 import { useSubscriptionContext } from "@/hooks/useSubscriptionContext";
 import SubscriptionBadge from "@/components/subscription/SubscriptionBadge";
@@ -20,7 +20,12 @@ interface MobileMenuProps {
 const MobileMenu = ({ isOpen, toggleMenu }: MobileMenuProps) => {
   const { user, loading, signOut } = useAuth();
   const { isPremium } = useSubscriptionContext();
-
+  const location = useLocation();
+  
+  const isActive = (path: string) => {
+    return location.pathname === path || location.pathname.startsWith(path + '/');
+  }
+  
   const handleSignOut = () => {
     signOut();
     toggleMenu();
@@ -69,7 +74,7 @@ const MobileMenu = ({ isOpen, toggleMenu }: MobileMenuProps) => {
           <div className="flex-1 overflow-auto py-4 space-y-2">
             <Link
               to="/"
-              className="flex items-center gap-2 text-foreground/80 hover:text-primary py-2 button-transition"
+              className={cn("flex items-center gap-2 text-foreground/80 hover:text-primary py-2 button-transition", isActive('/') && "text-primary font-medium")}
               onClick={toggleMenu}
             >
               <Home className="h-4 w-4" />
@@ -79,7 +84,7 @@ const MobileMenu = ({ isOpen, toggleMenu }: MobileMenuProps) => {
             {user && (
               <Link
                 to="/dashboard"
-                className="flex items-center gap-2 text-foreground/80 hover:text-primary py-2 button-transition"
+                className={cn("flex items-center gap-2 text-foreground/80 hover:text-primary py-2 button-transition", isActive('/dashboard') && "text-primary font-medium")}
                 onClick={toggleMenu}
               >
                 <Gauge className="h-4 w-4" />
@@ -137,16 +142,34 @@ const MobileMenu = ({ isOpen, toggleMenu }: MobileMenuProps) => {
 
             <Link
               to="/progress"
-              className="flex items-center gap-2 text-foreground/80 hover:text-primary py-2 button-transition"
+              className={cn("flex items-center gap-2 text-foreground/80 hover:text-primary py-2 button-transition", isActive('/progress') && "text-primary font-medium")}
               onClick={toggleMenu}
             >
               <LineChart className="h-4 w-4" />
               <span>Progress</span>
             </Link>
+            
+            <Link
+              to="/terms"
+              className={cn("flex items-center gap-2 text-foreground/80 hover:text-primary py-2 button-transition", isActive('/terms') && "text-primary font-medium")}
+              onClick={toggleMenu}
+            >
+              <FileText className="h-4 w-4" />
+              <span>Terms</span>
+            </Link>
+            
+            <Link
+              to="/privacy"
+              className={cn("flex items-center gap-2 text-foreground/80 hover:text-primary py-2 button-transition", isActive('/privacy') && "text-primary font-medium")}
+              onClick={toggleMenu}
+            >
+              <Lock className="h-4 w-4" />
+              <span>Privacy</span>
+            </Link>
 
             <Link
               to="/#pricing"
-              className="flex items-center gap-2 text-foreground/80 hover:text-primary py-2 button-transition"
+              className={cn("flex items-center gap-2 text-foreground/80 hover:text-primary py-2 button-transition", location.hash === '#pricing' && "text-primary font-medium")}
               onClick={toggleMenu}
             >
               <Clock className="h-4 w-4" />

@@ -19,6 +19,8 @@ import Meditate from '@/pages/Meditate';
 import Progress from '@/pages/Progress';
 import MeditationSession from '@/pages/MeditationSession';
 import Account from '@/pages/Account';
+import TermsPage from '@/pages/TermsPage';
+import PrivacyPage from '@/pages/PrivacyPage';
 
 const App: React.FC = () => {
   const [isMobileView, setIsMobileView] = useState(false);
@@ -53,6 +55,10 @@ const App: React.FC = () => {
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/reset-password" element={<ForgotPasswordPage />} />
         <Route path="/onboarding" element={<OnboardingPage />} />
+        
+        {/* Terms and Privacy Pages */}
+        <Route path="/terms" element={<TermsPage />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
         
         {/* Meditation routes */}
         <Route path="/meditate" element={<Meditate />} />

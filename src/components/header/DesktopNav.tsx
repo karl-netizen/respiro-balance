@@ -1,5 +1,5 @@
 
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import {
   NavigationMenu,
@@ -10,16 +10,23 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import FeatureItem from "./FeatureItem";
+import { cn } from "@/lib/utils";
 
 const DesktopNav = () => {
   const { user } = useAuth();
+  const location = useLocation();
+  
+  // Helper function to check if a path is active
+  const isActive = (path: string) => {
+    return location.pathname === path || location.pathname.startsWith(path + '/');
+  }
 
   return (
     <NavigationMenu className="hidden md:flex">
       <NavigationMenuList>
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
-            <Link to="/" className="text-foreground/80 hover:text-primary px-3 py-2 button-transition">
+            <Link to="/" className={cn("text-foreground/80 hover:text-primary px-3 py-2 button-transition", isActive('/') && "text-primary font-medium")}>
               Home
             </Link>
           </NavigationMenuLink>
@@ -28,7 +35,7 @@ const DesktopNav = () => {
         {user && (
           <NavigationMenuItem>
             <NavigationMenuLink asChild>
-              <Link to="/dashboard" className="text-foreground/80 hover:text-primary px-3 py-2 button-transition">
+              <Link to="/dashboard" className={cn("text-foreground/80 hover:text-primary px-3 py-2 button-transition", isActive('/dashboard') && "text-primary font-medium")}>
                 Dashboard
               </Link>
             </NavigationMenuLink>
@@ -102,7 +109,7 @@ const DesktopNav = () => {
         
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
-            <Link to="/progress" className="text-foreground/80 hover:text-primary px-3 py-2 button-transition">
+            <Link to="/progress" className={cn("text-foreground/80 hover:text-primary px-3 py-2 button-transition", isActive('/progress') && "text-primary font-medium")}>
               Progress
             </Link>
           </NavigationMenuLink>
@@ -110,7 +117,23 @@ const DesktopNav = () => {
         
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
-            <Link to="/#pricing" className="text-foreground/80 hover:text-primary px-3 py-2 button-transition">
+            <Link to="/terms" className={cn("text-foreground/80 hover:text-primary px-3 py-2 button-transition", isActive('/terms') && "text-primary font-medium")}>
+              Terms
+            </Link>
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        
+        <NavigationMenuItem>
+          <NavigationMenuLink asChild>
+            <Link to="/privacy" className={cn("text-foreground/80 hover:text-primary px-3 py-2 button-transition", isActive('/privacy') && "text-primary font-medium")}>
+              Privacy
+            </Link>
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        
+        <NavigationMenuItem>
+          <NavigationMenuLink asChild>
+            <Link to="/#pricing" className={cn("text-foreground/80 hover:text-primary px-3 py-2 button-transition", location.hash === '#pricing' && "text-primary font-medium")}>
               Pricing
             </Link>
           </NavigationMenuLink>

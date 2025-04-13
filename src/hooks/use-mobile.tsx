@@ -10,7 +10,14 @@ export function useIsMobile() {
     // Check if window is defined (for SSR)
     if (typeof window !== 'undefined') {
       const checkIfMobile = () => {
-        return window.innerWidth < MOBILE_BREAKPOINT;
+        // Check screen width
+        const isMobileWidth = window.innerWidth < MOBILE_BREAKPOINT;
+        
+        // Check for mobile user agent as a fallback
+        const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
+        const isMobileDevice = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent.toLowerCase());
+        
+        return isMobileWidth || isMobileDevice;
       };
       
       const handleResize = () => {
