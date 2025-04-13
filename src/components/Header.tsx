@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { CircleDot } from "lucide-react"; // Import a green circle icon
+import { Circle } from "lucide-react"; // Changed from CircleDot to Circle
 import DesktopNav from "./header/DesktopNav";
 import MobileMenu from "./header/MobileMenu";
 import AccountSection from "./header/AccountSection";
@@ -34,8 +34,8 @@ const Header = () => {
             to="/"
             className="flex items-center text-xl font-bold tracking-tight hover:text-primary transition-colors"
           >
-            <CircleDot 
-              className="mr-2 text-respiro-dark" 
+            <Circle 
+              className="mr-2 text-respiro-dark fill-respiro-dark" 
               size={24} 
             />
             <span className="text-respiro-dark">Respiro Balance</span>
