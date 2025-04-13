@@ -1,88 +1,78 @@
 
 import React from 'react';
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Clock, Star } from "lucide-react";
-import { MeditationSession as SupabaseMeditationSession } from '@/types/supabase';
+import { Badge } from "@/components/ui/badge";
+import { Link } from 'react-router-dom';
+import { Clock } from 'lucide-react';
 
-// Define the MeditationSession type for use throughout the app
 export interface MeditationSession {
   id: string;
   title: string;
   description: string;
-  duration: number;
+  duration: number; // in minutes
   category: string;
-  level?: string;
-  icon?: React.ReactNode;
-  audioUrl?: string;
+  level: 'beginner' | 'intermediate' | 'advanced';
+  instructor: string;
   imageUrl?: string;
-  instructor?: string;
-  tags?: string[];
-  premium?: boolean;
+  audioUrl?: string;
+  benefits?: string[];
 }
 
-export interface MeditationSessionCardProps {
+interface MeditationSessionCardProps {
   session: MeditationSession;
-  onSelect: (session: MeditationSession) => void;
-  isFavorite: boolean;
-  onToggleFavorite: (session: MeditationSession) => void;
-  disabled?: boolean;
-  isPremiumLocked?: boolean;
+  onSelect?: (session: MeditationSession) => void;
+  isFavorite?: boolean;
+  onToggleFavorite?: (id: string) => void;
 }
 
-export const MeditationSessionCard: React.FC<MeditationSessionCardProps> = ({
+const MeditationSessionCard: React.FC<MeditationSessionCardProps> = ({
   session,
   onSelect,
-  isFavorite,
-  onToggleFavorite,
-  disabled,
-  isPremiumLocked
+  isFavorite = false,
+  onToggleFavorite
 }) => {
+  const handleSelect = () => {
+    if (onSelect) {
+      onSelect(session);
+    }
+  };
+  
   return (
-    <Card className="h-full hover:shadow-md transition-shadow">
-      <CardContent className="p-6 flex flex-col h-full">
-        <div className="flex justify-between items-start mb-3">
-          <div className="p-2 bg-primary/10 rounded-md">
-            {session.icon || <Clock className="h-5 w-5 text-primary" />}
-          </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-muted-foreground hover:text-primary"
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggleFavorite(session);
-            }}
-          >
-            {isFavorite ? (
-              <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-            ) : (
-              <Star className="h-5 w-5" />
-            )}
-          </Button>
-        </div>
-        
-        <h3 className="font-semibold text-lg mb-2">{session.title}</h3>
-        <p className="text-muted-foreground text-sm mb-4 flex-grow">{session.description}</p>
-        
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-1 text-sm text-muted-foreground">
-            <Clock className="h-4 w-4" />
-            <span>{session.duration} min</span>
+    <Card className="h-full flex flex-col">
+      <CardContent className="pt-6 flex-grow">
+        <div className="flex justify-between items-start mb-2">
+          <div className="space-y-1">
+            <h3 className="font-semibold text-lg leading-tight">{session.title}</h3>
+            <div className="flex items-center text-sm text-muted-foreground">
+              <Clock className="h-4 w-4 mr-1" />
+              <span>{session.duration} min</span>
+            </div>
           </div>
           
-          <Button 
-            size="sm"
-            onClick={() => onSelect(session)}
-            disabled={disabled || isPremiumLocked}
-          >
-            {isPremiumLocked ? 'Premium' : 'Start'}
-          </Button>
+          <Badge variant="outline" className="capitalize">
+            {session.level}
+          </Badge>
         </div>
+        
+        <p className="text-sm text-muted-foreground line-clamp-3 mt-2">
+          {session.description}
+        </p>
       </CardContent>
+      
+      <CardFooter className="pt-0">
+        <Link 
+          to={`/meditate/session/${session.id}`}
+          className="w-full"
+          onClick={handleSelect}
+        >
+          <Button variant="default" className="w-full" onClick={handleSelect}>
+            Start Session
+          </Button>
+        </Link>
+      </CardFooter>
     </Card>
   );
 };
 
-// Export both the component and the type
 export default MeditationSessionCard;

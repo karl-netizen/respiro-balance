@@ -17,6 +17,8 @@ import OnboardingPage from '@/pages/OnboardingPage';
 import Breathe from '@/pages/Breathe';
 import Meditate from '@/pages/Meditate';
 import Progress from '@/pages/Progress';
+import MeditationSession from '@/pages/MeditationSession';
+import Account from '@/pages/Account';
 
 const App: React.FC = () => {
   const [isMobileView, setIsMobileView] = useState(false);
@@ -54,12 +56,16 @@ const App: React.FC = () => {
         
         {/* Meditation routes */}
         <Route path="/meditate" element={<Meditate />} />
+        <Route path="/meditate/session/:sessionId" element={<MeditationSession />} />
         
         {/* Breathing routes */}
         <Route path="/breathe" element={<Breathe />} />
         
         {/* Progress routes */}
         <Route path="/progress" element={<Progress />} />
+        
+        {/* Account routes */}
+        <Route path="/account" element={<Account />} />
         
         {/* Protected routes - auth is bypassed for testing */}
         <Route path="/dashboard" element={

@@ -1,11 +1,16 @@
 
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Menu, X, User, Moon, Sun, Bell, Heart, Search, Settings, HelpCircle, Download } from "lucide-react";
+import React from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { cn } from "@/lib/utils";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import MobileDropdown from './MobileDropdown';
-import { useUserPreferences } from '@/context/hooks/useUserPreferences';
-import { useAuth } from '@/hooks/useAuth';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
+import { LogOut, Settings, User, Crown, Home, Gauge, LineChart, Clock, BookOpen, Heart } from "lucide-react";
+import MobileDropdown from "./MobileDropdown";
+import { useSubscriptionContext } from "@/context/SubscriptionProvider";
+import SubscriptionBadge from "@/components/subscription/SubscriptionBadge";
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -13,206 +18,180 @@ interface MobileMenuProps {
 }
 
 const MobileMenu = ({ isOpen, toggleMenu }: MobileMenuProps) => {
-  const { preferences, updatePreferences } = useUserPreferences();
-  const { user } = useAuth();
-  const isDarkMode = preferences.theme === 'dark';
-  
-  const toggleTheme = () => {
-    updatePreferences({ theme: isDarkMode ? 'light' : 'dark' });
-    document.documentElement.classList.toggle('dark', !isDarkMode);
+  const { user, loading, signOut } = useAuth();
+  const { isPremium } = useSubscriptionContext();
+
+  const handleSignOut = () => {
+    signOut();
+    toggleMenu();
   };
 
   return (
-    <>
-      {/* Mobile Menu Button */}
-      <button 
-        className="md:hidden text-foreground"
-        onClick={toggleMenu}
-        aria-label={isOpen ? "Close menu" : "Open menu"}
-      >
-        {isOpen ? <X size={24} /> : <Menu size={24} />}
-      </button>
+    <Sheet open={isOpen} onOpenChange={toggleMenu}>
+      <SheetContent side="right" className="sm:max-w-sm">
+        <div className="h-full flex flex-col">
+          {user && !loading ? (
+            <div className="py-4">
+              <div className="flex items-center gap-3">
+                <Avatar className="h-10 w-10">
+                  <AvatarImage src={user?.user_metadata?.avatar_url || ""} />
+                  <AvatarFallback>
+                    {user?.email?.charAt(0).toUpperCase() || "U"}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1">
+                  <p className="font-medium">{user?.email}</p>
+                  <SubscriptionBadge className="mt-1" />
+                </div>
+              </div>
+            </div>
+          ) : !loading ? (
+            <div className="py-4 space-y-3">
+              <Button asChild variant="default" className="w-full">
+                <Link to="/login" onClick={toggleMenu}>
+                  Log in
+                </Link>
+              </Button>
+              <Button asChild variant="outline" className="w-full">
+                <Link to="/signup" onClick={toggleMenu}>
+                  Sign up
+                </Link>
+              </Button>
+            </div>
+          ) : (
+            <div className="py-4">
+              <div className="h-10 w-full bg-muted animate-pulse rounded"></div>
+            </div>
+          )}
 
-      {/* Mobile Navigation Menu */}
-      {isOpen && (
-        <div className="md:hidden absolute top-full left-0 right-0 glass-morph animate-fade-in">
-          <div className="flex flex-col space-y-2 p-6">
-            <Link 
-              to="/" 
-              className="text-foreground/80 hover:text-primary py-2 button-transition"
+          <Separator />
+
+          <div className="flex-1 overflow-auto py-4 space-y-2">
+            <Link
+              to="/"
+              className="flex items-center gap-2 text-foreground/80 hover:text-primary py-2 button-transition"
               onClick={toggleMenu}
             >
-              Home
+              <Home className="h-4 w-4" />
+              <span>Home</span>
             </Link>
             
             {user && (
-              <Link 
-                to="/dashboard" 
-                className="text-foreground/80 hover:text-primary py-2 button-transition"
+              <Link
+                to="/dashboard"
+                className="flex items-center gap-2 text-foreground/80 hover:text-primary py-2 button-transition"
                 onClick={toggleMenu}
               >
-                Dashboard
+                <Gauge className="h-4 w-4" />
+                <span>Dashboard</span>
               </Link>
             )}
-            
-            <MobileDropdown 
-              title="Meditate" 
+
+            <MobileDropdown
+              title="Meditate"
+              icon={<BookOpen className="h-4 w-4" />}
               items={[
-                { label: "Guided Sessions", href: "/meditate?tab=guided" },
-                { label: "Quick Breaks", href: "/meditate?tab=quick" },
-                { label: "Deep Focus", href: "/meditate?tab=deep" },
-                { label: "Meditation Library", href: "/meditate" }
-              ]} 
+                {
+                  label: "All Sessions",
+                  href: "/meditate",
+                },
+                {
+                  label: "Guided Meditation",
+                  href: "/meditate?tab=guided",
+                },
+                {
+                  label: "Quick Sessions",
+                  href: "/meditate?tab=quick",
+                },
+                {
+                  label: "Deep Focus",
+                  href: "/meditate?tab=deep",
+                },
+              ]}
               toggleMainMenu={toggleMenu}
             />
-            
-            <MobileDropdown 
-              title="Breathe" 
+
+            <MobileDropdown
+              title="Breathe"
+              icon={<Heart className="h-4 w-4" />}
               items={[
-                { label: "Breathing Visualizer", href: "/breathe" },
-                { label: "Breathing Techniques", href: "/breathe?tab=techniques" },
-                { label: "Box Breathing", href: "/breathe?tab=techniques&technique=box" },
-                { label: "4-7-8 Breathing", href: "/breathe?tab=techniques&technique=478" },
-                { label: "Coherent Breathing", href: "/breathe?tab=techniques&technique=coherent" }
-              ]} 
+                {
+                  label: "Breathing Exercises",
+                  href: "/breathe",
+                },
+                {
+                  label: "Breathing Techniques",
+                  href: "/breathe?tab=techniques",
+                },
+                {
+                  label: "Box Breathing",
+                  href: "/breathe?tab=techniques&technique=box",
+                },
+                {
+                  label: "4-7-8 Breathing",
+                  href: "/breathe?tab=techniques&technique=478",
+                },
+              ]}
               toggleMainMenu={toggleMenu}
             />
-            
-            <Link 
-              to="/progress" 
-              className="text-foreground/80 hover:text-primary py-2 button-transition"
+
+            <Link
+              to="/progress"
+              className="flex items-center gap-2 text-foreground/80 hover:text-primary py-2 button-transition"
               onClick={toggleMenu}
             >
-              Progress
+              <LineChart className="h-4 w-4" />
+              <span>Progress</span>
             </Link>
-            
-            <Link 
-              to="/#pricing" 
-              className="text-foreground/80 hover:text-primary py-2 button-transition"
+
+            <Link
+              to="/#pricing"
+              className="flex items-center gap-2 text-foreground/80 hover:text-primary py-2 button-transition"
               onClick={toggleMenu}
             >
-              Pricing
+              <Clock className="h-4 w-4" />
+              <span>Pricing</span>
             </Link>
-            
-            {/* Additional Mobile Menu Items */}
-            <div className="pt-2 mt-2 border-t border-foreground/10">
-              <MobileDropdown
-                title="User Profile"
-                icon={<User size={16} className="mr-2" />}
-                items={[
-                  { label: "My Profile", href: "/profile" },
-                  { label: "Account Settings", href: "/settings/account" },
-                  { label: "Preferences", href: "/settings/preferences" },
-                  { label: "Logout", href: "/logout" }
-                ]}
-                toggleMainMenu={toggleMenu}
-              />
-              
-              <button 
-                className="flex w-full items-center justify-between text-foreground/80 hover:text-primary py-2 button-transition"
-                onClick={() => {
-                  toggleTheme();
-                }}
-              >
-                <span className="flex items-center">
-                  {isDarkMode ? <Sun size={16} className="mr-2" /> : <Moon size={16} className="mr-2" />}
-                  {isDarkMode ? "Light Mode" : "Dark Mode"}
-                </span>
-              </button>
-              
-              <MobileDropdown
-                title="Notifications"
-                icon={<Bell size={16} className="mr-2" />}
-                items={[
-                  { label: "All Notifications", href: "/notifications" },
-                  { label: "Session Reminders", href: "/notifications/reminders" },
-                  { label: "Progress Updates", href: "/notifications/progress" },
-                  { label: "New Content", href: "/notifications/content" }
-                ]}
-                toggleMainMenu={toggleMenu}
-              />
-              
-              <MobileDropdown
-                title="Favorites"
-                icon={<Heart size={16} className="mr-2" />}
-                items={[
-                  { label: "Saved Sessions", href: "/favorites/sessions" },
-                  { label: "Favorite Techniques", href: "/favorites/techniques" },
-                  { label: "Custom Mixes", href: "/favorites/mixes" }
-                ]}
-                toggleMainMenu={toggleMenu}
-              />
-              
-              <a 
-                href="/search" 
-                className="flex items-center text-foreground/80 hover:text-primary py-2 button-transition"
-                onClick={toggleMenu}
-              >
-                <Search size={16} className="mr-2" />
-                Search
-              </a>
-              
-              <MobileDropdown
-                title="Settings"
-                icon={<Settings size={16} className="mr-2" />}
-                items={[
-                  { label: "App Settings", href: "/settings" },
-                  { label: "Notifications", href: "/settings/notifications" },
-                  { label: "Privacy", href: "/settings/privacy" },
-                  { label: "Display", href: "/settings/display" }
-                ]}
-                toggleMainMenu={toggleMenu}
-              />
-              
-              <MobileDropdown
-                title="Help & Support"
-                icon={<HelpCircle size={16} className="mr-2" />}
-                items={[
-                  { label: "FAQs", href: "/help/faqs" },
-                  { label: "Contact Support", href: "/help/contact" },
-                  { label: "Tutorials", href: "/help/tutorials" },
-                  { label: "Community Forum", href: "/community" }
-                ]}
-                toggleMainMenu={toggleMenu}
-              />
-              
-              <MobileDropdown
-                title="Downloads"
-                icon={<Download size={16} className="mr-2" />}
-                items={[
-                  { label: "Downloaded Content", href: "/downloads" },
-                  { label: "Download Manager", href: "/downloads/manage" },
-                  { label: "Storage Settings", href: "/downloads/storage" }
-                ]}
-                toggleMainMenu={toggleMenu}
-              />
-            </div>
-            
-            <div className="pt-4 mt-2">
-              {!user && (
-                <>
-                  <Button 
-                    variant="outline" 
-                    className="border-primary text-primary hover:bg-primary hover:text-white w-full mt-2"
-                    onClick={toggleMenu}
-                    asChild
-                  >
-                    <Link to="/login">Log In</Link>
-                  </Button>
-                  <Button 
-                    className="bg-primary text-white hover:bg-respiro-dark w-full mt-2"
-                    onClick={toggleMenu}
-                    asChild
-                  >
-                    <Link to="/signup">Get Started</Link>
-                  </Button>
-                </>
-              )}
-            </div>
           </div>
+
+          {user && (
+            <>
+              <Separator />
+              <div className="py-4 space-y-2">
+                <Link
+                  to="/account"
+                  className="flex items-center gap-2 text-foreground/80 hover:text-primary py-2 button-transition"
+                  onClick={toggleMenu}
+                >
+                  <Settings className="h-4 w-4" />
+                  <span>Account Settings</span>
+                </Link>
+                
+                {isPremium && (
+                  <Link
+                    to="/subscription"
+                    className="flex items-center gap-2 text-foreground/80 hover:text-primary py-2 button-transition"
+                    onClick={toggleMenu}
+                  >
+                    <Crown className="h-4 w-4" />
+                    <span>Subscription</span>
+                  </Link>
+                )}
+                
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start p-2 hover:bg-destructive/10 hover:text-destructive"
+                  onClick={handleSignOut}
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  <span>Log out</span>
+                </Button>
+              </div>
+            </>
+          )}
         </div>
-      )}
-    </>
+      </SheetContent>
+    </Sheet>
   );
 };
 
