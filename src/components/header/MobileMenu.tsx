@@ -58,9 +58,9 @@ const MobileMenu = ({ isOpen, toggleMenu }: MobileMenuProps) => {
             <MobileDropdown 
               title="Meditate" 
               items={[
-                { label: "Guided Sessions", href: "#meditation" },
-                { label: "Quick Breaks", href: "#quick-breaks" },
-                { label: "Deep Focus", href: "#deep-focus" },
+                { label: "Guided Sessions", href: "/meditate?tab=guided" },
+                { label: "Quick Breaks", href: "/meditate?tab=quick" },
+                { label: "Deep Focus", href: "/meditate?tab=deep" },
                 { label: "Meditation Library", href: "/meditate" }
               ]} 
               toggleMainMenu={toggleMenu}
@@ -78,21 +78,21 @@ const MobileMenu = ({ isOpen, toggleMenu }: MobileMenuProps) => {
               toggleMainMenu={toggleMenu}
             />
             
-            <a 
-              href="/progress" 
+            <Link 
+              to="/progress" 
               className="text-foreground/80 hover:text-primary py-2 button-transition"
               onClick={toggleMenu}
             >
               Progress
-            </a>
+            </Link>
             
-            <a 
-              href="#pricing" 
+            <Link 
+              to="/#pricing" 
               className="text-foreground/80 hover:text-primary py-2 button-transition"
               onClick={toggleMenu}
             >
               Pricing
-            </a>
+            </Link>
             
             {/* Additional Mobile Menu Items */}
             <div className="pt-2 mt-2 border-t border-foreground/10">

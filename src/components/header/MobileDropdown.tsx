@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { ChevronDown } from "lucide-react";
 import { cn } from '@/lib/utils';
+import { Link } from 'react-router-dom';
 
 interface MobileDropdownProps {
   title: string;
@@ -39,16 +40,36 @@ const MobileDropdown = ({ title, items, toggleMainMenu, icon, className }: Mobil
       
       {isOpen && (
         <div className="pl-4 space-y-2 mt-1 mb-2">
-          {items.map((item) => (
-            <a
-              key={item.label}
-              href={item.href}
-              className="block text-foreground/70 hover:text-primary py-1 text-sm button-transition flex items-center gap-2"
-              onClick={() => handleItemClick(item.onClick)}
-            >
-              {item.label}
-            </a>
-          ))}
+          {items.map((item) => {
+            // Check if the href is a local route or external link
+            const isExternalLink = item.href.startsWith('http');
+            
+            // For local routes (not starting with 'http')
+            if (!isExternalLink) {
+              return (
+                <Link
+                  key={item.label}
+                  to={item.href}
+                  className="block text-foreground/70 hover:text-primary py-1 text-sm button-transition flex items-center gap-2"
+                  onClick={() => handleItemClick(item.onClick)}
+                >
+                  {item.label}
+                </Link>
+              );
+            }
+            
+            // For external links
+            return (
+              <a
+                key={item.label}
+                href={item.href}
+                className="block text-foreground/70 hover:text-primary py-1 text-sm button-transition flex items-center gap-2"
+                onClick={() => handleItemClick(item.onClick)}
+              >
+                {item.label}
+              </a>
+            );
+          })}
         </div>
       )}
     </div>

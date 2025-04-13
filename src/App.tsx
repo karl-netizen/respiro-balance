@@ -14,6 +14,9 @@ import SignupPage from '@/pages/SignupPage';
 import ForgotPasswordPage from '@/pages/ForgotPasswordPage';
 import LandingPage from '@/pages/LandingPage';
 import OnboardingPage from '@/pages/OnboardingPage';
+import Breathe from '@/pages/Breathe';
+import Meditate from '@/pages/Meditate';
+import Progress from '@/pages/Progress';
 
 const App: React.FC = () => {
   const [isMobileView, setIsMobileView] = useState(false);
@@ -48,6 +51,15 @@ const App: React.FC = () => {
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/reset-password" element={<ForgotPasswordPage />} />
         <Route path="/onboarding" element={<OnboardingPage />} />
+        
+        {/* Meditation routes */}
+        <Route path="/meditate" element={<Meditate />} />
+        
+        {/* Breathing routes */}
+        <Route path="/breathe" element={<Breathe />} />
+        
+        {/* Progress routes */}
+        <Route path="/progress" element={<Progress />} />
         
         {/* Protected routes - auth is bypassed for testing */}
         <Route path="/dashboard" element={
