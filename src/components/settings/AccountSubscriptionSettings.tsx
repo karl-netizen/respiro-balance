@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardHeader, CardContent, CardDescription, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { useSubscriptionContext } from '@/context/SubscriptionProvider';
+import { useSubscriptionContext } from '@/hooks/useSubscriptionContext';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Progress } from '@/components/ui/progress';

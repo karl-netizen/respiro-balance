@@ -49,7 +49,8 @@ const MeditationSession = () => {
         duration: session.duration
       });
       
-      if (dbSessionId) {
+      // Fix the truthiness check for dbSessionId
+      if (dbSessionId !== undefined && dbSessionId !== null) {
         setSessionDbId(dbSessionId);
         toast.success('Session started');
       }

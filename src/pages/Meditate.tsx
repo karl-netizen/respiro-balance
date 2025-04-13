@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -13,6 +12,7 @@ import { useUserPreferences } from "@/context";
 import { useBiometricData } from "@/hooks/useBiometricData";
 import { toast } from "sonner";
 import { debugAllSessionAudio, analyzeSessionAudio, logAudioMappingStatus } from "@/lib/meditationAudioIntegration";
+import { MeditationSession } from "@/components/meditation/MeditationSessionCard";
 
 const Meditate = () => {
   const { preferences } = useUserPreferences();
@@ -83,6 +83,12 @@ const Meditate = () => {
     setShowRatingDialog(true);
   };
   
+  // Fix the type signature for handleToggleFavorite
+  const handleToggleFavoriteWrapper = (sessionId: string) => {
+    // For MeditationSessionCard, we're receiving the sessionId directly
+    handleToggleFavorite({ id: sessionId } as MeditationSession);
+  };
+  
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -107,7 +113,7 @@ const Meditate = () => {
             recentlyPlayed={recentlyPlayed}
             getFavoriteSessions={getFavoriteSessions}
             handleSelectSession={handleSelectSession}
-            handleToggleFavorite={handleToggleFavorite}
+            handleToggleFavorite={handleToggleFavoriteWrapper}
             isFavorite={isFavorite}
             filterSessionsByCategory={filterSessionsByCategory}
             durationFilter={durationFilter}

@@ -9,7 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { LogOut, Settings, User, Crown, Home, Gauge, LineChart, Clock, BookOpen, Heart } from "lucide-react";
 import MobileDropdown from "./MobileDropdown";
-import { useSubscriptionContext } from "@/context/SubscriptionProvider";
+import { useSubscriptionContext } from "@/hooks/useSubscriptionContext";
 import SubscriptionBadge from "@/components/subscription/SubscriptionBadge";
 
 interface MobileMenuProps {

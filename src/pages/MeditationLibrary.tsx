@@ -63,8 +63,10 @@ const MeditationLibrary = () => {
     handleSelectSession(session);
   };
 
-  const handleToggleFavoriteSafe = (session: UIMeditationSession) => {
-    handleToggleFavorite(session);
+  // Fix the type signature for handleToggleFavorite
+  const handleToggleFavoriteSafe = (sessionId: string) => {
+    // For MeditationSessionCard, we're receiving the sessionId directly
+    handleToggleFavorite({ id: sessionId } as UIMeditationSession);
   };
   
   return (

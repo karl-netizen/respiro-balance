@@ -13,7 +13,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { User, LogOut, Settings, Crown } from "lucide-react";
-import { useSubscriptionContext } from "@/context/SubscriptionProvider";
+import { useSubscriptionContext } from "@/hooks/useSubscriptionContext";
 import SubscriptionBadge from "@/components/subscription/SubscriptionBadge";
 
 const AccountSection = () => {
