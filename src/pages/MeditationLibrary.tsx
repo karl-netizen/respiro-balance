@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -59,7 +60,7 @@ const MeditationLibrary = () => {
 
   // Fix the type signature for handleToggleFavorite
   const handleToggleFavoriteSafe = (session: UIMeditationSession) => {
-    handleToggleFavorite(session);
+    handleToggleFavorite(session.id);
   };
   
   return (
@@ -73,7 +74,7 @@ const MeditationLibrary = () => {
           <MeditationSessionView 
             selectedSession={selectedSession}
             onBackToLibrary={() => setSelectedSession(null)}
-            handleToggleFavorite={handleToggleFavoriteSafe}
+            handleToggleFavorite={isFavorite}
             isFavorite={isFavorite}
             showRatingDialog={showRatingDialog}
             setShowRatingDialog={setShowRatingDialog}

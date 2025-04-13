@@ -1,7 +1,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { isSupabaseConfigured } from '@/lib/supabase';
-import { StartSessionParams } from '@/types/meditation';
+import { StartSessionParams, MeditationSession } from '@/types/meditation';
 import { useAuth } from './useAuth';
 import { useSubscriptionContext } from './useSubscriptionContext';
 import { toast } from 'sonner';
@@ -70,7 +70,11 @@ export function useMeditationSessions() {
       duration: params.duration,
       started_at: new Date().toISOString(),
       completed: false,
-    };
+      description: "",
+      category: params.sessionType,
+      difficulty: "beginner",
+      favorite: false
+    } as Omit<MeditationSession, "id">;
     
     // If not connected to Supabase, save to localStorage
     if (!isSupabaseConfigured()) {

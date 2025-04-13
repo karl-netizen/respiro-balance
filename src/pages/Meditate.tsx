@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -85,7 +86,7 @@ const Meditate = () => {
   
   // Fix the type signature for handleToggleFavorite
   const handleToggleFavoriteWrapper = (session: MeditationSession) => {
-    handleToggleFavorite(session);
+    handleToggleFavorite(session.id);
   };
   
   return (
@@ -99,7 +100,7 @@ const Meditate = () => {
           <MeditationSessionView 
             selectedSession={selectedSession}
             onBackToLibrary={() => setSelectedSession(null)}
-            handleToggleFavorite={handleToggleFavorite}
+            handleToggleFavorite={isFavorite}
             isFavorite={isFavorite}
             showRatingDialog={showRatingDialog}
             setShowRatingDialog={setShowRatingDialog}

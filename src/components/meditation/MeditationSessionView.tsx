@@ -8,7 +8,7 @@ import MeditationSessionPlayer from './MeditationSessionPlayer';
 interface MeditationSessionViewProps {
   selectedSession: MeditationSession;
   onBackToLibrary: () => void;
-  handleToggleFavorite: (id: string) => void;
+  handleToggleFavorite: (sessionId: string) => boolean;
   isFavorite: (sessionId: string) => boolean;
   showRatingDialog: boolean;
   setShowRatingDialog: (show: boolean) => void;
