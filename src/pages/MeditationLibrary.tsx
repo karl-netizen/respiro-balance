@@ -8,16 +8,13 @@ import {
   MeditationLibraryBrowser,
   MeditationBenefits
 } from "@/components/meditation";
-import { MeditationSession as UIMeditationSession } from "@/components/meditation/MeditationSessionCard";
+import { MeditationSession } from "@/components/meditation/MeditationSessionCard";
 import { useMeditationLibrary } from "@/hooks/useMeditationLibrary";
 import { useUserPreferences } from "@/context";
 import { useBiometricData } from "@/hooks/useBiometricData";
 import { toast } from "sonner";
-
-// Create a type adapter function to convert between the two MeditationSession types
-const adaptSessionType = (session: UIMeditationSession): UIMeditationSession => {
-  return session;
-};
+import { useIsMobile } from "@/hooks/use-mobile";
+import ViewportToggle from "@/components/layout/ViewportToggle";
 
 const MeditationLibrary = () => {
   const { preferences } = useUserPreferences();
@@ -42,6 +39,7 @@ const MeditationLibrary = () => {
   } = useMeditationLibrary();
   
   const [activeTab, setActiveTab] = useState('guided');
+  const isMobile = useIsMobile();
   
   const handleSessionComplete = (sessionId: string) => {
     if (preferences.hasWearableDevice) {
@@ -57,14 +55,9 @@ const MeditationLibrary = () => {
     // Show rating dialog
     setShowRatingDialog(true);
   };
-
-  // Fix the type signature for handleToggleFavorite
-  const handleToggleFavoriteSafe = (session: UIMeditationSession) => {
-    handleToggleFavorite(session.id);
-  };
   
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className={`min-h-screen flex flex-col ${isMobile ? 'mobile-view' : ''}`}>
       <Header />
       
       <main className="flex-grow">
@@ -74,7 +67,7 @@ const MeditationLibrary = () => {
           <MeditationSessionView 
             selectedSession={selectedSession}
             onBackToLibrary={() => setSelectedSession(null)}
-            handleToggleFavorite={isFavorite}
+            handleToggleFavorite={(sessionId) => handleToggleFavorite({...selectedSession, id: sessionId})}
             isFavorite={isFavorite}
             showRatingDialog={showRatingDialog}
             setShowRatingDialog={setShowRatingDialog}
@@ -87,7 +80,7 @@ const MeditationLibrary = () => {
             recentlyPlayed={recentlyPlayed}
             getFavoriteSessions={getFavoriteSessions}
             handleSelectSession={handleSelectSession}
-            handleToggleFavorite={handleToggleFavoriteSafe}
+            handleToggleFavorite={handleToggleFavorite}
             isFavorite={isFavorite}
             filterSessionsByCategory={filterSessionsByCategory}
             durationFilter={durationFilter}
@@ -102,6 +95,7 @@ const MeditationLibrary = () => {
       </main>
       
       <Footer />
+      <ViewportToggle />
     </div>
   );
 };

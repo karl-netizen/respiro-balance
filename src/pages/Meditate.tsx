@@ -14,6 +14,8 @@ import { useBiometricData } from "@/hooks/useBiometricData";
 import { toast } from "sonner";
 import { debugAllSessionAudio, analyzeSessionAudio, logAudioMappingStatus } from "@/lib/meditationAudioIntegration";
 import { MeditationSession } from "@/components/meditation/MeditationSessionCard";
+import { useIsMobile } from "@/hooks/use-mobile";
+import ViewportToggle from "@/components/layout/ViewportToggle";
 
 const Meditate = () => {
   const { preferences } = useUserPreferences();
@@ -39,6 +41,7 @@ const Meditate = () => {
   } = useMeditationLibrary();
   
   const [activeTab, setActiveTab] = useState('guided');
+  const isMobile = useIsMobile();
   
   // Run audio diagnosis on first load
   useEffect(() => {
@@ -84,13 +87,8 @@ const Meditate = () => {
     setShowRatingDialog(true);
   };
   
-  // Fix the type signature for handleToggleFavorite
-  const handleToggleFavoriteWrapper = (session: MeditationSession) => {
-    handleToggleFavorite(session.id);
-  };
-  
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className={`min-h-screen flex flex-col ${isMobile ? 'mobile-view' : ''}`}>
       <Header />
       
       <main className="flex-grow">
@@ -100,7 +98,7 @@ const Meditate = () => {
           <MeditationSessionView 
             selectedSession={selectedSession}
             onBackToLibrary={() => setSelectedSession(null)}
-            handleToggleFavorite={isFavorite}
+            handleToggleFavorite={(sessionId) => handleToggleFavorite({...selectedSession, id: sessionId})}
             isFavorite={isFavorite}
             showRatingDialog={showRatingDialog}
             setShowRatingDialog={setShowRatingDialog}
@@ -113,7 +111,7 @@ const Meditate = () => {
             recentlyPlayed={recentlyPlayed}
             getFavoriteSessions={getFavoriteSessions}
             handleSelectSession={handleSelectSession}
-            handleToggleFavorite={handleToggleFavoriteWrapper}
+            handleToggleFavorite={handleToggleFavorite}
             isFavorite={isFavorite}
             filterSessionsByCategory={filterSessionsByCategory}
             durationFilter={durationFilter}
@@ -128,6 +126,7 @@ const Meditate = () => {
       </main>
       
       <Footer />
+      <ViewportToggle />
     </div>
   );
 };

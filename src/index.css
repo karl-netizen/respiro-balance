@@ -28,6 +28,44 @@
   z-index: 1000;
 }
 
+/* Mobile-specific styles */
+.mobile-view .text-xs {
+  font-size: 0.75rem;
+}
+
+.mobile-view .text-sm {
+  font-size: 0.875rem;
+}
+
+.mobile-view .text-base {
+  font-size: 1rem;
+}
+
+.mobile-view .text-lg {
+  font-size: 1.125rem;
+}
+
+.mobile-view .text-xl {
+  font-size: 1.25rem;
+}
+
+.mobile-view .text-2xl {
+  font-size: 1.5rem;
+}
+
+.mobile-view .p-4 {
+  padding: 0.75rem;
+}
+
+.mobile-view .p-6 {
+  padding: 1rem;
+}
+
+.mobile-view .py-12 {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -108,5 +146,26 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* Mobile-friendly button transitions */
+.button-transition {
+  @apply transition-all duration-200;
+}
+
+/* Responsive glassmorphism cards */
+.glassmorphism-card {
+  @apply bg-background/90 backdrop-blur-sm border border-border/50 shadow-sm;
+}
+
+/* Improved mobile touch targets */
+@media (max-width: 768px) {
+  button, a, [role="button"] {
+    @apply min-h-[44px] touch-manipulation;
+  }
+  
+  input, select, textarea {
+    @apply text-base;
   }
 }

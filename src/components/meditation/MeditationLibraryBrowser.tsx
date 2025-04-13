@@ -39,7 +39,7 @@ const MeditationLibraryBrowser: React.FC<MeditationLibraryBrowserProps> = ({
   resetFilters
 }) => {
   return (
-    <section className="py-12 px-6" id="meditation-tabs">
+    <section className="py-8 px-4 md:py-12 md:px-6" id="meditation-tabs">
       <div className="max-w-6xl mx-auto">
         {recentlyPlayed.length > 0 && (
           <RecentlyPlayedSection 
@@ -59,7 +59,7 @@ const MeditationLibraryBrowser: React.FC<MeditationLibraryBrowserProps> = ({
           onValueChange={setActiveTab}
           className="w-full"
         >
-          <TabsList className="grid w-full grid-cols-4 mb-8">
+          <TabsList className="grid w-full grid-cols-4 mb-6 md:mb-8 text-xs md:text-sm">
             <TabsTrigger value="guided">Guided Sessions</TabsTrigger>
             <TabsTrigger value="quick">Quick Breaks</TabsTrigger>
             <TabsTrigger value="deep">Deep Focus</TabsTrigger>

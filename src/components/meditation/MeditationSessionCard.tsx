@@ -1,87 +1,101 @@
 
 import React from 'react';
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Link } from 'react-router-dom';
-import { Clock, Heart } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Clock, Heart, Star } from "lucide-react";
 
 export interface MeditationSession {
   id: string;
   title: string;
   description: string;
-  duration: number; // in minutes
+  duration: number;
   category: string;
-  level: 'beginner' | 'intermediate' | 'advanced';
-  instructor: string;
+  level: string;
   imageUrl?: string;
   audioUrl?: string;
-  benefits?: string[];
+  icon?: React.ReactNode;
+  rating?: number;
   tags?: string[];
-  isFeatured?: boolean;
+  favorite?: boolean;
+  completions?: number;
+  instructor?: string;
+  benefits?: string[];
 }
 
 interface MeditationSessionCardProps {
   session: MeditationSession;
-  onSelect?: (session: MeditationSession) => void;
-  isFavorite?: boolean;
-  onToggleFavorite?: (id: string) => void;
+  onSelect: () => void;
+  isFavorite: boolean;
+  onToggleFavorite: () => void;
 }
 
 const MeditationSessionCard: React.FC<MeditationSessionCardProps> = ({
   session,
   onSelect,
-  isFavorite = false,
+  isFavorite,
   onToggleFavorite
 }) => {
-  const handleSelect = () => {
-    if (onSelect) {
-      onSelect(session);
-    }
-  };
-  
-  const handleToggleFavorite = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (onToggleFavorite) {
-      onToggleFavorite(session.id);
-    }
-  };
-  
   return (
-    <Card className="h-full flex flex-col">
-      <CardContent className="pt-6 flex-grow">
-        <div className="flex justify-between items-start mb-2">
-          <div className="space-y-1">
-            <h3 className="font-semibold text-lg leading-tight">{session.title}</h3>
-            <div className="flex items-center text-sm text-muted-foreground">
-              <Clock className="h-4 w-4 mr-1" />
-              <span>{session.duration} min</span>
-            </div>
-          </div>
-          
-          <Badge variant="outline" className="capitalize">
-            {session.level}
+    <Card className="overflow-hidden hover:shadow-md transition-shadow">
+      <div 
+        className="h-32 bg-secondary/50 flex items-center justify-center"
+        style={session.imageUrl ? { backgroundImage: `url(${session.imageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
+      >
+        {!session.imageUrl && (
+          <div className="text-4xl">{session.icon || '🧘'}</div>
+        )}
+      </div>
+      
+      <CardHeader className="p-4 pb-2">
+        <div className="flex justify-between items-start">
+          <CardTitle className="text-lg">{session.title}</CardTitle>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="h-8 w-8" 
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleFavorite();
+            }}
+          >
+            <Heart className={`h-4 w-4 ${isFavorite ? 'fill-red-500 text-red-500' : ''}`} />
+            <span className="sr-only">Toggle favorite</span>
+          </Button>
+        </div>
+        <div className="flex gap-2 items-center mt-1">
+          <Badge variant="outline" className="text-xs">
+            {session.category}
+          </Badge>
+          <Badge variant="outline" className="text-xs">
+            {session.level || 'Beginner'}
           </Badge>
         </div>
-        
-        <p className="text-sm text-muted-foreground line-clamp-3 mt-2">
+      </CardHeader>
+      
+      <CardContent className="p-4 pt-0">
+        <CardDescription className="line-clamp-2 mb-3 h-10">
           {session.description}
-        </p>
+        </CardDescription>
+        
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <div className="flex items-center gap-1">
+            <Clock className="h-3 w-3" />
+            <span>{session.duration} min</span>
+          </div>
+          {session.rating && (
+            <div className="flex items-center gap-1">
+              <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+              <span>{session.rating}</span>
+            </div>
+          )}
+        </div>
       </CardContent>
       
-      <CardFooter className="pt-0">
-        <div className="w-full">
-          <Link 
-            to={`/meditate/session/${session.id}`}
-            className="w-full"
-            onClick={handleSelect}
-          >
-            <Button variant="default" className="w-full">
-              Start Session
-            </Button>
-          </Link>
-        </div>
+      <CardFooter className="p-2 border-t">
+        <Button className="w-full" variant="ghost" onClick={onSelect}>
+          Begin Session
+        </Button>
       </CardFooter>
     </Card>
   );
