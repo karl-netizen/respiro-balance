@@ -21,12 +21,19 @@ const DesktopNav = () => {
     return location.pathname === path || location.pathname.startsWith(path + '/');
   }
 
+  // Helper function to check if a path with query is active
+  const isTabActive = (path: string, tab: string) => {
+    if (!isActive(path)) return false;
+    const params = new URLSearchParams(location.search);
+    return params.get('tab') === tab;
+  }
+
   return (
     <NavigationMenu className="hidden md:flex">
       <NavigationMenuList>
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
-            <Link to="/" className={cn("text-foreground/80 hover:text-primary px-3 py-2 button-transition", isActive('/') && "text-primary font-medium")}>
+            <Link to="/" className={cn("text-foreground/80 hover:text-primary px-3 py-2 button-transition", isActive('/') && !isActive('/dashboard') && "text-primary font-medium")}>
               Home
             </Link>
           </NavigationMenuLink>
@@ -43,7 +50,10 @@ const DesktopNav = () => {
         )}
         
         <NavigationMenuItem>
-          <NavigationMenuTrigger className="text-foreground/80 hover:text-primary bg-transparent hover:bg-transparent focus:bg-transparent">
+          <NavigationMenuTrigger className={cn(
+            "text-foreground/80 hover:text-primary bg-transparent hover:bg-transparent focus:bg-transparent",
+            isActive('/meditate') && "text-primary font-medium"
+          )}>
             Meditate
           </NavigationMenuTrigger>
           <NavigationMenuContent className="bg-popover/95 backdrop-blur-sm">
@@ -64,6 +74,11 @@ const DesktopNav = () => {
                 description="Longer sessions for deep restoration"
               />
               <FeatureItem
+                title="Sleep Meditation"
+                href="/meditate?tab=sleep"
+                description="Sessions designed to help you fall asleep"
+              />
+              <FeatureItem
                 title="Meditation Library"
                 href="/meditate"
                 description="Browse our complete collection of sessions"
@@ -73,7 +88,10 @@ const DesktopNav = () => {
         </NavigationMenuItem>
         
         <NavigationMenuItem>
-          <NavigationMenuTrigger className="text-foreground/80 hover:text-primary bg-transparent hover:bg-transparent focus:bg-transparent">
+          <NavigationMenuTrigger className={cn(
+            "text-foreground/80 hover:text-primary bg-transparent hover:bg-transparent focus:bg-transparent",
+            isActive('/breathe') && "text-primary font-medium"
+          )}>
             Breathe
           </NavigationMenuTrigger>
           <NavigationMenuContent className="bg-popover/95 backdrop-blur-sm">

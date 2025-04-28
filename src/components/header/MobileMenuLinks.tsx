@@ -63,6 +63,10 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
             label: "Deep Focus",
             href: "/meditate?tab=deep",
           },
+          {
+            label: "Sleep",
+            href: "/meditate?tab=sleep",
+          }
         ]}
         toggleMainMenu={toggleMenu}
       />
@@ -87,6 +91,10 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
             label: "4-7-8 Breathing",
             href: "/breathe?tab=techniques&technique=478",
           },
+          {
+            label: "Coherent Breathing",
+            href: "/breathe?tab=techniques&technique=coherent",
+          }
         ]}
         toggleMainMenu={toggleMenu}
       />

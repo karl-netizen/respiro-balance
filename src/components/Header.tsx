@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { Circle } from "lucide-react"; // Changed from CircleDot to Circle
+import { Circle } from "lucide-react"; 
 import DesktopNav from "./header/DesktopNav";
 import MobileMenu from "./header/MobileMenu";
 import AccountSection from "./header/AccountSection";
@@ -33,6 +33,7 @@ const Header = () => {
           <Link
             to="/"
             className="flex items-center text-xl font-bold tracking-tight hover:text-primary transition-colors"
+            aria-label="Home"
           >
             <Circle 
               className="mr-2 text-respiro-dark fill-respiro-dark" 
@@ -53,6 +54,7 @@ const Header = () => {
             onClick={toggleMobileMenu}
             aria-controls="mobile-menu"
             aria-expanded={mobileMenuOpen}
+            aria-label="Toggle mobile menu"
           >
             <span className="sr-only">Open main menu</span>
             <MenuIcon className="w-6 h-6" />

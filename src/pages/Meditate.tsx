@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { 
@@ -20,6 +21,9 @@ import ViewportToggle from "@/components/layout/ViewportToggle";
 const Meditate = () => {
   const { preferences } = useUserPreferences();
   const { biometricData, addBiometricData } = useBiometricData();
+  const location = useLocation();
+  const navigate = useNavigate();
+  
   const { 
     meditationSessions,
     selectedSession, 
@@ -40,8 +44,31 @@ const Meditate = () => {
     resetFilters
   } = useMeditationLibrary();
   
-  const [activeTab, setActiveTab] = useState('guided');
+  // Parse tab from URL query parameters
+  const getTabFromUrl = () => {
+    const params = new URLSearchParams(location.search);
+    const tab = params.get('tab');
+    return tab && ['guided', 'quick', 'deep', 'sleep'].includes(tab) ? tab : 'guided';
+  };
+  
+  const [activeTab, setActiveTab] = useState(getTabFromUrl());
   const isMobile = useIsMobile();
+  
+  // Update URL when tab changes
+  const handleTabChange = (tabValue: string) => {
+    console.log("Tab changed to:", tabValue);
+    setActiveTab(tabValue);
+    
+    // Update URL without reloading page
+    const params = new URLSearchParams(location.search);
+    params.set('tab', tabValue);
+    navigate(`${location.pathname}?${params.toString()}`, { replace: true });
+  };
+  
+  // Listen for URL changes
+  useEffect(() => {
+    setActiveTab(getTabFromUrl());
+  }, [location]);
   
   // Run audio diagnosis on first load
   useEffect(() => {
@@ -66,12 +93,6 @@ const Meditate = () => {
     }
   }, [meditationSessions]);
 
-  // Handle tab change
-  const handleTabChange = (tabValue: string) => {
-    console.log("Tab changed to:", tabValue);
-    setActiveTab(tabValue);
-  };
-  
   const handleSessionComplete = (sessionId: string) => {
     if (preferences.hasWearableDevice) {
       toast.success("Meditation complete", {
@@ -99,7 +120,7 @@ const Meditate = () => {
             selectedSession={selectedSession}
             onBackToLibrary={() => setSelectedSession(null)}
             handleToggleFavorite={(sessionId) => handleToggleFavorite({...selectedSession, id: sessionId})}
-            isFavorite={isFavorite}
+            isFavorite={(sessionId) => !!isFavorite(sessionId)}
             showRatingDialog={showRatingDialog}
             setShowRatingDialog={setShowRatingDialog}
             handleSubmitRating={handleSubmitRating}
