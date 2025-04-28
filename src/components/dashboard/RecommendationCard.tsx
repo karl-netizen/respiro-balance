@@ -1,107 +1,111 @@
-
 import React from 'react';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { ArrowRight, Brain, Flame, Heart, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { Trophy, Activity, Brain, Moon } from 'lucide-react';
-import { useMeditationLibrary } from '@/hooks/useMeditationLibrary';
 
-interface RecommendationCardProps {
-  currentMood: string | null;
+export interface RecommendationCardProps {
+  currentMood?: string | null;
 }
 
 const RecommendationCard: React.FC<RecommendationCardProps> = ({ currentMood }) => {
   const navigate = useNavigate();
-  const { meditationSessions } = useMeditationLibrary();
   
-  // Determine recommendation based on mood
-  const getRecommendation = () => {
-    if (!currentMood || !meditationSessions?.length) {
-      // Default recommendation
-      return {
-        title: 'Morning Focus',
-        description: 'Start your day with clarity and intention.',
-        icon: <Brain className="h-5 w-5 text-primary" />,
-        duration: '10 min',
-        navigateTo: '/meditate?tab=guided'
-      };
-    }
-    
-    // Mood-based recommendations
+  // Determine recommendations based on mood
+  const getRecommendations = () => {
     switch (currentMood) {
-      case 'anxious':
+      case 'happy':
+        return {
+          title: 'Amplify Your Positive Energy',
+          description: 'Channel your positive mood into focused productivity',
+          sessions: [
+            { id: 'gratitude-1', title: 'Gratitude Practice', duration: 10, icon: <Sparkles className="h-5 w-5" /> },
+            { id: 'joy-1', title: 'Joy Meditation', duration: 15, icon: <Heart className="h-5 w-5" /> }
+          ]
+        };
       case 'stressed':
         return {
-          title: 'Anxiety Relief',
-          description: 'Calm your mind and reduce stress with this guided practice.',
-          icon: <Activity className="h-5 w-5 text-primary" />,
-          duration: '15 min',
-          navigateTo: '/meditate?tab=guided'
+          title: 'Reduce Your Stress',
+          description: 'These sessions can help calm your mind and body',
+          sessions: [
+            { id: 'calm-1', title: 'Quick Calm', duration: 5, icon: <Brain className="h-5 w-5" /> },
+            { id: 'breathe-1', title: 'Deep Breathing', duration: 8, icon: <Flame className="h-5 w-5" /> }
+          ]
         };
-        
-      case 'meh':
-      case 'okay':
+      case 'tired':
         return {
-          title: 'Energy Boost',
-          description: 'Revitalize your mind and increase your energy level.',
-          icon: <Trophy className="h-5 w-5 text-primary" />,
-          duration: '10 min',
-          navigateTo: '/meditate?tab=quick'
+          title: 'Boost Your Energy',
+          description: 'Revitalize your mind and body with these sessions',
+          sessions: [
+            { id: 'energy-1', title: 'Energy Boost', duration: 7, icon: <Flame className="h-5 w-5" /> },
+            { id: 'focus-1', title: 'Quick Focus', duration: 5, icon: <Brain className="h-5 w-5" /> }
+          ]
         };
-        
-      case 'good':
-      case 'amazing':
+      case 'anxious':
         return {
-          title: 'Deep Focus',
-          description: 'Enhance your productivity and concentration.',
-          icon: <Brain className="h-5 w-5 text-primary" />,
-          duration: '20 min',
-          navigateTo: '/meditate?tab=deep'
+          title: 'Find Your Center',
+          description: 'Ground yourself and reduce anxiety with these practices',
+          sessions: [
+            { id: 'ground-1', title: 'Grounding Exercise', duration: 10, icon: <Brain className="h-5 w-5" /> },
+            { id: 'calm-2', title: 'Anxiety Relief', duration: 12, icon: <Heart className="h-5 w-5" /> }
+          ]
         };
-        
       default:
         return {
-          title: 'Evening Wind Down',
-          description: 'Prepare your mind and body for restful sleep.',
-          icon: <Moon className="h-5 w-5 text-primary" />,
-          duration: '10 min',
-          navigateTo: '/meditate?tab=sleep'
+          title: 'Recommended For You',
+          description: 'Based on your meditation history and preferences',
+          sessions: [
+            { id: 'daily-1', title: 'Daily Calm', duration: 10, icon: <Sparkles className="h-5 w-5" /> },
+            { id: 'focus-2', title: 'Focus Enhancer', duration: 15, icon: <Brain className="h-5 w-5" /> }
+          ]
         };
     }
   };
   
-  const recommendation = getRecommendation();
+  const recommendations = getRecommendations();
+  
+  const handleSessionClick = (sessionId: string) => {
+    navigate(`/meditate/session/${sessionId}`);
+  };
   
   return (
-    <Card className="bg-gradient-to-br from-primary/5 to-primary/10">
+    <Card>
       <CardHeader>
-        <CardTitle className="flex items-center">
-          {recommendation.icon}
-          <span className="ml-2">Recommended for You</span>
-        </CardTitle>
+        <CardTitle>{recommendations.title}</CardTitle>
         <CardDescription>
-          Based on {currentMood ? `your ${currentMood} mood` : 'your past activity'}
+          {recommendations.description}
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between">
-          <div>
-            <h3 className="text-lg font-semibold">{recommendation.title}</h3>
-            <p className="text-sm text-muted-foreground">{recommendation.description}</p>
-          </div>
-          <div className="bg-primary/20 rounded-full px-3 py-1 text-xs font-medium text-primary mt-2 md:mt-0">
-            {recommendation.duration}
-          </div>
+        <div className="space-y-3">
+          {recommendations.sessions.map((session) => (
+            <div 
+              key={session.id}
+              className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted cursor-pointer"
+              onClick={() => handleSessionClick(session.id)}
+            >
+              <div className="flex items-center gap-3">
+                <div className="bg-primary/10 p-2 rounded-full">
+                  {session.icon}
+                </div>
+                <div>
+                  <h4 className="font-medium">{session.title}</h4>
+                  <p className="text-sm text-muted-foreground">{session.duration} min</p>
+                </div>
+              </div>
+              <ArrowRight className="h-4 w-4 text-muted-foreground" />
+            </div>
+          ))}
+          
+          <Button 
+            variant="ghost" 
+            className="w-full mt-2"
+            onClick={() => navigate('/meditate')}
+          >
+            View All Sessions
+          </Button>
         </div>
       </CardContent>
-      <CardFooter>
-        <Button 
-          onClick={() => navigate(recommendation.navigateTo)}
-          className="w-full"
-        >
-          Start Session
-        </Button>
-      </CardFooter>
     </Card>
   );
 };

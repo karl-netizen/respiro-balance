@@ -1,66 +1,79 @@
-
 import React from 'react';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { MeditationStats } from '@/components/progress/types/meditationStats';
 import { Progress } from '@/components/ui/progress';
-import { MeditationStats, SessionDay } from '@/components/progress/useMeditationStats';
+import { CheckCircle2, Circle } from 'lucide-react';
 
-interface WeeklyProgressCardProps {
-  meditationStats: MeditationStats;
-  sessions: SessionDay[];
+export interface WeeklyProgressCardProps {
+  progress: MeditationStats;
 }
 
-const WeeklyProgressCard: React.FC<WeeklyProgressCardProps> = ({ meditationStats, sessions }) => {
-  const weeklyCompletionPercentage = Math.min(
-    100,
-    Math.round((meditationStats.weeklyCompleted / meditationStats.weeklyGoal) * 100)
-  );
+const WeeklyProgressCard: React.FC<WeeklyProgressCardProps> = ({ progress }) => {
+  const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  
+  // Calculate completion percentage
+  const completionPercentage = Math.round((progress.weeklyCompleted / progress.weeklyGoal) * 100);
+  
+  // Generate mock data for the week if not provided
+  const generateWeekData = () => {
+    const today = new Date().getDay(); // 0 is Sunday, 1 is Monday, etc.
+    const adjustedToday = today === 0 ? 6 : today - 1; // Convert to 0 = Monday, 6 = Sunday
+    
+    return daysOfWeek.map((day, index) => ({
+      day,
+      completed: index < adjustedToday ? Math.random() > 0.3 : false,
+      today: index === adjustedToday
+    }));
+  };
+  
+  const weekData = generateWeekData();
   
   return (
     <Card>
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg">Weekly Progress</CardTitle>
-        <CardDescription>Your meditation activity this week</CardDescription>
+        <CardTitle className="text-lg">Weekly Goal</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="flex justify-between mb-4">
-          {sessions.map((session, i) => (
-            <div 
-              key={i} 
-              className={`flex flex-col items-center ${session.today ? 'relative' : ''}`}
-            >
-              <div 
-                className={`w-8 h-8 rounded-full flex items-center justify-center mb-1
-                  ${session.completed 
-                    ? 'bg-primary text-primary-foreground' 
-                    : session.today 
-                      ? 'border-2 border-primary text-primary' 
-                      : 'bg-secondary/50 text-muted-foreground'
-                  }`}
-              >
-                {session.completed ? '✓' : ''}
-              </div>
-              <span className={`text-xs ${session.today ? 'font-bold' : 'text-muted-foreground'}`}>
-                {session.day}
-              </span>
-              {session.today && (
-                <div className="absolute -top-1 -right-1 text-xs bg-primary text-primary-foreground rounded-full w-3 h-3"></div>
-              )}
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <div>
+              <p className="text-sm text-muted-foreground">
+                {progress.weeklyCompleted} of {progress.weeklyGoal} sessions
+              </p>
             </div>
-          ))}
-        </div>
-        
-        <div className="space-y-2">
-          <div className="flex justify-between text-xs">
-            <span className="font-medium">Weekly Goal</span>
-            <span>{meditationStats.weeklyCompleted}/{meditationStats.weeklyGoal} sessions</span>
+            <div className="text-sm font-medium">
+              {completionPercentage}%
+            </div>
           </div>
-          <Progress value={weeklyCompletionPercentage} className="h-2" />
-          <p className="text-xs text-muted-foreground mt-1">
-            {weeklyCompletionPercentage >= 100 
-              ? "You've completed your weekly goal! 🎉" 
-              : `${meditationStats.weeklyGoal - meditationStats.weeklyCompleted} more to reach your goal`
-            }
-          </p>
+          
+          <Progress value={completionPercentage} className="h-2" />
+          
+          <div className="flex justify-between mt-4">
+            {weekData.map((day, index) => (
+              <div key={index} className="flex flex-col items-center">
+                <div className="mb-1">
+                  {day.completed ? (
+                    <CheckCircle2 className="h-5 w-5 text-primary" />
+                  ) : (
+                    <Circle className={`h-5 w-5 ${day.today ? 'text-primary' : 'text-muted-foreground/30'}`} />
+                  )}
+                </div>
+                <span className={`text-xs ${day.today ? 'font-medium' : 'text-muted-foreground'}`}>
+                  {day.day}
+                </span>
+              </div>
+            ))}
+          </div>
+          
+          <div className="pt-2">
+            <p className="text-sm">
+              {progress.streak > 0 ? (
+                <>Current streak: <span className="font-medium">{progress.streak} days</span></>
+              ) : (
+                "Start a streak by meditating today!"
+              )}
+            </p>
+          </div>
         </div>
       </CardContent>
     </Card>

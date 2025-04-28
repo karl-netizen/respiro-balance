@@ -11,7 +11,7 @@ import SleepMeditationList from './SleepMeditationList';
 import RecentlyPlayedSection from './RecentlyPlayedSection';
 import FavoritesSection from './FavoritesSection';
 
-interface MeditationLibraryBrowserProps {
+export interface MeditationLibraryBrowserProps {
   activeTab: string;
   setActiveTab: (value: string) => void;
   recentlyPlayed: MeditationSession[];
@@ -27,7 +27,7 @@ interface MeditationLibraryBrowserProps {
   resetFilters: () => void;
 }
 
-const MeditationLibraryBrowser = ({
+const MeditationLibraryBrowser: React.FC<MeditationLibraryBrowserProps> = ({
   activeTab,
   setActiveTab,
   recentlyPlayed,
@@ -41,7 +41,7 @@ const MeditationLibraryBrowser = ({
   levelFilter,
   setLevelFilter,
   resetFilters
-}: MeditationLibraryBrowserProps) => {
+}) => {
   return (
     <Card className="w-full">
       <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -65,8 +65,8 @@ const MeditationLibraryBrowser = ({
         <TabsContent value="guided" className="pt-0 border-none outline-none">
           <GuidedMeditationList 
             sessions={filterSessionsByCategory('guided')}
-            handleSelectSession={handleSelectSession}
-            handleToggleFavorite={handleToggleFavorite}
+            onSelectSession={handleSelectSession}
+            onToggleFavorite={handleToggleFavorite}
             isFavorite={isFavorite}
           />
         </TabsContent>
@@ -74,8 +74,8 @@ const MeditationLibraryBrowser = ({
         <TabsContent value="quick" className="pt-0 border-none outline-none">
           <QuickBreaksList 
             sessions={filterSessionsByCategory('quick')}
-            handleSelectSession={handleSelectSession}
-            handleToggleFavorite={handleToggleFavorite}
+            onSelectSession={handleSelectSession}
+            onToggleFavorite={handleToggleFavorite}
             isFavorite={isFavorite}
           />
         </TabsContent>
@@ -83,8 +83,8 @@ const MeditationLibraryBrowser = ({
         <TabsContent value="deep" className="pt-0 border-none outline-none">
           <DeepFocusList 
             sessions={filterSessionsByCategory('deep')}
-            handleSelectSession={handleSelectSession}
-            handleToggleFavorite={handleToggleFavorite}
+            onSelectSession={handleSelectSession}
+            onToggleFavorite={handleToggleFavorite}
             isFavorite={isFavorite}
           />
         </TabsContent>
@@ -92,8 +92,8 @@ const MeditationLibraryBrowser = ({
         <TabsContent value="sleep" className="pt-0 border-none outline-none">
           <SleepMeditationList 
             sessions={filterSessionsByCategory('sleep')}
-            handleSelectSession={handleSelectSession}
-            handleToggleFavorite={handleToggleFavorite}
+            onSelectSession={handleSelectSession}
+            onToggleFavorite={handleToggleFavorite}
             isFavorite={isFavorite}
           />
         </TabsContent>
@@ -101,15 +101,15 @@ const MeditationLibraryBrowser = ({
       
       <RecentlyPlayedSection 
         recentlyPlayed={recentlyPlayed}
-        handleSelectSession={handleSelectSession}
-        handleToggleFavorite={handleToggleFavorite}
+        onSelectSession={handleSelectSession}
+        onToggleFavorite={handleToggleFavorite}
         isFavorite={isFavorite}
       />
       
       <FavoritesSection 
         favoriteSessions={getFavoriteSessions()}
-        handleSelectSession={handleSelectSession}
-        handleToggleFavorite={handleToggleFavorite}
+        onSelectSession={handleSelectSession}
+        onToggleFavorite={handleToggleFavorite}
         isFavorite={isFavorite}
       />
     </Card>

@@ -1,6 +1,7 @@
 
 export interface MeditationSession {
   id: string;
+  title: string;
   user_id: string;
   session_type: string;
   duration: number;
@@ -12,8 +13,17 @@ export interface MeditationSession {
   description: string;
   category: string;
   difficulty: string;
+  level?: string;
   favorite: boolean;
+  premium?: boolean;
   biometrics?: SessionBiometrics;
+  imageUrl?: string;
+  audioUrl?: string;
+  icon?: React.ReactNode;
+  tags?: string[];
+  completions?: number;
+  instructor?: string;
+  benefits?: string[];
 }
 
 export interface SessionBiometrics {

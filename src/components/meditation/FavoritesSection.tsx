@@ -1,38 +1,57 @@
 
 import React from 'react';
-import MeditationSessionCard from "./MeditationSessionCard";
-import type { MeditationSession } from "./MeditationSessionCard";
+import { MeditationSession } from '@/types/meditation';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Heart } from 'lucide-react';
 
-interface FavoritesSectionProps {
-  favorites: MeditationSession[];
+export interface FavoritesSectionProps {
+  favoriteSessions: MeditationSession[];
   onSelectSession: (session: MeditationSession) => void;
-  onToggleFavorite: (sessionId: string) => void;
+  isFavorite: (id: string) => boolean;
+  onToggleFavorite: (session: MeditationSession) => void;
 }
 
 const FavoritesSection: React.FC<FavoritesSectionProps> = ({
-  favorites,
+  favoriteSessions,
   onSelectSession,
+  isFavorite,
   onToggleFavorite
 }) => {
-  if (favorites.length === 0) {
+  if (favoriteSessions.length === 0) {
     return null;
   }
-  
+
   return (
-    <div className="mb-8">
-      <h2 className="text-xl font-semibold mb-4">Favorites</h2>
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {favorites.map((session) => (
-          <MeditationSessionCard 
-            key={session.id}
-            session={session}
-            onSelect={() => onSelectSession(session)}
-            isFavorite={true}
-            onToggleFavorite={() => onToggleFavorite(session.id)}
-          />
-        ))}
-      </div>
-    </div>
+    <Card className="mt-6">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Heart className="h-5 w-5 fill-red-500 text-red-500" />
+          Favorites
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <ScrollArea className="h-[200px] pr-4">
+          <div className="grid gap-2">
+            {favoriteSessions.map((session) => (
+              <div 
+                key={session.id}
+                className="flex items-center gap-3 p-2 rounded-md hover:bg-accent cursor-pointer"
+                onClick={() => onSelectSession(session)}
+              >
+                <div className="bg-primary/10 rounded-md p-2">
+                  <Heart className="h-4 w-4 text-primary fill-red-500" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-sm font-medium">{session.title}</h4>
+                  <p className="text-xs text-muted-foreground">{session.duration} min</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </ScrollArea>
+      </CardContent>
+    </Card>
   );
 };
 

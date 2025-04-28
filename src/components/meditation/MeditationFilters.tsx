@@ -1,88 +1,72 @@
 
 import React from 'react';
-import { Filter, Clock, Award } from 'lucide-react';
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Button } from '@/components/ui/button';
-import { Slider } from '@/components/ui/slider';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { X } from 'lucide-react';
 
-interface MeditationFiltersProps {
-  durationRange: [number, number];
-  onDurationChange: (value: [number, number]) => void;
-  selectedLevel: string | null;
-  onLevelChange: (level: string | null) => void;
-  onResetFilters: () => void;
+export interface MeditationFiltersProps {
+  durationFilter: number | null;
+  setDurationFilter: (duration: number | null) => void;
+  levelFilter: string | null;
+  setLevelFilter: (level: string | null) => void;
+  resetFilters: () => void;
 }
 
 const MeditationFilters: React.FC<MeditationFiltersProps> = ({
-  durationRange,
-  onDurationChange,
-  selectedLevel,
-  onLevelChange,
-  onResetFilters
+  durationFilter,
+  setDurationFilter,
+  levelFilter,
+  setLevelFilter,
+  resetFilters
 }) => {
   return (
-    <div className="bg-card rounded-lg p-4 mb-6 shadow-sm">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="font-medium flex items-center gap-2">
-          <Filter size={18} />
-          Filters
-        </h3>
-        <Button variant="ghost" size="sm" onClick={onResetFilters}>
-          Reset
-        </Button>
+    <div className="p-4 border-b flex flex-wrap items-center gap-3">
+      <div className="flex-1 min-w-[120px]">
+        <Select
+          value={durationFilter?.toString() || ''}
+          onValueChange={(value) => setDurationFilter(value ? Number(value) : null)}
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Duration" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">Any Duration</SelectItem>
+            <SelectItem value="5">5 min or less</SelectItem>
+            <SelectItem value="10">5-10 min</SelectItem>
+            <SelectItem value="15">10-15 min</SelectItem>
+            <SelectItem value="30">15-30 min</SelectItem>
+            <SelectItem value="60">30+ min</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
       
-      <div className="grid md:grid-cols-2 gap-6">
-        <div className="space-y-3">
-          <div className="flex items-center gap-2">
-            <Clock size={16} className="text-muted-foreground" />
-            <span className="text-sm font-medium">Duration (minutes)</span>
-          </div>
-          
-          <div className="px-2">
-            <Slider 
-              defaultValue={durationRange} 
-              min={1} 
-              max={60} 
-              step={1}
-              onValueChange={(value) => onDurationChange(value as [number, number])}
-              className="w-full"
-            />
-            <div className="flex justify-between mt-1 text-xs text-muted-foreground">
-              <span>{durationRange[0]} min</span>
-              <span>{durationRange[1]} min</span>
-            </div>
-          </div>
-        </div>
-        
-        <div className="space-y-3">
-          <div className="flex items-center gap-2">
-            <Award size={16} className="text-muted-foreground" />
-            <span className="text-sm font-medium">Experience Level</span>
-          </div>
-          
-          <Select 
-            value={selectedLevel || 'all'} 
-            onValueChange={(value) => onLevelChange(value === 'all' ? null : value)}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="All Levels" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Levels</SelectItem>
-              <SelectItem value="beginner">Beginner</SelectItem>
-              <SelectItem value="intermediate">Intermediate</SelectItem>
-              <SelectItem value="advanced">Advanced</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+      <div className="flex-1 min-w-[120px]">
+        <Select
+          value={levelFilter || ''}
+          onValueChange={(value) => setLevelFilter(value || null)}
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Level" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">Any Level</SelectItem>
+            <SelectItem value="beginner">Beginner</SelectItem>
+            <SelectItem value="intermediate">Intermediate</SelectItem>
+            <SelectItem value="advanced">Advanced</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
+      
+      {(durationFilter !== null || levelFilter !== null) && (
+        <Button
+          variant="ghost"
+          size="sm"
+          className="text-muted-foreground"
+          onClick={resetFilters}
+        >
+          <X className="h-4 w-4 mr-1" /> Clear Filters
+        </Button>
+      )}
     </div>
   );
 };

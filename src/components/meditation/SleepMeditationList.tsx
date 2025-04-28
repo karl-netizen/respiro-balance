@@ -1,11 +1,11 @@
 
 import React from 'react';
-import { MeditationSession } from './MeditationSessionCard';
+import { MeditationSession } from '@/types/meditation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Moon } from 'lucide-react';
 
-interface SleepMeditationListProps {
+export interface SleepMeditationListProps {
   sessions: MeditationSession[];
   onSelectSession: (session: MeditationSession) => void;
   isFavorite: (id: string) => boolean;

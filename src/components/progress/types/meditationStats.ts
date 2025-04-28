@@ -21,6 +21,8 @@ export interface MeditationStats {
   };
   // New fields for enhanced visualizations
   longestStreak: number;
+  sessionsThisWeek: number;
+  completionRate: number;
   dailyMinutes: Array<{
     day: string;
     minutes: number;

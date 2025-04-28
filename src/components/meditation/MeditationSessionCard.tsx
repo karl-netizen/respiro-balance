@@ -4,24 +4,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Clock, Heart, Star } from "lucide-react";
-
-export interface MeditationSession {
-  id: string;
-  title: string;
-  description: string;
-  duration: number;
-  category: string;
-  level: string;
-  imageUrl?: string;
-  audioUrl?: string;
-  icon?: React.ReactNode;
-  rating?: number;
-  tags?: string[];
-  favorite?: boolean;
-  completions?: number;
-  instructor?: string;
-  benefits?: string[];
-}
+import { MeditationSession } from '@/types/meditation';
 
 interface MeditationSessionCardProps {
   session: MeditationSession;
@@ -68,7 +51,7 @@ const MeditationSessionCard: React.FC<MeditationSessionCardProps> = ({
             {session.category}
           </Badge>
           <Badge variant="outline" className="text-xs">
-            {session.level || 'Beginner'}
+            {session.level || session.difficulty || 'Beginner'}
           </Badge>
         </div>
       </CardHeader>

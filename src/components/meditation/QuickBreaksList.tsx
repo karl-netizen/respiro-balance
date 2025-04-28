@@ -1,9 +1,9 @@
 
 import React from 'react';
-import { MeditationSession } from './MeditationSessionCard';
+import { MeditationSession } from '@/types/meditation';
 import MeditationSessionCard from './MeditationSessionCard';
 
-interface QuickBreaksListProps {
+export interface QuickBreaksListProps {
   sessions: MeditationSession[];
   onSelectSession: (session: MeditationSession) => void;
   isFavorite: (sessionId: string) => boolean;

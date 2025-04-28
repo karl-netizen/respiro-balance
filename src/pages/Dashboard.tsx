@@ -29,10 +29,27 @@ const Dashboard = () => {
     weeklyCompleted: 3,
     streak: 2,
     longestStreak: 7,
-    averageSessionLength: 23,
     lastSessionDate: new Date().toISOString(),
     sessionsThisWeek: 3,
     completionRate: 60,
+    monthlyTrend: [],
+    lastSession: "",
+    focusScores: [],
+    stressScores: [],
+    achievements: [],
+    moodCorrelation: {
+      withMeditation: 0,
+      withoutMeditation: 0,
+    },
+    focusCorrelation: {
+      withMeditation: 0,
+      withoutMeditation: 0,
+    },
+    dailyMinutes: [],
+    achievementProgress: {
+      unlocked: 0,
+      total: 0,
+    }
   };
   
   // Handle mood selection
@@ -56,13 +73,13 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
           <div className="md:col-span-8 space-y-6">
             <MoodTracker onMoodSelect={handleMoodSelect} currentMood={currentMood} />
-            <RecommendationCard mood={currentMood} />
-            <ActivityCalendar />
+            <RecommendationCard currentMood={currentMood} />
+            <ActivityCalendar data={[]} />
           </div>
           
           <div className="md:col-span-4 space-y-6">
             <DashboardStats meditationStats={meditationStats} />
-            <WeeklyProgressCard stats={meditationStats} />
+            <WeeklyProgressCard progress={meditationStats} />
             <QuickAccessSection isPremium={isPremium} />
           </div>
         </div>

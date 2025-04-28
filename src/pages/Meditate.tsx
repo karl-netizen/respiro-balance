@@ -78,11 +78,6 @@ const Meditate = () => {
     }
   };
   
-  const filterByLevel = (sessions: MeditationSession[], level: string): MeditationSession[] => {
-    if (!level || level === 'all') return sessions;
-    return sessions.filter(session => session.level === level);
-  };
-  
   const handleStartMeditation = (session: MeditationSession) => {
     // Check if session is premium and user doesn't have premium
     if (session.premium && !isPremium) {
@@ -95,6 +90,38 @@ const Meditate = () => {
     // Direct to meditation session page
     window.location.href = `/meditate/session/${session.id}`;
   };
+
+  // Mock data for sessions (should come from an API or context)
+  const mockSessions: MeditationSession[] = [
+    {
+      id: "1",
+      title: "Guided Morning Meditation",
+      description: "Start your day with calm focus",
+      duration: 10,
+      level: "beginner",
+      category: "guided",
+      user_id: "1",
+      session_type: "guided",
+      started_at: new Date().toISOString(),
+      completed: false,
+      difficulty: "beginner",
+      favorite: false
+    },
+    {
+      id: "2",
+      title: "Quick Focus Break",
+      description: "Regain concentration quickly",
+      duration: 5,
+      level: "beginner",
+      category: "quick",
+      user_id: "1", 
+      session_type: "quick",
+      started_at: new Date().toISOString(),
+      completed: false,
+      difficulty: "beginner",
+      favorite: false
+    }
+  ];
   
   return (
     <div className="min-h-screen flex flex-col">
@@ -115,37 +142,37 @@ const Meditate = () => {
           
           <TabsContent value="guided">
             <GuidedMeditationList 
-              handleSelectSession={handleSelectSession}
-              handleToggleFavorite={handleToggleFavorite}
+              sessions={mockSessions.filter(s => s.category === "guided")}
+              onSelectSession={handleSelectSession}
+              onToggleFavorite={handleToggleFavorite}
               isFavorite={isFavorite}
-              isPremium={isPremium}
             />
           </TabsContent>
           
           <TabsContent value="quick">
             <QuickBreaksList 
-              handleSelectSession={handleSelectSession}
-              handleToggleFavorite={handleToggleFavorite}
+              sessions={mockSessions.filter(s => s.category === "quick")}
+              onSelectSession={handleSelectSession}
+              onToggleFavorite={handleToggleFavorite}
               isFavorite={isFavorite}
-              isPremium={isPremium}
             />
           </TabsContent>
           
           <TabsContent value="deep">
             <DeepFocusList 
-              handleSelectSession={handleSelectSession}
-              handleToggleFavorite={handleToggleFavorite}
+              sessions={mockSessions.filter(s => s.category === "deep")}
+              onSelectSession={handleSelectSession}
+              onToggleFavorite={handleToggleFavorite}
               isFavorite={isFavorite}
-              isPremium={isPremium}
             />
           </TabsContent>
           
           <TabsContent value="sleep">
             <SleepMeditationList 
-              handleSelectSession={handleSelectSession}
-              handleToggleFavorite={handleToggleFavorite}
+              sessions={mockSessions.filter(s => s.category === "sleep")}
+              onSelectSession={handleSelectSession}
+              onToggleFavorite={handleToggleFavorite}
               isFavorite={isFavorite}
-              isPremium={isPremium}
             />
           </TabsContent>
         </Tabs>
