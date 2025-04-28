@@ -1,167 +1,166 @@
 
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import { useSearchParams } from 'react-router-dom';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import { 
-  MeditationHeader,
-  MeditationSessionView,
-  MeditationLibraryBrowser,
-  MeditationBenefits
-} from "@/components/meditation";
-import { useMeditationLibrary } from "@/hooks/useMeditationLibrary";
-import { useUserPreferences } from "@/context";
-import { useBiometricData } from "@/hooks/useBiometricData";
-import { toast } from "sonner";
-import { debugAllSessionAudio, analyzeSessionAudio, logAudioMappingStatus } from "@/lib/meditationAudioIntegration";
-import { MeditationSession } from "@/types/meditation";
-import { useIsMobile } from "@/hooks/use-mobile";
-import ViewportToggle from "@/components/layout/ViewportToggle";
-import { useSubscriptionContext } from "@/hooks/useSubscriptionContext";
-import SubscriptionBanner from "@/components/subscription/SubscriptionBanner";
+  GuidedMeditationList, 
+  QuickBreaksList, 
+  DeepFocusList, 
+  SleepMeditationList,
+  MeditationSessionDialog,
+  MeditationHeader
+} from '@/components/meditation';
+import { useSubscriptionContext } from '@/hooks/useSubscriptionContext';
+import SubscriptionBanner from '@/components/subscription/SubscriptionBanner';
+import { MeditationSession } from '@/types/meditation';
 
 const Meditate = () => {
-  const { preferences } = useUserPreferences();
-  const { biometricData, addBiometricData } = useBiometricData();
-  const location = useLocation();
-  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [selectedSession, setSelectedSession] = useState<MeditationSession | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [favoriteSessions, setFavoriteSessions] = useState<string[]>([]);
   const { isPremium } = useSubscriptionContext();
   
-  const { 
-    meditationSessions,
-    selectedSession, 
-    setSelectedSession, 
-    handleSelectSession,
-    filterSessionsByCategory,
-    recentlyPlayed,
-    handleToggleFavorite,
-    getFavoriteSessions,
-    isFavorite,
-    showRatingDialog,
-    setShowRatingDialog,
-    handleSubmitRating,
-    durationFilter,
-    setDurationFilter,
-    levelFilter,
-    setLevelFilter,
-    resetFilters
-  } = useMeditationLibrary();
-  
-  // Parse tab from URL query parameters
-  const getTabFromUrl = () => {
-    const params = new URLSearchParams(location.search);
-    const tab = params.get('tab');
-    return tab && ['guided', 'quick', 'deep', 'sleep'].includes(tab) ? tab : 'guided';
-  };
-  
-  const [activeTab, setActiveTab] = useState(getTabFromUrl());
-  const isMobile = useIsMobile();
+  // Get tab from URL or default to 'guided'
+  const initialTab = searchParams.get('tab') || 'guided';
+  const [activeTab, setActiveTab] = useState(initialTab);
   
   // Update URL when tab changes
-  const handleTabChange = (tabValue: string) => {
-    console.log("Tab changed to:", tabValue);
-    setActiveTab(tabValue);
-    
-    // Update URL without reloading page
-    const params = new URLSearchParams(location.search);
-    params.set('tab', tabValue);
-    navigate(`${location.pathname}?${params.toString()}`, { replace: true });
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    setSearchParams({ tab: value });
   };
   
-  // Listen for URL changes
+  // Load favorites from localStorage
   useEffect(() => {
-    setActiveTab(getTabFromUrl());
-  }, [location]);
-  
-  // Run audio diagnosis on first load
-  useEffect(() => {
-    if (meditationSessions && meditationSessions.length > 0) {
-      // Output debug info to console
-      debugAllSessionAudio(meditationSessions);
-      
-      // Log audio mapping status
-      logAudioMappingStatus();
-      
-      // Analyze sessions
-      const { withAudio, withoutAudio, summary } = analyzeSessionAudio(meditationSessions);
-      
-      console.log("Audio mapping summary:", summary);
-      console.log("Sessions WITH audio:", withAudio.map(s => s.title));
-      console.log("Sessions WITHOUT audio:", withoutAudio.map(s => s.title));
-      
-      // Show toast with results
-      toast.info("Audio mapping analysis", {
-        description: summary
-      });
+    const storedFavorites = localStorage.getItem('favoriteSessions');
+    if (storedFavorites) {
+      setFavoriteSessions(JSON.parse(storedFavorites));
     }
-  }, [meditationSessions]);
-
-  const handleSessionComplete = (sessionId: string) => {
-    if (preferences.hasWearableDevice) {
-      toast.success("Meditation complete", {
-        description: "Your biometric data has been saved."
-      });
+  }, []);
+  
+  // Save favorites to localStorage when they change
+  useEffect(() => {
+    localStorage.setItem('favoriteSessions', JSON.stringify(favoriteSessions));
+  }, [favoriteSessions]);
+  
+  const handleSelectSession = (session: MeditationSession) => {
+    setSelectedSession(session);
+    setDialogOpen(true);
+  };
+  
+  const handleToggleFavorite = (session: MeditationSession) => {
+    if (favoriteSessions.includes(session.id)) {
+      setFavoriteSessions(favoriteSessions.filter(id => id !== session.id));
     } else {
-      toast.success("Meditation complete", {
-        description: "Connect a wearable device to track biometrics."
-      });
+      setFavoriteSessions([...favoriteSessions, session.id]);
     }
-    
-    // Show rating dialog
-    setShowRatingDialog(true);
   };
   
-  // Create wrapped isFavorite function that ensures boolean return
-  const handleIsFavorite = (sessionId: string): boolean => {
-    return Boolean(isFavorite(sessionId));
+  const isFavorite = (sessionId: string): boolean => {
+    return favoriteSessions.includes(sessionId);
+  };
+
+  const filterByDuration = (sessions: MeditationSession[], duration: number): MeditationSession[] => {
+    if (!duration) return sessions;
+    if (duration === 5) {
+      return sessions.filter(session => session.duration <= 5 * 60);
+    } else if (duration === 10) {
+      return sessions.filter(session => session.duration > 5 * 60 && session.duration <= 10 * 60);
+    } else if (duration === 15) {
+      return sessions.filter(session => session.duration > 10 * 60 && session.duration <= 15 * 60);
+    } else if (duration === 30) {
+      return sessions.filter(session => session.duration > 15 * 60 && session.duration <= 30 * 60);
+    } else {
+      return sessions.filter(session => session.duration > 30 * 60);
+    }
+  };
+  
+  const filterByLevel = (sessions: MeditationSession[], level: string): MeditationSession[] => {
+    if (!level || level === 'all') return sessions;
+    return sessions.filter(session => session.level === level);
+  };
+  
+  const handleStartMeditation = (session: MeditationSession) => {
+    // Check if session is premium and user doesn't have premium
+    if (session.premium && !isPremium) {
+      // Show premium upsell instead of starting session
+      // Direct to subscription page
+      window.location.href = '/subscription';
+      return;
+    }
+    
+    // Direct to meditation session page
+    window.location.href = `/meditate/session/${session.id}`;
   };
   
   return (
-    <div className={`min-h-screen flex flex-col ${isMobile ? 'mobile-view' : ''}`}>
+    <div className="min-h-screen flex flex-col">
       <Header />
       
-      <main className="flex-grow">
+      <main className="flex-grow container mx-auto px-4 py-8">
         <MeditationHeader />
         
         {!isPremium && <SubscriptionBanner />}
         
-        {selectedSession ? (
-          <MeditationSessionView 
-            selectedSession={selectedSession}
-            onBackToLibrary={() => setSelectedSession(null)}
-            handleToggleFavorite={(sessionId) => {
-              if (selectedSession) {
-                handleToggleFavorite(selectedSession);
-              }
-            }}
-            isFavorite={handleIsFavorite}
-            showRatingDialog={showRatingDialog}
-            setShowRatingDialog={setShowRatingDialog}
-            handleSubmitRating={handleSubmitRating}
-          />
-        ) : (
-          <MeditationLibraryBrowser 
-            activeTab={activeTab}
-            setActiveTab={handleTabChange}
-            recentlyPlayed={recentlyPlayed as unknown as MeditationSession[]}
-            getFavoriteSessions={() => getFavoriteSessions() as unknown as MeditationSession[]}
-            handleSelectSession={handleSelectSession as unknown as (session: MeditationSession) => void}
-            handleToggleFavorite={handleToggleFavorite as unknown as (session: MeditationSession) => void}
-            isFavorite={handleIsFavorite}
-            filterSessionsByCategory={filterSessionsByCategory as unknown as (category: 'guided' | 'quick' | 'deep' | 'sleep') => MeditationSession[]}
-            durationFilter={durationFilter as number}
-            setDurationFilter={setDurationFilter as unknown as (duration: number | null) => void}
-            levelFilter={levelFilter}
-            setLevelFilter={setLevelFilter}
-            resetFilters={resetFilters}
-          />
-        )}
-        
-        <MeditationBenefits />
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="mt-6">
+          <TabsList className="grid grid-cols-4 mb-6">
+            <TabsTrigger value="guided">Guided</TabsTrigger>
+            <TabsTrigger value="quick">Quick Breaks</TabsTrigger>
+            <TabsTrigger value="deep">Deep Focus</TabsTrigger>
+            <TabsTrigger value="sleep">Sleep</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="guided">
+            <GuidedMeditationList 
+              handleSelectSession={handleSelectSession}
+              handleToggleFavorite={handleToggleFavorite}
+              isFavorite={isFavorite}
+              isPremium={isPremium}
+            />
+          </TabsContent>
+          
+          <TabsContent value="quick">
+            <QuickBreaksList 
+              handleSelectSession={handleSelectSession}
+              handleToggleFavorite={handleToggleFavorite}
+              isFavorite={isFavorite}
+              isPremium={isPremium}
+            />
+          </TabsContent>
+          
+          <TabsContent value="deep">
+            <DeepFocusList 
+              handleSelectSession={handleSelectSession}
+              handleToggleFavorite={handleToggleFavorite}
+              isFavorite={isFavorite}
+              isPremium={isPremium}
+            />
+          </TabsContent>
+          
+          <TabsContent value="sleep">
+            <SleepMeditationList 
+              handleSelectSession={handleSelectSession}
+              handleToggleFavorite={handleToggleFavorite}
+              isFavorite={isFavorite}
+              isPremium={isPremium}
+            />
+          </TabsContent>
+        </Tabs>
       </main>
       
+      <MeditationSessionDialog 
+        session={selectedSession} 
+        open={dialogOpen}
+        setOpen={setDialogOpen}
+        onStart={handleStartMeditation}
+        isFavorite={selectedSession ? isFavorite(selectedSession.id) : false}
+        onToggleFavorite={() => selectedSession && handleToggleFavorite(selectedSession)}
+      />
+      
       <Footer />
-      <ViewportToggle />
     </div>
   );
 };

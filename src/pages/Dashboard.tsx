@@ -1,85 +1,74 @@
 
-import React, { useState } from 'react';
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import React from 'react';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import { useAuth } from '@/hooks/useAuth';
-import { MeditationHistoryList } from '@/components/meditation/MeditationHistoryList';
-import { useMeditationStats } from '@/components/progress/useMeditationStats';
 import { useSubscriptionContext } from '@/hooks/useSubscriptionContext';
-import { useUserPreferences } from '@/context';
 import { 
-  DashboardWelcome,
+  DashboardWelcome, 
   DashboardStats,
   WeeklyProgressCard,
   MoodTracker,
   RecommendationCard,
-  QuickAccessSection
+  QuickAccessSection,
+  ActivityCalendar
 } from '@/components/dashboard';
-import SubscriptionBanner from "@/components/subscription/SubscriptionBanner";
-import { Card } from '@/components/ui/card';
-import ViewportToggle from '@/components/layout/ViewportToggle';
-import { useIsMobile } from '@/hooks/use-mobile';
+import SubscriptionBanner from '@/components/subscription/SubscriptionBanner';
+import { MeditationStats } from '@/components/progress/types/meditationStats';
 
 const Dashboard = () => {
   const { user } = useAuth();
   const { isPremium } = useSubscriptionContext();
-  const { preferences } = useUserPreferences();
-  const { meditationStats, sessions } = useMeditationStats();
-  const isMobile = useIsMobile();
-  const [currentMood, setCurrentMood] = useState<string | null>(null);
+  const [currentMood, setCurrentMood] = React.useState<string | null>(null);
   
-  const handleMoodSelect = (mood: string) => {
-    setCurrentMood(mood);
-    // In a real app, this would save the mood to user data
+  // Mock meditation stats - would come from API in real implementation
+  const meditationStats: MeditationStats = {
+    totalSessions: 15,
+    totalMinutes: 345,
+    weeklyGoal: 5,
+    weeklyCompleted: 3,
+    streak: 2,
+    longestStreak: 7,
+    averageSessionLength: 23,
+    lastSessionDate: new Date().toISOString(),
+    sessionsThisWeek: 3,
+    completionRate: 60,
   };
   
+  // Handle mood selection
+  const handleMoodSelect = (mood: string) => {
+    setCurrentMood(mood);
+    // In real implementation, save to user profile
+    console.log(`Mood selected: ${mood}`);
+  };
+  
+  const userName = user?.email?.split('@')[0] || 'Friend';
+  
   return (
-    <div className={`min-h-screen flex flex-col ${isMobile ? 'mobile-view' : ''}`}>
+    <div className="min-h-screen flex flex-col">
       <Header />
       
-      <main className="flex-grow px-4 py-6 md:px-6">
-        <div className="max-w-6xl mx-auto">
-          <DashboardWelcome 
-            userName={user?.name || user?.email?.split('@')[0] || 'Friend'} 
-          />
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-            <div className="md:col-span-2">
-              <MoodTracker 
-                onMoodSelect={handleMoodSelect} 
-                currentMood={currentMood}
-              />
-            </div>
-            
-            <DashboardStats meditationStats={meditationStats} />
+      <main className="flex-grow container mx-auto px-4 py-8">
+        <DashboardWelcome userName={userName} />
+        
+        {!isPremium && <SubscriptionBanner />}
+        
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+          <div className="md:col-span-8 space-y-6">
+            <MoodTracker onMoodSelect={handleMoodSelect} currentMood={currentMood} />
+            <RecommendationCard mood={currentMood} />
+            <ActivityCalendar />
           </div>
           
-          {!isPremium && <SubscriptionBanner className="mb-6" />}
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="md:col-span-2">
-              <RecommendationCard currentMood={currentMood} />
-              
-              <Card className="p-4 mt-6">
-                <h3 className="text-lg font-semibold mb-3">Recent Activity</h3>
-                <MeditationHistoryList />
-              </Card>
-            </div>
-            
-            <div className="space-y-6">
-              <WeeklyProgressCard 
-                meditationStats={meditationStats} 
-                sessions={sessions || []} 
-              />
-              
-              <QuickAccessSection isPremium={isPremium} />
-            </div>
+          <div className="md:col-span-4 space-y-6">
+            <DashboardStats meditationStats={meditationStats} />
+            <WeeklyProgressCard stats={meditationStats} />
+            <QuickAccessSection isPremium={isPremium} />
           </div>
         </div>
       </main>
       
       <Footer />
-      <ViewportToggle />
     </div>
   );
 };

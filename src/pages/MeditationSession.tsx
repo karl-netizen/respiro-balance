@@ -1,164 +1,83 @@
-import React, { useEffect, useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { meditationSessions } from '@/data/meditationSessions';
-import MeditationSessionPlayer from '@/components/meditation/MeditationSessionPlayer';
+import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Clock, User } from 'lucide-react';
-import { toast } from 'sonner';
+import { MeditationSessionView } from '@/components/meditation';
 import { useSubscriptionContext } from '@/hooks/useSubscriptionContext';
-import { useMeditationSessions } from '@/hooks/useMeditationSessions';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import SubscriptionBanner from '@/components/subscription/SubscriptionBanner';
+import { MeditationSession as MeditationSessionType } from '@/types/meditation';
+import { useMeditationSession } from '@/hooks/useMeditationSession';
 
 const MeditationSession = () => {
   const { sessionId } = useParams<{ sessionId: string }>();
   const navigate = useNavigate();
-  const [session, setSession] = useState<any>(null);
-  const { hasExceededUsageLimit, isPremium } = useSubscriptionContext();
-  const { startSession, completeSession } = useMeditationSessions();
-  const [sessionDbId, setSessionDbId] = useState<string | null>(null);
+  const { isPremium } = useSubscriptionContext();
+  
+  const { 
+    session, 
+    isLoading, 
+    error,
+    handleSessionComplete 
+  } = useMeditationSession(sessionId || '');
   
   useEffect(() => {
-    if (!sessionId) {
-      navigate('/meditate');
-      return;
+    // If session requires premium and user is not premium, redirect to subscription
+    if (!isLoading && session && session.premium && !isPremium) {
+      navigate('/subscription');
     }
-    
-    const foundSession = meditationSessions.find(s => s.id === sessionId);
-    if (foundSession) {
-      setSession(foundSession);
-    } else {
-      toast.error('Meditation session not found');
-      navigate('/meditate');
-    }
-  }, [sessionId, navigate]);
+  }, [session, isPremium, isLoading, navigate]);
   
-  const handleSessionStart = async () => {
-    if (hasExceededUsageLimit && !isPremium) {
-      toast.error('You have reached your monthly meditation limit. Please upgrade to continue.');
-      return;
-    }
-    
-    try {
-      const dbSessionId = await startSession({
-        sessionType: session.category,
-        duration: session.duration
-      });
-      
-      if (dbSessionId) {
-        setSessionDbId(dbSessionId);
-        toast.success('Session started');
-      }
-    } catch (error) {
-      console.error('Failed to start session:', error);
-      toast.error('Failed to start session');
-    }
+  const handleBack = () => {
+    navigate(-1);
   };
   
-  const handleSessionComplete = async () => {
-    if (!sessionDbId) return;
-    
-    try {
-      await completeSession(sessionDbId);
-      toast.success('Session completed! Great job!');
-    } catch (error) {
-      console.error('Failed to complete session:', error);
-      toast.error('Failed to record session completion');
+  const handleComplete = (completedSession: MeditationSessionType, feedback?: { rating: number; notes?: string }) => {
+    if (handleSessionComplete) {
+      handleSessionComplete(completedSession, feedback);
     }
+    
+    // Show completion dialog or redirect
+    navigate('/meditate');
   };
   
-  if (!session) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        <div className="animate-pulse text-center">
+          <div className="h-8 w-48 bg-muted rounded mx-auto mb-4"></div>
+          <div className="h-4 w-32 bg-muted rounded mx-auto"></div>
+        </div>
+      </div>
+    );
+  }
+  
+  if (error || !session) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-4">
+        <h1 className="text-2xl font-bold mb-4">Session Not Found</h1>
+        <p className="text-muted-foreground mb-8">
+          The meditation session you're looking for could not be found.
+        </p>
+        <Button onClick={() => navigate('/meditate')}>Return to Meditations</Button>
       </div>
     );
   }
   
   return (
-    <>
-      <Header />
-      <main className="container py-8">
-        <Button variant="ghost" className="mb-6" onClick={() => navigate('/meditate')}>
+    <div className="min-h-screen flex flex-col">
+      <div className="container mx-auto px-4 py-4">
+        <Button variant="ghost" onClick={handleBack} className="mb-4">
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Library
+          Back
         </Button>
-        
-        {!isPremium && <SubscriptionBanner />}
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="md:col-span-2">
-            <Card className="mb-6">
-              <CardHeader>
-                <CardTitle>{session.title}</CardTitle>
-                <div className="flex flex-wrap items-center gap-3 mt-2">
-                  <div className="flex items-center text-muted-foreground">
-                    <Clock className="mr-1 h-4 w-4" />
-                    <span className="text-sm">{session.duration} min</span>
-                  </div>
-                  <div className="flex items-center text-muted-foreground">
-                    <User className="mr-1 h-4 w-4" />
-                    <span className="text-sm">{session.instructor}</span>
-                  </div>
-                  <Badge variant="outline">{session.category}</Badge>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="mb-6">{session.description}</p>
-                
-                <MeditationSessionPlayer
-                  session={session}
-                  onStart={handleSessionStart}
-                  onComplete={handleSessionComplete}
-                />
-              </CardContent>
-              <CardFooter className="flex justify-between">
-                <Button variant="outline" onClick={() => navigate('/meditate')}>
-                  Return to Library
-                </Button>
-              </CardFooter>
-            </Card>
-          </div>
-          
-          <div>
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Benefits</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2">
-                  {session.benefits?.map((benefit: string, index: number) => (
-                    <li key={index} className="flex items-start">
-                      <div className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary mr-2"></div>
-                      <span>{benefit}</span>
-                    </li>
-                  )) || (
-                    <>
-                      <li className="flex items-start">
-                        <div className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary mr-2"></div>
-                        <span>Reduces stress and anxiety</span>
-                      </li>
-                      <li className="flex items-start">
-                        <div className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary mr-2"></div>
-                        <span>Improves focus and concentration</span>
-                      </li>
-                      <li className="flex items-start">
-                        <div className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary mr-2"></div>
-                        <span>Promotes emotional well-being</span>
-                      </li>
-                    </>
-                  )}
-                </ul>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </main>
-      <Footer />
-    </>
+      </div>
+      
+      <MeditationSessionView 
+        session={session} 
+        onComplete={handleComplete} 
+        isPremium={isPremium}
+      />
+    </div>
   );
 };
 
