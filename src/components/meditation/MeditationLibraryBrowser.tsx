@@ -1,14 +1,15 @@
+
 import React from 'react';
 import { MeditationSession } from '@/types/meditation';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { MeditationFilters } from './MeditationFilters';
-import { GuidedMeditationList } from './GuidedMeditationList';
-import { QuickBreaksList } from './QuickBreaksList';
-import { DeepFocusList } from './DeepFocusList';
-import { SleepMeditationList } from './SleepMeditationList';
-import { RecentlyPlayedSection } from './RecentlyPlayedSection';
-import { FavoritesSection } from './FavoritesSection';
+import MeditationFilters from './MeditationFilters';
+import GuidedMeditationList from './GuidedMeditationList';
+import QuickBreaksList from './QuickBreaksList';
+import DeepFocusList from './DeepFocusList';
+import SleepMeditationList from './SleepMeditationList';
+import RecentlyPlayedSection from './RecentlyPlayedSection';
+import FavoritesSection from './FavoritesSection';
 
 interface MeditationLibraryBrowserProps {
   activeTab: string;

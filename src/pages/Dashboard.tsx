@@ -1,41 +1,85 @@
 
-import React from 'react';
+import React, { useState } from 'react';
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import { useAuth } from '@/hooks/useAuth';
+import { MeditationHistoryList } from '@/components/meditation/MeditationHistoryList';
+import { useMeditationStats } from '@/components/progress/useMeditationStats';
+import { useSubscriptionContext } from '@/hooks/useSubscriptionContext';
+import { useUserPreferences } from '@/context';
+import { 
+  DashboardWelcome,
+  DashboardStats,
+  WeeklyProgressCard,
+  MoodTracker,
+  RecommendationCard,
+  QuickAccessSection
+} from '@/components/dashboard';
+import SubscriptionBanner from "@/components/subscription/SubscriptionBanner";
+import { Card } from '@/components/ui/card';
+import ViewportToggle from '@/components/layout/ViewportToggle';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const { isPremium } = useSubscriptionContext();
+  const { preferences } = useUserPreferences();
+  const { meditationStats, sessions } = useMeditationStats();
+  const isMobile = useIsMobile();
+  const [currentMood, setCurrentMood] = useState<string | null>(null);
+  
+  const handleMoodSelect = (mood: string) => {
+    setCurrentMood(mood);
+    // In a real app, this would save the mood to user data
+  };
   
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
+    <div className={`min-h-screen flex flex-col ${isMobile ? 'mobile-view' : ''}`}>
+      <Header />
       
-      <div className="bg-card p-4 rounded-lg shadow">
-        <p className="text-lg">Welcome{user?.name ? `, ${user.name}` : ''}!</p>
-        <p className="text-muted-foreground mt-2">
-          This is your personal dashboard. Here you'll see your progress and recommended activities.
-        </p>
-      </div>
+      <main className="flex-grow px-4 py-6 md:px-6">
+        <div className="max-w-6xl mx-auto">
+          <DashboardWelcome 
+            userName={user?.name || user?.email?.split('@')[0] || 'Friend'} 
+          />
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div className="md:col-span-2">
+              <MoodTracker 
+                onMoodSelect={handleMoodSelect} 
+                currentMood={currentMood}
+              />
+            </div>
+            
+            <DashboardStats meditationStats={meditationStats} />
+          </div>
+          
+          {!isPremium && <SubscriptionBanner className="mb-6" />}
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="md:col-span-2">
+              <RecommendationCard currentMood={currentMood} />
+              
+              <Card className="p-4 mt-6">
+                <h3 className="text-lg font-semibold mb-3">Recent Activity</h3>
+                <MeditationHistoryList />
+              </Card>
+            </div>
+            
+            <div className="space-y-6">
+              <WeeklyProgressCard 
+                meditationStats={meditationStats} 
+                sessions={sessions || []} 
+              />
+              
+              <QuickAccessSection isPremium={isPremium} />
+            </div>
+          </div>
+        </div>
+      </main>
       
-      {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-        <div className="bg-secondary/30 p-4 rounded-lg">
-          <h3 className="font-medium mb-2">Meditation Minutes</h3>
-          <p className="text-2xl font-bold">45</p>
-          <p className="text-xs text-muted-foreground">This week</p>
-        </div>
-        
-        <div className="bg-secondary/30 p-4 rounded-lg">
-          <h3 className="font-medium mb-2">Focus Score</h3>
-          <p className="text-2xl font-bold">82%</p>
-          <p className="text-xs text-muted-foreground">Last session</p>
-        </div>
-        
-        <div className="bg-secondary/30 p-4 rounded-lg">
-          <h3 className="font-medium mb-2">Streak</h3>
-          <p className="text-2xl font-bold">3 Days</p>
-          <p className="text-xs text-muted-foreground">Keep it going!</p>
-        </div>
-      </div>
+      <Footer />
+      <ViewportToggle />
     </div>
   );
 };

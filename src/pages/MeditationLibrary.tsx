@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -7,7 +8,7 @@ import {
   MeditationLibraryBrowser,
   MeditationBenefits
 } from "@/components/meditation";
-import { MeditationSession } from "@/components/meditation/MeditationSessionCard";
+import { MeditationSession } from "@/types/meditation";
 import { useMeditationLibrary } from "@/hooks/useMeditationLibrary";
 import { useUserPreferences } from "@/context";
 import { useBiometricData } from "@/hooks/useBiometricData";
@@ -59,6 +60,11 @@ const MeditationLibrary = () => {
     setShowRatingDialog(true);
   };
   
+  // Create wrapped isFavorite function that ensures boolean return
+  const handleIsFavorite = (sessionId: string): boolean => {
+    return Boolean(isFavorite(sessionId));
+  };
+  
   return (
     <div className={`min-h-screen flex flex-col ${isMobile ? 'mobile-view' : ''}`}>
       <Header />
@@ -77,7 +83,7 @@ const MeditationLibrary = () => {
                 handleToggleFavorite(selectedSession);
               }
             }}
-            isFavorite={(sessionId) => Boolean(isFavorite(sessionId))}
+            isFavorite={handleIsFavorite}
             showRatingDialog={showRatingDialog}
             setShowRatingDialog={setShowRatingDialog}
             handleSubmitRating={handleSubmitRating}
@@ -86,14 +92,14 @@ const MeditationLibrary = () => {
           <MeditationLibraryBrowser 
             activeTab={activeTab}
             setActiveTab={setActiveTab}
-            recentlyPlayed={recentlyPlayed}
-            getFavoriteSessions={getFavoriteSessions}
-            handleSelectSession={handleSelectSession}
-            handleToggleFavorite={handleToggleFavorite}
-            isFavorite={isFavorite}
-            filterSessionsByCategory={filterSessionsByCategory}
-            durationFilter={durationFilter}
-            setDurationFilter={setDurationFilter}
+            recentlyPlayed={recentlyPlayed as unknown as MeditationSession[]}
+            getFavoriteSessions={() => getFavoriteSessions() as unknown as MeditationSession[]}
+            handleSelectSession={handleSelectSession as unknown as (session: MeditationSession) => void}
+            handleToggleFavorite={handleToggleFavorite as unknown as (session: MeditationSession) => void}
+            isFavorite={handleIsFavorite}
+            filterSessionsByCategory={filterSessionsByCategory as unknown as (category: 'guided' | 'quick' | 'deep' | 'sleep') => MeditationSession[]}
+            durationFilter={durationFilter as number}
+            setDurationFilter={setDurationFilter as unknown as (duration: number | null) => void}
             levelFilter={levelFilter}
             setLevelFilter={setLevelFilter}
             resetFilters={resetFilters}

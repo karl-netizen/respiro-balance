@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Header from "@/components/Header";
@@ -13,7 +14,7 @@ import { useUserPreferences } from "@/context";
 import { useBiometricData } from "@/hooks/useBiometricData";
 import { toast } from "sonner";
 import { debugAllSessionAudio, analyzeSessionAudio, logAudioMappingStatus } from "@/lib/meditationAudioIntegration";
-import { MeditationSession } from "@/components/meditation/MeditationSessionCard";
+import { MeditationSession } from "@/types/meditation";
 import { useIsMobile } from "@/hooks/use-mobile";
 import ViewportToggle from "@/components/layout/ViewportToggle";
 import { useSubscriptionContext } from "@/hooks/useSubscriptionContext";
@@ -110,6 +111,11 @@ const Meditate = () => {
     setShowRatingDialog(true);
   };
   
+  // Create wrapped isFavorite function that ensures boolean return
+  const handleIsFavorite = (sessionId: string): boolean => {
+    return Boolean(isFavorite(sessionId));
+  };
+  
   return (
     <div className={`min-h-screen flex flex-col ${isMobile ? 'mobile-view' : ''}`}>
       <Header />
@@ -128,7 +134,7 @@ const Meditate = () => {
                 handleToggleFavorite(selectedSession);
               }
             }}
-            isFavorite={(sessionId) => Boolean(isFavorite(sessionId))}
+            isFavorite={handleIsFavorite}
             showRatingDialog={showRatingDialog}
             setShowRatingDialog={setShowRatingDialog}
             handleSubmitRating={handleSubmitRating}
@@ -137,14 +143,14 @@ const Meditate = () => {
           <MeditationLibraryBrowser 
             activeTab={activeTab}
             setActiveTab={handleTabChange}
-            recentlyPlayed={recentlyPlayed}
-            getFavoriteSessions={getFavoriteSessions}
-            handleSelectSession={handleSelectSession}
-            handleToggleFavorite={handleToggleFavorite}
-            isFavorite={isFavorite}
-            filterSessionsByCategory={filterSessionsByCategory}
-            durationFilter={durationFilter}
-            setDurationFilter={setDurationFilter}
+            recentlyPlayed={recentlyPlayed as unknown as MeditationSession[]}
+            getFavoriteSessions={() => getFavoriteSessions() as unknown as MeditationSession[]}
+            handleSelectSession={handleSelectSession as unknown as (session: MeditationSession) => void}
+            handleToggleFavorite={handleToggleFavorite as unknown as (session: MeditationSession) => void}
+            isFavorite={handleIsFavorite}
+            filterSessionsByCategory={filterSessionsByCategory as unknown as (category: 'guided' | 'quick' | 'deep' | 'sleep') => MeditationSession[]}
+            durationFilter={durationFilter as number}
+            setDurationFilter={setDurationFilter as unknown as (duration: number | null) => void}
             levelFilter={levelFilter}
             setLevelFilter={setLevelFilter}
             resetFilters={resetFilters}
