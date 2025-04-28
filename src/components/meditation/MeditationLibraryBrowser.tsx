@@ -52,6 +52,7 @@ const MeditationLibraryBrowser: React.FC<MeditationLibraryBrowserProps> = ({
           favorites={getFavoriteSessions()}
           onSelectSession={handleSelectSession}
           onToggleFavorite={handleToggleFavorite}
+          isFavorite={isFavorite}
         />
         
         <Tabs 
