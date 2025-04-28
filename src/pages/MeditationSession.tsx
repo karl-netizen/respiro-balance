@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { meditationSessions } from '@/data/meditationSessions';
@@ -29,13 +28,12 @@ const MeditationSession = () => {
     }
     
     const foundSession = meditationSessions.find(s => s.id === sessionId);
-    if (!foundSession) {
+    if (foundSession) {
+      setSession(foundSession);
+    } else {
       toast.error('Meditation session not found');
       navigate('/meditate');
-      return;
     }
-    
-    setSession(foundSession);
   }, [sessionId, navigate]);
   
   const handleSessionStart = async () => {

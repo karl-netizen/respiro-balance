@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Header from "@/components/Header";
@@ -124,7 +123,11 @@ const Meditate = () => {
           <MeditationSessionView 
             selectedSession={selectedSession}
             onBackToLibrary={() => setSelectedSession(null)}
-            handleToggleFavorite={(sessionId) => handleToggleFavorite({...selectedSession, id: sessionId})}
+            handleToggleFavorite={(sessionId) => {
+              if (selectedSession) {
+                handleToggleFavorite(selectedSession);
+              }
+            }}
             isFavorite={(sessionId) => Boolean(isFavorite(sessionId))}
             showRatingDialog={showRatingDialog}
             setShowRatingDialog={setShowRatingDialog}

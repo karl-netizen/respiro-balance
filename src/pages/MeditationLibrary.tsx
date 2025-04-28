@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -73,7 +72,11 @@ const MeditationLibrary = () => {
           <MeditationSessionView 
             selectedSession={selectedSession}
             onBackToLibrary={() => setSelectedSession(null)}
-            handleToggleFavorite={(sessionId) => handleToggleFavorite({...selectedSession, id: sessionId})}
+            handleToggleFavorite={(sessionId) => {
+              if (selectedSession) {
+                handleToggleFavorite(selectedSession);
+              }
+            }}
             isFavorite={(sessionId) => Boolean(isFavorite(sessionId))}
             showRatingDialog={showRatingDialog}
             setShowRatingDialog={setShowRatingDialog}
