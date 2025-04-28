@@ -15,10 +15,14 @@ import { useBiometricData } from "@/hooks/useBiometricData";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
 import ViewportToggle from "@/components/layout/ViewportToggle";
+import { useSubscriptionContext } from "@/hooks/useSubscriptionContext";
+import SubscriptionBanner from "@/components/subscription/SubscriptionBanner";
 
 const MeditationLibrary = () => {
   const { preferences } = useUserPreferences();
   const { biometricData, addBiometricData } = useBiometricData();
+  const { isPremium } = useSubscriptionContext();
+  
   const { 
     selectedSession, 
     setSelectedSession, 
@@ -63,12 +67,14 @@ const MeditationLibrary = () => {
       <main className="flex-grow">
         <MeditationHeader />
         
+        {!isPremium && <SubscriptionBanner />}
+        
         {selectedSession ? (
           <MeditationSessionView 
             selectedSession={selectedSession}
             onBackToLibrary={() => setSelectedSession(null)}
             handleToggleFavorite={(sessionId) => handleToggleFavorite({...selectedSession, id: sessionId})}
-            isFavorite={isFavorite}
+            isFavorite={(sessionId) => Boolean(isFavorite(sessionId))}
             showRatingDialog={showRatingDialog}
             setShowRatingDialog={setShowRatingDialog}
             handleSubmitRating={handleSubmitRating}

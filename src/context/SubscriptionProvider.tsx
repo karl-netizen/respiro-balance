@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext } from 'react';
 import { useSubscription, SubscriptionTier } from '@/hooks/useSubscription';
 import { UserProfile } from '@/types/supabase';

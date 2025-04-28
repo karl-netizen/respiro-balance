@@ -23,6 +23,7 @@ import MorningRitual from '@/pages/MorningRitual';
 import Settings from '@/pages/Settings';
 import TermsPage from '@/pages/TermsPage';
 import PrivacyPage from '@/pages/PrivacyPage';
+import SubscriptionPage from '@/pages/SubscriptionPage';
 
 const App: React.FC = () => {
   const [isMobileView, setIsMobileView] = useState(false);
@@ -75,6 +76,7 @@ const App: React.FC = () => {
         {/* Account routes */}
         <Route path="/account" element={<Account />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/subscription" element={<SubscriptionPage />} />
         
         {/* Morning Ritual routes */}
         <Route path="/morning-ritual" element={<MorningRitual />} />

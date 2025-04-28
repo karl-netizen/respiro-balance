@@ -12,6 +12,7 @@ import { useSubscriptionContext } from '@/hooks/useSubscriptionContext';
 import { useMeditationSessions } from '@/hooks/useMeditationSessions';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import SubscriptionBanner from '@/components/subscription/SubscriptionBanner';
 
 const MeditationSession = () => {
   const { sessionId } = useParams<{ sessionId: string }>();
@@ -87,6 +88,8 @@ const MeditationSession = () => {
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Library
         </Button>
+        
+        {!isPremium && <SubscriptionBanner />}
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="md:col-span-2">

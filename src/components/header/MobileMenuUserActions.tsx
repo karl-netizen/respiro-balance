@@ -32,14 +32,23 @@ const MobileMenuUserActions = ({ toggleMenu }: MobileMenuUserActionsProps) => {
         <span>Profile Settings</span>
       </Link>
       
-      {isPremium && (
+      {isPremium ? (
         <Link
           to="/subscription"
           className="flex items-center gap-2 text-foreground/80 hover:text-primary py-2 button-transition"
           onClick={toggleMenu}
         >
           <Crown className="h-4 w-4" />
-          <span>Subscription</span>
+          <span>Manage Subscription</span>
+        </Link>
+      ) : (
+        <Link
+          to="/subscription"
+          className="flex items-center gap-2 text-foreground/80 hover:text-primary py-2 button-transition"
+          onClick={toggleMenu}
+        >
+          <Crown className="h-4 w-4" />
+          <span>Upgrade to Premium</span>
         </Link>
       )}
       

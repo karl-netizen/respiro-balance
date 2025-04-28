@@ -17,12 +17,15 @@ import { debugAllSessionAudio, analyzeSessionAudio, logAudioMappingStatus } from
 import { MeditationSession } from "@/components/meditation/MeditationSessionCard";
 import { useIsMobile } from "@/hooks/use-mobile";
 import ViewportToggle from "@/components/layout/ViewportToggle";
+import { useSubscriptionContext } from "@/hooks/useSubscriptionContext";
+import SubscriptionBanner from "@/components/subscription/SubscriptionBanner";
 
 const Meditate = () => {
   const { preferences } = useUserPreferences();
   const { biometricData, addBiometricData } = useBiometricData();
   const location = useLocation();
   const navigate = useNavigate();
+  const { isPremium } = useSubscriptionContext();
   
   const { 
     meditationSessions,
@@ -115,12 +118,14 @@ const Meditate = () => {
       <main className="flex-grow">
         <MeditationHeader />
         
+        {!isPremium && <SubscriptionBanner />}
+        
         {selectedSession ? (
           <MeditationSessionView 
             selectedSession={selectedSession}
             onBackToLibrary={() => setSelectedSession(null)}
             handleToggleFavorite={(sessionId) => handleToggleFavorite({...selectedSession, id: sessionId})}
-            isFavorite={(sessionId) => !!isFavorite(sessionId)}
+            isFavorite={(sessionId) => Boolean(isFavorite(sessionId))}
             showRatingDialog={showRatingDialog}
             setShowRatingDialog={setShowRatingDialog}
             handleSubmitRating={handleSubmitRating}
