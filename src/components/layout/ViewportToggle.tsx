@@ -14,7 +14,7 @@ export const ViewportToggle: React.FC = () => {
     
     const handleResize = () => {
       const isActuallyMobile = checkIfMobile();
-      document.body.classList.toggle('mobile-view', isActuallyMobile);
+      document.body.classList.toggle('mobile-view', isActuallyMobile || isMobileView);
     };
     
     // Add event listener
@@ -25,12 +25,13 @@ export const ViewportToggle: React.FC = () => {
     
     // Cleanup
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [isMobileView]);
 
   const toggleViewport = () => {
-    setIsMobileView(!isMobileView);
+    const newMobileViewState = !isMobileView;
+    setIsMobileView(newMobileViewState);
     
-    if (!isMobileView) {
+    if (newMobileViewState) {
       // Switch to mobile view
       document.body.classList.add('mobile-preview-mode', 'mobile-view');
     } else {
@@ -40,7 +41,7 @@ export const ViewportToggle: React.FC = () => {
     
     // Dispatch a custom event to notify other components about the viewport change
     const event = new CustomEvent('viewport-change', { 
-      detail: { isMobile: !isMobileView } 
+      detail: { isMobile: newMobileViewState } 
     });
     window.dispatchEvent(event);
   };

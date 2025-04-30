@@ -29,143 +29,95 @@
 }
 
 /* Mobile-specific styles */
+.mobile-view {
+  /* Font sizes */
+  --mobile-text-xs: 0.7rem;  /* 11.2px */
+  --mobile-text-sm: 0.813rem; /* 13px */
+  --mobile-text-base: 0.938rem; /* 15px */
+  --mobile-text-lg: 1.063rem; /* 17px */
+  --mobile-text-xl: 1.188rem; /* 19px */
+  --mobile-text-2xl: 1.375rem; /* 22px */
+  
+  /* Spacing */
+  --mobile-spacing-1: 0.25rem; /* 4px */
+  --mobile-spacing-2: 0.5rem;  /* 8px */
+  --mobile-spacing-3: 0.75rem; /* 12px */
+  --mobile-spacing-4: 1rem;    /* 16px */
+  --mobile-spacing-6: 1.5rem;  /* 24px */
+}
+
 .mobile-view .text-xs {
-  font-size: 0.75rem;
+  font-size: var(--mobile-text-xs);
 }
 
 .mobile-view .text-sm {
-  font-size: 0.875rem;
+  font-size: var(--mobile-text-sm);
 }
 
 .mobile-view .text-base {
-  font-size: 1rem;
+  font-size: var(--mobile-text-base);
 }
 
 .mobile-view .text-lg {
-  font-size: 1.125rem;
+  font-size: var(--mobile-text-lg);
 }
 
 .mobile-view .text-xl {
-  font-size: 1.25rem;
+  font-size: var(--mobile-text-xl);
 }
 
 .mobile-view .text-2xl {
-  font-size: 1.5rem;
+  font-size: var(--mobile-text-2xl);
 }
 
+/* Spacing adjustments for mobile */
 .mobile-view .p-4 {
-  padding: 0.75rem;
+  padding: var(--mobile-spacing-3);
 }
 
 .mobile-view .p-6 {
-  padding: 1rem;
+  padding: var(--mobile-spacing-4);
 }
 
 .mobile-view .py-12 {
-  padding-top: 2rem;
-  padding-bottom: 2rem;
+  padding-top: var(--mobile-spacing-6);
+  padding-bottom: var(--mobile-spacing-6);
 }
 
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-
-    --primary: 189 94% 43%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --respiro: 189 94% 43%;
-    --respiro-light: 189 100% 68%;
-    --respiro-dark: 189 94% 35%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --ring: 189 94% 43%;
-
-    --radius: 0.5rem;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --card: 0 0% 12%;
-    --card-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-
-    --primary: 189 94% 43%; 
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --respiro: 189 94% 43%;
-    --respiro-light: 189 100% 68%;
-    --respiro-dark: 189 94% 35%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --ring: 189 94% 43%;
-  }
+.mobile-view .px-6 {
+  padding-left: var(--mobile-spacing-4);
+  padding-right: var(--mobile-spacing-4);
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+/* Grid adjustments for mobile */
+.mobile-view .grid {
+  gap: var(--mobile-spacing-3) !important;
 }
 
-/* Mobile-friendly button transitions */
-.button-transition {
-  @apply transition-all duration-200;
+/* Card adjustments for mobile */
+.mobile-view .card {
+  padding: var(--mobile-spacing-3);
 }
 
-/* Responsive glassmorphism cards */
-.glassmorphism-card {
-  @apply bg-background/90 backdrop-blur-sm border border-border/50 shadow-sm;
+/* Button adjustments for mobile */
+.mobile-view button {
+  min-height: 40px;
 }
 
-/* Improved mobile touch targets */
-@media (max-width: 768px) {
-  button, a, [role="button"] {
-    @apply min-h-[44px] touch-manipulation;
-  }
-  
-  input, select, textarea {
-    @apply text-base;
-  }
+/* Container padding for mobile */
+.mobile-view .container {
+  padding-left: var(--mobile-spacing-4);
+  padding-right: var(--mobile-spacing-4);
 }
+
+/* List spacing for mobile */
+.mobile-view ul, .mobile-view ol {
+  padding-left: var(--mobile-spacing-4);
+}
+
+/* Form element spacing */
+.mobile-view form > * {
+  margin-bottom: var(--mobile-spacing-3);
+}
+
+/* ... keep existing code (the rest of the CSS file) */

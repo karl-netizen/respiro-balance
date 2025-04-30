@@ -5,6 +5,7 @@ import ViewportToggle from '@/components/layout/ViewportToggle';
 import { cn } from '@/lib/utils';
 import RequireAuth from '@/components/auth/RequireAuth';
 import { Toaster } from '@/components/ui/toaster';
+import { useIsMobile } from "@/hooks/use-mobile";
 
 // Import pages
 import Home from '@/pages/Home';
@@ -27,7 +28,8 @@ import SubscriptionPage from '@/pages/SubscriptionPage';
 
 const App: React.FC = () => {
   const [isMobileView, setIsMobileView] = useState(false);
-
+  const isMobile = useIsMobile();
+  
   useEffect(() => {
     const handleViewportChange = (e: CustomEvent) => {
       setIsMobileView(e.detail.isMobile);
@@ -46,7 +48,7 @@ const App: React.FC = () => {
     <div 
       className={cn(
         "min-h-screen w-full", 
-        isMobileView && "max-w-[390px] mx-auto border-x border-border"
+        (isMobileView || isMobile) && "max-w-[390px] mx-auto border-x border-border"
       )}
     >
       <ViewportToggle />

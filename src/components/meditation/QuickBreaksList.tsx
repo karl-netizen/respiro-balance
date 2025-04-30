@@ -1,33 +1,24 @@
 
 import React from 'react';
 import { MeditationSession } from '@/types/meditation';
-import MeditationSessionCard from './MeditationSessionCard';
+import MeditationSessionList, { MeditationSessionListProps } from './MeditationSessionList';
 
-export interface QuickBreaksListProps {
-  sessions: MeditationSession[];
-  onSelectSession: (session: MeditationSession) => void;
-  isFavorite: (sessionId: string) => boolean;
-  onToggleFavorite: (session: MeditationSession) => void;
-}
+// Reuse the same props interface from the common component
+export type QuickBreaksListProps = MeditationSessionListProps;
 
 const QuickBreaksList: React.FC<QuickBreaksListProps> = ({ 
   sessions, 
   onSelectSession,
   isFavorite,
-  onToggleFavorite 
+  onToggleFavorite
 }) => {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-      {sessions.map((session) => (
-        <MeditationSessionCard 
-          key={session.id}
-          session={session}
-          onSelect={() => onSelectSession(session)}
-          isFavorite={isFavorite(session.id)}
-          onToggleFavorite={() => onToggleFavorite(session)}
-        />
-      ))}
-    </div>
+    <MeditationSessionList
+      sessions={sessions}
+      onSelectSession={onSelectSession}
+      isFavorite={isFavorite}
+      onToggleFavorite={onToggleFavorite}
+    />
   );
 };
 
