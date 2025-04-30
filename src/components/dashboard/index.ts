@@ -1,4 +1,3 @@
-
 import DashboardWelcome from './DashboardWelcome';
 import DashboardStats from './DashboardStats';
 import WeeklyProgressCard from './WeeklyProgressCard';
@@ -16,3 +15,6 @@ export {
   QuickAccessSection,
   ActivityCalendar
 };
+
+export { default as ActivityCalendar } from './ActivityCalendar';
+export type { ActivityEntry } from './ActivityCalendar';

@@ -16,7 +16,7 @@ import { useSubscriptionContext } from "@/hooks/useSubscriptionContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import ViewportToggle from "@/components/layout/ViewportToggle";
 import SubscriptionBanner from "@/components/subscription/SubscriptionBanner";
-import { ActivityCalendar } from '@/components/dashboard';
+import { ActivityCalendar, ActivityEntry } from '@/components/dashboard';
 import { useLocation, useNavigate } from "react-router-dom";
 import { Achievement } from '@/types/achievements';
 
@@ -54,11 +54,11 @@ const Progress = () => {
     setActiveTab(getTabFromUrl());
   }, [location]);
   
-  // Generate activity data for calendar
-  const activityData = meditationStats.dailyMinutes?.map(day => ({
-    date: new Date(), // This would be based on the actual date in a real app
-    minutesCount: day.minutes,
-    sessionsCount: day.sessions
+  // Generate activity data for calendar in the correct format
+  const activityData: ActivityEntry[] = meditationStats.dailyMinutes?.map(day => ({
+    date: day.day, // Ensure this is a string in YYYY-MM-DD format
+    value: day.minutes,
+    type: day.sessions > 0 ? 'meditation' : undefined
   })) || [];
   
   // Convert achievements to match the expected type

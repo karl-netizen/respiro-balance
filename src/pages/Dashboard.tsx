@@ -11,7 +11,8 @@ import {
   MoodTracker,
   RecommendationCard,
   QuickAccessSection,
-  ActivityCalendar
+  ActivityCalendar,
+  ActivityEntry
 } from '@/components/dashboard';
 import SubscriptionBanner from '@/components/subscription/SubscriptionBanner';
 import { MeditationStats } from '@/components/progress/types/meditationStats';
@@ -61,6 +62,20 @@ const Dashboard = () => {
   
   const userName = user?.email?.split('@')[0] || 'Friend';
   
+  // Create properly formatted activity data for the calendar
+  const activityData: ActivityEntry[] = [
+    // Generate some example data for the past 30 days
+    ...Array(30).fill(0).map((_, i) => {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      return {
+        date: date.toISOString().split('T')[0], // Format as YYYY-MM-DD
+        value: Math.random() > 0.3 ? Math.floor(Math.random() * 60) : 0,
+        type: 'meditation'
+      };
+    })
+  ];
+  
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -74,7 +89,7 @@ const Dashboard = () => {
           <div className="md:col-span-8 space-y-6">
             <MoodTracker onMoodSelect={handleMoodSelect} currentMood={currentMood} />
             <RecommendationCard currentMood={currentMood} />
-            <ActivityCalendar data={[]} />
+            <ActivityCalendar data={activityData} />
           </div>
           
           <div className="md:col-span-4 space-y-6">
