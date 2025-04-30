@@ -1,3 +1,4 @@
+
 import DashboardWelcome from './DashboardWelcome';
 import DashboardStats from './DashboardStats';
 import WeeklyProgressCard from './WeeklyProgressCard';
@@ -5,6 +6,7 @@ import MoodTracker from './MoodTracker';
 import RecommendationCard from './RecommendationCard';
 import QuickAccessSection from './QuickAccessSection';
 import ActivityCalendar from './ActivityCalendar';
+import { ActivityEntry } from './ActivityCalendar';
 
 export {
   DashboardWelcome,
@@ -16,5 +18,4 @@ export {
   ActivityCalendar
 };
 
-export { default as ActivityCalendar } from './ActivityCalendar';
-export type { ActivityEntry } from './ActivityCalendar';
+export type { ActivityEntry };

@@ -6,7 +6,7 @@ import { Activity } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 export interface ActivityEntry {
-  date: string;
+  date: string | Date;
   value: number;
   type?: string;
 }
@@ -39,13 +39,8 @@ const ActivityCalendar: React.FC<ActivityCalendarProps> = ({ data }) => {
             {weeks.map((week, weekIndex) => (
               <div key={weekIndex} className="flex gap-1">
                 {week.map((day, dayIndex) => {
-                  // Ensure we have a valid date string before parsing
-                  const dateObj = typeof day.date === 'string' 
-                    ? parseISO(day.date) 
-                    : day.date instanceof Date 
-                      ? day.date 
-                      : new Date();
-                      
+                  // Ensure we have a valid date
+                  const dateObj = ensureValidDate(day.date);
                   const formattedDate = isValid(dateObj) 
                     ? format(dateObj, 'MMM d') 
                     : 'Invalid date';
@@ -97,6 +92,25 @@ const ActivityCalendar: React.FC<ActivityCalendarProps> = ({ data }) => {
   );
 };
 
+// Helper function to convert any date format to a valid Date object
+function ensureValidDate(dateInput: string | Date): Date {
+  if (dateInput instanceof Date) {
+    return dateInput;
+  }
+  
+  if (typeof dateInput === 'string') {
+    // Try to parse the string date
+    const parsedDate = parseISO(dateInput);
+    if (isValid(parsedDate)) {
+      return parsedDate;
+    }
+  }
+  
+  // Return current date as fallback if date is invalid
+  console.warn(`Invalid date format: ${dateInput}`);
+  return new Date();
+}
+
 // Helper function to generate mock data
 function generateMockData(): ActivityEntry[] {
   const data: ActivityEntry[] = [];
@@ -123,13 +137,9 @@ function groupByWeek(entries: ActivityEntry[]): ActivityEntry[][] {
   let currentWeek: ActivityEntry[] = [];
   
   entries.forEach((entry, index) => {
-    // Ensure date is a proper string before parsing
-    const entryDate = typeof entry.date === 'string'
-      ? parseISO(entry.date)
-      : entry.date instanceof Date
-        ? entry.date
-        : new Date();
-        
+    // Convert entry date to Date object for consistent processing
+    const entryDate = ensureValidDate(entry.date);
+    
     if (!isValid(entryDate)) {
       console.warn(`Invalid date encountered in ActivityCalendar: ${entry.date}`);
       return; // Skip this entry if date is invalid

@@ -1,8 +1,7 @@
 
 import { MeditationStats } from '../types/meditationStats';
 
-// Default stats for when data is loading or unavailable
-export function getDefaultStats(): MeditationStats {
+export const getDefaultStats = (): MeditationStats => {
   return {
     totalSessions: 0,
     totalMinutes: 0,
@@ -10,35 +9,14 @@ export function getDefaultStats(): MeditationStats {
     longestStreak: 0,
     weeklyGoal: 5,
     weeklyCompleted: 0,
-    monthlyTrend: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    sessionsThisWeek: 0, // Added missing property
+    completionRate: 0,   // Added missing property
+    monthlyTrend: [0, 0, 0, 0],
     lastSession: "None",
     lastSessionDate: "None",
-    focusScores: [0, 0, 0, 0, 0, 0, 0],
-    stressScores: [0, 0, 0, 0, 0, 0, 0],
-    dailyMinutes: [
-      { day: "Mon", minutes: 0, sessions: 0 },
-      { day: "Tue", minutes: 0, sessions: 0 },
-      { day: "Wed", minutes: 0, sessions: 0 },
-      { day: "Thu", minutes: 0, sessions: 0 },
-      { day: "Fri", minutes: 0, sessions: 0 },
-      { day: "Sat", minutes: 0, sessions: 0 },
-      { day: "Sun", minutes: 0, sessions: 0 }
-    ],
-    achievements: [
-      { name: "First Steps", description: "Complete your first meditation", unlocked: false, icon: "footprints" },
-      { name: "Steady Mind", description: "Meditate for 5 days in a row", unlocked: false, icon: "brain" },
-      { name: "Focus Master", description: "Complete 10 focus meditations", unlocked: false, icon: "target" },
-      { name: "Breath Explorer", description: "Try all breathing techniques", unlocked: false, icon: "wind" },
-      { name: "Consistency King", description: "Complete a 10-day streak", unlocked: false, icon: "calendar" },
-      { name: "Morning Person", description: "Complete 7 morning meditations", unlocked: false, icon: "sunrise" },
-      { name: "Deep Diver", description: "Complete a 20-minute session", unlocked: false, icon: "anchor" },
-      { name: "Zen Master", description: "Achieve a 30-day streak", unlocked: false, icon: "award" }
-    ],
-    achievementProgress: {
-      unlocked: 0,
-      total: 8,
-      recentUnlocked: undefined
-    },
+    focusScores: [50, 52, 54, 55],
+    stressScores: [48, 46, 44, 42],
+    achievements: [],
     moodCorrelation: {
       withMeditation: 0,
       withoutMeditation: 0
@@ -46,6 +24,11 @@ export function getDefaultStats(): MeditationStats {
     focusCorrelation: {
       withMeditation: 0,
       withoutMeditation: 0
+    },
+    dailyMinutes: [],
+    achievementProgress: {
+      unlocked: 0,
+      total: 10
     }
   };
-}
+};

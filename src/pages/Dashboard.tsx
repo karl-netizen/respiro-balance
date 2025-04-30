@@ -68,8 +68,9 @@ const Dashboard = () => {
     ...Array(30).fill(0).map((_, i) => {
       const date = new Date();
       date.setDate(date.getDate() - i);
+      // Format as YYYY-MM-DD string instead of passing Date object directly
       return {
-        date: date.toISOString().split('T')[0], // Format as YYYY-MM-DD
+        date: format(date, 'yyyy-MM-dd'), 
         value: Math.random() > 0.3 ? Math.floor(Math.random() * 60) : 0,
         type: 'meditation'
       };
@@ -104,5 +105,8 @@ const Dashboard = () => {
     </div>
   );
 };
+
+// Import the format function from date-fns at the top of the file
+import { format } from 'date-fns';
 
 export default Dashboard;

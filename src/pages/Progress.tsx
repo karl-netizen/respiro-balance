@@ -56,7 +56,7 @@ const Progress = () => {
   
   // Generate activity data for calendar in the correct format
   const activityData: ActivityEntry[] = meditationStats.dailyMinutes?.map(day => ({
-    date: day.day, // Ensure this is a string in YYYY-MM-DD format
+    date: day.day, // This is already a string in YYYY-MM-DD format
     value: day.minutes,
     type: day.sessions > 0 ? 'meditation' : undefined
   })) || [];
