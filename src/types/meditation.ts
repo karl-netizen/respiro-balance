@@ -36,3 +36,10 @@ export interface StartSessionParams {
   sessionType: string;
   duration: number;
 }
+
+export interface MeditationSessionFeedback {
+  rating: number;
+  comment: string;
+  sessionId: string;
+  submittedAt: string;
+}

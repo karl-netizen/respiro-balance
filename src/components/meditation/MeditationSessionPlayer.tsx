@@ -5,19 +5,25 @@ import { MeditationSession } from '@/types/meditation';
 import AudioPlayerWrapper from './player/AudioPlayerWrapper';
 import TimedPlayer from './player/TimedPlayer';
 import { useSessionPlayer } from './hooks/useSessionPlayer';
+import EnhancedSessionPlayer from './EnhancedSessionPlayer';
 
 interface MeditationSessionPlayerProps {
   session: MeditationSession;
   onComplete?: () => void;
   onStart?: () => void;
   onPlayStateChange?: (isPlaying: boolean) => void;
+  biometricData?: {
+    focusScore?: number;
+    calmScore?: number;
+  };
 }
 
 const MeditationSessionPlayer: React.FC<MeditationSessionPlayerProps> = ({ 
   session, 
   onComplete,
   onStart,
-  onPlayStateChange
+  onPlayStateChange,
+  biometricData
 }) => {
   const {
     isPlaying,
@@ -29,6 +35,7 @@ const MeditationSessionPlayer: React.FC<MeditationSessionPlayerProps> = ({
     handleAudioPlay,
     handleAudioPause,
     handleAudioComplete,
+    handleAudioTimeUpdate
   } = useSessionPlayer({
     session,
     onComplete,
@@ -36,26 +43,18 @@ const MeditationSessionPlayer: React.FC<MeditationSessionPlayerProps> = ({
     onPlayStateChange
   });
 
+  // Use the enhanced player if available
   return (
     <Card>
       <CardContent className="pt-6">
-        {audioUrl ? (
-          <AudioPlayerWrapper
-            audioUrl={audioUrl}
-            onPlay={handleAudioPlay}
-            onPause={handleAudioPause}
-            onComplete={handleAudioComplete}
-            autoPlay={isPlaying}
-          />
-        ) : (
-          <TimedPlayer
-            remainingTime={remainingTime}
-            progress={progress}
-            isPlaying={isPlaying}
-            togglePlayPause={togglePlayPause}
-            skipToEnd={skipToEnd}
-          />
-        )}
+        <EnhancedSessionPlayer
+          session={session}
+          onComplete={onComplete}
+          onStart={onStart}
+          onPlayStateChange={onPlayStateChange}
+          biometricData={biometricData}
+          onAudioTimeUpdate={handleAudioTimeUpdate}
+        />
       </CardContent>
     </Card>
   );

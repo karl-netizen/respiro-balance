@@ -8,24 +8,19 @@ import { ChevronLeft, Heart, Clock, Share2 } from 'lucide-react';
 import { useMeditationSessions } from '@/hooks/useMeditationSessions';
 import { useBiometricData } from '@/hooks/useBiometricData';
 import { toast } from 'sonner';
-import { 
-  MeditationSessionPlayer, 
-  BiometricTracker,
-  SessionRatingDialog 
-} from '@/components/meditation';
+import { MeditationSessionPlayer } from '@/components/meditation';
 import { MeditationSession } from '@/types/meditation';
-import { MeditationAudioPlayer } from '@/components/meditation/MeditationAudioPlayer';
-import { getMeditationAudioUrl } from '@/lib/meditationAudioIntegration';
 import { meditationSessions } from '@/data/meditationSessions';
-import { BiometricData } from '@/components/meditation/types/BiometricTypes';
+import { useMeditationFeedback } from '@/hooks/useMeditationFeedback';
+import SessionCompletionDialog from '@/components/meditation/SessionCompletionDialog';
 
 const MeditationSessionView = () => {
   const { sessionId } = useParams<{ sessionId: string }>();
   const navigate = useNavigate();
   const { sessions, completeSession } = useMeditationSessions();
-  const [showRatingDialog, setShowRatingDialog] = useState(false);
+  const [showCompletionDialog, setShowCompletionDialog] = useState(false);
   const { biometricData, addBiometricData } = useBiometricData();
-  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const { addFeedback } = useMeditationFeedback();
   const [session, setSession] = useState<MeditationSession | null>(null);
   const [initialBiometrics, setInitialBiometrics] = useState<any>(null);
   const [currentBiometrics, setCurrentBiometrics] = useState<any>(null);
@@ -73,48 +68,11 @@ const MeditationSessionView = () => {
       hrv: Math.floor(Math.random() * 20) + 40, // 40-60
       respiratory_rate: Math.floor(Math.random() * 5) + 12, // 12-17
       stress_score: Math.floor(Math.random() * 20) + 50, // 50-70
+      focus_score: Math.floor(Math.random() * 30) + 60, // 60-90
+      calm_score: Math.floor(Math.random() * 25) + 65, // 65-90
     };
     return mockBiometricData;
   };
-
-  // Get audio URL from session or try to find a matching file
-  useEffect(() => {
-    if (session) {
-      console.log("Attempting to get audio URL for session:", session.title);
-      
-      // If session has an explicit audio_url property
-      if (session.audio_url) {
-        console.log("Session has audio_url property:", session.audio_url);
-        const url = getMeditationAudioUrl(session.audio_url);
-        console.log("Generated audio URL:", url);
-        setAudioUrl(url);
-        return;
-      }
-      
-      // Try to match by session ID
-      const idBasedFileName = `${session.id}.mp3`;
-      console.log("Trying to find audio by session ID:", idBasedFileName);
-      const idBasedUrl = getMeditationAudioUrl(idBasedFileName);
-      
-      // Try to match by session title
-      const titleBasedFileName = `${session.title.toLowerCase().replace(/\s+/g, '-')}.mp3`;
-      console.log("Trying to find audio by session title:", titleBasedFileName);
-      const titleBasedUrl = getMeditationAudioUrl(titleBasedFileName);
-      
-      // Set whichever URL we can find, with ID-based taking precedence
-      if (idBasedUrl) {
-        console.log("Using ID-based audio URL");
-        setAudioUrl(idBasedUrl);
-      } else if (titleBasedUrl) {
-        console.log("Using title-based audio URL");
-        setAudioUrl(titleBasedUrl);
-      } else {
-        console.log("No matching audio found for session:", session.title);
-        setAudioUrl(null);
-        toast.warning('No audio found for this meditation');
-      }
-    }
-  }, [session]);
   
   const handleBackToLibrary = () => {
     navigate('/meditate');
@@ -146,8 +104,8 @@ const MeditationSessionView = () => {
         });
       }
       
-      // Show rating dialog
-      setShowRatingDialog(true);
+      // Show completion dialog
+      setShowCompletionDialog(true);
     }
   };
   
@@ -160,23 +118,52 @@ const MeditationSessionView = () => {
     toast.success('Link copied to clipboard');
   };
   
-  const handleRatingSubmit = (sessionId: string, rating: number, feedback: string) => {
-    toast.success('Thank you for your feedback!');
-    setShowRatingDialog(false);
+  const handleFeedbackSubmit = (rating: number, comment: string) => {
+    if (sessionId && session) {
+      addFeedback(sessionId, rating, comment);
+      
+      toast.success('Thank you for your feedback!', {
+        description: 'Your insights help improve our meditations.'
+      });
+      
+      // Navigate back to library after a short delay
+      setTimeout(() => {
+        navigate('/meditate');
+      }, 2000);
+    }
   };
   
-  const handleAudioPlay = () => {
-    setIsPlaying(true);
-    handleSessionStart();
+  const handleContinueWithoutFeedback = () => {
+    navigate('/meditate');
   };
   
-  const handleAudioPause = () => {
-    setIsPlaying(false);
-  };
-  
-  const handleAudioComplete = () => {
-    // Auto-complete the session when audio finishes
-    handleSessionComplete();
+  const handleAudioTimeUpdate = (currentTime: number, duration: number) => {
+    // Update biometrics based on session progress
+    if (currentBiometrics && initialBiometrics) {
+      const progress = currentTime / duration;
+      
+      // Simple algorithm to simulate biometric changes during meditation
+      // Heart rate decreases, HRV increases, focus and calm improve
+      const updatedBiometrics = {
+        ...currentBiometrics,
+        heart_rate: Math.max(65, initialBiometrics.heart_rate - Math.floor(10 * progress)),
+        hrv: Math.min(80, initialBiometrics.hrv + Math.floor(20 * progress)),
+        focus_score: Math.min(98, initialBiometrics.focus_score + Math.floor(25 * progress)),
+        calm_score: Math.min(98, initialBiometrics.calm_score + Math.floor(20 * progress))
+      };
+      
+      setCurrentBiometrics(updatedBiometrics);
+      
+      // Calculate changes compared to initial state
+      const changes = {
+        heart_rate: updatedBiometrics.heart_rate - initialBiometrics.heart_rate,
+        hrv: updatedBiometrics.hrv - initialBiometrics.hrv,
+        focus_score: updatedBiometrics.focus_score - initialBiometrics.focus_score,
+        calm_score: updatedBiometrics.calm_score - initialBiometrics.calm_score
+      };
+      
+      setBiometricChange(changes);
+    }
   };
   
   if (!session) {
@@ -228,44 +215,117 @@ const MeditationSessionView = () => {
               </Button>
             </div>
             
-            {audioUrl ? (
-              <div className="mb-6">
-                <h2 className="text-lg font-medium mb-3">Audio Meditation</h2>
-                <MeditationAudioPlayer 
-                  audioUrl={audioUrl} 
-                  onComplete={handleAudioComplete}
-                  onPlay={handleAudioPlay}
-                  onPause={handleAudioPause}
-                  autoPlay={false}
-                />
-              </div>
-            ) : (
-              <MeditationSessionPlayer 
-                session={session} 
-                onComplete={handleSessionComplete}
-                onStart={handleSessionStart}
-                onPlayStateChange={setIsPlaying}
-              />
-            )}
+            <MeditationSessionPlayer 
+              session={session} 
+              onComplete={handleSessionComplete}
+              onStart={handleSessionStart}
+              onPlayStateChange={setIsPlaying}
+              biometricData={{
+                focusScore: currentBiometrics?.focus_score,
+                calmScore: currentBiometrics?.calm_score
+              }}
+            />
           </div>
           
           <div>
             <h2 className="text-xl font-semibold mb-4">Biometric Feedback</h2>
-            {session && (
-              <BiometricTracker
-                isPlaying={isPlaying}
-                sessionStarted={sessionStarted}
-                timeRemaining={timeRemaining}
-                sessionDuration={session.duration}
-                initialBiometrics={initialBiometrics}
-                setInitialBiometrics={setInitialBiometrics}
-                currentBiometrics={currentBiometrics} 
-                setCurrentBiometrics={setCurrentBiometrics}
-                biometricChange={biometricChange}
-                setBiometricChange={setBiometricChange}
-                getInitialBiometrics={getInitialBiometrics}
-                sessionId={sessionId || ""}
-              />
+            {session && sessionStarted && (
+              <div className="bg-card rounded-lg p-4 shadow-sm">
+                <div className="space-y-4">
+                  <div>
+                    <div className="flex justify-between mb-1">
+                      <span className="text-sm">Heart Rate</span>
+                      <span className="text-sm font-medium">{currentBiometrics?.heart_rate || "--"} BPM</span>
+                    </div>
+                    <div className="w-full bg-secondary h-2 rounded-full overflow-hidden">
+                      <div 
+                        className="bg-primary h-full transition-all duration-500" 
+                        style={{ width: `${((currentBiometrics?.heart_rate || 70) - 50) / 100 * 100}%` }}
+                      />
+                    </div>
+                    {biometricChange?.heart_rate && (
+                      <div className={`text-xs mt-1 ${biometricChange.heart_rate < 0 ? "text-green-500" : "text-red-500"}`}>
+                        {biometricChange.heart_rate < 0 ? "↓" : "↑"} {Math.abs(biometricChange.heart_rate)} BPM
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div>
+                    <div className="flex justify-between mb-1">
+                      <span className="text-sm">Focus Score</span>
+                      <span className="text-sm font-medium">{currentBiometrics?.focus_score || "--"}%</span>
+                    </div>
+                    <div className="w-full bg-secondary h-2 rounded-full overflow-hidden">
+                      <div 
+                        className="bg-blue-500 h-full transition-all duration-500" 
+                        style={{ width: `${currentBiometrics?.focus_score || 60}%` }}
+                      />
+                    </div>
+                    {biometricChange?.focus_score > 0 && (
+                      <div className="text-xs mt-1 text-green-500">
+                        ↑ {biometricChange.focus_score}%
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div>
+                    <div className="flex justify-between mb-1">
+                      <span className="text-sm">Calm Score</span>
+                      <span className="text-sm font-medium">{currentBiometrics?.calm_score || "--"}%</span>
+                    </div>
+                    <div className="w-full bg-secondary h-2 rounded-full overflow-hidden">
+                      <div 
+                        className="bg-green-500 h-full transition-all duration-500" 
+                        style={{ width: `${currentBiometrics?.calm_score || 65}%` }}
+                      />
+                    </div>
+                    {biometricChange?.calm_score > 0 && (
+                      <div className="text-xs mt-1 text-green-500">
+                        ↑ {biometricChange.calm_score}%
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div>
+                    <div className="flex justify-between mb-1">
+                      <span className="text-sm">Respiratory Rate</span>
+                      <span className="text-sm font-medium">{currentBiometrics?.respiratory_rate || "--"} breaths/min</span>
+                    </div>
+                    <div className="w-full bg-secondary h-2 rounded-full overflow-hidden">
+                      <div 
+                        className="bg-primary h-full transition-all duration-500" 
+                        style={{ width: `${((currentBiometrics?.respiratory_rate || 14) - 8) / 12 * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="pt-2 text-sm text-muted-foreground italic">
+                    {isPlaying ? (
+                      "Biometrics updating in real-time..."
+                    ) : sessionStarted ? (
+                      "Session paused. Biometrics on hold."
+                    ) : (
+                      "Start the session to see your biometric feedback."
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {!sessionStarted && (
+              <div className="bg-card rounded-lg p-8 shadow-sm flex flex-col items-center justify-center text-center">
+                <div className="text-4xl mb-4">🧘</div>
+                <h3 className="text-lg font-medium mb-2">Ready to Begin?</h3>
+                <p className="text-muted-foreground mb-4">
+                  Press play to start your meditation session and view your biometric feedback.
+                </p>
+                <Button onClick={() => {
+                  handleSessionStart();
+                  setIsPlaying(true);
+                }}>
+                  Start Meditation
+                </Button>
+              </div>
             )}
           </div>
         </div>
@@ -273,12 +333,17 @@ const MeditationSessionView = () => {
       
       <Footer />
       
-      <SessionRatingDialog
-        isOpen={showRatingDialog}
-        onClose={() => setShowRatingDialog(false)}
-        sessionId={sessionId || ""}
-        sessionTitle={session.title}
-        onSubmitRating={handleRatingSubmit}
+      <SessionCompletionDialog
+        isOpen={showCompletionDialog}
+        onClose={() => setShowCompletionDialog(false)}
+        session={session}
+        meditationStats={{
+          focusScore: currentBiometrics?.focus_score,
+          calmScore: currentBiometrics?.calm_score,
+          timeCompleted: session.duration * 60 - timeRemaining
+        }}
+        onSubmitFeedback={handleFeedbackSubmit}
+        onContinue={handleContinueWithoutFeedback}
       />
     </div>
   );

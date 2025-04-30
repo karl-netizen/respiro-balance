@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { MeditationSession } from '@/types/meditation';
 import { Button } from '@/components/ui/button';
@@ -34,8 +35,8 @@ const MeditationSessionView: React.FC<MeditationSessionViewProps> = ({
   
   // Initialize audio
   useEffect(() => {
-    if (session.audioUrl) {
-      audioRef.current = new Audio(session.audioUrl);
+    if (session.audio_url) {
+      audioRef.current = new Audio(session.audio_url);
       audioRef.current.addEventListener('loadedmetadata', () => {
         if (audioRef.current) {
           setDuration(audioRef.current.duration);
@@ -61,7 +62,7 @@ const MeditationSessionView: React.FC<MeditationSessionViewProps> = ({
         clearInterval(intervalRef.current);
       }
     };
-  }, [session.audioUrl]);
+  }, [session.audio_url]);
   
   // Handle volume changes
   useEffect(() => {
@@ -167,9 +168,9 @@ const MeditationSessionView: React.FC<MeditationSessionViewProps> = ({
         <CardContent className="space-y-6">
           <div 
             className="h-48 bg-gradient-to-b from-primary/20 to-secondary/20 rounded-md flex items-center justify-center"
-            style={session.imageUrl ? { backgroundImage: `url(${session.imageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
+            style={session.image_url ? { backgroundImage: `url(${session.image_url})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
           >
-            {!session.imageUrl && (
+            {!session.image_url && (
               <div className="text-6xl">{session.icon || '🧘'}</div>
             )}
           </div>

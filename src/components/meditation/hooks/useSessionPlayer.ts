@@ -108,6 +108,16 @@ export const useSessionPlayer = ({
       onComplete();
     }
   };
+  
+  const handleAudioTimeUpdate = (currentTime: number, duration: number) => {
+    // Calculate remaining time
+    const remainingSecs = Math.max(0, duration - currentTime);
+    setRemainingTime(remainingSecs);
+    
+    // Calculate progress percentage
+    const progressPercent = Math.min(100, (currentTime / duration) * 100);
+    setProgress(progressPercent);
+  };
 
   // Timer effect for non-audio sessions
   useEffect(() => {
@@ -151,5 +161,6 @@ export const useSessionPlayer = ({
     handleAudioPlay,
     handleAudioPause,
     handleAudioComplete,
+    handleAudioTimeUpdate,
   };
 };
