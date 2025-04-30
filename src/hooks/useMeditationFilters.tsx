@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { MeditationSession } from '@/components/meditation/MeditationSessionCard';
+import { MeditationSession } from '@/types/meditation';
 
 export const useMeditationFilters = () => {
   const [durationFilter, setDurationFilter] = useState<[number, number]>([1, 60]);

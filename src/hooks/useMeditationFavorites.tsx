@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { MeditationSession } from '@/components/meditation/MeditationSessionCard';
+import { MeditationSession } from '@/types/meditation';
 
 export const useMeditationFavorites = (allSessions: MeditationSession[]) => {
   const [favorites, setFavorites] = useState<string[]>([]);

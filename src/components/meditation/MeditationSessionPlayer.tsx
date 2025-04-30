@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
-import { MeditationSession } from './MeditationSessionCard';
+import { MeditationSession } from '@/types/meditation';
 import AudioPlayerWrapper from './player/AudioPlayerWrapper';
 import TimedPlayer from './player/TimedPlayer';
 import { useSessionPlayer } from './hooks/useSessionPlayer';

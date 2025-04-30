@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { MeditationSession } from '@/components/meditation/MeditationSessionCard';
+import { MeditationSession } from '@/types/meditation';
 import { fetchMeditationAudioFiles, mapAudioFilesToSessions, initializeAudioBucket } from '@/lib/meditationAudioIntegration';
 
 export const useMeditationAudio = (sessions: MeditationSession[]) => {

@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { MeditationSession } from '../MeditationSessionCard';
+import { MeditationSession } from '@/types/meditation';
 import { getMeditationAudioUrl } from '@/lib/meditationAudioIntegration';
 
 interface UseSessionPlayerProps {
@@ -25,10 +25,10 @@ export const useSessionPlayer = ({
   
   // Get audio URL when session changes
   useEffect(() => {
-    if (session.audioUrl) {
-      const url = getMeditationAudioUrl(session.audioUrl);
+    if (session.audio_url) {
+      const url = getMeditationAudioUrl(session.audio_url);
       setAudioUrl(url);
-      console.log("Using session's audioUrl:", session.audioUrl, "resolved to:", url);
+      console.log("Using session's audio_url:", session.audio_url, "resolved to:", url);
     } else {
       const url = getMeditationAudioUrl(`${session.id}.mp3`);
       setAudioUrl(url);

@@ -13,7 +13,7 @@ import {
   BiometricTracker,
   SessionRatingDialog 
 } from '@/components/meditation';
-import { MeditationSession } from '@/components/meditation/MeditationSessionCard';
+import { MeditationSession } from '@/types/meditation';
 import { MeditationAudioPlayer } from '@/components/meditation/MeditationAudioPlayer';
 import { getMeditationAudioUrl } from '@/lib/meditationAudioIntegration';
 import { meditationSessions } from '@/data/meditationSessions';
@@ -82,10 +82,10 @@ const MeditationSessionView = () => {
     if (session) {
       console.log("Attempting to get audio URL for session:", session.title);
       
-      // If session has an explicit audioUrl property
-      if (session.audioUrl) {
-        console.log("Session has audioUrl property:", session.audioUrl);
-        const url = getMeditationAudioUrl(session.audioUrl);
+      // If session has an explicit audio_url property
+      if (session.audio_url) {
+        console.log("Session has audio_url property:", session.audio_url);
+        const url = getMeditationAudioUrl(session.audio_url);
         console.log("Generated audio URL:", url);
         setAudioUrl(url);
         return;

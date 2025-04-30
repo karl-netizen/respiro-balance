@@ -23,9 +23,9 @@ const MeditationSessionCard: React.FC<MeditationSessionCardProps> = ({
     <Card className="overflow-hidden hover:shadow-md transition-shadow">
       <div 
         className="h-32 bg-secondary/50 flex items-center justify-center"
-        style={session.imageUrl ? { backgroundImage: `url(${session.imageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
+        style={session.image_url ? { backgroundImage: `url(${session.image_url})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
       >
-        {!session.imageUrl && (
+        {!session.image_url && (
           <div className="text-4xl">{session.icon || '🧘'}</div>
         )}
       </div>

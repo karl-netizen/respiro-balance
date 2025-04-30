@@ -40,12 +40,9 @@ const MeditationLibrary = () => {
       duration: 10,
       level: "beginner",
       category: "guided",
-      user_id: "1",
       session_type: "guided",
-      started_at: new Date().toISOString(),
-      completed: false,
-      difficulty: "beginner",
-      favorite: false
+      tags: [],
+      instructor: "Sam Lee"
     },
     {
       id: "2",
@@ -54,12 +51,9 @@ const MeditationLibrary = () => {
       duration: 5,
       level: "beginner",
       category: "quick",
-      user_id: "1", 
       session_type: "quick",
-      started_at: new Date().toISOString(),
-      completed: false,
-      difficulty: "beginner",
-      favorite: false
+      tags: [],
+      instructor: "Alex Wang"
     }
   ];
   
@@ -83,15 +77,15 @@ const MeditationLibrary = () => {
   const filterByDuration = (sessions: MeditationSession[], duration: number): MeditationSession[] => {
     if (!duration) return sessions;
     if (duration === 5) {
-      return sessions.filter(session => session.duration <= 5 * 60);
+      return sessions.filter(session => session.duration <= 5);
     } else if (duration === 10) {
-      return sessions.filter(session => session.duration > 5 * 60 && session.duration <= 10 * 60);
+      return sessions.filter(session => session.duration > 5 && session.duration <= 10);
     } else if (duration === 15) {
-      return sessions.filter(session => session.duration > 10 * 60 && session.duration <= 15 * 60);
+      return sessions.filter(session => session.duration > 10 && session.duration <= 15);
     } else if (duration === 30) {
-      return sessions.filter(session => session.duration > 15 * 60 && session.duration <= 30 * 60);
+      return sessions.filter(session => session.duration > 15 && session.duration <= 30);
     } else {
-      return sessions.filter(session => session.duration > 30 * 60);
+      return sessions.filter(session => session.duration > 30);
     }
   };
   

@@ -1,7 +1,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { isSupabaseConfigured } from '@/lib/supabase';
-import { StartSessionParams, MeditationSession } from '@/types/meditation';
+import { MeditationSession, StartSessionParams } from '@/types/meditation';
 import { useAuth } from './useAuth';
 import { useSubscriptionContext } from './useSubscriptionContext';
 import { toast } from 'sonner';
@@ -64,7 +64,7 @@ export function useMeditationSessions() {
       throw new Error('You have reached your monthly meditation limit. Please upgrade to continue.');
     }
 
-    const newSession = {
+    const newSession: Omit<MeditationSession, "id"> = {
       user_id: user.id,
       session_type: params.sessionType,
       duration: params.duration,
@@ -72,9 +72,10 @@ export function useMeditationSessions() {
       completed: false,
       description: "",
       category: params.sessionType,
-      difficulty: "beginner",
-      favorite: false
-    } as Omit<MeditationSession, "id">;
+      level: "beginner",
+      instructor: "",
+      tags: []
+    };
     
     // If not connected to Supabase, save to localStorage
     if (!isSupabaseConfigured()) {

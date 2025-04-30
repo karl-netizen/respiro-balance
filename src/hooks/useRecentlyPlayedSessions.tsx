@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { MeditationSession } from '@/components/meditation/MeditationSessionCard';
+import { MeditationSession } from '@/types/meditation';
 
 export const useRecentlyPlayedSessions = (allSessions: MeditationSession[]) => {
   const [recentlyPlayed, setRecentlyPlayed] = useState<MeditationSession[]>([]);

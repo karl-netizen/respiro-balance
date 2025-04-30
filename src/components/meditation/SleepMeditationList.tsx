@@ -1,8 +1,8 @@
 
 import React from 'react';
 import { MeditationSession } from '@/types/meditation';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Moon } from 'lucide-react';
 
 export interface SleepMeditationListProps {

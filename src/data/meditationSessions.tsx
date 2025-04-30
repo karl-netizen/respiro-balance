@@ -1,5 +1,5 @@
 
-import { MeditationSession } from '@/components/meditation/MeditationSessionCard';
+import { MeditationSession } from '@/types/meditation';
 
 // Expanded meditation sessions data with more diverse content
 export const meditationSessions: MeditationSession[] = [
@@ -9,6 +9,7 @@ export const meditationSessions: MeditationSession[] = [
     description: 'Start your day with a clear mind and positive intentions.',
     duration: 10,
     category: 'guided',
+    session_type: 'guided',
     level: 'beginner',
     instructor: 'Sarah Johnson',
     tags: ['morning', 'focus', 'clarity']
@@ -19,6 +20,7 @@ export const meditationSessions: MeditationSession[] = [
     description: 'Reset your mind in the middle of your day to restore focus.',
     duration: 15,
     category: 'guided',
+    session_type: 'guided',
     level: 'intermediate',
     instructor: 'Michael Chen',
     tags: ['midday', 'focus', 'energy']

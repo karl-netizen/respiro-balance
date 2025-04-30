@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { MeditationSession } from '@/components/meditation/MeditationSessionCard';
+import { MeditationSession } from '@/types/meditation';
 import { useMeditationSessions } from './useMeditationSessions';
 import { useMeditationFavorites } from './useMeditationFavorites';
 import { useRecentlyPlayedSessions } from './useRecentlyPlayedSessions';
