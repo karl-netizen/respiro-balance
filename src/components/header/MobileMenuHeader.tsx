@@ -24,7 +24,7 @@ const MobileMenuHeader = ({ toggleMenu }: MobileMenuHeaderProps) => {
             </AvatarFallback>
           </Avatar>
           <div className="flex-1">
-            <p className="font-medium">{user?.email}</p>
+            <p className="font-medium text-white">{user?.email}</p>
             <SubscriptionBadge className="mt-1" />
           </div>
         </div>
@@ -35,12 +35,12 @@ const MobileMenuHeader = ({ toggleMenu }: MobileMenuHeaderProps) => {
   if (!loading) {
     return (
       <div className="py-4 space-y-3">
-        <Button asChild variant="default" className="w-full">
+        <Button asChild variant="default" className="w-full bg-respiro-dark hover:bg-respiro-darker text-white">
           <Link to="/login" onClick={toggleMenu}>
             Log in
           </Link>
         </Button>
-        <Button asChild variant="outline" className="w-full">
+        <Button asChild variant="outline" className="w-full border-white/30 text-white hover:bg-white/10">
           <Link to="/signup" onClick={toggleMenu}>
             Sign up
           </Link>

@@ -25,7 +25,7 @@ const MobileMenuUserActions = ({ toggleMenu }: MobileMenuUserActionsProps) => {
     <div className="py-4 space-y-2">
       <Link
         to="/account"
-        className="flex items-center gap-2 text-foreground/80 hover:text-primary py-2 button-transition"
+        className="flex items-center gap-2 text-white hover:text-respiro-light py-2 button-transition"
         onClick={toggleMenu}
       >
         <User className="h-4 w-4" />
@@ -35,7 +35,7 @@ const MobileMenuUserActions = ({ toggleMenu }: MobileMenuUserActionsProps) => {
       {isPremium ? (
         <Link
           to="/subscription"
-          className="flex items-center gap-2 text-foreground/80 hover:text-primary py-2 button-transition"
+          className="flex items-center gap-2 text-white hover:text-respiro-light py-2 button-transition"
           onClick={toggleMenu}
         >
           <Crown className="h-4 w-4" />
@@ -44,7 +44,7 @@ const MobileMenuUserActions = ({ toggleMenu }: MobileMenuUserActionsProps) => {
       ) : (
         <Link
           to="/subscription"
-          className="flex items-center gap-2 text-foreground/80 hover:text-primary py-2 button-transition"
+          className="flex items-center gap-2 text-white hover:text-respiro-light py-2 button-transition"
           onClick={toggleMenu}
         >
           <Crown className="h-4 w-4" />
@@ -54,7 +54,7 @@ const MobileMenuUserActions = ({ toggleMenu }: MobileMenuUserActionsProps) => {
       
       <Button
         variant="ghost"
-        className="w-full justify-start p-2 hover:bg-destructive/10 hover:text-destructive"
+        className="w-full justify-start p-2 text-white hover:bg-red-600/20 hover:text-red-500"
         onClick={handleSignOut}
       >
         <LogOut className="h-4 w-4 mr-2" />

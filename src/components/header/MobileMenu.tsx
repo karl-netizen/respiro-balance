@@ -17,17 +17,17 @@ const MobileMenu = ({ isOpen, toggleMenu }: MobileMenuProps) => {
   
   return (
     <Sheet open={isOpen} onOpenChange={toggleMenu}>
-      <SheetContent side="right" className="sm:max-w-sm">
+      <SheetContent side="right" className="sm:max-w-sm bg-gray-900 border-gray-800 text-white">
         <div className="h-full flex flex-col">
           <MobileMenuHeader toggleMenu={toggleMenu} />
 
-          <Separator />
+          <Separator className="bg-gray-700" />
 
           <MobileMenuLinks toggleMenu={toggleMenu} />
 
           {user && (
             <>
-              <Separator />
+              <Separator className="bg-gray-700" />
               <MobileMenuUserActions toggleMenu={toggleMenu} />
             </>
           )}

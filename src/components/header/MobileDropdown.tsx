@@ -29,7 +29,7 @@ const MobileDropdown = ({ title, items, toggleMainMenu, icon, className }: Mobil
     <div className={cn("relative", className)}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex w-full items-center justify-between text-foreground/80 hover:text-primary py-2 button-transition"
+        className="flex w-full items-center justify-between text-white hover:text-respiro-light py-2 button-transition"
       >
         <span className="flex items-center gap-2">
           {icon}
@@ -50,7 +50,7 @@ const MobileDropdown = ({ title, items, toggleMainMenu, icon, className }: Mobil
                 <Link
                   key={item.label}
                   to={item.href}
-                  className="block text-foreground/70 hover:text-primary py-1 text-sm button-transition flex items-center gap-2"
+                  className="block text-white hover:text-respiro-light py-1 text-sm button-transition flex items-center gap-2"
                   onClick={() => handleItemClick(item.onClick)}
                 >
                   {item.label}
@@ -63,7 +63,7 @@ const MobileDropdown = ({ title, items, toggleMainMenu, icon, className }: Mobil
               <a
                 key={item.label}
                 href={item.href}
-                className="block text-foreground/70 hover:text-primary py-1 text-sm button-transition flex items-center gap-2"
+                className="block text-white hover:text-respiro-light py-1 text-sm button-transition flex items-center gap-2"
                 onClick={() => handleItemClick(item.onClick)}
               >
                 {item.label}

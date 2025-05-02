@@ -25,7 +25,7 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
     <div className="flex-1 overflow-auto py-4 space-y-2">
       <Link
         to="/"
-        className={cn("flex items-center gap-2 text-foreground/80 hover:text-primary py-2 button-transition", isActive('/') && "text-primary font-medium")}
+        className={cn("flex items-center gap-2 text-white hover:text-respiro-light py-2 button-transition", isActive('/') && "text-respiro-light font-medium")}
         onClick={toggleMenu}
       >
         <Home className="h-4 w-4" />
@@ -35,7 +35,7 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
       {user && (
         <Link
           to="/dashboard"
-          className={cn("flex items-center gap-2 text-foreground/80 hover:text-primary py-2 button-transition", isActive('/dashboard') && "text-primary font-medium")}
+          className={cn("flex items-center gap-2 text-white hover:text-respiro-light py-2 button-transition", isActive('/dashboard') && "text-respiro-light font-medium")}
           onClick={toggleMenu}
         >
           <Gauge className="h-4 w-4" />
@@ -101,7 +101,7 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
 
       <Link
         to="/progress"
-        className={cn("flex items-center gap-2 text-foreground/80 hover:text-primary py-2 button-transition", isActive('/progress') && "text-primary font-medium")}
+        className={cn("flex items-center gap-2 text-white hover:text-respiro-light py-2 button-transition", isActive('/progress') && "text-respiro-light font-medium")}
         onClick={toggleMenu}
       >
         <LineChart className="h-4 w-4" />
@@ -110,7 +110,7 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
       
       <Link
         to="/account"
-        className={cn("flex items-center gap-2 text-foreground/80 hover:text-primary py-2 button-transition", isActive('/account') && "text-primary font-medium")}
+        className={cn("flex items-center gap-2 text-white hover:text-respiro-light py-2 button-transition", isActive('/account') && "text-respiro-light font-medium")}
         onClick={toggleMenu}
       >
         <Settings className="h-4 w-4" />
@@ -119,7 +119,7 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
       
       <Link
         to="/morning-ritual"
-        className={cn("flex items-center gap-2 text-foreground/80 hover:text-primary py-2 button-transition", isActive('/morning-ritual') && "text-primary font-medium")}
+        className={cn("flex items-center gap-2 text-white hover:text-respiro-light py-2 button-transition", isActive('/morning-ritual') && "text-respiro-light font-medium")}
         onClick={toggleMenu}
       >
         <Sunrise className="h-4 w-4" />
@@ -128,7 +128,7 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
 
       <Link
         to="/#pricing"
-        className={cn("flex items-center gap-2 text-foreground/80 hover:text-primary py-2 button-transition", location.hash === '#pricing' && "text-primary font-medium")}
+        className={cn("flex items-center gap-2 text-white hover:text-respiro-light py-2 button-transition", location.hash === '#pricing' && "text-respiro-light font-medium")}
         onClick={toggleMenu}
       >
         <Clock className="h-4 w-4" />
