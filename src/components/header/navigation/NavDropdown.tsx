@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
   NavigationMenuItem,
@@ -21,6 +21,15 @@ interface NavDropdownProps {
 }
 
 const NavDropdown = ({ title, items, isActive, onItemClick }: NavDropdownProps) => {
+  const navigate = useNavigate();
+
+  const handleItemClick = (path: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    console.log(`NavDropdown item clicked: ${path}`);
+    onItemClick(path);
+    navigate(path);
+  };
+
   return (
     <NavigationMenuItem>
       <NavigationMenuTrigger
@@ -31,14 +40,14 @@ const NavDropdown = ({ title, items, isActive, onItemClick }: NavDropdownProps) 
       >
         {title}
       </NavigationMenuTrigger>
-      <NavigationMenuContent className="bg-background border shadow-md z-50">
-        <ul className="grid gap-2 p-4 w-48 bg-background">
+      <NavigationMenuContent className="bg-white border shadow-md z-[999] dropdown-content">
+        <ul className="grid gap-2 p-4 w-48 bg-white">
           {items.map((item) => (
             <li key={item.path}>
               <Link 
                 to={item.path} 
                 className="block p-2 hover:bg-accent rounded-md"
-                onClick={() => onItemClick(item.path)}
+                onClick={(e) => handleItemClick(item.path, e)}
               >
                 {item.label}
               </Link>

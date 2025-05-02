@@ -104,21 +104,32 @@
 
 /* Navigation dropdown visibility improvements */
 .navigation-menu-content {
-  @apply z-50 bg-background shadow-lg border !important;
+  @apply z-50 bg-white shadow-lg border !important;
 }
 
 /* Ensure dropdown menus are visible on top of page content */
 [data-radix-popper-content-wrapper] {
-  z-index: 50 !important;
+  z-index: 999 !important;
 }
 
 /* Ensure NavigationMenuContent is visible with proper contrast */
 .navigation-menu-content ul {
-  @apply bg-background border shadow-lg !important;
+  @apply bg-white border shadow-lg !important;
 }
 
-/* Fix navigation menu viewport visibility */
+/* Fix navigation menu viewport visibility with solid background */
 [data-radix-navigation-menu-viewport] {
-  @apply bg-background shadow-lg border !important;
-  z-index: 50 !important;
+  @apply bg-white shadow-lg border !important;
+  z-index: 999 !important;
+}
+
+/* Add solid background to dropdown content */
+.dropdown-content {
+  @apply bg-white rounded-md shadow-lg border border-gray-200 !important;
+}
+
+/* Solid background for navigation dropdown */
+.NavigationMenuContent,
+.NavigationMenuViewport {
+  @apply bg-white !important;
 }

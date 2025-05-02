@@ -18,6 +18,7 @@ const DesktopNavLinks = () => {
   const handleNavClick = useCallback((path: string) => {
     console.log(`Navigation clicked: ${path}`);
     
+    // Navigate to the path
     navigate(path);
     
     // Use a longer timeout to ensure navigation completes before scrolling
@@ -28,7 +29,7 @@ const DesktopNavLinks = () => {
   }, [navigate]);
 
   return (
-    <NavigationMenu>
+    <NavigationMenu className="z-50">
       <NavigationMenuList>
         {/* Home link */}
         <NavigationMenuItem>

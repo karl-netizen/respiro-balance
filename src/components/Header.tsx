@@ -16,9 +16,9 @@ const Header = () => {
   const isHomePage = location.pathname === "/";
   const isTransparent = isHomePage;
 
-  const toggleMobileMenu = () => {
+  const toggleMobileMenu = useCallback(() => {
     setMobileMenuOpen(prev => !prev);
-  };
+  }, []);
 
   const handleLogoClick = useCallback(() => {
     console.log("Logo clicked! Current path:", location.pathname);
@@ -42,7 +42,7 @@ const Header = () => {
   return (
     <header
       className={cn(
-        "sticky top-0 z-40 w-full transition-colors duration-300",
+        "sticky top-0 z-50 w-full transition-colors duration-300",
         isTransparent
           ? "bg-transparent"
           : "bg-background border-b shadow-sm"

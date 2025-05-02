@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { ChevronDown } from "lucide-react";
 import { cn } from '@/lib/utils';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface MobileDropdownProps {
   title: string;
@@ -14,14 +14,24 @@ interface MobileDropdownProps {
 
 const MobileDropdown = ({ title, items, toggleMainMenu, icon, className }: MobileDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
 
-  const handleItemClick = (onClick?: () => void) => {
+  const handleItemClick = (href: string, onClick?: () => void) => {
+    console.log(`MobileDropdown item clicked: ${href}`);
     setIsOpen(false);
+    
     if (onClick) {
       onClick();
     }
+    
     if (toggleMainMenu) {
       toggleMainMenu();
+    }
+    
+    // Check if the href is a local route or external link
+    const isExternalLink = href.startsWith('http');
+    if (!isExternalLink) {
+      navigate(href);
     }
   };
 
@@ -51,7 +61,7 @@ const MobileDropdown = ({ title, items, toggleMainMenu, icon, className }: Mobil
                   key={item.label}
                   to={item.href}
                   className="block text-white hover:text-respiro-light py-1 text-sm button-transition flex items-center gap-2"
-                  onClick={() => handleItemClick(item.onClick)}
+                  onClick={() => handleItemClick(item.href, item.onClick)}
                 >
                   {item.label}
                 </Link>
@@ -64,7 +74,7 @@ const MobileDropdown = ({ title, items, toggleMainMenu, icon, className }: Mobil
                 key={item.label}
                 href={item.href}
                 className="block text-white hover:text-respiro-light py-1 text-sm button-transition flex items-center gap-2"
-                onClick={() => handleItemClick(item.onClick)}
+                onClick={() => handleItemClick(item.href, item.onClick)}
                 target="_blank"
                 rel="noopener noreferrer"
               >
