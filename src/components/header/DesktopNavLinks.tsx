@@ -14,8 +14,7 @@ const DesktopNavLinks = () => {
     { name: "Morning Ritual", path: "/morning-ritual" },
   ];
 
-  const handleNavClick = (e, path) => {
-    e.preventDefault();
+  const handleNavClick = (path) => {
     navigate(path);
     
     // Force scroll to top if already on the same page
@@ -30,7 +29,7 @@ const DesktopNavLinks = () => {
         <NavLink
           key={link.name}
           to={link.path}
-          onClick={(e) => handleNavClick(e, link.path)}
+          onClick={() => handleNavClick(link.path)}
           className={({ isActive }) =>
             cn(
               "px-3 py-2 rounded-md text-sm font-medium transition-colors",

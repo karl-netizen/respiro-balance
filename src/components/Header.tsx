@@ -20,13 +20,10 @@ const Header = () => {
     setMobileMenuOpen(prev => !prev);
   };
 
-  const handleLogoClick = (e) => {
-    e.preventDefault();
+  const handleLogoClick = () => {
     navigate("/");
-    // Force reload if already on home page to ensure components reinitialize
-    if (location.pathname === "/") {
-      window.scrollTo(0, 0);
-    }
+    // Force scroll to top without preventing default behavior
+    window.scrollTo(0, 0);
   };
 
   return (

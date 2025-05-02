@@ -18,7 +18,7 @@ const Home = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[80vh] px-4 py-12">
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-64px)] px-4 py-12 mt-8">
       <h1 className="text-4xl font-bold text-center mb-6">Welcome to Respiro Balance</h1>
       
       <p className="text-xl text-center text-muted-foreground mb-8 max-w-lg">
@@ -28,13 +28,13 @@ const Home = () => {
       <div className="flex flex-col sm:flex-row gap-4">
         <Button 
           size="lg" 
-          className="bg-primary text-white hover:bg-respiro-dark"
+          className="bg-primary text-white hover:bg-respiro-dark text-lg px-8 py-6 h-auto"
           onClick={handleGetStarted}
         >
           Begin Your Journey
         </Button>
         
-        <Button variant="outline" asChild size="lg">
+        <Button variant="outline" asChild size="lg" className="text-lg px-8 py-6 h-auto">
           <Link to="/signup">Create Account</Link>
         </Button>
       </div>

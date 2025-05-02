@@ -2,7 +2,7 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import { 
   Home, Gauge, LineChart, Settings, BookOpen, Heart, 
   Clock, Sunrise
@@ -18,6 +18,9 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
   const location = useLocation();
   
   const isActive = (path: string) => {
+    if (path === '/') {
+      return location.pathname === path;
+    }
     return location.pathname === path || location.pathname.startsWith(path + '/');
   }
 
