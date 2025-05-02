@@ -46,79 +46,13 @@
   --mobile-spacing-6: 1.5rem;  /* 24px */
 }
 
-.mobile-view .text-xs {
-  font-size: var(--mobile-text-xs);
-}
+/* ... keep existing code (mobile view text size classes) */
 
-.mobile-view .text-sm {
-  font-size: var(--mobile-text-sm);
-}
+/* ... keep existing code (spacing adjustments for mobile) */
 
-.mobile-view .text-base {
-  font-size: var(--mobile-text-base);
-}
+/* ... keep existing code (grid, card, button adjustments) */
 
-.mobile-view .text-lg {
-  font-size: var(--mobile-text-lg);
-}
-
-.mobile-view .text-xl {
-  font-size: var(--mobile-text-xl);
-}
-
-.mobile-view .text-2xl {
-  font-size: var(--mobile-text-2xl);
-}
-
-/* Spacing adjustments for mobile */
-.mobile-view .p-4 {
-  padding: var(--mobile-spacing-3);
-}
-
-.mobile-view .p-6 {
-  padding: var(--mobile-spacing-4);
-}
-
-.mobile-view .py-12 {
-  padding-top: var(--mobile-spacing-6);
-  padding-bottom: var(--mobile-spacing-6);
-}
-
-.mobile-view .px-6 {
-  padding-left: var(--mobile-spacing-4);
-  padding-right: var(--mobile-spacing-4);
-}
-
-/* Grid adjustments for mobile */
-.mobile-view .grid {
-  gap: var(--mobile-spacing-3) !important;
-}
-
-/* Card adjustments for mobile */
-.mobile-view .card {
-  padding: var(--mobile-spacing-3);
-}
-
-/* Button adjustments for mobile */
-.mobile-view button {
-  min-height: 40px;
-}
-
-/* Container padding for mobile */
-.mobile-view .container {
-  padding-left: var(--mobile-spacing-4);
-  padding-right: var(--mobile-spacing-4);
-}
-
-/* List spacing for mobile */
-.mobile-view ul, .mobile-view ol {
-  padding-left: var(--mobile-spacing-4);
-}
-
-/* Form element spacing */
-.mobile-view form > * {
-  margin-bottom: var(--mobile-spacing-3);
-}
+/* ... keep existing code (container padding, list spacing, form element spacing) */
 
 /* Add styles for mobile menu improvements */
 .sheet-content {
@@ -166,4 +100,25 @@
 
 .mobile-dropdown-item {
   @apply bg-gray-800 text-white rounded-md py-1 px-2;
+}
+
+/* Navigation dropdown visibility improvements */
+.navigation-menu-content {
+  @apply z-50 bg-background shadow-lg border !important;
+}
+
+/* Ensure dropdown menus are visible on top of page content */
+[data-radix-popper-content-wrapper] {
+  z-index: 50 !important;
+}
+
+/* Ensure NavigationMenuContent is visible with proper contrast */
+.navigation-menu-content ul {
+  @apply bg-background border shadow-lg !important;
+}
+
+/* Fix navigation menu viewport visibility */
+[data-radix-navigation-menu-viewport] {
+  @apply bg-background shadow-lg border !important;
+  z-index: 50 !important;
 }
