@@ -30,7 +30,7 @@ const Home = () => {
       <div className="flex flex-col sm:flex-row gap-4">
         <Button 
           size="lg" 
-          className="bg-primary text-white hover:bg-respiro-dark text-lg px-8 py-6 h-auto cursor-pointer"
+          className="bg-respiro-dark text-white hover:bg-respiro-darker font-medium text-lg px-8 py-6 h-auto cursor-pointer border-2 border-respiro-dark"
           onClick={handleGetStarted}
         >
           Begin Your Journey
