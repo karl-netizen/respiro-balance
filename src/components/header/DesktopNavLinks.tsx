@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
@@ -15,20 +15,24 @@ const DesktopNavLinks = () => {
     { name: "Morning Ritual", path: "/morning-ritual" },
   ];
 
-  const handleNavClick = (path: string) => {
+  const handleNavClick = useCallback((path: string) => {
+    console.log(`Navigation clicked: ${path}, current path: ${location.pathname}`);
+    
     if (location.pathname === path) {
-      // If already on the same page, just scroll to top
+      console.log("Already on this page, scrolling to top");
       window.scrollTo({top: 0, behavior: 'smooth'});
     } else {
+      console.log(`Navigating to: ${path}`);
       // Navigate to the new page
       navigate(path);
       
-      // Use a slightly longer timeout to ensure navigation completes before scrolling
+      // Use a longer timeout to ensure navigation completes before scrolling
       setTimeout(() => {
+        console.log("Scrolling to top after navigation");
         window.scrollTo({top: 0, behavior: 'smooth'});
-      }, 200);
+      }, 300);
     }
-  };
+  }, [location.pathname, navigate]);
 
   return (
     <nav className="hidden lg:flex items-center space-x-1 z-20">

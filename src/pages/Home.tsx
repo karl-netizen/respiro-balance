@@ -10,6 +10,8 @@ const Home = () => {
   const { user } = useAuth();
   
   const handleGetStarted = () => {
+    console.log("Get Started clicked, user:", user ? "logged in" : "not logged in");
+    
     if (user) {
       navigate('/dashboard');
     } else {

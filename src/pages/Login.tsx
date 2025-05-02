@@ -33,11 +33,11 @@ const Login = () => {
 
   const onSubmit = async (data: FormData) => {
     setError(null);
-    setLoading(true);
-    
     try {
-      await signInWithEmail(data.email, data.password, navigate, setLoading);
-      // Navigation is handled inside signInWithEmail
+      // We'll handle the loading state in this component rather than relying on the authActions
+      setLoading(true);
+      await signInWithEmail(data.email, data.password, navigate, () => {});
+      // We don't set loading to false here because the navigation will unmount this component
     } catch (err: any) {
       setError(err.message || "Invalid email or password");
       console.error("Login error:", err);
