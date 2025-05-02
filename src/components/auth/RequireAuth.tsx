@@ -11,13 +11,6 @@ const RequireAuth = ({ children }: RequireAuthProps) => {
   const { user, loading } = useAuth();
   const location = useLocation();
 
-  // BYPASS AUTHENTICATION - Force display content immediately without loading state
-  // This allows testing access to protected pages without being logged in
-  console.log("Auth check completely bypassed for testing");
-  return <>{children}</>;
-  
-  // Original authentication logic - commented out for testing
-  /*
   // Show loading state while checking authentication
   if (loading) {
     return (
@@ -30,8 +23,8 @@ const RequireAuth = ({ children }: RequireAuthProps) => {
   if (!user) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
+  
   return <>{children}</>;
-  */
 };
 
 export default RequireAuth;

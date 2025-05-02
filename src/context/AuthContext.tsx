@@ -7,9 +7,9 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  isLoading: boolean; // Added to fix errors
+  isLoading: boolean;
   signIn?: (email: string, password: string) => Promise<any>;
-  signUp?: (email: string, password: string, firstName: string) => Promise<any>;
+  signUp?: (email: string, password: string, firstName?: string) => Promise<any>;
   signOut?: () => Promise<void>;
   forgotPassword?: (email: string) => Promise<void>;
   resetPassword?: (password: string) => Promise<void>;
@@ -29,7 +29,7 @@ export const AuthContext = createContext<AuthContextType>({
 // Export the useAuth hook
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
