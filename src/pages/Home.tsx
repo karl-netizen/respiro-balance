@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -15,7 +16,12 @@ const Home = () => {
     if (user) {
       navigate('/dashboard');
     } else {
-      navigate('/login');
+      // For demo purposes, show a toast and navigate directly to dashboard
+      // This ensures users can always access the dashboard in demo mode
+      toast.info("Demo Mode", {
+        description: "Bypassing login for demonstration"
+      });
+      navigate('/dashboard');
     }
   };
 

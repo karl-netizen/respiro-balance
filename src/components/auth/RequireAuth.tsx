@@ -2,6 +2,7 @@
 import { ReactNode } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { toast } from 'sonner';
 
 interface RequireAuthProps {
   children: ReactNode;
@@ -20,8 +21,14 @@ const RequireAuth = ({ children }: RequireAuthProps) => {
     );
   }
 
+  // In demo mode, we'll allow access even without authentication
   if (!user) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    // If this is an actual deployed app, we'd redirect to login
+    // For demo purposes, we'll just warn and allow access
+    toast.info("Demo Mode Active", {
+      description: "Normally this would require login, but demo mode is enabled"
+    });
+    return <>{children}</>;
   }
   
   return <>{children}</>;
