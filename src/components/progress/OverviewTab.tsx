@@ -7,7 +7,8 @@ import {
   LastSessionCard, 
   RecommendationsCard,
   MeditationStreakCard,
-  MeditationProgressChart
+  MeditationProgressChart,
+  MeditationInsightCard
 } from './overview';
 
 interface OverviewTabProps {
@@ -49,6 +50,14 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ meditationStats, sessions }) 
     { day: "Sun", minutes: 15, sessions: 1 }
   ];
   
+  // Calculate current time of day for recommendations
+  const getCurrentTimeOfDay = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'morning';
+    if (hour < 18) return 'afternoon';
+    return 'evening';
+  };
+  
   return (
     <div className="mt-0 space-y-6">
       <StatsCards meditationStats={meditationStats} />
@@ -69,6 +78,16 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ meditationStats, sessions }) 
       
       <MeditationProgressChart dailyData={dailyData} />
       
+      <div className="grid md:grid-cols-2 gap-6">
+        <MeditationInsightCard />
+        
+        <RecommendationsCard 
+          timeOfDay={getCurrentTimeOfDay()}
+          recentSessions={meditationStats.totalSessions}
+          preferredDuration={15}
+        />
+      </div>
+      
       <div className="grid md:grid-cols-3 gap-6">
         <div className="md:col-span-2">
           <div>
@@ -82,8 +101,6 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ meditationStats, sessions }) 
             lastSession={meditationStats.lastSession} 
             lastSessionDate={meditationStats.lastSessionDate} 
           />
-          
-          <RecommendationsCard />
         </div>
       </div>
     </div>

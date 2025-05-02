@@ -24,12 +24,23 @@ export const useMeditationFeedback = () => {
     localStorage.setItem('meditationFeedbacks', JSON.stringify(sessionFeedbacks));
   }, [sessionFeedbacks]);
   
-  const addFeedback = (sessionId: string, rating: number, comment: string = '') => {
+  const addFeedback = (
+    sessionId: string, 
+    rating: number, 
+    comment: string = '',
+    additionalData?: {
+      mood?: string;
+      focusImprovement?: number;
+      stressReduction?: number;
+      wouldRecommend?: boolean;
+    }
+  ) => {
     const newFeedback: MeditationSessionFeedback = {
       sessionId,
       rating,
       comment,
-      submittedAt: new Date().toISOString()
+      submittedAt: new Date().toISOString(),
+      ...additionalData
     };
     
     setSessionFeedbacks(prev => [...prev, newFeedback]);
@@ -56,12 +67,47 @@ export const useMeditationFeedback = () => {
     const sum = sessionRatings.reduce((acc, rating) => acc + rating, 0);
     return sum / sessionRatings.length;
   };
+
+  const getMostPositiveFeedback = () => {
+    return [...sessionFeedbacks]
+      .sort((a, b) => b.rating - a.rating)
+      .slice(0, 3);
+  };
+  
+  const getFeedbackInsights = () => {
+    if (sessionFeedbacks.length === 0) return null;
+    
+    const totalSessions = sessionFeedbacks.length;
+    const averageRating = sessionFeedbacks.reduce((sum, feedback) => sum + feedback.rating, 0) / totalSessions;
+    
+    // Calculate focus improvement if available
+    const focusData = sessionFeedbacks.filter(f => f.focusImprovement !== undefined);
+    const avgFocusImprovement = focusData.length > 0 
+      ? focusData.reduce((sum, f) => sum + (f.focusImprovement || 0), 0) / focusData.length
+      : undefined;
+    
+    // Calculate stress reduction if available
+    const stressData = sessionFeedbacks.filter(f => f.stressReduction !== undefined);
+    const avgStressReduction = stressData.length > 0
+      ? stressData.reduce((sum, f) => sum + (f.stressReduction || 0), 0) / stressData.length
+      : undefined;
+      
+    return {
+      totalFeedbacks: totalSessions,
+      averageRating,
+      avgFocusImprovement,
+      avgStressReduction,
+      recommendRate: sessionFeedbacks.filter(f => f.wouldRecommend).length / totalSessions
+    };
+  };
   
   return {
     sessionFeedbacks,
     addFeedback,
     getSessionFeedback,
-    getAverageRating
+    getAverageRating,
+    getMostPositiveFeedback,
+    getFeedbackInsights
   };
 };
 

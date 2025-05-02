@@ -1,7 +1,7 @@
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { format, parseISO, subDays, isValid } from 'date-fns';
+import { format, parseISO, subDays, isValid, isSameDay } from 'date-fns';
 import { Activity } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
@@ -17,10 +17,14 @@ export interface ActivityCalendarProps {
 
 const ActivityCalendar: React.FC<ActivityCalendarProps> = ({ data }) => {
   // Generate last 30 days if no data provided
-  const calendarData = data.length > 0 ? data : generateMockData();
+  const calendarData = useMemo(() => {
+    return data.length > 0 ? data : generateMockData();
+  }, [data]);
   
-  // Group by week for display
-  const weeks = groupByWeek(calendarData);
+  // Group by week for display - using useMemo to optimize performance
+  const weeks = useMemo(() => {
+    return groupByWeek(calendarData);
+  }, [calendarData]);
   
   return (
     <Card>
@@ -99,10 +103,22 @@ function ensureValidDate(dateInput: string | Date): Date {
   }
   
   if (typeof dateInput === 'string') {
-    // Try to parse the string date
-    const parsedDate = parseISO(dateInput);
-    if (isValid(parsedDate)) {
-      return parsedDate;
+    // Try different formats - first attempt ISO format
+    try {
+      const parsedDate = parseISO(dateInput);
+      if (isValid(parsedDate)) {
+        return parsedDate;
+      }
+    } catch (e) {
+      // Continue to the fallback options
+    }
+    
+    // Try to parse as a simple date (YYYY-MM-DD)
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateInput)) {
+      const parsedDate = new Date(dateInput);
+      if (isValid(parsedDate)) {
+        return parsedDate;
+      }
     }
   }
   
@@ -133,35 +149,51 @@ function generateMockData(): ActivityEntry[] {
 
 // Helper function to group entries by week
 function groupByWeek(entries: ActivityEntry[]): ActivityEntry[][] {
-  const weeks: ActivityEntry[][] = [];
+  const result: ActivityEntry[][] = [];
   let currentWeek: ActivityEntry[] = [];
   
-  entries.forEach((entry, index) => {
-    // Convert entry date to Date object for consistent processing
+  // First, sort entries by date
+  const sortedEntries = [...entries].sort((a, b) => {
+    const dateA = ensureValidDate(a.date);
+    const dateB = ensureValidDate(b.date);
+    return dateA.getTime() - dateB.getTime();
+  });
+  
+  // Group by week
+  sortedEntries.forEach((entry) => {
     const entryDate = ensureValidDate(entry.date);
     
-    if (!isValid(entryDate)) {
-      console.warn(`Invalid date encountered in ActivityCalendar: ${entry.date}`);
-      return; // Skip this entry if date is invalid
-    }
-    
-    const dayOfWeek = entryDate.getDay();
-    
-    // If it's the first day (Sunday) and not the first entry, start a new week
-    if (dayOfWeek === 0 && index > 0) {
-      weeks.push([...currentWeek]);
-      currentWeek = [];
-    }
-    
-    currentWeek.push(entry);
-    
-    // If it's the last entry, push the current week
-    if (index === entries.length - 1) {
-      weeks.push([...currentWeek]);
+    // If this is the first entry or it belongs to a new week
+    if (currentWeek.length === 0 || shouldStartNewWeek(currentWeek, entryDate)) {
+      // If we have entries in the current week, add them to result
+      if (currentWeek.length > 0) {
+        result.push([...currentWeek]);
+      }
+      // Start a new week
+      currentWeek = [entry];
+    } else {
+      // Add to the current week
+      currentWeek.push(entry);
     }
   });
   
-  return weeks;
+  // Add the last week if it has entries
+  if (currentWeek.length > 0) {
+    result.push([...currentWeek]);
+  }
+  
+  return result;
+}
+
+// Helper function to determine if a new date should start a new week
+function shouldStartNewWeek(currentWeek: ActivityEntry[], newDate: Date): boolean {
+  const lastEntryDate = ensureValidDate(currentWeek[currentWeek.length - 1].date);
+  
+  // If the day of the week is less than the previous entry's day of the week,
+  // it means we've wrapped around to a new week
+  return newDate.getDay() < lastEntryDate.getDay() || 
+    // Or if this date is more than 1 day after the last entry
+    newDate.getTime() - lastEntryDate.getTime() > 24 * 60 * 60 * 1000;
 }
 
 // Helper function to get color based on activity value

@@ -5,3 +5,4 @@ export { default as LastSessionCard } from './LastSessionCard';
 export { default as RecommendationsCard } from './RecommendationsCard';
 export { default as MeditationStreakCard } from './MeditationStreakCard';
 export { default as MeditationProgressChart } from './MeditationProgressChart';
+export { default as MeditationInsightCard } from './MeditationInsightCard';

@@ -42,4 +42,20 @@ export interface MeditationSessionFeedback {
   comment: string;
   sessionId: string;
   submittedAt: string;
+  mood?: string;
+  focusImprovement?: number;
+  stressReduction?: number;
+  wouldRecommend?: boolean;
 }
+
+export interface MeditationRecommendation {
+  id: string;
+  title: string;
+  description: string;
+  reason: string;
+  confidence: number; // 0-100
+  sessionId: string;
+  matchScore?: number; // How well it matches user preferences
+  tags?: string[];
+}
+
