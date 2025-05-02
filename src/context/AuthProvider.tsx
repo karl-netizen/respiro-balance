@@ -20,6 +20,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     user,
     session,
     loading: loading || initializing,
+    isLoading: loading || initializing, // Added to fix errors
     ...authMethods
   };
 

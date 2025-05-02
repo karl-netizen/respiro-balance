@@ -7,6 +7,7 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
+  isLoading: boolean; // Added to fix errors
   signIn?: (email: string, password: string) => Promise<any>;
   signUp?: (email: string, password: string, firstName: string) => Promise<any>;
   signOut?: () => Promise<void>;
@@ -21,7 +22,8 @@ interface AuthContextType {
 export const AuthContext = createContext<AuthContextType>({
   user: null,
   session: null,
-  loading: true
+  loading: true,
+  isLoading: true
 });
 
 // Export the useAuth hook

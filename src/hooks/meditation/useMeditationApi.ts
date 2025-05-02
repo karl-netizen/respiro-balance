@@ -173,8 +173,9 @@ export function useMeditationApi(userId: string | undefined) {
         category: 'mindfulness',
         difficulty: 'beginner',
         favorite: true,
-        imageUrl: '/images/meditation/mindfulness.jpg',
+        image_url: '/images/meditation/mindfulness.jpg',
         instructor: 'Sara Johnson',
+        level: 'beginner',
         description: 'A gentle introduction to mindfulness meditation',
         tags: ['mindfulness', 'beginner', 'stress']
       },
@@ -190,6 +191,8 @@ export function useMeditationApi(userId: string | undefined) {
         category: 'focus',
         difficulty: 'intermediate',
         favorite: false,
+        instructor: 'Self-guided',
+        level: 'intermediate',
         description: 'Simple focus timer with bells',
         tags: ['focus', 'silence']
       }
