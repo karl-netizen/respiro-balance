@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -27,8 +26,8 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
   return (
     <div className="flex-1 overflow-auto py-2 space-y-2">
       <Link
-        to="/"
-        className={cn("flex items-center gap-2 text-white hover:text-respiro-light py-2 button-transition", isActive('/') && "text-respiro-light font-medium")}
+        to="/landing"
+        className={cn("flex items-center gap-2 text-white hover:text-respiro-light py-2 button-transition", isActive('/landing') && "text-respiro-light font-medium")}
         onClick={toggleMenu}
       >
         <Home className="h-4 w-4" />
