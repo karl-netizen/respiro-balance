@@ -53,9 +53,10 @@ const App: React.FC = () => {
     >
       <ViewportToggle />
       <Routes>
-        {/* Public routes */}
-        <Route path="/" element={<LandingPage />} />
+        {/* Public routes - Use Home component instead of LandingPage for root path */}
+        <Route path="/" element={<Home />} />
         <Route path="/home" element={<Navigate to="/" replace />} />
+        <Route path="/landing" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/reset-password" element={<ForgotPasswordPage />} />

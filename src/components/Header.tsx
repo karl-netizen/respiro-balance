@@ -21,15 +21,17 @@ const Header = () => {
   };
 
   const handleLogoClick = () => {
+    // Navigate to root and ensure page scrolls to top
     navigate("/");
-    // Force scroll to top without preventing default behavior
-    window.scrollTo(0, 0);
+    setTimeout(() => {
+      window.scrollTo({top: 0, behavior: 'smooth'});
+    }, 50);
   };
 
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 w-full transition-colors duration-300",
+        "sticky top-0 z-40 w-full transition-colors duration-300",
         isTransparent
           ? "bg-transparent"
           : "bg-background border-b shadow-sm"
@@ -37,8 +39,7 @@ const Header = () => {
     >
       <div className="container flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
         <div className="flex items-center">
-          <Link
-            to="/"
+          <button
             className="flex items-center text-xl font-bold tracking-tight hover:text-primary transition-colors"
             aria-label="Home"
             onClick={handleLogoClick}
@@ -48,7 +49,7 @@ const Header = () => {
               size={24} 
             />
             <span className="text-respiro-dark">Respiro Balance</span>
-          </Link>
+          </button>
         </div>
 
         <DesktopNav />
