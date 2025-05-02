@@ -109,13 +109,13 @@ export const mapAudioFilesToSessions = (
     if (audioFileName) {
       return {
         ...session,
-        audioUrl: audioFileName
+        audio_url: audioFileName
       };
     }
     
     return {
       ...session,
-      // Note that audioUrl is optional in the MeditationSession type
+      // Note that audio_url is optional in the MeditationSession type
     };
   });
 };
@@ -125,15 +125,15 @@ export const debugAllSessionAudio = (sessions: MeditationSession[]): void => {
   console.group('Meditation Audio Mapping Debug');
   console.log(`Total sessions: ${sessions.length}`);
   
-  const withAudio = sessions.filter(s => s.audioUrl);
-  const withoutAudio = sessions.filter(s => !s.audioUrl);
+  const withAudio = sessions.filter(s => s.audio_url);
+  const withoutAudio = sessions.filter(s => !s.audio_url);
   
   console.log(`Sessions with audio: ${withAudio.length}`);
   console.log(`Sessions without audio: ${withoutAudio.length}`);
   
   console.log('Sessions with audio:');
   withAudio.forEach(session => {
-    console.log(`"${session.title}" -> ${session.audioUrl}`);
+    console.log(`"${session.title}" -> ${session.audio_url}`);
   });
   
   console.log('Sessions without audio:');
@@ -146,8 +146,8 @@ export const debugAllSessionAudio = (sessions: MeditationSession[]): void => {
 
 // Utility to analyze session audio mapping
 export const analyzeSessionAudio = (sessions: MeditationSession[]) => {
-  const withAudio = sessions.filter(s => s.audioUrl);
-  const withoutAudio = sessions.filter(s => !s.audioUrl);
+  const withAudio = sessions.filter(s => s.audio_url);
+  const withoutAudio = sessions.filter(s => !s.audio_url);
   
   const summary = `${withAudio.length}/${sessions.length} sessions have audio (${Math.round((withAudio.length / sessions.length) * 100)}%)`;
   

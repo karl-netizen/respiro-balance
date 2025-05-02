@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,9 +7,11 @@ import { useNavigate } from 'react-router-dom';
 
 export interface RecommendationCardProps {
   currentMood?: string | null;
+  timeOfDay?: 'morning' | 'afternoon' | 'evening';
+  recentSessions?: number;
 }
 
-const RecommendationCard: React.FC<RecommendationCardProps> = ({ currentMood }) => {
+const RecommendationCard: React.FC<RecommendationCardProps> = ({ currentMood, timeOfDay, recentSessions }) => {
   const navigate = useNavigate();
   
   // Determine recommendations based on mood
