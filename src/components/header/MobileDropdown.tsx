@@ -60,7 +60,7 @@ const MobileDropdown = ({ title, items, toggleMainMenu, icon, className }: Mobil
                 <Link
                   key={item.label}
                   to={item.href}
-                  className="block text-white hover:text-respiro-light py-1 text-sm button-transition flex items-center gap-2"
+                  className="block text-white hover:bg-gray-700 py-1 px-2 text-sm button-transition flex items-center gap-2 rounded-md"
                   onClick={() => handleItemClick(item.href, item.onClick)}
                 >
                   {item.label}
@@ -73,7 +73,7 @@ const MobileDropdown = ({ title, items, toggleMainMenu, icon, className }: Mobil
               <a
                 key={item.label}
                 href={item.href}
-                className="block text-white hover:text-respiro-light py-1 text-sm button-transition flex items-center gap-2"
+                className="block text-white hover:bg-gray-700 py-1 px-2 text-sm button-transition flex items-center gap-2 rounded-md"
                 onClick={() => handleItemClick(item.href, item.onClick)}
                 target="_blank"
                 rel="noopener noreferrer"

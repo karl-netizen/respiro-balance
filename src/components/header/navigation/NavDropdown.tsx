@@ -46,7 +46,7 @@ const NavDropdown = ({ title, items, isActive, onItemClick }: NavDropdownProps) 
             <li key={item.path}>
               <Link 
                 to={item.path} 
-                className="block p-2 hover:bg-accent rounded-md"
+                className="block p-2 hover:bg-accent hover:text-accent-foreground text-foreground rounded-md transition-colors focus:bg-accent focus:text-accent-foreground focus:outline-none"
                 onClick={(e) => handleItemClick(item.path, e)}
               >
                 {item.label}

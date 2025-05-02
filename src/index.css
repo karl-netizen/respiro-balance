@@ -107,7 +107,7 @@
   @apply z-50 bg-white shadow-lg border !important;
 }
 
-/* Ensure dropdown menus are visible on top of page content */
+/* Enhanced dropdown styling for better visibility */
 [data-radix-popper-content-wrapper] {
   z-index: 999 !important;
 }
@@ -132,4 +132,25 @@
 .NavigationMenuContent,
 .NavigationMenuViewport {
   @apply bg-white !important;
+}
+
+/* Enhanced dropdown menu items with better hover states */
+.navigation-menu-content a,
+.dropdown-content a {
+  @apply text-foreground hover:bg-accent hover:text-accent-foreground rounded-md transition-colors !important;
+}
+
+/* Active/selected state for dropdown items */
+.dropdown-active-item {
+  @apply bg-accent text-accent-foreground font-medium !important;
+}
+
+/* Mobile dropdown item enhancement */
+.mobile-dropdown .dropdown-item {
+  @apply block w-full text-left px-3 py-2 text-white hover:bg-gray-700 rounded-md transition-colors !important;
+}
+
+/* Add contrast background to mobile dropdowns */
+.mobile-dropdown-content {
+  @apply bg-gray-800 border border-gray-700 rounded-md shadow-lg !important;
 }
