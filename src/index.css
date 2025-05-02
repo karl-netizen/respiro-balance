@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -135,4 +136,34 @@
 /* Dropdown menu item visibility fix */
 .mobile-menu-dropdown-item {
   @apply text-white hover:text-respiro-light;
+}
+
+/* Touch-friendly improvements */
+.mobile-view button,
+.mobile-view a,
+.mobile-view [role="button"] {
+  @apply min-h-[40px] min-w-[40px] flex items-center;
+}
+
+/* Improve tap target sizes */
+.mobile-view .dropdown-menu-item,
+.mobile-view .navigation-menu-item {
+  @apply py-2;
+}
+
+/* Optimize for touch scrolling */
+.mobile-view .overflow-auto,
+.mobile-view .overflow-y-auto {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Fix for mobile menu visibility */
+.mobile-menu-dropdown-item,
+.sheet-content a,
+.sheet-content button {
+  color: white !important;
+}
+
+.mobile-dropdown-item {
+  @apply bg-gray-800 text-white rounded-md py-1 px-2;
 }

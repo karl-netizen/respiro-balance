@@ -39,7 +39,7 @@ const MobileDropdown = ({ title, items, toggleMainMenu, icon, className }: Mobil
       </button>
       
       {isOpen && (
-        <div className="pl-4 space-y-2 mt-1 mb-2">
+        <div className="pl-4 space-y-2 mt-1 mb-2 bg-gray-800 rounded-md py-2 px-2">
           {items.map((item) => {
             // Check if the href is a local route or external link
             const isExternalLink = item.href.startsWith('http');
@@ -65,6 +65,8 @@ const MobileDropdown = ({ title, items, toggleMainMenu, icon, className }: Mobil
                 href={item.href}
                 className="block text-white hover:text-respiro-light py-1 text-sm button-transition flex items-center gap-2"
                 onClick={() => handleItemClick(item.onClick)}
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 {item.label}
               </a>

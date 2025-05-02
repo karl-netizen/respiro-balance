@@ -22,7 +22,7 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
   }
 
   return (
-    <div className="flex-1 overflow-auto py-4 space-y-2">
+    <div className="flex-1 overflow-auto py-2 space-y-2">
       <Link
         to="/"
         className={cn("flex items-center gap-2 text-white hover:text-respiro-light py-2 button-transition", isActive('/') && "text-respiro-light font-medium")}

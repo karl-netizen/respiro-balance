@@ -22,7 +22,7 @@ const MobileMenuUserActions = ({ toggleMenu }: MobileMenuUserActionsProps) => {
   };
 
   return (
-    <div className="py-4 space-y-2">
+    <div className="py-2 space-y-2">
       <Link
         to="/account"
         className="flex items-center gap-2 text-white hover:text-respiro-light py-2 button-transition"
@@ -54,7 +54,7 @@ const MobileMenuUserActions = ({ toggleMenu }: MobileMenuUserActionsProps) => {
       
       <Button
         variant="ghost"
-        className="w-full justify-start p-2 text-white hover:bg-red-600/20 hover:text-red-500"
+        className="w-full justify-start p-2 text-white hover:bg-red-600/20 hover:text-red-400"
         onClick={handleSignOut}
       >
         <LogOut className="h-4 w-4 mr-2" />
