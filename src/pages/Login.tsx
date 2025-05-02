@@ -33,13 +33,15 @@ const Login = () => {
 
   const onSubmit = async (data: FormData) => {
     setError(null);
+    setLoading(true);
     
     try {
       await signInWithEmail(data.email, data.password, navigate, setLoading);
-      // No need to navigate here as it's handled in signInWithEmail
+      // Navigation is handled inside signInWithEmail
     } catch (err: any) {
       setError(err.message || "Invalid email or password");
       console.error("Login error:", err);
+      setLoading(false);
     }
   };
 
@@ -52,7 +54,7 @@ const Login = () => {
     });
     
     // Direct navigation - hardcoded approach
-    window.location.href = '/dashboard';
+    navigate('/dashboard');
   };
 
   return (

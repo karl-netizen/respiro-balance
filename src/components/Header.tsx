@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Circle } from "lucide-react"; 
@@ -20,12 +20,18 @@ const Header = () => {
     setMobileMenuOpen(prev => !prev);
   };
 
-  const handleLogoClick = () => {
-    // Navigate to root and ensure page scrolls to top
-    navigate("/");
-    setTimeout(() => {
+  const handleLogoClick = (e: React.MouseEvent) => {
+    // Prevent default only if needed
+    if (location.pathname === "/") {
+      // Already on homepage, just scroll to top
       window.scrollTo({top: 0, behavior: 'smooth'});
-    }, 50);
+    } else {
+      // Navigate to homepage then scroll to top after navigation completes
+      navigate("/");
+      setTimeout(() => {
+        window.scrollTo({top: 0, behavior: 'smooth'});
+      }, 100);
+    }
   };
 
   return (
