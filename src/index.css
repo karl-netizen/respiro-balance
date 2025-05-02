@@ -123,7 +123,7 @@
   z-index: 999 !important;
 }
 
-/* Add solid background to dropdown content */
+/* Solid background for dropdown content */
 .dropdown-content {
   @apply bg-white rounded-md shadow-lg border border-gray-200 !important;
 }

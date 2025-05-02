@@ -25,6 +25,7 @@ import Settings from '@/pages/Settings';
 import TermsPage from '@/pages/TermsPage';
 import PrivacyPage from '@/pages/PrivacyPage';
 import SubscriptionPage from '@/pages/SubscriptionPage';
+import NotFound from '@/pages/NotFound'; // Import the NotFound page
 
 const App: React.FC = () => {
   const [isMobileView, setIsMobileView] = useState(false);
@@ -91,8 +92,8 @@ const App: React.FC = () => {
           </RequireAuth>
         } />
         
-        {/* Redirect any unknown routes to landing page */}
-        <Route path="*" element={<Navigate to="/" />} />
+        {/* 404 route - catch all unknown routes */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <Toaster />
     </div>
