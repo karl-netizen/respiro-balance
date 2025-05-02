@@ -7,7 +7,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAuth } from "@/hooks/useAuth";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
 
 const formSchema = z.object({
@@ -34,7 +35,7 @@ const LoginPage = () => {
     setError(null);
     try {
       await signIn(data.email, data.password);
-      toast("Login successful", {
+      toast.success("Login successful", {
         description: "Welcome back to Respiro Balance!",
       });
       navigate('/dashboard');
@@ -44,13 +45,31 @@ const LoginPage = () => {
     }
   };
 
+  const bypassAuth = () => {
+    console.log("DIRECT BYPASS: Sending user to dashboard");
+    
+    // Notify user
+    toast.success("Test Mode Active", {
+      description: "Bypassed authentication for testing"
+    });
+    
+    // Direct navigation - hardcoded approach
+    window.location.href = '/dashboard';
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-white to-secondary/10 px-4 py-12">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
-          <h1 className="text-3xl font-bold tracking-tight text-primary">Welcome to Respiro Balance</h1>
-          <p className="mt-2 text-lg text-muted-foreground">Sign in to your account</p>
+          <h1 className="text-3xl font-bold tracking-tight text-primary">Welcome back</h1>
+          <p className="mt-2 text-lg text-muted-foreground">Sign in to your Respiro Balance account</p>
         </div>
+
+        <Alert className="bg-amber-50 border-amber-200">
+          <AlertDescription className="text-amber-800">
+            Testing auth? Click "Test Access" to bypass the login.
+          </AlertDescription>
+        </Alert>
 
         <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-6">
           {error && (
@@ -75,15 +94,7 @@ const LoginPage = () => {
             </div>
 
             <div>
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password">Password</Label>
-                <Link
-                  to="/reset-password"
-                  className="text-sm font-medium text-primary hover:text-primary/90"
-                >
-                  Forgot password?
-                </Link>
-              </div>
+              <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
                 type="password"
@@ -97,19 +108,35 @@ const LoginPage = () => {
             </div>
           </div>
 
-          <Button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-primary text-white hover:bg-primary/90"
-          >
-            {loading ? "Signing in..." : "Sign in"}
-          </Button>
+          <div className="flex items-center justify-end">
+            <Link to="/reset-password" className="text-sm text-primary hover:underline">
+              Forgot password?
+            </Link>
+          </div>
+
+          <div className="space-y-4">
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-primary text-white hover:bg-primary/90"
+            >
+              {loading ? "Signing in..." : "Sign in"}
+            </Button>
+            
+            <Button
+              type="button"
+              onClick={bypassAuth}
+              className="w-full bg-amber-500 hover:bg-amber-600 text-white"
+            >
+              Test Access
+            </Button>
+          </div>
 
           <div className="text-center text-sm">
             <p>
               Don't have an account?{" "}
               <Link to="/signup" className="font-medium text-primary hover:text-primary/90">
-                Sign up
+                Create an account
               </Link>
             </p>
           </div>

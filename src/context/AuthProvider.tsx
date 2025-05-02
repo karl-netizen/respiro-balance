@@ -1,17 +1,32 @@
 
-import { ReactNode } from 'react';
-import { AuthProvider as BaseAuthProvider } from '@/providers/AuthProvider';
+import { ReactNode, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuthInitialization } from '@/hooks/useAuthInitialization';
+import { useAuthMethods } from '@/hooks/useAuthMethods';
+import { AuthContext } from './AuthContext';
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  // We don't need useNavigate here anymore as we'll pass it from components inside the Router
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const { user, session, loading: initializing } = useAuthInitialization();
+  const authMethods = useAuthMethods(navigate, setLoading);
+  
+  // Create the combined auth context value
+  const value = {
+    user,
+    session,
+    loading: loading || initializing,
+    ...authMethods
+  };
+
   return (
-    <BaseAuthProvider>
+    <AuthContext.Provider value={value}>
       {children}
-    </BaseAuthProvider>
+    </AuthContext.Provider>
   );
 }
 

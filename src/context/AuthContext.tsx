@@ -1,11 +1,12 @@
 
 import { createContext, useContext } from 'react';
+import { User, Session } from '@supabase/supabase-js';
 
 // Define comprehensive auth context type with all required methods and properties
 interface AuthContextType {
-  user: any;
+  user: User | null;
+  session: Session | null;
   loading: boolean;
-  isLoading?: boolean; // Alias for loading (used in some components)
   signIn?: (email: string, password: string) => Promise<any>;
   signUp?: (email: string, password: string, firstName: string) => Promise<any>;
   signOut?: () => Promise<void>;
@@ -19,6 +20,7 @@ interface AuthContextType {
 // Create the auth context with default values
 export const AuthContext = createContext<AuthContextType>({
   user: null,
+  session: null,
   loading: true
 });
 

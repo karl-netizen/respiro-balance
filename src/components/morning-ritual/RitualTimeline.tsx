@@ -1,17 +1,13 @@
 
-import React, { useEffect } from "react";
+import React from "react";
 import EmptyRitualState from "./EmptyRitualState";
 import RitualTimelineHeader from "./RitualTimelineHeader";
 import RitualFilter from "./RitualFilter";
 import RitualFilterEmptyState from "./RitualFilterEmptyState";
 import RitualTimelineList from "./RitualTimelineList";
 import { useRitualTimeline } from "./hooks/useRitualTimeline";
-import { useAuth } from "@/hooks/useAuth";
-import { supabase, isSupabaseConfigured } from "@/lib/supabase";
-import { toast } from "sonner";
 
 const RitualTimeline = () => {
-  const { user } = useAuth();
   const {
     rituals,
     sortedRituals,
@@ -24,42 +20,6 @@ const RitualTimeline = () => {
     resetFilters,
     isLoading
   } = useRitualTimeline();
-  
-  // Save ritual data to Supabase when changes occur
-  useEffect(() => {
-    const saveRitualsToSupabase = async () => {
-      if (!user || !isSupabaseConfigured() || rituals.length === 0) return;
-      
-      try {
-        // Get the current user preferences
-        const { data: prefsData } = await supabase
-          .from('user_preferences')
-          .select('id, preferences_data')
-          .eq('user_id', user.id)
-          .single();
-          
-        if (prefsData) {
-          // Update preferences with latest rituals
-          const updatedData = {
-            ...prefsData.preferences_data,
-            morningRituals: rituals
-          };
-          
-          await supabase
-            .from('user_preferences')
-            .update({ 
-              preferences_data: updatedData,
-              updated_at: new Date().toISOString()
-            })
-            .eq('id', prefsData.id);
-        }
-      } catch (error) {
-        console.error("Failed to save rituals to Supabase:", error);
-      }
-    };
-    
-    saveRitualsToSupabase();
-  }, [rituals, user]);
   
   if (isLoading) {
     return (

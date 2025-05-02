@@ -1,4 +1,3 @@
 
-// Re-export the context and provider for easier imports
+// We're replacing this file with a simple export from our AuthContext
 export { useAuth } from '@/context/AuthContext';
-export { AuthProvider } from '@/providers/AuthProvider';
