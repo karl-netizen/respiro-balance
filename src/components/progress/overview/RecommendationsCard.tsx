@@ -1,4 +1,3 @@
-
 import React, { useMemo } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Sparkles, Activity, Brain, Heart, Flame, Clock, Zap, BarChart3 } from "lucide-react";

@@ -2,7 +2,7 @@
 // This is a stub implementation for integration with audio sources
 // It would typically connect to a backend service for serving meditation audio files
 
-import { MeditationSession } from "@/components/meditation/MeditationSessionCard";
+import { MeditationSession } from "@/types/meditation";
 
 // Audio integration helpers
 const AUDIO_BASE_URL = 'https://storage.googleapis.com/meditation-audio/';

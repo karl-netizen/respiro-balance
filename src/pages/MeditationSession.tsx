@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
@@ -36,7 +35,9 @@ const useEnhancedMeditationSession = (sessionId: string) => {
           difficulty: "beginner",
           level: "beginner",
           favorite: false,
-          premium: false
+          premium: false,
+          tags: [], // Add required tags property
+          instructor: "Mindful Instructor" // Add required instructor property
         };
         
         setSession(mockSession);
