@@ -1,6 +1,6 @@
 
 import React, { useEffect } from 'react';
-import { MeditationSession } from './MeditationSessionCard';
+import { MeditationSession } from '@/types/meditation';
 import { useUserPreferences } from '@/context';
 import BiometricDisplay from './BiometricDisplay';
 import { calculateBiometricChange } from '@/components/morning-ritual/utils';

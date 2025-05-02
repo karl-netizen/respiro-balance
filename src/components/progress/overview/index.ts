@@ -6,3 +6,4 @@ export { default as RecommendationsCard } from './RecommendationsCard';
 export { default as MeditationStreakCard } from './MeditationStreakCard';
 export { default as MeditationProgressChart } from './MeditationProgressChart';
 export { default as MeditationInsightCard } from './MeditationInsightCard';
+export { default as MeditationBiometricCard } from './MeditationBiometricCard';

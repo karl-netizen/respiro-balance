@@ -65,6 +65,7 @@ export function useMeditationSessions() {
     }
 
     const newSession: Omit<MeditationSession, "id"> = {
+      title: `${params.sessionType.charAt(0).toUpperCase() + params.sessionType.slice(1)} Session`,
       user_id: user.id,
       session_type: params.sessionType,
       duration: params.duration,

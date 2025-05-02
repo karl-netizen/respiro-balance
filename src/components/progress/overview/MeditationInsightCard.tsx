@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Chart } from 'lucide-react';
+import { ChartLine } from 'lucide-react';
 import { useMeditationFeedback } from '@/hooks/useMeditationFeedback';
 import { Progress } from '@/components/ui/progress';
 
@@ -42,7 +42,7 @@ const MeditationInsightCard: React.FC<MeditationInsightCardProps> = ({
             <CardTitle>{title}</CardTitle>
             <CardDescription>{description}</CardDescription>
           </div>
-          <Chart className="h-4 w-4 text-muted-foreground" />
+          <ChartLine className="h-4 w-4 text-muted-foreground" />
         </div>
       </CardHeader>
       <CardContent>
