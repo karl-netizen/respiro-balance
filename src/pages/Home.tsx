@@ -18,7 +18,7 @@ const Home = () => {
   };
 
   return (
-    <div className="p-6 flex flex-col items-center justify-center min-h-[80vh]">
+    <div className="flex flex-col items-center justify-center min-h-[80vh] px-4 py-12">
       <h1 className="text-4xl font-bold text-center mb-6">Welcome to Respiro Balance</h1>
       
       <p className="text-xl text-center text-muted-foreground mb-8 max-w-lg">

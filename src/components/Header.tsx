@@ -23,6 +23,10 @@ const Header = () => {
   const handleLogoClick = (e) => {
     e.preventDefault();
     navigate("/");
+    // Force reload if already on home page to ensure components reinitialize
+    if (location.pathname === "/") {
+      window.scrollTo(0, 0);
+    }
   };
 
   return (
