@@ -4,7 +4,7 @@ import DesktopNavLinks from "./DesktopNavLinks";
 
 const DesktopNav = () => {
   return (
-    <div className="z-50">
+    <div className="hidden lg:flex z-50">
       <DesktopNavLinks />
     </div>
   );

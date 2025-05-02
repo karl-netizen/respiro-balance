@@ -17,7 +17,7 @@ const MobileMenu = ({ isOpen, toggleMenu }: MobileMenuProps) => {
   
   return (
     <Sheet open={isOpen} onOpenChange={toggleMenu}>
-      <SheetContent side="right" className="sm:max-w-sm bg-gray-900 border-gray-800 text-white p-0">
+      <SheetContent side="right" className="sm:max-w-sm bg-gray-900 border-gray-800 text-white p-0 z-50">
         <div className="h-full flex flex-col p-4">
           <MobileMenuHeader toggleMenu={toggleMenu} />
 

@@ -39,7 +39,7 @@ const MobileDropdown = ({ title, items, toggleMainMenu, icon, className }: Mobil
       </button>
       
       {isOpen && (
-        <div className="pl-4 space-y-2 mt-1 mb-2 bg-gray-800 rounded-md py-2 px-2">
+        <div className="pl-4 space-y-2 mt-1 mb-2 bg-gray-800 rounded-md py-2 px-2 z-50">
           {items.map((item) => {
             // Check if the href is a local route or external link
             const isExternalLink = item.href.startsWith('http');

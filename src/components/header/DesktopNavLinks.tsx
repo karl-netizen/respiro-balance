@@ -11,7 +11,6 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-import { ChevronDown } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const DesktopNavLinks = () => {
@@ -46,7 +45,7 @@ const DesktopNavLinks = () => {
   };
 
   return (
-    <NavigationMenu className="hidden lg:flex">
+    <NavigationMenu>
       <NavigationMenuList>
         {/* Home link */}
         <NavigationMenuItem>
@@ -73,8 +72,8 @@ const DesktopNavLinks = () => {
           >
             Meditate
           </NavigationMenuTrigger>
-          <NavigationMenuContent className="bg-background border shadow-md">
-            <ul className="grid gap-2 p-4 w-48">
+          <NavigationMenuContent className="bg-background border shadow-md z-50">
+            <ul className="grid gap-2 p-4 w-48 bg-background">
               <li>
                 <Link 
                   to="/meditate" 
@@ -134,8 +133,8 @@ const DesktopNavLinks = () => {
           >
             Breathing
           </NavigationMenuTrigger>
-          <NavigationMenuContent className="bg-background border shadow-md">
-            <ul className="grid gap-2 p-4 w-48">
+          <NavigationMenuContent className="bg-background border shadow-md z-50">
+            <ul className="grid gap-2 p-4 w-48 bg-background">
               <li>
                 <Link 
                   to="/breathe" 
