@@ -23,10 +23,10 @@ const DesktopNavLinks = () => {
       // Navigate to the new page
       navigate(path);
       
-      // After navigation completes, scroll to top
+      // Use a slightly longer timeout to ensure navigation completes before scrolling
       setTimeout(() => {
         window.scrollTo({top: 0, behavior: 'smooth'});
-      }, 100);
+      }, 200);
     }
   };
 

@@ -1,3 +1,4 @@
+
 import { supabase, demoAuth, handleSupabaseError } from '@/lib/supabase';
 import { toast } from 'sonner';
 import { NavigateFunction } from 'react-router-dom';
@@ -17,12 +18,13 @@ export const signInWithEmail = async (
       await new Promise(resolve => setTimeout(resolve, 800)); // Simulate network delay
       console.log("Demo mode: Sign in successful");
       
+      // Make sure we release the loading state before navigation
+      setLoading(false);
+      
       toast.success("Demo Mode - Welcome back!", {
         description: "Using demo account (no actual authentication occurred)"
       });
       
-      // Make sure we release the loading state before navigation
-      setLoading(false);
       navigate('/dashboard');
       return;
     }
