@@ -6,6 +6,9 @@ import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
+// Using the same demo mode flag as in RequireAuth
+const IS_DEMO_MODE = true;
+
 const Home = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -15,13 +18,15 @@ const Home = () => {
     
     if (user) {
       navigate('/dashboard');
-    } else {
+    } else if (IS_DEMO_MODE) {
       // For demo purposes, show a toast and navigate directly to dashboard
-      // This ensures users can always access the dashboard in demo mode
       toast.info("Demo Mode", {
         description: "Bypassing login for demonstration"
       });
       navigate('/dashboard');
+    } else {
+      // In production, would redirect to login
+      navigate('/login');
     }
   };
 
