@@ -29,6 +29,7 @@ const Footer = () => {
               <li><Link to="/#balance" className="hover:text-primary transition-colors">Work-Life Balance</Link></li>
               <li><Link to="/#features" className="hover:text-primary transition-colors">Meditation</Link></li>
               <li><Link to="/breathe" className="hover:text-primary transition-colors">Breathing Exercises</Link></li>
+              <li><Link to="/morning-ritual" className="hover:text-primary transition-colors">Morning Ritual</Link></li>
               <li><Link to="/progress" className="hover:text-primary transition-colors">Progress Tracking</Link></li>
             </ul>
           </div>

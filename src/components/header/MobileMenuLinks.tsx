@@ -98,6 +98,15 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
         ]}
         toggleMainMenu={toggleMenu}
       />
+      
+      <Link
+        to="/morning-ritual"
+        className={cn("flex items-center gap-2 text-white hover:text-respiro-light py-2 button-transition", isActive('/morning-ritual') && "text-respiro-light font-medium")}
+        onClick={toggleMenu}
+      >
+        <Sunrise className="h-4 w-4" />
+        <span>Morning Ritual</span>
+      </Link>
 
       <Link
         to="/progress"
@@ -117,15 +126,6 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
         <span>Account</span>
       </Link>
       
-      <Link
-        to="/morning-ritual"
-        className={cn("flex items-center gap-2 text-white hover:text-respiro-light py-2 button-transition", isActive('/morning-ritual') && "text-respiro-light font-medium")}
-        onClick={toggleMenu}
-      >
-        <Sunrise className="h-4 w-4" />
-        <span>Morning Ritual</span>
-      </Link>
-
       <Link
         to="/#pricing"
         className={cn("flex items-center gap-2 text-white hover:text-respiro-light py-2 button-transition", location.hash === '#pricing' && "text-respiro-light font-medium")}

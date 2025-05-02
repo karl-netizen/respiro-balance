@@ -127,6 +127,14 @@ const DesktopNav = () => {
         
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
+            <Link to="/morning-ritual" className={cn("text-foreground/80 hover:text-primary px-3 py-2 button-transition", isActive('/morning-ritual') && "text-primary font-medium")}>
+              Morning Ritual
+            </Link>
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        
+        <NavigationMenuItem>
+          <NavigationMenuLink asChild>
             <Link to="/progress" className={cn("text-foreground/80 hover:text-primary px-3 py-2 button-transition", isActive('/progress') && "text-primary font-medium")}>
               Progress
             </Link>
@@ -137,14 +145,6 @@ const DesktopNav = () => {
           <NavigationMenuLink asChild>
             <Link to="/account" className={cn("text-foreground/80 hover:text-primary px-3 py-2 button-transition", isActive('/account') && "text-primary font-medium")}>
               Account
-            </Link>
-          </NavigationMenuLink>
-        </NavigationMenuItem>
-        
-        <NavigationMenuItem>
-          <NavigationMenuLink asChild>
-            <Link to="/morning-ritual" className={cn("text-foreground/80 hover:text-primary px-3 py-2 button-transition", isActive('/morning-ritual') && "text-primary font-medium")}>
-              Morning Ritual
             </Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
