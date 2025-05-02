@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Circle } from "lucide-react"; 
 import DesktopNav from "./header/DesktopNav";
@@ -12,11 +12,17 @@ import { MenuIcon } from "lucide-react";
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const isHomePage = location.pathname === "/";
   const isTransparent = isHomePage;
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(prev => !prev);
+  };
+
+  const handleLogoClick = (e) => {
+    e.preventDefault();
+    navigate("/");
   };
 
   return (
@@ -34,6 +40,7 @@ const Header = () => {
             to="/"
             className="flex items-center text-xl font-bold tracking-tight hover:text-primary transition-colors"
             aria-label="Home"
+            onClick={handleLogoClick}
           >
             <Circle 
               className="mr-2 text-respiro-dark fill-respiro-dark" 

@@ -55,7 +55,7 @@ const App: React.FC = () => {
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<LandingPage />} />
-        <Route path="/home" element={<Home />} />
+        <Route path="/home" element={<Navigate to="/" replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/reset-password" element={<ForgotPasswordPage />} />
