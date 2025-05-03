@@ -18,7 +18,7 @@ const MeditationFilters: React.FC<MeditationFiltersProps> = ({
   setLevelFilter,
   resetFilters
 }) => {
-  // Duration labels that match the categories in the images
+  // Duration options with corrected labels that match the filtering logic
   const durationOptions = [
     { value: 5, label: "< 5 min" },
     { value: 10, label: "5-10 min" },

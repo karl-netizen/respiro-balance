@@ -15,13 +15,13 @@ export const useMeditationFilters = () => {
       filteredSessions = filteredSessions.filter(session => {
         switch (durationFilter) {
           case 5:
-            return session.duration <= 5; // Less than 5 minutes
+            return session.duration < 5; // Less than 5 minutes
           case 10:
-            return session.duration > 5 && session.duration <= 10; // 5-10 minutes
+            return session.duration >= 5 && session.duration < 10; // 5-10 minutes
           case 15:
-            return session.duration > 10 && session.duration <= 15; // 10-15 minutes
+            return session.duration >= 10 && session.duration < 15; // 10-15 minutes
           case 30:
-            return session.duration > 15 && session.duration <= 30; // 15-30 minutes
+            return session.duration >= 15 && session.duration <= 30; // 15-30 minutes
           case 60:
             return session.duration > 30; // Greater than 30 minutes
           default:
@@ -47,13 +47,13 @@ export const useMeditationFilters = () => {
       filteredSessions = filteredSessions.filter(session => {
         switch (durationFilter) {
           case 5:
-            return session.duration <= 5; // Less than 5 minutes
+            return session.duration < 5; // Less than 5 minutes
           case 10:
-            return session.duration > 5 && session.duration <= 10; // 5-10 minutes
+            return session.duration >= 5 && session.duration < 10; // 5-10 minutes
           case 15:
-            return session.duration > 10 && session.duration <= 15; // 10-15 minutes
+            return session.duration >= 10 && session.duration < 15; // 10-15 minutes
           case 30:
-            return session.duration > 15 && session.duration <= 30; // 15-30 minutes
+            return session.duration >= 15 && session.duration <= 30; // 15-30 minutes
           case 60:
             return session.duration > 30; // Greater than 30 minutes
           default:
