@@ -23,7 +23,7 @@ export const useMeditationLibrary = () => {
   const { showRatingDialog, setShowRatingDialog, handleSubmitRating } = 
     useMeditationRatings();
   
-  const { durationFilter, setDurationFilter, levelFilter, setLevelFilter, 
+  const { durationFilter, setDurationFilter,
     filterSessionsByCategory: filterByCategory, resetFilters } = 
     useMeditationFilters();
     
@@ -76,8 +76,6 @@ export const useMeditationLibrary = () => {
     handleSubmitRating,
     durationFilter,
     setDurationFilter,
-    levelFilter,
-    setLevelFilter,
     resetFilters,
     audioEnabled,
     audioFiles,

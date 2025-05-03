@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -27,11 +26,10 @@ const SessionFilter: React.FC<SessionFilterProps> = ({
     { label: '30+ min', min: 30, max: Infinity },
   ];
   
-  // Define levels and categories - ensure they match data case exactly
-  const levels = ['beginner', 'intermediate', 'advanced'];
+  // Define categories - ensure they match data case exactly
   const categories = ['guided', 'quick', 'deep', 'sleep'];
   
-  // Filter sessions based on current filter - fixed logic
+  // Filter sessions based on current filter
   useEffect(() => {
     let filteredSessions = [...sessions];
     
@@ -56,9 +54,6 @@ const SessionFilter: React.FC<SessionFilterProps> = ({
           } else if (filterValue === '30+ min') {
             return duration > 30;
           }
-        } else if (filterType === 'level') {
-          // Make case-sensitive comparison and ensure exact match
-          return session.level === filterValue;
         } else if (filterType === 'category') {
           // Make case-sensitive comparison and ensure exact match
           return session.category === filterValue;
@@ -87,7 +82,7 @@ const SessionFilter: React.FC<SessionFilterProps> = ({
   
   return (
     <div className="session-filter-container space-y-4">
-      {/* Filter Type Tabs */}
+      {/* Filter Type Tabs - Updated to 3 columns */}
       <Tabs 
         value={filterType || 'all'} 
         onValueChange={(value) => {
@@ -101,10 +96,9 @@ const SessionFilter: React.FC<SessionFilterProps> = ({
         }}
         className="w-full"
       >
-        <TabsList className="grid grid-cols-4 w-full">
+        <TabsList className="grid grid-cols-3 w-full">
           <TabsTrigger value="all">All</TabsTrigger>
           <TabsTrigger value="duration">Duration</TabsTrigger>
-          <TabsTrigger value="level">Level</TabsTrigger>
           <TabsTrigger value="category">Category</TabsTrigger>
         </TabsList>
       </Tabs>
@@ -130,22 +124,6 @@ const SessionFilter: React.FC<SessionFilterProps> = ({
                     className="text-xs sm:text-sm"
                   >
                     {range.label}
-                  </Button>
-                ))}
-              </div>
-            )}
-            
-            {filterType === 'level' && (
-              <div className="level-filters flex flex-wrap gap-2">
-                {levels.map(level => (
-                  <Button
-                    key={level}
-                    onClick={() => handleFilterSelect('level', level)}
-                    variant={filterValue === level ? "default" : "outline"}
-                    size="sm"
-                    className="text-xs sm:text-sm capitalize"
-                  >
-                    {level}
                   </Button>
                 ))}
               </div>

@@ -4,7 +4,6 @@ import { MeditationSession } from '@/types/meditation';
 
 export const useMeditationFilters = () => {
   const [durationFilter, setDurationFilter] = useState<number | null>(null);
-  const [levelFilter, setLevelFilter] = useState<string | null>(null);
   
   const applyFilters = (sessions: MeditationSession[]) => {
     let filteredSessions = [...sessions];
@@ -29,11 +28,6 @@ export const useMeditationFilters = () => {
       });
     }
     
-    // Apply level filter if set
-    if (levelFilter !== null) {
-      filteredSessions = filteredSessions.filter(session => session.level === levelFilter);
-    }
-    
     return filteredSessions;
   };
   
@@ -41,7 +35,7 @@ export const useMeditationFilters = () => {
     // First filter by category
     const categoryFilteredSessions = sessions.filter(session => session.category === category);
     
-    // Then apply duration and level filters
+    // Then apply duration filter
     return applyFilters(categoryFilteredSessions);
   };
   
@@ -52,14 +46,11 @@ export const useMeditationFilters = () => {
   
   const resetFilters = () => {
     setDurationFilter(null);
-    setLevelFilter(null);
   };
   
   return {
     durationFilter,
     setDurationFilter,
-    levelFilter,
-    setLevelFilter,
     filterSessionsByCategory,
     filterAllSessions,
     resetFilters
