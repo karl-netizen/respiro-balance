@@ -1,20 +1,43 @@
 
-import { useLocation } from "react-router-dom";
+import { matchPath } from 'react-router-dom';
+import { NavSection } from './navigationData';
 
-export const useActiveRoute = () => {
-  const location = useLocation();
+/**
+ * Check if a path matches the current location
+ */
+export const isPathActive = (path: string, currentPathWithSearch: string): boolean => {
+  // If comparing exact paths with search params
+  if (path.includes('?') && currentPathWithSearch === path) {
+    return true;
+  }
   
-  const isActive = (path: string) => {
-    if (path === '/') {
-      return location.pathname === path;
-    }
-    if (path.includes('?')) {
-      // If the path has query parameters, just check the base path
-      const basePath = path.split('?')[0];
-      return location.pathname === basePath || location.pathname.startsWith(basePath + '/');
-    }
-    return location.pathname === path || location.pathname.startsWith(path + '/');
-  };
+  // For paths without search params, just check if the current path starts with this path
+  // This handles nested routes
+  const pathWithoutParams = path.split('?')[0];
+  const currentPathWithoutParams = currentPathWithSearch.split('?')[0];
+  
+  // Special case for root path to avoid false positives
+  if (pathWithoutParams === '/' && currentPathWithoutParams !== '/') {
+    return false;
+  }
+  
+  // Use matchPath for proper route matching
+  return !!matchPath(
+    { path: pathWithoutParams, end: pathWithoutParams === '/' },
+    currentPathWithoutParams
+  );
+};
 
-  return { isActive };
+/**
+ * Check if a section has an active item
+ */
+export const isSectionActive = (section: NavSection, currentPathWithSearch: string): boolean => {
+  return section.items.some(item => isPathActive(item.path, currentPathWithSearch));
+};
+
+/**
+ * Get active item in section
+ */
+export const getActiveItem = (section: NavSection, currentPathWithSearch: string) => {
+  return section.items.find(item => isPathActive(item.path, currentPathWithSearch));
 };

@@ -1,18 +1,47 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { BreathingPhase } from './types';
+import { toast } from 'sonner';
 
 type BreathingPattern = {
   inhale: number;
   hold?: number;
   exhale: number;
   rest?: number;
+  name: string;
+  description: string;
 };
 
 const breathingPatterns: Record<string, BreathingPattern> = {
-  box: { inhale: 4, hold: 4, exhale: 4, rest: 4 },
-  '478': { inhale: 4, hold: 7, exhale: 8 },
-  coherent: { inhale: 5, exhale: 5 },
+  box: { 
+    inhale: 4, 
+    hold: 4, 
+    exhale: 4, 
+    rest: 4,
+    name: "Box Breathing",
+    description: "Equal 4-count inhale, hold, exhale, and rest"
+  },
+  '478': { 
+    inhale: 4, 
+    hold: 7, 
+    exhale: 8,
+    name: "4-7-8 Breathing",
+    description: "Inhale for 4, hold for 7, exhale for 8"
+  },
+  coherent: { 
+    inhale: 5, 
+    exhale: 5,
+    name: "Coherent Breathing",
+    description: "5-5 balanced breathing for heart rate coherence"
+  },
+  alternate: {
+    inhale: 4,
+    hold: 4,
+    exhale: 4,
+    rest: 2,
+    name: "Alternate Nostril",
+    description: "Alternating between nostrils with holds"
+  }
 };
 
 export function useBreathingLogic() {
@@ -23,6 +52,8 @@ export function useBreathingLogic() {
   const [selectedTechnique, setSelectedTechnique] = useState('box');
   const speechSynthesisRef = useRef<SpeechSynthesisUtterance | null>(null);
   const patternRef = useRef<BreathingPattern>(breathingPatterns.box);
+  const cyclesCompletedRef = useRef<number>(0);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const selectTechnique = (techniqueId: string) => {
     if (breathingPatterns[techniqueId]) {
@@ -32,6 +63,13 @@ export function useBreathingLogic() {
       // Reset to inhale phase and appropriate count
       setBreathingPhase('inhale');
       setCount(patternRef.current.inhale);
+      
+      // If already active, notify of technique change
+      if (isActive) {
+        toast.info(`Switched to ${patternRef.current.name}`, {
+          description: patternRef.current.description
+        });
+      }
     }
   };
 
@@ -39,6 +77,11 @@ export function useBreathingLogic() {
     setIsActive(true);
     setBreathingPhase('inhale');
     setCount(patternRef.current.inhale);
+    cyclesCompletedRef.current = 0;
+    
+    toast.success(`Starting ${patternRef.current.name}`, {
+      description: "Follow the animation and sync your breath"
+    });
     
     if (voiceEnabled) {
       speakBreathingCue('inhale');
@@ -51,17 +94,29 @@ export function useBreathingLogic() {
     setCount(patternRef.current.inhale);
     
     // Cancel any ongoing speech
-    if (speechSynthesis && speechSynthesisRef.current) {
-      speechSynthesis.cancel();
+    if (window.speechSynthesis && speechSynthesisRef.current) {
+      window.speechSynthesis.cancel();
     }
+    
+    // Clear any active timer
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    
+    toast.info("Breathing exercise stopped", {
+      description: `Completed ${cyclesCompletedRef.current} breath cycles`
+    });
   };
   
   const toggleVoice = () => {
     setVoiceEnabled(!voiceEnabled);
     
+    toast.info(voiceEnabled ? "Voice guidance disabled" : "Voice guidance enabled");
+    
     // If turning off voice while active, cancel any ongoing speech
-    if (voiceEnabled && isActive && speechSynthesis && speechSynthesisRef.current) {
-      speechSynthesis.cancel();
+    if (voiceEnabled && isActive && window.speechSynthesis && speechSynthesisRef.current) {
+      window.speechSynthesis.cancel();
     }
   };
   
@@ -69,8 +124,8 @@ export function useBreathingLogic() {
     if (!voiceEnabled || !window.speechSynthesis) return;
     
     // Cancel any previous speech
-    if (speechSynthesis.speaking && speechSynthesisRef.current) {
-      speechSynthesis.cancel();
+    if (window.speechSynthesis.speaking && speechSynthesisRef.current) {
+      window.speechSynthesis.cancel();
     }
     
     // Create new utterance
@@ -80,7 +135,7 @@ export function useBreathingLogic() {
     utterance.pitch = 1.2; // Slightly higher pitch for a more feminine voice
     
     // Try to find a calm, soothing female voice
-    const voices = speechSynthesis.getVoices();
+    const voices = window.speechSynthesis.getVoices();
     // Prioritize female voices - try to find voices with these names first
     const preferredVoice = voices.find(voice => 
       voice.name.includes('Female') || 
@@ -103,27 +158,36 @@ export function useBreathingLogic() {
     
     // Store reference and speak
     speechSynthesisRef.current = utterance;
-    speechSynthesis.speak(utterance);
+    window.speechSynthesis.speak(utterance);
   };
 
+  // Load voices when component mounts
   useEffect(() => {
-    // Load voices when component mounts
-    speechSynthesis.onvoiceschanged = () => {
-      speechSynthesis.getVoices();
-    };
+    if (window.speechSynthesis) {
+      window.speechSynthesis.onvoiceschanged = () => {
+        window.speechSynthesis.getVoices();
+      };
+    }
     
     return () => {
       // Clean up any speech on unmount
-      if (speechSynthesis && speechSynthesisRef.current) {
-        speechSynthesis.cancel();
+      if (window.speechSynthesis && speechSynthesisRef.current) {
+        window.speechSynthesis.cancel();
       }
     };
   }, []);
 
+  // Handle breathing timer
   useEffect(() => {
-    if (!isActive) return;
+    if (!isActive) {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+      return;
+    }
 
-    const timer = setInterval(() => {
+    timerRef.current = setInterval(() => {
       setCount((prevCount) => {
         if (prevCount > 1) return prevCount - 1;
         
@@ -153,12 +217,16 @@ export function useBreathingLogic() {
               if (voiceEnabled) speakBreathingCue(restPhase);
               return patternRef.current.rest; // Rest duration
             } else {
+              // If no rest phase, we've completed a cycle
+              cyclesCompletedRef.current += 1;
               const inhalePhase = 'inhale';
               setBreathingPhase(inhalePhase);
               if (voiceEnabled) speakBreathingCue(inhalePhase);
               return patternRef.current.inhale; // Inhale duration
             }  
           case 'rest':
+            // Completed a full cycle
+            cyclesCompletedRef.current += 1;
             const inhalePhase = 'inhale';
             setBreathingPhase(inhalePhase);
             if (voiceEnabled) speakBreathingCue(inhalePhase);
@@ -169,7 +237,12 @@ export function useBreathingLogic() {
       });
     }, 1000);
 
-    return () => clearInterval(timer);
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    };
   }, [isActive, breathingPhase, voiceEnabled]);
 
   return {
@@ -181,6 +254,7 @@ export function useBreathingLogic() {
     startBreathing,
     stopBreathing,
     toggleVoice,
-    selectTechnique
+    selectTechnique,
+    cyclesCompleted: cyclesCompletedRef.current
   };
 }
