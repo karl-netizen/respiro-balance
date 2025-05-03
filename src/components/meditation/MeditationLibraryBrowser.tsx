@@ -22,8 +22,6 @@ export interface MeditationLibraryBrowserProps {
   filterSessionsByCategory: (category: 'guided' | 'quick' | 'deep' | 'sleep') => MeditationSession[];
   durationFilter: number | null;
   setDurationFilter: (duration: number | null) => void;
-  levelFilter: string | null;
-  setLevelFilter: (level: string | null) => void;
   resetFilters: () => void;
 }
 
@@ -38,8 +36,6 @@ const MeditationLibraryBrowser: React.FC<MeditationLibraryBrowserProps> = ({
   filterSessionsByCategory,
   durationFilter,
   setDurationFilter,
-  levelFilter,
-  setLevelFilter,
   resetFilters
 }) => {
   // Track filtered sessions for each category
@@ -54,15 +50,13 @@ const MeditationLibraryBrowser: React.FC<MeditationLibraryBrowserProps> = ({
     setQuickSessions(filterSessionsByCategory('quick'));
     setDeepSessions(filterSessionsByCategory('deep'));
     setSleepSessions(filterSessionsByCategory('sleep'));
-  }, [durationFilter, levelFilter, filterSessionsByCategory]);
+  }, [durationFilter, filterSessionsByCategory]);
   
   return (
     <Card className="w-full">
       <MeditationFilters 
         durationFilter={durationFilter}
         setDurationFilter={setDurationFilter}
-        levelFilter={levelFilter}
-        setLevelFilter={setLevelFilter}
         resetFilters={resetFilters}
       />
       

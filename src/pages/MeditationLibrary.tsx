@@ -19,9 +19,7 @@ const MeditationLibrary = () => {
   const { isPremium } = useSubscriptionContext();
   const { 
     durationFilter, 
-    setDurationFilter, 
-    levelFilter, 
-    setLevelFilter, 
+    setDurationFilter,
     filterSessionsByCategory, 
     resetFilters 
   } = useMeditationFilters();
@@ -107,8 +105,6 @@ const MeditationLibrary = () => {
             filterSessionsByCategory={filterByCategory}
             durationFilter={durationFilter}
             setDurationFilter={setDurationFilter}
-            levelFilter={levelFilter}
-            setLevelFilter={setLevelFilter}
             resetFilters={resetFilters}
           />
         </Tabs>
