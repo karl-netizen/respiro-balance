@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { GuidedMeditationList, QuickBreaksList, DeepFocusList, SleepMeditationList } from '@/components/meditation';
 import { MeditationSession } from '@/types/meditation';
@@ -21,11 +21,19 @@ const MeditationTabsContent: React.FC<MeditationTabsContentProps> = ({
   onToggleFavorite,
   isFavorite
 }) => {
-  // Get filtered sessions for each category
-  const guidedSessions = getFilteredSessions("guided");
-  const quickSessions = getFilteredSessions("quick");
-  const deepSessions = getFilteredSessions("deep");
-  const sleepSessions = getFilteredSessions("sleep");
+  // Track filtered sessions state for each category
+  const [guidedSessions, setGuidedSessions] = useState<MeditationSession[]>([]);
+  const [quickSessions, setQuickSessions] = useState<MeditationSession[]>([]);
+  const [deepSessions, setDeepSessions] = useState<MeditationSession[]>([]);
+  const [sleepSessions, setSleepSessions] = useState<MeditationSession[]>([]);
+  
+  // Update filtered sessions whenever the tab changes or filters change
+  useEffect(() => {
+    setGuidedSessions(getFilteredSessions("guided"));
+    setQuickSessions(getFilteredSessions("quick"));
+    setDeepSessions(getFilteredSessions("deep"));
+    setSleepSessions(getFilteredSessions("sleep"));
+  }, [getFilteredSessions]);
   
   return (
     <Tabs value={activeTab} onValueChange={handleTabChange} className="mt-6">

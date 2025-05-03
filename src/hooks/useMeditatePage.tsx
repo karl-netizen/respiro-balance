@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { MeditationSession } from '@/types/meditation';
@@ -86,19 +86,20 @@ export const useMeditatePage = () => {
     });
   };
 
-  const getFilteredSessions = (category: string): MeditationSession[] => {
+  // Use useCallback to prevent unnecessary re-renders
+  const getFilteredSessions = useCallback((category: string): MeditationSession[] => {
     return filterSessionsByCategory(meditationSessions, category as 'guided' | 'quick' | 'deep' | 'sleep');
-  };
+  }, [filterSessionsByCategory, durationFilter, levelFilter]);
   
-  const getRecentSessions = (): MeditationSession[] => {
+  const getRecentSessions = useCallback((): MeditationSession[] => {
     return recentlyPlayed
       .map(id => meditationSessions.find(s => s.id === id))
       .filter(s => s !== undefined) as MeditationSession[];
-  };
+  }, [recentlyPlayed]);
   
-  const getFavoriteSessions = (): MeditationSession[] => {
+  const getFavoriteSessions = useCallback((): MeditationSession[] => {
     return meditationSessions.filter(s => favoriteSessions.includes(s.id));
-  };
+  }, [favoriteSessions]);
 
   const handleStartMeditation = (session: MeditationSession) => {
     // Check if session is premium and user doesn't have premium
