@@ -1,4 +1,3 @@
-
 // Views
 export { default as MeditationLibraryBrowser } from './MeditationLibraryBrowser';
 export { default as MeditationHeader } from './MeditationHeader';
@@ -27,3 +26,6 @@ export { default as MeditationFilters } from './MeditationFilters';
 export { default as SessionRatingDialog } from './SessionRatingDialog';
 // Audio management
 export { default as AudioFileUploader } from './AudioFileUploader';
+// Add new exports
+export { default as RecentPlayedList } from './RecentPlayedList';
+export { default as MeditationTabsContent } from './MeditationTabsContent';
