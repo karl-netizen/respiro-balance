@@ -1,26 +1,22 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { MeditationHeader, MeditationSessionDialog, MeditationFilters } from '@/components/meditation';
+import { MeditationHeader, MeditationSessionDialog } from '@/components/meditation';
 import RecentPlayedList from '@/components/meditation/RecentPlayedList';
 import MeditationTabsContent from '@/components/meditation/MeditationTabsContent';
 import SubscriptionBanner from '@/components/subscription/SubscriptionBanner';
+import SessionFilter from '@/components/meditation/SessionFilter';
 import { useMeditatePage } from '@/hooks/useMeditatePage';
+import { MeditationSession } from '@/types/meditation';
 
 const Meditate = () => {
   const {
     activeTab,
     handleTabChange,
     selectedSession,
-    setSelectedSession,
     dialogOpen,
     setDialogOpen,
-    durationFilter,
-    setDurationFilter,
-    levelFilter,
-    setLevelFilter,
-    resetFilters,
     isFavorite,
     handleToggleFavorite,
     handleSelectSession,
@@ -30,7 +26,13 @@ const Meditate = () => {
     isPremium
   } = useMeditatePage();
 
+  // State to track filtered sessions
+  const [filteredSessions, setFilteredSessions] = useState<MeditationSession[]>([]);
+  
   const recentSessions = getRecentSessions();
+  
+  // Get all sessions for the current tab
+  const allSessionsForCurrentTab = getFilteredSessions(activeTab);
   
   return (
     <div className="min-h-screen flex flex-col">
@@ -42,12 +44,9 @@ const Meditate = () => {
         {!isPremium && <SubscriptionBanner />}
         
         <div className="mb-6 mt-6">
-          <MeditationFilters
-            durationFilter={durationFilter}
-            setDurationFilter={setDurationFilter}
-            levelFilter={levelFilter}
-            setLevelFilter={setLevelFilter}
-            resetFilters={resetFilters}
+          <SessionFilter 
+            sessions={allSessionsForCurrentTab}
+            onFilteredSessionsChange={setFilteredSessions}
           />
         </div>
         
@@ -61,7 +60,7 @@ const Meditate = () => {
         <MeditationTabsContent
           activeTab={activeTab}
           handleTabChange={handleTabChange}
-          getFilteredSessions={getFilteredSessions}
+          getFilteredSessions={() => filteredSessions.length > 0 ? filteredSessions : allSessionsForCurrentTab}
           onSelectSession={handleSelectSession}
           onToggleFavorite={handleToggleFavorite}
           isFavorite={isFavorite}

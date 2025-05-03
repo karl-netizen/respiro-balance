@@ -4,7 +4,6 @@ import { useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { MeditationSession } from '@/types/meditation';
 import { useSubscriptionContext } from '@/hooks/useSubscriptionContext';
-import { useMeditationFilters } from '@/hooks/useMeditationFilters';
 import { meditationSessions } from '@/data/meditationSessions';
 
 export const useMeditatePage = () => {
@@ -18,17 +17,6 @@ export const useMeditatePage = () => {
   // Get tab from URL or default to 'guided'
   const initialTab = searchParams.get('tab') || 'guided';
   const [activeTab, setActiveTab] = useState(initialTab);
-  
-  // Use the meditation filters hook
-  const { 
-    durationFilter, 
-    setDurationFilter, 
-    levelFilter, 
-    setLevelFilter, 
-    filterSessionsByCategory,
-    filterAllSessions,
-    resetFilters 
-  } = useMeditationFilters();
   
   // Update URL when tab changes
   const handleTabChange = (value: string) => {
@@ -86,10 +74,10 @@ export const useMeditatePage = () => {
     });
   };
 
-  // Use useCallback to prevent unnecessary re-renders
+  // Get sessions for a specific category
   const getFilteredSessions = useCallback((category: string): MeditationSession[] => {
-    return filterSessionsByCategory(meditationSessions, category as 'guided' | 'quick' | 'deep' | 'sleep');
-  }, [filterSessionsByCategory, durationFilter, levelFilter]);
+    return meditationSessions.filter(s => s.category === category);
+  }, []);
   
   const getRecentSessions = useCallback((): MeditationSession[] => {
     return recentlyPlayed
@@ -129,11 +117,6 @@ export const useMeditatePage = () => {
     setSelectedSession,
     dialogOpen,
     setDialogOpen,
-    durationFilter,
-    setDurationFilter,
-    levelFilter,
-    setLevelFilter,
-    resetFilters,
     isFavorite,
     handleToggleFavorite,
     handleSelectSession,
