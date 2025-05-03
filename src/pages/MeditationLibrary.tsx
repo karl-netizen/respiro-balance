@@ -72,6 +72,11 @@ const MeditationLibrary = () => {
     return meditationSessions.filter(session => favoriteSessions.includes(session.id));
   };
   
+  // Wrapper function to match the expected signature
+  const filterByCategory = (category: 'guided' | 'quick' | 'deep' | 'sleep') => {
+    return filterSessionsByCategory(meditationSessions, category);
+  };
+  
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -99,7 +104,7 @@ const MeditationLibrary = () => {
             handleSelectSession={handleSelectSession}
             handleToggleFavorite={handleToggleFavorite}
             isFavorite={isFavorite}
-            filterSessionsByCategory={filterSessionsByCategory}
+            filterSessionsByCategory={filterByCategory}
             durationFilter={durationFilter}
             setDurationFilter={setDurationFilter}
             levelFilter={levelFilter}

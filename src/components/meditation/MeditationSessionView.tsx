@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { MeditationSession } from '@/types/meditation';
 import { Button } from '@/components/ui/button';
@@ -188,13 +187,14 @@ const MeditationSessionView: React.FC<MeditationSessionViewProps> = ({
               variant="outline" 
               size="icon"
               onClick={handleReset}
+              className="bg-white text-gray-700 hover:bg-gray-100"
             >
               <SkipBack className="h-4 w-4" />
             </Button>
             
             <Button 
               size="icon" 
-              className="h-12 w-12 rounded-full"
+              className="h-12 w-12 rounded-full bg-primary text-white hover:bg-primary/90" 
               onClick={togglePlayPause}
             >
               {isPlaying ? (
@@ -209,6 +209,7 @@ const MeditationSessionView: React.FC<MeditationSessionViewProps> = ({
                 variant="ghost"
                 size="icon"
                 onClick={() => setIsMuted(!isMuted)}
+                className="text-gray-700 hover:bg-gray-100"
               >
                 {isMuted ? (
                   <VolumeX className="h-4 w-4" />
@@ -231,11 +232,10 @@ const MeditationSessionView: React.FC<MeditationSessionViewProps> = ({
         
         <CardFooter>
           <Button 
-            variant="outline" 
-            className="w-full"
+            className="w-full bg-primary text-white hover:bg-primary/90"
             onClick={handleSessionEnd}
           >
-            End Session
+            Begin Meditation
           </Button>
         </CardFooter>
       </Card>
@@ -279,7 +279,12 @@ const MeditationSessionView: React.FC<MeditationSessionViewProps> = ({
           </div>
           
           <DialogFooter>
-            <Button onClick={handleSubmitRating}>Submit</Button>
+            <Button 
+              className="bg-primary text-white hover:bg-primary/90"
+              onClick={handleSubmitRating}
+            >
+              Submit
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

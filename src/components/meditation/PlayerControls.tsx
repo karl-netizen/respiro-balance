@@ -47,16 +47,17 @@ const PlayerControls: React.FC<PlayerControlsProps> = ({
           size="icon" 
           onClick={onReset}
           disabled={isPlaying && timeRemaining === totalDuration * 60}
+          className="border-gray-300 bg-white text-gray-700 hover:bg-gray-100"
         >
           <RotateCcw className="h-4 w-4" />
         </Button>
         
         <Button 
           size="icon" 
-          className="h-12 w-12 rounded-full" 
+          className="h-12 w-12 rounded-full bg-primary text-white hover:bg-primary/90" 
           onClick={onPlayPause}
         >
-          {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
+          {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5 ml-1" />}
         </Button>
         
         <div className="flex items-center space-x-2">
