@@ -7,28 +7,35 @@ export const useMeditationFilters = () => {
   const [levelFilter, setLevelFilter] = useState<string | null>(null);
   
   const filterSessionsByCategory = (sessions: MeditationSession[], category: 'guided' | 'quick' | 'deep' | 'sleep') => {
-    return sessions
-      .filter(session => session.category === category)
-      .filter(session => {
-        // Apply duration filter
-        if (durationFilter === null) return true;
-        
-        if (durationFilter === 5) {
-          return session.duration <= 5;
-        } else if (durationFilter === 10) {
-          return session.duration > 5 && session.duration <= 10;
-        } else if (durationFilter === 15) {
-          return session.duration > 10 && session.duration <= 15;
-        } else if (durationFilter === 30) {
-          return session.duration > 15 && session.duration <= 30;
-        } else {
-          return session.duration > 30;
+    // First filter by category
+    let filteredSessions = sessions.filter(session => session.category === category);
+    
+    // Apply duration filter if set
+    if (durationFilter !== null) {
+      filteredSessions = filteredSessions.filter(session => {
+        switch (durationFilter) {
+          case 5:
+            return session.duration <= 5;
+          case 10:
+            return session.duration > 5 && session.duration <= 10;
+          case 15:
+            return session.duration > 10 && session.duration <= 15;
+          case 30:
+            return session.duration > 15 && session.duration <= 30;
+          case 60:
+            return session.duration > 30;
+          default:
+            return true;
         }
-      })
-      .filter(session => {
-        // Apply level filter if set
-        return levelFilter === null || session.level === levelFilter;
       });
+    }
+    
+    // Apply level filter if set
+    if (levelFilter !== null) {
+      filteredSessions = filteredSessions.filter(session => session.level === levelFilter);
+    }
+    
+    return filteredSessions;
   };
   
   const resetFilters = () => {

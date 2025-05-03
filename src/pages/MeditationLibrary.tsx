@@ -7,16 +7,24 @@ import { MeditationLibraryBrowser } from '@/components/meditation';
 import { useSubscriptionContext } from '@/hooks/useSubscriptionContext';
 import SubscriptionBanner from '@/components/subscription/SubscriptionBanner';
 import { MeditationSession } from '@/types/meditation';
+import { useMeditationFilters } from '@/hooks/useMeditationFilters';
+import { meditationSessions } from '@/data/meditationSessions';
 
 const MeditationLibrary = () => {
   const [selectedSession, setSelectedSession] = useState<MeditationSession | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [favoriteSessions, setFavoriteSessions] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState('all');
-  const [durationFilter, setDurationFilter] = useState<number | null>(null);
-  const [levelFilter, setLevelFilter] = useState<string | null>(null);
   
   const { isPremium } = useSubscriptionContext();
+  const { 
+    durationFilter, 
+    setDurationFilter, 
+    levelFilter, 
+    setLevelFilter, 
+    filterSessionsByCategory, 
+    resetFilters 
+  } = useMeditationFilters();
   
   // Load favorites from localStorage
   useEffect(() => {
@@ -30,32 +38,6 @@ const MeditationLibrary = () => {
   useEffect(() => {
     localStorage.setItem('favoriteSessions', JSON.stringify(favoriteSessions));
   }, [favoriteSessions]);
-
-  // Mock data for sessions (should come from an API or context)
-  const mockSessions: MeditationSession[] = [
-    {
-      id: "1",
-      title: "Guided Morning Meditation",
-      description: "Start your day with calm focus",
-      duration: 10,
-      level: "beginner",
-      category: "guided",
-      session_type: "guided",
-      tags: [],
-      instructor: "Sam Lee"
-    },
-    {
-      id: "2",
-      title: "Quick Focus Break",
-      description: "Regain concentration quickly",
-      duration: 5,
-      level: "beginner",
-      category: "quick",
-      session_type: "quick",
-      tags: [],
-      instructor: "Alex Wang"
-    }
-  ];
   
   const handleSelectSession = (session: MeditationSession) => {
     setSelectedSession(session);
@@ -73,21 +55,6 @@ const MeditationLibrary = () => {
   const isFavorite = (sessionId: string): boolean => {
     return favoriteSessions.includes(sessionId);
   };
-
-  const filterByDuration = (sessions: MeditationSession[], duration: number): MeditationSession[] => {
-    if (!duration) return sessions;
-    if (duration === 5) {
-      return sessions.filter(session => session.duration <= 5);
-    } else if (duration === 10) {
-      return sessions.filter(session => session.duration > 5 && session.duration <= 10);
-    } else if (duration === 15) {
-      return sessions.filter(session => session.duration > 10 && session.duration <= 15);
-    } else if (duration === 30) {
-      return sessions.filter(session => session.duration > 15 && session.duration <= 30);
-    } else {
-      return sessions.filter(session => session.duration > 30);
-    }
-  };
   
   const handleStartMeditation = (session: MeditationSession) => {
     // Check if session is premium and user doesn't have premium
@@ -101,17 +68,8 @@ const MeditationLibrary = () => {
     window.location.href = `/meditate/session/${session.id}`;
   };
 
-  const resetFilters = () => {
-    setDurationFilter(null);
-    setLevelFilter(null);
-  };
-
-  const filterSessionsByCategory = (category: 'guided' | 'quick' | 'deep' | 'sleep'): MeditationSession[] => {
-    return mockSessions.filter(session => session.category === category);
-  };
-
   const getFavoriteSessions = () => {
-    return mockSessions.filter(session => favoriteSessions.includes(session.id));
+    return meditationSessions.filter(session => favoriteSessions.includes(session.id));
   };
   
   return (
@@ -136,7 +94,7 @@ const MeditationLibrary = () => {
           <MeditationLibraryBrowser
             activeTab={activeTab}
             setActiveTab={setActiveTab}
-            recentlyPlayed={mockSessions.slice(0, 3)}
+            recentlyPlayed={meditationSessions.slice(0, 3)}
             getFavoriteSessions={getFavoriteSessions}
             handleSelectSession={handleSelectSession}
             handleToggleFavorite={handleToggleFavorite}
