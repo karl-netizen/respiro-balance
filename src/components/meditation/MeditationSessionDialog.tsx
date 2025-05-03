@@ -1,15 +1,15 @@
 
 import React from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { Heart } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { Clock, Heart, Star, User } from 'lucide-react';
 import { MeditationSession } from '@/types/meditation';
 
-export interface MeditationSessionDialogProps {
+interface MeditationSessionDialogProps {
   session: MeditationSession | null;
   open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpen: (open: boolean) => void;
   onStart: (session: MeditationSession) => void;
   isFavorite: boolean;
   onToggleFavorite: () => void;
@@ -24,89 +24,62 @@ const MeditationSessionDialog: React.FC<MeditationSessionDialogProps> = ({
   onToggleFavorite
 }) => {
   if (!session) return null;
-
+  
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="bg-white dark:bg-gray-800 text-foreground max-w-md mx-auto">
         <DialogHeader>
-          <DialogTitle className="flex justify-between items-start">
-            <span>{session.title}</span>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="h-8 w-8" 
-              onClick={(e) => {
-                e.stopPropagation();
-                onToggleFavorite();
-              }}
-            >
-              <Heart className={`h-4 w-4 ${isFavorite ? 'fill-red-500 text-red-500' : ''}`} />
-              <span className="sr-only">Toggle favorite</span>
-            </Button>
+          <DialogTitle className="text-xl font-bold text-foreground">
+            {session.title}
           </DialogTitle>
-          <DialogDescription>
-            <div className="flex gap-2 items-center mt-1">
-              <Badge variant="outline" className="text-xs">
-                {session.category}
-              </Badge>
-              <Badge variant="outline" className="text-xs">
-                {session.level || session.difficulty || 'Beginner'}
-              </Badge>
-            </div>
+          <DialogDescription className="text-muted-foreground">
+            {session.description}
           </DialogDescription>
         </DialogHeader>
         
-        <div className="space-y-4">
-          <p className="text-sm text-muted-foreground">
-            {session.description}
-          </p>
-          
-          <div className="grid grid-cols-2 gap-4">
-            <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm">{session.duration} minutes</span>
-            </div>
-            
-            {session.instructor && (
-              <div className="flex items-center gap-2">
-                <User className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm">{session.instructor}</span>
-              </div>
-            )}
-            
-            {session.rating && (
-              <div className="flex items-center gap-2">
-                <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-                <span className="text-sm">{session.rating}</span>
-              </div>
-            )}
+        <div className="space-y-4 my-2">
+          <div className="flex flex-wrap gap-2">
+            <Badge variant="outline" className="bg-background text-foreground">
+              {session.duration} min
+            </Badge>
+            <Badge variant="outline" className="bg-background text-foreground capitalize">
+              {session.level}
+            </Badge>
+            <Badge variant="outline" className="bg-background text-foreground capitalize">
+              {session.category}
+            </Badge>
           </div>
           
-          {session.benefits && session.benefits.length > 0 && (
-            <div className="space-y-2">
-              <h4 className="text-sm font-medium">Benefits:</h4>
-              <ul className="text-sm text-muted-foreground list-disc pl-5 space-y-1">
-                {session.benefits.map((benefit, index) => (
-                  <li key={index}>{benefit}</li>
-                ))}
-              </ul>
-            </div>
-          )}
+          <div className="text-sm text-foreground">
+            <span className="font-medium">Instructor:</span> {session.instructor}
+          </div>
           
-          {session.premium && (
-            <Badge className="bg-amber-500 hover:bg-amber-600">Premium</Badge>
+          {session.tags && session.tags.length > 0 && (
+            <div className="flex flex-wrap gap-1">
+              {session.tags.map((tag, i) => (
+                <Badge key={i} variant="secondary" className="text-xs">
+                  {tag}
+                </Badge>
+              ))}
+            </div>
           )}
         </div>
         
-        <DialogFooter>
+        <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:gap-0 mt-4">
           <Button 
-            className="w-full" 
-            onClick={() => {
-              onStart(session);
-              setOpen(false);
-            }}
+            variant="outline" 
+            onClick={onToggleFavorite} 
+            className="sm:mr-auto flex items-center gap-1"
           >
-            Begin Session
+            <Heart className={`h-4 w-4 ${isFavorite ? 'fill-rose-500 text-rose-500' : ''}`} />
+            {isFavorite ? 'Favorited' : 'Favorite'}
+          </Button>
+          
+          <Button 
+            onClick={() => onStart(session)} 
+            className="w-full sm:w-auto"
+          >
+            Begin Meditation
           </Button>
         </DialogFooter>
       </DialogContent>
