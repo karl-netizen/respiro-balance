@@ -1,5 +1,5 @@
 
-import { matchPath } from 'react-router-dom';
+import { matchPath, useLocation } from 'react-router-dom';
 import { NavSection } from './navigationData';
 
 /**
@@ -40,4 +40,19 @@ export const isSectionActive = (section: NavSection, currentPathWithSearch: stri
  */
 export const getActiveItem = (section: NavSection, currentPathWithSearch: string) => {
   return section.items.find(item => isPathActive(item.path, currentPathWithSearch));
+};
+
+/**
+ * Custom hook to check if routes are active based on current location
+ */
+export const useActiveRoute = () => {
+  const location = useLocation();
+  const currentPathWithSearch = location.pathname + location.search;
+  
+  return {
+    isActive: (path: string) => isPathActive(path, currentPathWithSearch),
+    isSectionActive: (section: NavSection) => isSectionActive(section, currentPathWithSearch),
+    getActiveItem: (section: NavSection) => getActiveItem(section, currentPathWithSearch),
+    currentPath: currentPathWithSearch
+  };
 };
