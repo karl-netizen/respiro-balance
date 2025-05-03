@@ -38,6 +38,38 @@ export const useMeditationFilters = () => {
     return filteredSessions;
   };
   
+  // This function filters all sessions without restricting by category
+  const filterAllSessions = (sessions: MeditationSession[]) => {
+    let filteredSessions = [...sessions];
+    
+    // Apply duration filter if set
+    if (durationFilter !== null) {
+      filteredSessions = filteredSessions.filter(session => {
+        switch (durationFilter) {
+          case 5:
+            return session.duration <= 5;
+          case 10:
+            return session.duration > 5 && session.duration <= 10;
+          case 15:
+            return session.duration > 10 && session.duration <= 15;
+          case 30:
+            return session.duration > 15 && session.duration <= 30;
+          case 60:
+            return session.duration > 30;
+          default:
+            return true;
+        }
+      });
+    }
+    
+    // Apply level filter if set
+    if (levelFilter !== null) {
+      filteredSessions = filteredSessions.filter(session => session.level === levelFilter);
+    }
+    
+    return filteredSessions;
+  };
+  
   const resetFilters = () => {
     setDurationFilter(null);
     setLevelFilter(null);
@@ -49,6 +81,7 @@ export const useMeditationFilters = () => {
     levelFilter,
     setLevelFilter,
     filterSessionsByCategory,
+    filterAllSessions,
     resetFilters
   };
 };

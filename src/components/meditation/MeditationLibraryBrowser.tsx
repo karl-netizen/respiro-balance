@@ -58,6 +58,14 @@ const MeditationLibraryBrowser: React.FC<MeditationLibraryBrowserProps> = ({
   
   return (
     <Card className="w-full">
+      <MeditationFilters 
+        durationFilter={durationFilter}
+        setDurationFilter={setDurationFilter}
+        levelFilter={levelFilter}
+        setLevelFilter={setLevelFilter}
+        resetFilters={resetFilters}
+      />
+      
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="p-4">
           <TabsTrigger value="guided">Guided</TabsTrigger>
@@ -66,17 +74,7 @@ const MeditationLibraryBrowser: React.FC<MeditationLibraryBrowserProps> = ({
           <TabsTrigger value="sleep">Sleep</TabsTrigger>
         </TabsList>
         
-        <Card className="border-none shadow-none">
-          <MeditationFilters 
-            durationFilter={durationFilter}
-            setDurationFilter={setDurationFilter}
-            levelFilter={levelFilter}
-            setLevelFilter={setLevelFilter}
-            resetFilters={resetFilters}
-          />
-        </Card>
-        
-        <TabsContent value="guided" className="pt-0 border-none outline-none">
+        <TabsContent value="guided" className="pt-0 border-none outline-none p-4">
           <GuidedMeditationList 
             sessions={guidedSessions}
             onSelectSession={handleSelectSession}
@@ -85,7 +83,7 @@ const MeditationLibraryBrowser: React.FC<MeditationLibraryBrowserProps> = ({
           />
         </TabsContent>
         
-        <TabsContent value="quick" className="pt-0 border-none outline-none">
+        <TabsContent value="quick" className="pt-0 border-none outline-none p-4">
           <QuickBreaksList 
             sessions={quickSessions}
             onSelectSession={handleSelectSession}
@@ -94,7 +92,7 @@ const MeditationLibraryBrowser: React.FC<MeditationLibraryBrowserProps> = ({
           />
         </TabsContent>
         
-        <TabsContent value="deep" className="pt-0 border-none outline-none">
+        <TabsContent value="deep" className="pt-0 border-none outline-none p-4">
           <DeepFocusList 
             sessions={deepSessions}
             onSelectSession={handleSelectSession}
@@ -103,7 +101,7 @@ const MeditationLibraryBrowser: React.FC<MeditationLibraryBrowserProps> = ({
           />
         </TabsContent>
         
-        <TabsContent value="sleep" className="pt-0 border-none outline-none">
+        <TabsContent value="sleep" className="pt-0 border-none outline-none p-4">
           <SleepMeditationList 
             sessions={sleepSessions}
             onSelectSession={handleSelectSession}

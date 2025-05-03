@@ -11,12 +11,14 @@ import {
   DeepFocusList, 
   SleepMeditationList,
   MeditationSessionDialog,
-  MeditationHeader
+  MeditationHeader,
+  MeditationFilters
 } from '@/components/meditation';
 import { useSubscriptionContext } from '@/hooks/useSubscriptionContext';
 import SubscriptionBanner from '@/components/subscription/SubscriptionBanner';
 import { MeditationSession } from '@/types/meditation';
 import { meditationSessions } from '@/data/meditationSessions';
+import { useMeditationFilters } from '@/hooks/useMeditationFilters';
 
 const Meditate = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -29,8 +31,17 @@ const Meditate = () => {
   // Get tab from URL or default to 'guided'
   const initialTab = searchParams.get('tab') || 'guided';
   const [activeTab, setActiveTab] = useState(initialTab);
-  const [durationFilter, setDurationFilter] = useState<number | null>(null);
-  const [levelFilter, setLevelFilter] = useState<string | null>(null);
+  
+  // Use the meditation filters hook
+  const { 
+    durationFilter, 
+    setDurationFilter, 
+    levelFilter, 
+    setLevelFilter, 
+    filterSessionsByCategory,
+    filterAllSessions,
+    resetFilters 
+  } = useMeditationFilters();
   
   // Update URL when tab changes
   const handleTabChange = (value: string) => {
@@ -88,32 +99,20 @@ const Meditate = () => {
     });
   };
 
-  const filterByDuration = (sessions: MeditationSession[]): MeditationSession[] => {
-    if (!durationFilter) return sessions;
-    
-    if (durationFilter === 5) {
-      return sessions.filter(session => session.duration <= 5);
-    } else if (durationFilter === 10) {
-      return sessions.filter(session => session.duration > 5 && session.duration <= 10);
-    } else if (durationFilter === 15) {
-      return sessions.filter(session => session.duration > 10 && session.duration <= 15);
-    } else if (durationFilter === 30) {
-      return sessions.filter(session => session.duration > 15 && session.duration <= 30);
-    } else {
-      return sessions.filter(session => session.duration > 30);
-    }
+  const getFilteredSessions = (category: string): MeditationSession[] => {
+    return filterSessionsByCategory(meditationSessions, category as 'guided' | 'quick' | 'deep' | 'sleep');
   };
   
-  const filterByLevel = (sessions: MeditationSession[]): MeditationSession[] => {
-    if (!levelFilter) return sessions;
-    return sessions.filter(session => session.level === levelFilter);
+  const getRecentSessions = (): MeditationSession[] => {
+    return recentlyPlayed
+      .map(id => meditationSessions.find(s => s.id === id))
+      .filter(s => s !== undefined) as MeditationSession[];
   };
   
-  const resetFilters = () => {
-    setDurationFilter(null);
-    setLevelFilter(null);
+  const getFavoriteSessions = (): MeditationSession[] => {
+    return meditationSessions.filter(s => favoriteSessions.includes(s.id));
   };
-  
+
   const handleStartMeditation = (session: MeditationSession) => {
     // Check if session is premium and user doesn't have premium
     if (session.premium && !isPremium) {
@@ -134,23 +133,6 @@ const Meditate = () => {
     // Direct to meditation session page
     window.location.href = `/meditate/session/${session.id}`;
   };
-
-  const getFilteredSessions = (category: string): MeditationSession[] => {
-    let filteredSessions = meditationSessions.filter(s => s.category === category);
-    filteredSessions = filterByDuration(filteredSessions);
-    filteredSessions = filterByLevel(filteredSessions);
-    return filteredSessions;
-  };
-  
-  const getRecentSessions = (): MeditationSession[] => {
-    return recentlyPlayed
-      .map(id => meditationSessions.find(s => s.id === id))
-      .filter(s => s !== undefined) as MeditationSession[];
-  };
-  
-  const getFavoriteSessions = (): MeditationSession[] => {
-    return meditationSessions.filter(s => favoriteSessions.includes(s.id));
-  };
   
   return (
     <div className="min-h-screen flex flex-col">
@@ -162,67 +144,13 @@ const Meditate = () => {
         {!isPremium && <SubscriptionBanner />}
         
         <div className="mb-6 mt-6">
-          <div className="flex flex-wrap gap-4">
-            {/* Duration filter */}
-            <div className="space-y-2">
-              <h3 className="text-sm font-medium">Duration</h3>
-              <div className="flex flex-wrap gap-2">
-                {[
-                  { value: 5, label: "≤ 5 min" },
-                  { value: 10, label: "5-10 min" },
-                  { value: 15, label: "10-15 min" },
-                  { value: 30, label: "15-30 min" },
-                  { value: 60, label: "> 30 min" }
-                ].map(option => (
-                  <button
-                    key={option.value}
-                    onClick={() => setDurationFilter(durationFilter === option.value ? null : option.value)}
-                    className={`px-3 py-1 text-sm rounded-full border ${
-                      durationFilter === option.value
-                        ? 'bg-primary text-primary-foreground border-primary'
-                        : 'bg-background border-input hover:bg-accent hover:text-accent-foreground'
-                    }`}
-                  >
-                    {option.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-            
-            {/* Level filter */}
-            <div className="space-y-2">
-              <h3 className="text-sm font-medium">Level</h3>
-              <div className="flex flex-wrap gap-2">
-                {[
-                  { value: "beginner", label: "Beginner" },
-                  { value: "intermediate", label: "Intermediate" },
-                  { value: "advanced", label: "Advanced" }
-                ].map(option => (
-                  <button
-                    key={option.value}
-                    onClick={() => setLevelFilter(levelFilter === option.value ? null : option.value)}
-                    className={`px-3 py-1 text-sm rounded-full border ${
-                      levelFilter === option.value
-                        ? 'bg-primary text-primary-foreground border-primary'
-                        : 'bg-background border-input hover:bg-accent hover:text-accent-foreground'
-                    }`}
-                  >
-                    {option.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-            
-            {/* Reset filters */}
-            {(durationFilter || levelFilter) && (
-              <button
-                onClick={resetFilters}
-                className="px-3 py-1 text-sm text-muted-foreground hover:text-foreground self-end"
-              >
-                Reset filters
-              </button>
-            )}
-          </div>
+          <MeditationFilters
+            durationFilter={durationFilter}
+            setDurationFilter={setDurationFilter}
+            levelFilter={levelFilter}
+            setLevelFilter={setLevelFilter}
+            resetFilters={resetFilters}
+          />
         </div>
         
         {getRecentSessions().length > 0 && (

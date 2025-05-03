@@ -29,14 +29,14 @@ const SessionControls: React.FC<SessionControlsProps> = ({
         variant="outline" 
         size="icon"
         onClick={onReset}
-        className="bg-white text-gray-700 hover:bg-gray-100"
+        className="bg-background text-foreground hover:bg-accent"
       >
         <SkipBack className="h-4 w-4" />
       </Button>
       
       <Button 
         size="icon" 
-        className="h-12 w-12 rounded-full bg-primary text-white hover:bg-primary/90" 
+        className="h-12 w-12 rounded-full bg-primary text-primary-foreground hover:bg-primary/90" 
         onClick={onPlayPause}
       >
         {isPlaying ? (
@@ -51,7 +51,7 @@ const SessionControls: React.FC<SessionControlsProps> = ({
           variant="ghost"
           size="icon"
           onClick={onMuteToggle}
-          className="text-gray-700 hover:bg-gray-100"
+          className="text-foreground hover:bg-accent hover:text-accent-foreground"
         >
           {isMuted ? (
             <VolumeX className="h-4 w-4" />

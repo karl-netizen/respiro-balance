@@ -45,22 +45,46 @@ const MeditationFilters: React.FC<MeditationFiltersProps> = ({
     <div className="p-4 border-b space-y-4">
       <div>
         <h3 className="text-sm font-medium mb-2">Duration</h3>
-        <ToggleGroup type="single" value={durationFilter?.toString() || ""} onValueChange={handleDurationChange} className="flex flex-wrap gap-2">
-          <ToggleGroupItem value="5" className="text-xs sm:text-sm bg-background border border-input hover:bg-accent data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">≤ 5 min</ToggleGroupItem>
-          <ToggleGroupItem value="10" className="text-xs sm:text-sm bg-background border border-input hover:bg-accent data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">5-10 min</ToggleGroupItem>
-          <ToggleGroupItem value="15" className="text-xs sm:text-sm bg-background border border-input hover:bg-accent data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">10-15 min</ToggleGroupItem>
-          <ToggleGroupItem value="30" className="text-xs sm:text-sm bg-background border border-input hover:bg-accent data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">15-30 min</ToggleGroupItem>
-          <ToggleGroupItem value="60" className="text-xs sm:text-sm bg-background border border-input hover:bg-accent data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">&gt; 30 min</ToggleGroupItem>
-        </ToggleGroup>
+        <div className="flex flex-wrap gap-2">
+          {[
+            { value: 5, label: "≤ 5 min" },
+            { value: 10, label: "5-10 min" },
+            { value: 15, label: "10-15 min" },
+            { value: 30, label: "15-30 min" },
+            { value: 60, label: "> 30 min" }
+          ].map(option => (
+            <Button
+              key={option.value}
+              onClick={() => setDurationFilter(durationFilter === option.value ? null : option.value)}
+              variant={durationFilter === option.value ? "default" : "outline"}
+              className="text-xs sm:text-sm"
+              size="sm"
+            >
+              {option.label}
+            </Button>
+          ))}
+        </div>
       </div>
       
       <div>
         <h3 className="text-sm font-medium mb-2">Level</h3>
-        <ToggleGroup type="single" value={levelFilter || ""} onValueChange={handleLevelChange} className="flex flex-wrap gap-2">
-          <ToggleGroupItem value="beginner" className="text-xs sm:text-sm bg-background border border-input hover:bg-accent data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">Beginner</ToggleGroupItem>
-          <ToggleGroupItem value="intermediate" className="text-xs sm:text-sm bg-background border border-input hover:bg-accent data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">Intermediate</ToggleGroupItem>
-          <ToggleGroupItem value="advanced" className="text-xs sm:text-sm bg-background border border-input hover:bg-accent data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">Advanced</ToggleGroupItem>
-        </ToggleGroup>
+        <div className="flex flex-wrap gap-2">
+          {[
+            { value: "beginner", label: "Beginner" },
+            { value: "intermediate", label: "Intermediate" },
+            { value: "advanced", label: "Advanced" }
+          ].map(option => (
+            <Button
+              key={option.value}
+              onClick={() => setLevelFilter(levelFilter === option.value ? null : option.value)}
+              variant={levelFilter === option.value ? "default" : "outline"}
+              className="text-xs sm:text-sm"
+              size="sm"
+            >
+              {option.label}
+            </Button>
+          ))}
+        </div>
       </div>
       
       {(durationFilter !== null || levelFilter !== null) && (
