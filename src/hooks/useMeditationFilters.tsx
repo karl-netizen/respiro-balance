@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { MeditationSession } from '@/types/meditation';
 
 export const useMeditationFilters = () => {
-  const [durationFilter, setDurationFilter] = useState<[number, number]>([1, 60]);
+  const [durationFilter, setDurationFilter] = useState<number | null>(null);
   const [levelFilter, setLevelFilter] = useState<string | null>(null);
   
   const filterSessionsByCategory = (sessions: MeditationSession[], category: 'guided' | 'quick' | 'deep' | 'sleep') => {
@@ -11,18 +11,28 @@ export const useMeditationFilters = () => {
       .filter(session => session.category === category)
       .filter(session => {
         // Apply duration filter
-        const meetsMinDuration = session.duration >= durationFilter[0];
-        const meetsMaxDuration = session.duration <= durationFilter[1];
+        if (durationFilter === null) return true;
         
+        if (durationFilter === 5) {
+          return session.duration <= 5;
+        } else if (durationFilter === 10) {
+          return session.duration > 5 && session.duration <= 10;
+        } else if (durationFilter === 15) {
+          return session.duration > 10 && session.duration <= 15;
+        } else if (durationFilter === 30) {
+          return session.duration > 15 && session.duration <= 30;
+        } else {
+          return session.duration > 30;
+        }
+      })
+      .filter(session => {
         // Apply level filter if set
-        const meetsLevelFilter = levelFilter === null || session.level === levelFilter;
-        
-        return meetsMinDuration && meetsMaxDuration && meetsLevelFilter;
+        return levelFilter === null || session.level === levelFilter;
       });
   };
   
   const resetFilters = () => {
-    setDurationFilter([1, 60]);
+    setDurationFilter(null);
     setLevelFilter(null);
   };
   

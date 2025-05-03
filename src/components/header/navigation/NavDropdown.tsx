@@ -7,6 +7,7 @@ import {
   NavigationMenuTrigger,
   NavigationMenuContent,
 } from "@/components/ui/navigation-menu";
+import { useActiveRoute } from "./navigationUtils";
 
 interface NavDropdownItem {
   label: string;
@@ -22,6 +23,7 @@ interface NavDropdownProps {
 
 const NavDropdown = ({ title, items, isActive, onItemClick }: NavDropdownProps) => {
   const navigate = useNavigate();
+  const { isActive: checkIsActive } = useActiveRoute();
 
   const handleItemClick = (path: string, e: React.MouseEvent) => {
     e.preventDefault();
@@ -43,8 +45,8 @@ const NavDropdown = ({ title, items, isActive, onItemClick }: NavDropdownProps) 
       <NavigationMenuContent className="bg-white border shadow-md z-[999] dropdown-content">
         <ul className="grid gap-2 p-4 w-48 bg-white">
           {items.map((item) => {
-            // Determine if this item's path matches current location
-            const isItemActive = window.location.pathname + window.location.search === item.path;
+            // Use our useActiveRoute hook to check if this item's path is active
+            const isItemActive = checkIsActive(item.path);
             
             return (
               <li key={item.path}>

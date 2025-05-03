@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { X } from 'lucide-react';
 
 export interface MeditationFiltersProps {
@@ -19,42 +19,44 @@ const MeditationFilters: React.FC<MeditationFiltersProps> = ({
   setLevelFilter,
   resetFilters
 }) => {
+  const handleDurationChange = (value: string) => {
+    // If clicking the already selected value, clear the filter
+    if (value === durationFilter?.toString()) {
+      setDurationFilter(null);
+    } else {
+      setDurationFilter(Number(value));
+    }
+  };
+  
+  const handleLevelChange = (value: string) => {
+    // If clicking the already selected value, clear the filter
+    if (value === levelFilter) {
+      setLevelFilter(null);
+    } else {
+      setLevelFilter(value);
+    }
+  };
+
   return (
-    <div className="p-4 border-b flex flex-wrap items-center gap-3">
-      <div className="flex-1 min-w-[120px]">
-        <Select
-          value={durationFilter?.toString() || ''}
-          onValueChange={(value) => setDurationFilter(value ? Number(value) : null)}
-        >
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Duration" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="">Any Duration</SelectItem>
-            <SelectItem value="5">5 min or less</SelectItem>
-            <SelectItem value="10">5-10 min</SelectItem>
-            <SelectItem value="15">10-15 min</SelectItem>
-            <SelectItem value="30">15-30 min</SelectItem>
-            <SelectItem value="60">30+ min</SelectItem>
-          </SelectContent>
-        </Select>
+    <div className="p-4 border-b space-y-4">
+      <div>
+        <h3 className="text-sm font-medium mb-2">Duration</h3>
+        <ToggleGroup type="single" value={durationFilter?.toString()} onValueChange={handleDurationChange}>
+          <ToggleGroupItem value="5" className="text-xs sm:text-sm">≤ 5 min</ToggleGroupItem>
+          <ToggleGroupItem value="10" className="text-xs sm:text-sm">5-10 min</ToggleGroupItem>
+          <ToggleGroupItem value="15" className="text-xs sm:text-sm">10-15 min</ToggleGroupItem>
+          <ToggleGroupItem value="30" className="text-xs sm:text-sm">15-30 min</ToggleGroupItem>
+          <ToggleGroupItem value="60" className="text-xs sm:text-sm">> 30 min</ToggleGroupItem>
+        </ToggleGroup>
       </div>
       
-      <div className="flex-1 min-w-[120px]">
-        <Select
-          value={levelFilter || ''}
-          onValueChange={(value) => setLevelFilter(value || null)}
-        >
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Level" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="">Any Level</SelectItem>
-            <SelectItem value="beginner">Beginner</SelectItem>
-            <SelectItem value="intermediate">Intermediate</SelectItem>
-            <SelectItem value="advanced">Advanced</SelectItem>
-          </SelectContent>
-        </Select>
+      <div>
+        <h3 className="text-sm font-medium mb-2">Level</h3>
+        <ToggleGroup type="single" value={levelFilter || ''} onValueChange={handleLevelChange}>
+          <ToggleGroupItem value="beginner" className="text-xs sm:text-sm">Beginner</ToggleGroupItem>
+          <ToggleGroupItem value="intermediate" className="text-xs sm:text-sm">Intermediate</ToggleGroupItem>
+          <ToggleGroupItem value="advanced" className="text-xs sm:text-sm">Advanced</ToggleGroupItem>
+        </ToggleGroup>
       </div>
       
       {(durationFilter !== null || levelFilter !== null) && (
