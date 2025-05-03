@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -17,7 +18,7 @@ const SessionFilter: React.FC<SessionFilterProps> = ({
   const [filterType, setFilterType] = useState<string | null>(null);
   const [filterValue, setFilterValue] = useState<string | null>(null);
   
-  // Define duration ranges
+  // Define duration ranges - corrected logic
   const durationRanges = [
     { label: '<5 min', min: 0, max: 5 },
     { label: '5-10 min', min: 5, max: 10 },
@@ -26,34 +27,46 @@ const SessionFilter: React.FC<SessionFilterProps> = ({
     { label: '30+ min', min: 30, max: Infinity },
   ];
   
-  // Define levels and categories
+  // Define levels and categories - ensure they match data case exactly
   const levels = ['beginner', 'intermediate', 'advanced'];
   const categories = ['guided', 'quick', 'deep', 'sleep'];
   
-  // Filter sessions based on current filter
+  // Filter sessions based on current filter - fixed logic
   useEffect(() => {
     let filteredSessions = [...sessions];
     
     if (filterType && filterValue) {
+      console.log("Filtering by:", filterType, filterValue);
+      
       filteredSessions = sessions.filter(session => {
+        // Always convert session duration to a number for comparison
+        const duration = Number(session.duration);
+        
         if (filterType === 'duration') {
-          const range = durationRanges.find(r => r.label === filterValue);
-          if (!range) return true;
+          console.log("Checking session:", session.title, "Duration:", duration);
           
-          if (range.label === '<5 min') {
-            return session.duration < 5;
-          } else if (range.label === '30+ min') {
-            return session.duration > 30;
-          } else {
-            return session.duration >= range.min && session.duration < range.max;
+          if (filterValue === '<5 min') {
+            return duration < 5;
+          } else if (filterValue === '5-10 min') {
+            return duration >= 5 && duration < 10;
+          } else if (filterValue === '10-15 min') {
+            return duration >= 10 && duration < 15;
+          } else if (filterValue === '15-30 min') {
+            return duration >= 15 && duration <= 30;
+          } else if (filterValue === '30+ min') {
+            return duration > 30;
           }
         } else if (filterType === 'level') {
-          return session.level.toLowerCase() === filterValue.toLowerCase();
+          // Make case-sensitive comparison as our data uses lowercase
+          return session.level === filterValue;
         } else if (filterType === 'category') {
-          return session.category.toLowerCase() === filterValue.toLowerCase();
+          // Make case-sensitive comparison as our data uses lowercase
+          return session.category === filterValue;
         }
         return true;
       });
+      
+      console.log("Filtered sessions:", filteredSessions);
     }
     
     onFilteredSessionsChange(filteredSessions);

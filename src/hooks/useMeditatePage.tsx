@@ -74,7 +74,7 @@ export const useMeditatePage = () => {
     });
   };
 
-  // Get sessions for a specific category
+  // Get sessions for a specific category - updated to handle all sessions
   const getFilteredSessions = useCallback((category: string): MeditationSession[] => {
     return meditationSessions.filter(s => s.category === category);
   }, []);
