@@ -21,6 +21,7 @@ const Meditate = () => {
     handleToggleFavorite,
     handleSelectSession,
     handleStartMeditation,
+    getAllSessions,
     getFilteredSessions,
     getRecentSessions,
     isPremium
@@ -30,6 +31,9 @@ const Meditate = () => {
   const [filteredSessions, setFilteredSessions] = useState<MeditationSession[]>([]);
   
   const recentSessions = getRecentSessions();
+  
+  // Get all sessions, not just for the current tab
+  const allSessions = getAllSessions();
   
   // Get all sessions for the current tab
   const allSessionsForCurrentTab = getFilteredSessions(activeTab);
@@ -45,7 +49,7 @@ const Meditate = () => {
         
         <div className="mb-6 mt-6">
           <SessionFilter 
-            sessions={allSessionsForCurrentTab}
+            sessions={allSessions}
             onFilteredSessionsChange={setFilteredSessions}
           />
         </div>

@@ -18,7 +18,7 @@ const SessionFilter: React.FC<SessionFilterProps> = ({
   const [filterType, setFilterType] = useState<string | null>(null);
   const [filterValue, setFilterValue] = useState<string | null>(null);
   
-  // Define duration ranges - corrected logic
+  // Define duration ranges - using simpler structure for clarity
   const durationRanges = [
     { label: '<5 min', min: 0, max: 5 },
     { label: '5-10 min', min: 5, max: 10 },
@@ -57,10 +57,10 @@ const SessionFilter: React.FC<SessionFilterProps> = ({
             return duration > 30;
           }
         } else if (filterType === 'level') {
-          // Make case-sensitive comparison as our data uses lowercase
+          // Make case-sensitive comparison and ensure exact match
           return session.level === filterValue;
         } else if (filterType === 'category') {
-          // Make case-sensitive comparison as our data uses lowercase
+          // Make case-sensitive comparison and ensure exact match
           return session.category === filterValue;
         }
         return true;

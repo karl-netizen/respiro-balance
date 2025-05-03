@@ -74,7 +74,12 @@ export const useMeditatePage = () => {
     });
   };
 
-  // Get sessions for a specific category - updated to handle all sessions
+  // Get all meditation sessions available in the system
+  const getAllSessions = useCallback((): MeditationSession[] => {
+    return meditationSessions;
+  }, []);
+
+  // Get sessions for a specific category - returns all sessions for the given category
   const getFilteredSessions = useCallback((category: string): MeditationSession[] => {
     return meditationSessions.filter(s => s.category === category);
   }, []);
@@ -121,6 +126,7 @@ export const useMeditatePage = () => {
     handleToggleFavorite,
     handleSelectSession,
     handleStartMeditation,
+    getAllSessions,
     getFilteredSessions,
     getRecentSessions,
     getFavoriteSessions,
