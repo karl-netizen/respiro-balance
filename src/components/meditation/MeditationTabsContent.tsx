@@ -21,6 +21,12 @@ const MeditationTabsContent: React.FC<MeditationTabsContentProps> = ({
   onToggleFavorite,
   isFavorite
 }) => {
+  // Get filtered sessions for each category
+  const guidedSessions = getFilteredSessions("guided");
+  const quickSessions = getFilteredSessions("quick");
+  const deepSessions = getFilteredSessions("deep");
+  const sleepSessions = getFilteredSessions("sleep");
+  
   return (
     <Tabs value={activeTab} onValueChange={handleTabChange} className="mt-6">
       <TabsList className="grid grid-cols-4 mb-6">
@@ -32,7 +38,7 @@ const MeditationTabsContent: React.FC<MeditationTabsContentProps> = ({
       
       <TabsContent value="guided">
         <GuidedMeditationList 
-          sessions={getFilteredSessions("guided")}
+          sessions={guidedSessions}
           onSelectSession={onSelectSession}
           onToggleFavorite={onToggleFavorite}
           isFavorite={isFavorite}
@@ -41,7 +47,7 @@ const MeditationTabsContent: React.FC<MeditationTabsContentProps> = ({
       
       <TabsContent value="quick">
         <QuickBreaksList 
-          sessions={getFilteredSessions("quick")}
+          sessions={quickSessions}
           onSelectSession={onSelectSession}
           onToggleFavorite={onToggleFavorite}
           isFavorite={isFavorite}
@@ -50,7 +56,7 @@ const MeditationTabsContent: React.FC<MeditationTabsContentProps> = ({
       
       <TabsContent value="deep">
         <DeepFocusList 
-          sessions={getFilteredSessions("deep")}
+          sessions={deepSessions}
           onSelectSession={onSelectSession}
           onToggleFavorite={onToggleFavorite}
           isFavorite={isFavorite}
@@ -59,7 +65,7 @@ const MeditationTabsContent: React.FC<MeditationTabsContentProps> = ({
       
       <TabsContent value="sleep">
         <SleepMeditationList 
-          sessions={getFilteredSessions("sleep")}
+          sessions={sleepSessions}
           onSelectSession={onSelectSession}
           onToggleFavorite={onToggleFavorite}
           isFavorite={isFavorite}
