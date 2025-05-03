@@ -46,7 +46,7 @@ const MeditationFilters: React.FC<MeditationFiltersProps> = ({
           <ToggleGroupItem value="10" className="text-xs sm:text-sm">5-10 min</ToggleGroupItem>
           <ToggleGroupItem value="15" className="text-xs sm:text-sm">10-15 min</ToggleGroupItem>
           <ToggleGroupItem value="30" className="text-xs sm:text-sm">15-30 min</ToggleGroupItem>
-          <ToggleGroupItem value="60" className="text-xs sm:text-sm">> 30 min</ToggleGroupItem>
+          <ToggleGroupItem value="60" className="text-xs sm:text-sm">&gt; 30 min</ToggleGroupItem>
         </ToggleGroup>
       </div>
       

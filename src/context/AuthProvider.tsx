@@ -1,5 +1,5 @@
 
-import { ReactNode, useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthInitialization } from '@/hooks/useAuthInitialization';
 import { useAuthMethods } from '@/hooks/useAuthMethods';
