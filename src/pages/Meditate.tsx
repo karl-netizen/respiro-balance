@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { MeditationHeader, MeditationSessionDialog } from '@/components/meditation';
@@ -9,7 +9,10 @@ import SubscriptionBanner from '@/components/subscription/SubscriptionBanner';
 import SessionFilter from '@/components/meditation/SessionFilter';
 import { useMeditatePage } from '@/hooks/useMeditatePage';
 import { MeditationSession } from '@/types/meditation';
-import StateDebugger from '@/components/dev/StateDebugger';
+// Only import this in development
+const StateDebugger = process.env.NODE_ENV !== 'production' 
+  ? require('@/components/dev/StateDebugger').default 
+  : () => null;
 
 const Meditate = () => {
   const {
@@ -31,27 +34,26 @@ const Meditate = () => {
   // State to track filtered sessions
   const [filteredSessions, setFilteredSessions] = useState<MeditationSession[]>([]);
   
-  // Track currently displayed session in dialog to ensure consistency
-  const [currentDialogSession, setCurrentDialogSession] = useState<MeditationSession | null>(null);
+  // Memoize the current session's favorite status to avoid unnecessary re-renders
+  const currentFavoriteStatus = useCallback(() => {
+    return selectedSession ? isFavorite(selectedSession.id) : false;
+  }, [selectedSession, isFavorite]);
   
-  // Update currentDialogSession whenever selectedSession changes
-  useEffect(() => {
+  // Memoize the toggle function to ensure it references the correct session
+  const handleCurrentSessionToggleFavorite = useCallback(() => {
     if (selectedSession) {
-      setCurrentDialogSession(selectedSession);
+      handleToggleFavorite(selectedSession);
     }
-  }, [selectedSession]);
-  
-  // Enhanced session selection handler
-  const enhancedHandleSelectSession = (session: MeditationSession) => {
-    // Set the current dialog session immediately to ensure UI consistency
-    setCurrentDialogSession(session);
-    // Then call the original handler
-    handleSelectSession(session);
-  };
+  }, [selectedSession, handleToggleFavorite]);
   
   const recentSessions = getRecentSessions();
   const allSessions = getAllSessions();
   const allSessionsForCurrentTab = getFilteredSessions(activeTab);
+  
+  // The sessions to display based on filters
+  const displaySessions = filteredSessions.length > 0 
+    ? filteredSessions 
+    : allSessionsForCurrentTab;
   
   return (
     <div className="min-h-screen flex flex-col">
@@ -71,7 +73,7 @@ const Meditate = () => {
         
         <RecentPlayedList
           recentSessions={recentSessions}
-          onSelectSession={enhancedHandleSelectSession}
+          onSelectSession={handleSelectSession}
           onToggleFavorite={handleToggleFavorite}
           isFavorite={isFavorite}
         />
@@ -79,20 +81,20 @@ const Meditate = () => {
         <MeditationTabsContent
           activeTab={activeTab}
           handleTabChange={handleTabChange}
-          getFilteredSessions={() => filteredSessions.length > 0 ? filteredSessions : allSessionsForCurrentTab}
-          onSelectSession={enhancedHandleSelectSession}
+          getFilteredSessions={() => displaySessions}
+          onSelectSession={handleSelectSession}
           onToggleFavorite={handleToggleFavorite}
           isFavorite={isFavorite}
         />
       </main>
       
       <MeditationSessionDialog 
-        session={currentDialogSession} 
+        session={selectedSession} 
         open={dialogOpen}
         setOpen={setDialogOpen}
         onStart={handleStartMeditation}
-        isFavorite={currentDialogSession ? isFavorite(currentDialogSession.id) : false}
-        onToggleFavorite={() => currentDialogSession && handleToggleFavorite(currentDialogSession)}
+        isFavorite={currentFavoriteStatus()}
+        onToggleFavorite={handleCurrentSessionToggleFavorite}
       />
       
       <Footer />
@@ -101,12 +103,11 @@ const Meditate = () => {
         <StateDebugger
           data={{
             selectedSession,
-            currentDialogSession,
             dialogOpen,
             activeTab,
             filteredSessions: filteredSessions.length,
             allSessionsForCurrentTab: allSessionsForCurrentTab.length,
-            favorites: isFavorite && selectedSession ? isFavorite(selectedSession.id) : false,
+            isFavorite: currentFavoriteStatus(),
           }}
           title="Meditation Page State"
           initialExpanded={false}
