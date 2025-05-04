@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { MeditationHeader, MeditationSessionDialog } from '@/components/meditation';
@@ -30,12 +30,26 @@ const Meditate = () => {
   // State to track filtered sessions
   const [filteredSessions, setFilteredSessions] = useState<MeditationSession[]>([]);
   
+  // Track currently displayed session in dialog to ensure consistency
+  const [currentDialogSession, setCurrentDialogSession] = useState<MeditationSession | null>(null);
+  
+  // Update currentDialogSession whenever selectedSession changes
+  useEffect(() => {
+    if (selectedSession) {
+      setCurrentDialogSession(selectedSession);
+    }
+  }, [selectedSession]);
+  
+  // Enhanced session selection handler
+  const enhancedHandleSelectSession = (session: MeditationSession) => {
+    // Set the current dialog session immediately to ensure UI consistency
+    setCurrentDialogSession(session);
+    // Then call the original handler
+    handleSelectSession(session);
+  };
+  
   const recentSessions = getRecentSessions();
-  
-  // Get all sessions, not just for the current tab
   const allSessions = getAllSessions();
-  
-  // Get all sessions for the current tab
   const allSessionsForCurrentTab = getFilteredSessions(activeTab);
   
   return (
@@ -56,7 +70,7 @@ const Meditate = () => {
         
         <RecentPlayedList
           recentSessions={recentSessions}
-          onSelectSession={handleSelectSession}
+          onSelectSession={enhancedHandleSelectSession}
           onToggleFavorite={handleToggleFavorite}
           isFavorite={isFavorite}
         />
@@ -65,19 +79,19 @@ const Meditate = () => {
           activeTab={activeTab}
           handleTabChange={handleTabChange}
           getFilteredSessions={() => filteredSessions.length > 0 ? filteredSessions : allSessionsForCurrentTab}
-          onSelectSession={handleSelectSession}
+          onSelectSession={enhancedHandleSelectSession}
           onToggleFavorite={handleToggleFavorite}
           isFavorite={isFavorite}
         />
       </main>
       
       <MeditationSessionDialog 
-        session={selectedSession} 
+        session={currentDialogSession} 
         open={dialogOpen}
         setOpen={setDialogOpen}
         onStart={handleStartMeditation}
-        isFavorite={selectedSession ? isFavorite(selectedSession.id) : false}
-        onToggleFavorite={() => selectedSession && handleToggleFavorite(selectedSession)}
+        isFavorite={currentDialogSession ? isFavorite(currentDialogSession.id) : false}
+        onToggleFavorite={() => currentDialogSession && handleToggleFavorite(currentDialogSession)}
       />
       
       <Footer />

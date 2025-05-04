@@ -1,22 +1,61 @@
 
 import { useState, useEffect, useCallback } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { MeditationSession } from '@/types/meditation';
 import { useSubscriptionContext } from '@/hooks/useSubscriptionContext';
 import { meditationSessions } from '@/data/meditationSessions';
 
+// Custom hook for session storage
+const useSessionStorage = <T,>(key: string, initialValue: T): [T, (value: T) => void] => {
+  const [storedValue, setStoredValue] = useState<T>(() => {
+    try {
+      const item = window.sessionStorage.getItem(key);
+      return item ? JSON.parse(item) : initialValue;
+    } catch (error) {
+      console.error(`Error reading sessionStorage key "${key}":`, error);
+      return initialValue;
+    }
+  });
+
+  const setValue = (value: T) => {
+    try {
+      setStoredValue(value);
+      window.sessionStorage.setItem(key, JSON.stringify(value));
+    } catch (error) {
+      console.error(`Error setting sessionStorage key "${key}":`, error);
+    }
+  };
+
+  return [storedValue, setValue];
+};
+
 export const useMeditatePage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [selectedSession, setSelectedSession] = useState<MeditationSession | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [favoriteSessions, setFavoriteSessions] = useState<string[]>([]);
-  const [recentlyPlayed, setRecentlyPlayed] = useState<string[]>([]);
+  
+  // Using session storage for persistence
+  const [favoriteSessions, setFavoriteSessions] = useSessionStorage<string[]>('favoriteSessions', []);
+  const [recentlyPlayed, setRecentlyPlayed] = useSessionStorage<string[]>('recentlyPlayedSessions', []);
+  
   const { isPremium } = useSubscriptionContext();
   
   // Get tab from URL or default to 'guided'
   const initialTab = searchParams.get('tab') || 'guided';
   const [activeTab, setActiveTab] = useState(initialTab);
+  
+  // Check for session ID in URL on component mount
+  useEffect(() => {
+    const sessionId = searchParams.get('session');
+    if (sessionId) {
+      const session = meditationSessions.find(s => s.id === sessionId);
+      if (session) {
+        handleSelectSession(session);
+      }
+    }
+  }, [searchParams]);
   
   // Update URL when tab changes
   const handleTabChange = (value: string) => {
@@ -24,31 +63,13 @@ export const useMeditatePage = () => {
     setSearchParams({ tab: value });
   };
   
-  // Load favorites from localStorage
-  useEffect(() => {
-    const storedFavorites = localStorage.getItem('favoriteSessions');
-    if (storedFavorites) {
-      setFavoriteSessions(JSON.parse(storedFavorites));
-    }
-    
-    const storedRecent = localStorage.getItem('recentlyPlayedSessions');
-    if (storedRecent) {
-      setRecentlyPlayed(JSON.parse(storedRecent));
-    }
-  }, []);
-  
-  // Save favorites to localStorage when they change
-  useEffect(() => {
-    localStorage.setItem('favoriteSessions', JSON.stringify(favoriteSessions));
-  }, [favoriteSessions]);
-  
-  useEffect(() => {
-    localStorage.setItem('recentlyPlayedSessions', JSON.stringify(recentlyPlayed));
-  }, [recentlyPlayed]);
-  
   const handleSelectSession = (session: MeditationSession) => {
+    // Set in local state first to ensure immediate UI update
     setSelectedSession(session);
-    setDialogOpen(true);
+    // Use setTimeout to ensure state update completes
+    setTimeout(() => {
+      setDialogOpen(true);
+    }, 0);
   };
   
   const handleToggleFavorite = (session: MeditationSession) => {
@@ -81,8 +102,14 @@ export const useMeditatePage = () => {
 
   // Get sessions for a specific category - returns all sessions for the given category
   const getFilteredSessions = useCallback((category: string): MeditationSession[] => {
-    return meditationSessions.filter(s => s.category === category);
-  }, []);
+    if (category === 'all') {
+      return meditationSessions;
+    } else if (category === 'favorites') {
+      return meditationSessions.filter(s => favoriteSessions.includes(s.id));
+    } else {
+      return meditationSessions.filter(s => s.category === category);
+    }
+  }, [favoriteSessions]);
   
   const getRecentSessions = useCallback((): MeditationSession[] => {
     return recentlyPlayed
@@ -102,7 +129,7 @@ export const useMeditatePage = () => {
         description: "Upgrade your subscription to access premium content",
         action: {
           label: "Upgrade",
-          onClick: () => window.location.href = '/subscription'
+          onClick: () => navigate('/subscription')
         }
       });
       return;
@@ -111,8 +138,11 @@ export const useMeditatePage = () => {
     // Add to recently played
     addToRecentlyPlayed(session);
     
+    // Close the dialog
+    setDialogOpen(false);
+    
     // Direct to meditation session page
-    window.location.href = `/meditate/session/${session.id}`;
+    navigate(`/meditate/session/${session.id}`);
   };
 
   return {
