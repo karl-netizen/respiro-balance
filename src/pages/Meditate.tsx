@@ -9,6 +9,7 @@ import SubscriptionBanner from '@/components/subscription/SubscriptionBanner';
 import SessionFilter from '@/components/meditation/SessionFilter';
 import { useMeditatePage } from '@/hooks/useMeditatePage';
 import { MeditationSession } from '@/types/meditation';
+import StateDebugger from '@/components/dev/StateDebugger';
 
 const Meditate = () => {
   const {
@@ -95,6 +96,21 @@ const Meditate = () => {
       />
       
       <Footer />
+      
+      {process.env.NODE_ENV !== 'production' && (
+        <StateDebugger
+          data={{
+            selectedSession,
+            currentDialogSession,
+            dialogOpen,
+            activeTab,
+            filteredSessions: filteredSessions.length,
+            allSessionsForCurrentTab: allSessionsForCurrentTab.length,
+            favorites: isFavorite && selectedSession ? isFavorite(selectedSession.id) : false,
+          }}
+          title="Meditation Page State"
+        />
+      )}
     </div>
   );
 };
