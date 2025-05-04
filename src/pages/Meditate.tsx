@@ -9,10 +9,8 @@ import SubscriptionBanner from '@/components/subscription/SubscriptionBanner';
 import SessionFilter from '@/components/meditation/SessionFilter';
 import { useMeditatePage } from '@/hooks/useMeditatePage';
 import { MeditationSession } from '@/types/meditation';
-// Only import this in development
-const StateDebugger = process.env.NODE_ENV !== 'production' 
-  ? require('@/components/dev/StateDebugger').default 
-  : () => null;
+// Import StateDebugger with dynamic import for development only
+import { StateDebugger } from '@/components/dev';
 
 const Meditate = () => {
   const {
