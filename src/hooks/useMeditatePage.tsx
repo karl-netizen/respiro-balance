@@ -87,7 +87,8 @@ export const useMeditatePage = () => {
   };
   
   const addToRecentlyPlayed = (session: MeditationSession) => {
-    setRecentlyPlayed(prev => {
+    // Fix type error by explicitly setting the type to string[]
+    setRecentlyPlayed((prev: string[]) => {
       // Remove if already exists (to move it to the front)
       const filtered = prev.filter(id => id !== session.id);
       // Add to front and limit to 5
