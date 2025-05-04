@@ -7,7 +7,7 @@ import { useSubscriptionContext } from '@/hooks/useSubscriptionContext';
 import { meditationSessions } from '@/data/meditationSessions';
 
 // Custom hook for session storage
-const useSessionStorage = <T,>(key: string, initialValue: T): [T, (value: T) => void] => {
+const useSessionStorage = <T,>(key: string, initialValue: T): [T, (value: T | ((val: T) => T)) => void] => {
   const [storedValue, setStoredValue] = useState<T>(() => {
     try {
       const item = window.sessionStorage.getItem(key);
@@ -18,10 +18,12 @@ const useSessionStorage = <T,>(key: string, initialValue: T): [T, (value: T) => 
     }
   });
 
-  const setValue = (value: T) => {
+  const setValue = (value: T | ((val: T) => T)) => {
     try {
-      setStoredValue(value);
-      window.sessionStorage.setItem(key, JSON.stringify(value));
+      // Allow value to be a function so we have the same API as useState
+      const valueToStore = value instanceof Function ? value(storedValue) : value;
+      setStoredValue(valueToStore);
+      window.sessionStorage.setItem(key, JSON.stringify(valueToStore));
     } catch (error) {
       console.error(`Error setting sessionStorage key "${key}":`, error);
     }
@@ -87,12 +89,12 @@ export const useMeditatePage = () => {
   };
   
   const addToRecentlyPlayed = (session: MeditationSession) => {
-    // Fix the type error by properly handling the state update function
-    setRecentlyPlayed((prev) => {
+    // Fix the type error by properly typing the function parameter
+    setRecentlyPlayed((prev: MeditationSession[]) => {
       // Remove if already exists (to move it to the front)
-      const filtered = prev.filter(id => id !== session.id);
+      const filtered = prev.filter(s => s.id !== session.id);
       // Add to front and limit to 5
-      return [session.id, ...filtered].slice(0, 5);
+      return [session, ...filtered].slice(0, 5);
     });
   };
 

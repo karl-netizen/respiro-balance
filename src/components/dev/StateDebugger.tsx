@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import { useUserPreferences } from '@/context/hooks/useUserPreferences';
 
 interface StateDebuggerProps {
   data: Record<string, any>;
@@ -9,7 +10,20 @@ interface StateDebuggerProps {
 }
 
 /**
- * A development-only component that displays state for debugging purposes
+ * StateDebugger component - A development tool to visualize state in your application
+ * 
+ * Usage:
+ * ```jsx
+ * <StateDebugger 
+ *   data={{ 
+ *     selectedSession, 
+ *     dialogOpen, 
+ *     activeTab, 
+ *     filteredSessions: filteredSessions.length 
+ *   }} 
+ *   title="Meditation Page State" 
+ * />
+ * ```
  */
 const StateDebugger: React.FC<StateDebuggerProps> = ({ 
   data, 
@@ -17,19 +31,53 @@ const StateDebugger: React.FC<StateDebuggerProps> = ({
   initialExpanded = false 
 }) => {
   const [isExpanded, setIsExpanded] = useState(initialExpanded);
-
+  const { theme } = useUserPreferences();
+  
+  const isDarkMode = theme === 'dark';
+  
   // Don't render in production
   if (process.env.NODE_ENV === 'production') {
     return null;
   }
+  
+  // Safely stringify any data
+  const safeStringify = (value: any): string => {
+    if (value === null) return 'null';
+    if (value === undefined) return 'undefined';
+    if (typeof value === 'function') return 'function() { ... }';
+    
+    try {
+      if (typeof value === 'object') {
+        // Handle circular references
+        const seen = new WeakSet();
+        return JSON.stringify(value, (_, val) => {
+          if (typeof val === 'object' && val !== null) {
+            if (seen.has(val)) return '[Circular]';
+            seen.add(val);
+          }
+          return val;
+        }, 2);
+      }
+      return String(value);
+    } catch (err) {
+      return `[Error displaying value: ${err}]`;
+    }
+  };
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 max-w-sm bg-black bg-opacity-90 text-green-400 p-4 rounded-lg shadow-lg border border-green-500 text-xs font-mono">
+    <div 
+      className={`fixed bottom-4 right-4 z-50 max-w-md overflow-hidden rounded-lg shadow-lg ${
+        isDarkMode ? 'bg-gray-800 text-green-400 border border-gray-700' : 'bg-white text-green-600 border border-gray-200'
+      } transition-all duration-200`}
+      style={{ maxHeight: isExpanded ? '80vh' : 'auto' }}
+    >
       <div 
-        className="flex items-center justify-between cursor-pointer mb-2"
+        className={`flex items-center justify-between px-4 py-2 cursor-pointer ${
+          isDarkMode ? 'bg-gray-700' : 'bg-gray-100'
+        }`}
         onClick={() => setIsExpanded(!isExpanded)}
       >
-        <h3 className="font-bold">{title}</h3>
+        <h3 className="font-medium text-sm">{title}</h3>
         {isExpanded ? (
           <ChevronUp size={16} />
         ) : (
@@ -38,10 +86,25 @@ const StateDebugger: React.FC<StateDebuggerProps> = ({
       </div>
       
       {isExpanded && (
-        <div className="max-h-96 overflow-auto">
-          <pre className="whitespace-pre-wrap">
-            {JSON.stringify(data, null, 2)}
-          </pre>
+        <div 
+          className="p-4 overflow-auto text-xs font-mono"
+          style={{ maxHeight: 'calc(80vh - 40px)' }}
+        >
+          {Object.entries(data).map(([key, value]) => (
+            <div key={key} className="mb-2">
+              <div className={`font-bold ${isDarkMode ? 'text-blue-300' : 'text-blue-600'}`}>
+                {key}:
+              </div>
+              <pre 
+                className="mt-1 p-2 rounded overflow-x-auto whitespace-pre-wrap break-words" 
+                style={{
+                  backgroundColor: isDarkMode ? 'rgba(0,0,0,0.2)' : 'rgba(0,0,0,0.05)'
+                }}
+              >
+                {safeStringify(value)}
+              </pre>
+            </div>
+          ))}
         </div>
       )}
     </div>
