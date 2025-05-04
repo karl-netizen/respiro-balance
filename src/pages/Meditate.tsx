@@ -109,6 +109,7 @@ const Meditate = () => {
             favorites: isFavorite && selectedSession ? isFavorite(selectedSession.id) : false,
           }}
           title="Meditation Page State"
+          initialExpanded={false}
         />
       )}
     </div>

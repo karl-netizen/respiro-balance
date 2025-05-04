@@ -31,9 +31,9 @@ const StateDebugger: React.FC<StateDebuggerProps> = ({
   initialExpanded = false 
 }) => {
   const [isExpanded, setIsExpanded] = useState(initialExpanded);
-  const { theme } = useUserPreferences();
+  const { preferences } = useUserPreferences();
   
-  const isDarkMode = theme === 'dark';
+  const isDarkMode = preferences.theme === 'dark';
   
   // Don't render in production
   if (process.env.NODE_ENV === 'production') {
