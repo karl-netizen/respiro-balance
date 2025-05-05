@@ -38,7 +38,7 @@ const SessionFilter: React.FC<SessionFilterProps> = ({
   return (
     <div className="session-filter-container mb-6">
       <div className="flex items-center gap-3">
-        <label className="text-sm font-medium">Filter by Category:</label>
+        <label className="text-sm font-medium">Category:</label>
         <Select 
           value={activeTab} 
           onValueChange={(value) => onCategoryChange(value)}
@@ -53,7 +53,7 @@ const SessionFilter: React.FC<SessionFilterProps> = ({
                 value={category}
                 className="capitalize"
               >
-                {category}
+                {category.charAt(0).toUpperCase() + category.slice(1)}
               </SelectItem>
             ))}
           </SelectContent>

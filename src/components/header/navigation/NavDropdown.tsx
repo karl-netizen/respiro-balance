@@ -19,11 +19,17 @@ interface NavDropdownProps {
   items: NavDropdownItem[];
   isActive: boolean;
   onItemClick: (path: string) => void;
+  activeCategory?: string; // Added to filter items by category
 }
 
-const NavDropdown = ({ title, items, isActive, onItemClick }: NavDropdownProps) => {
+const NavDropdown = ({ title, items, isActive, onItemClick, activeCategory }: NavDropdownProps) => {
   const navigate = useNavigate();
   const { isActive: checkIsActive } = useActiveRoute();
+  
+  // Filter items if activeCategory is provided and this is the meditation dropdown
+  const filteredItems = activeCategory && title === "Meditate" 
+    ? items.filter(item => item.path.includes(`tab=${activeCategory}`) || !item.path.includes('?tab='))
+    : items;
 
   const handleItemClick = (path: string, e: React.MouseEvent) => {
     e.preventDefault();
@@ -44,7 +50,7 @@ const NavDropdown = ({ title, items, isActive, onItemClick }: NavDropdownProps) 
       </NavigationMenuTrigger>
       <NavigationMenuContent className="bg-white border shadow-md z-[999] dropdown-content">
         <ul className="grid gap-2 p-4 w-48 bg-white">
-          {items.map((item) => {
+          {filteredItems.map((item) => {
             // Use our useActiveRoute hook to check if this item's path is active
             const isItemActive = checkIsActive(item.path);
             

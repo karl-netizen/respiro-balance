@@ -1,6 +1,6 @@
 
 import React, { useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   NavigationMenu,
   NavigationMenuList,
@@ -14,6 +14,18 @@ import { meditateSection, breathingSection } from "./navigation/navigationData";
 const DesktopNavLinks = () => {
   const navigate = useNavigate();
   const { isActive } = useActiveRoute();
+  const location = useLocation();
+  
+  // Extract active category from URL if on meditate page
+  const getActiveCategory = () => {
+    if (location.pathname.includes('/meditate')) {
+      const searchParams = new URLSearchParams(location.search);
+      return searchParams.get('tab') || 'guided'; // Default to 'guided' if no tab specified
+    }
+    return null;
+  };
+  
+  const activeCategory = getActiveCategory();
   
   const handleNavClick = useCallback((path: string) => {
     console.log(`Navigation clicked: ${path}`);
@@ -48,6 +60,7 @@ const DesktopNavLinks = () => {
           items={meditateSection.items}
           isActive={isActive('/meditate')}
           onItemClick={handleNavClick}
+          activeCategory={activeCategory}
         />
 
         {/* Breathing dropdown */}

@@ -101,7 +101,7 @@ export const MeditationSessionDialog: React.FC<MeditationSessionDialogProps> = (
           
           <Button 
             onClick={() => onStart(session)} 
-            className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white"
+            className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-medium"
           >
             <Play className="h-4 w-4 mr-2" />
             Begin Meditation
