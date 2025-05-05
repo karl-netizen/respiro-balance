@@ -6,7 +6,6 @@ import { MeditationHeader, MeditationSessionDialog } from '@/components/meditati
 import RecentPlayedList from '@/components/meditation/RecentPlayedList';
 import MeditationTabsContent from '@/components/meditation/MeditationTabsContent';
 import SubscriptionBanner from '@/components/subscription/SubscriptionBanner';
-import SessionFilter from '@/components/meditation/SessionFilter';
 import { useMeditatePage } from '@/hooks/useMeditatePage';
 import { MeditationSession } from '@/types/meditation';
 import { StateDebugger } from '@/components/dev';
@@ -43,13 +42,7 @@ const Meditate = () => {
     }
   }, [selectedSession, handleToggleFavorite]);
   
-  // Handle category change from dropdown - sync with tabs
-  const handleCategoryChange = (category: string) => {
-    handleTabChange(category);
-  };
-  
   const recentSessions = getRecentSessions();
-  const allSessions = getAllSessions();
   const allSessionsForCurrentTab = getFilteredSessions(activeTab);
   
   // The sessions to display based on filters
@@ -65,15 +58,6 @@ const Meditate = () => {
         <MeditationHeader />
         
         {!isPremium && <SubscriptionBanner />}
-        
-        <div className="mt-6">
-          <SessionFilter 
-            sessions={allSessions}
-            onFilteredSessionsChange={setFilteredSessions}
-            activeTab={activeTab}
-            onCategoryChange={handleCategoryChange}
-          />
-        </div>
         
         <RecentPlayedList
           recentSessions={recentSessions}

@@ -1,4 +1,3 @@
-
 export interface NavItem {
   label: string;
   path: string;
@@ -12,7 +11,6 @@ export interface NavSection {
 export const meditateSection: NavSection = {
   title: "Meditate",
   items: [
-    { label: "All Sessions", path: "/meditate" },
     { label: "Guided Meditation", path: "/meditate?tab=guided" },
     { label: "Quick Sessions", path: "/meditate?tab=quick" },
     { label: "Deep Focus", path: "/meditate?tab=deep" },
