@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -50,10 +49,6 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
         title="Meditate"
         icon={<BookOpen className="h-4 w-4" />}
         items={[
-          {
-            label: "All Sessions",
-            href: "/meditate",
-          },
           {
             label: "Guided Meditation",
             href: "/meditate?tab=guided",

@@ -1,5 +1,5 @@
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { MeditationHeader, MeditationSessionDialog } from '@/components/meditation';
@@ -29,6 +29,11 @@ const Meditate = () => {
 
   // State to track filtered sessions
   const [filteredSessions, setFilteredSessions] = useState<MeditationSession[]>([]);
+  
+  // Update filtered sessions when tab changes
+  useEffect(() => {
+    setFilteredSessions(getFilteredSessions(activeTab));
+  }, [activeTab, getFilteredSessions]);
   
   // Memoize the current session's favorite status to avoid unnecessary re-renders
   const currentFavoriteStatus = useCallback(() => {
