@@ -44,6 +44,11 @@ const Meditate = () => {
     }
   }, [selectedSession, handleToggleFavorite]);
   
+  // Handle category change from dropdown - sync with tabs
+  const handleCategoryChange = (category: string) => {
+    handleTabChange(category);
+  };
+  
   const recentSessions = getRecentSessions();
   const allSessions = getAllSessions();
   const allSessionsForCurrentTab = getFilteredSessions(activeTab);
@@ -62,10 +67,12 @@ const Meditate = () => {
         
         {!isPremium && <SubscriptionBanner />}
         
-        <div className="mb-6 mt-6">
+        <div className="mt-6">
           <SessionFilter 
             sessions={allSessions}
             onFilteredSessionsChange={setFilteredSessions}
+            activeTab={activeTab}
+            onCategoryChange={handleCategoryChange}
           />
         </div>
         
