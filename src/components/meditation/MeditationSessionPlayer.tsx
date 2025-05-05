@@ -22,7 +22,7 @@ const MeditationSessionPlayer: React.FC<MeditationSessionPlayerProps> = ({
   biometricData
 }) => {
   return (
-    <div className="bg-gray-900 p-4 rounded-lg shadow-lg">
+    <div className="bg-gray-900 p-5 rounded-lg shadow-xl border border-gray-800">
       <SessionPlayerWrapper
         session={session}
         onComplete={onComplete}

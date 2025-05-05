@@ -26,13 +26,13 @@ const SessionControls: React.FC<SessionControlsProps> = ({
   onVolumeChange
 }) => {
   return (
-    <div className="flex justify-between items-center p-3 bg-gray-800 rounded-md">
+    <div className="flex justify-between items-center p-4 bg-gray-900 rounded-md border border-gray-700 shadow-lg">
       <div className="flex items-center gap-2">
         <Button
           variant="ghost"
           size="icon"
           onClick={onToggleMute}
-          className="hover:bg-gray-700 text-white border border-gray-700"
+          className="bg-gray-800 hover:bg-gray-700 text-white border border-gray-700 shadow"
         >
           {isMuted ? (
             <VolumeX className="h-4 w-4" />
@@ -41,7 +41,7 @@ const SessionControls: React.FC<SessionControlsProps> = ({
           )}
         </Button>
         
-        <div className="relative w-24 p-2 bg-gray-900 rounded-full">
+        <div className="relative w-24 p-2 bg-gray-800 rounded-full">
           <Slider
             value={[volume]}
             min={0}
@@ -53,13 +53,13 @@ const SessionControls: React.FC<SessionControlsProps> = ({
         </div>
       </div>
       
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-3">
         <Button
           variant="ghost"
           size="icon"
           onClick={onSkipBack}
           disabled={false}
-          className="text-white hover:bg-gray-700 disabled:text-gray-500 border border-gray-700"
+          className="bg-gray-800 text-white hover:bg-gray-700 disabled:text-gray-500 border border-gray-700 shadow"
         >
           <SkipBack className="h-5 w-5" />
         </Button>
@@ -67,13 +67,13 @@ const SessionControls: React.FC<SessionControlsProps> = ({
         <Button
           variant="default"
           size="icon"
-          className="h-12 w-12 rounded-full bg-respiro-light text-gray-900 hover:bg-respiro-dark shadow-lg"
+          className="h-14 w-14 rounded-full bg-respiro-light text-gray-900 hover:bg-respiro-dark shadow-xl border-2 border-white/20"
           onClick={onPlayPause}
         >
           {isPlaying ? (
-            <Pause className="h-6 w-6" />
+            <Pause className="h-7 w-7" />
           ) : (
-            <Play className="h-6 w-6 ml-0.5" />
+            <Play className="h-7 w-7 ml-0.5" />
           )}
         </Button>
         
@@ -82,7 +82,7 @@ const SessionControls: React.FC<SessionControlsProps> = ({
           size="icon"
           onClick={onSkipForward}
           disabled={false}
-          className="text-white hover:bg-gray-700 disabled:text-gray-500 border border-gray-700"
+          className="bg-gray-800 text-white hover:bg-gray-700 disabled:text-gray-500 border border-gray-700 shadow"
         >
           <SkipForward className="h-5 w-5" />
         </Button>
