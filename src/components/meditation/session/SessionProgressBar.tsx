@@ -16,12 +16,12 @@ const SessionProgressBar: React.FC<SessionProgressBarProps> = ({
   const progress = (currentTime / duration) * 100;
   
   return (
-    <div className="space-y-2">
-      <div className="flex justify-between text-sm">
+    <div className="space-y-2 bg-black p-3 rounded-md border-2 border-white">
+      <div className="flex justify-between text-md font-bold text-white">
         <span>{formatTime(currentTime)}</span>
         <span>{formatTime(duration)}</span>
       </div>
-      <Progress value={progress} className="h-2" />
+      <Progress value={progress} className="h-3 bg-gray-800 border border-white" />
     </div>
   );
 };

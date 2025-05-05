@@ -30,16 +30,16 @@ const ProgressDisplay: React.FC<ProgressDisplayProps> = ({
   const timeFormatter = formatTimeProp || formatTime;
   
   return (
-    <div className={`space-y-2 bg-gray-800 p-4 rounded-md border-2 border-gray-500 shadow-lg ${className}`}>
-      <div className="flex justify-between text-sm font-bold">
+    <div className={`space-y-2 bg-black p-5 rounded-md border-4 border-white shadow-lg ${className}`}>
+      <div className="flex justify-between text-md font-bold">
         <span className="text-white">{timeFormatter(currentTime)}</span>
         <span className="text-white">{timeFormatter(duration)}</span>
       </div>
       
       {/* Custom progress bar implementation */}
-      <div className="relative h-3 w-full overflow-hidden rounded-full bg-gray-700 border border-gray-400">
+      <div className="relative h-4 w-full overflow-hidden rounded-full bg-gray-800 border-2 border-white">
         <div
-          className="absolute left-0 top-0 h-full bg-respiro-light transition-all duration-300 ease-in-out"
+          className="absolute left-0 top-0 h-full bg-white transition-all duration-300 ease-in-out"
           style={{ width: `${progressPercentage}%` }}
         />
       </div>

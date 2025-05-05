@@ -17,8 +17,8 @@ const ProgressDisplay: React.FC<ProgressDisplayProps> = ({
 }) => {
   return (
     <>
-      <div className="flex items-center justify-between mb-2">
-        <div className="text-sm font-medium">
+      <div className="flex items-center justify-between mb-2 bg-black text-white p-2 rounded-md">
+        <div className="text-md font-bold">
           {formatTime(currentTime)} / {formatTime(duration)}
         </div>
       </div>

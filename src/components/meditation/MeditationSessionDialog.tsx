@@ -40,10 +40,10 @@ export const MeditationSessionDialog: React.FC<MeditationSessionDialogProps> = (
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md bg-black border-4 border-white text-white">
         <DialogHeader>
-          <DialogTitle>{session.title}</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-white text-xl">{session.title}</DialogTitle>
+          <DialogDescription className="text-gray-300">
             {session.duration} minutes • {session.category}
           </DialogDescription>
         </DialogHeader>
@@ -54,34 +54,34 @@ export const MeditationSessionDialog: React.FC<MeditationSessionDialogProps> = (
               <img
                 src={session.image_url}
                 alt={session.title}
-                className="w-full h-full object-cover rounded-md"
+                className="w-full h-full object-cover rounded-md border-2 border-white"
               />
             </div>
           )}
           
           <div className="flex flex-wrap gap-2 mb-3">
-            <Badge variant="outline" className="bg-gray-100 dark:bg-gray-700 text-black dark:text-white">
+            <Badge variant="outline" className="bg-black border-2 border-white text-white">
               {session.duration} min
             </Badge>
-            <Badge variant="outline" className="bg-gray-100 dark:bg-gray-700 text-black dark:text-white capitalize">
+            <Badge variant="outline" className="bg-black border-2 border-white text-white capitalize">
               {session.category}
             </Badge>
             
             {session.instructor && (
-              <Badge variant="outline" className="bg-gray-100 dark:bg-gray-700 text-black dark:text-white">
+              <Badge variant="outline" className="bg-black border-2 border-white text-white">
                 {session.instructor}
               </Badge>
             )}
           </div>
           
-          <p className="text-sm text-gray-700 dark:text-gray-300">
+          <p className="text-md text-white">
             {session.description}
           </p>
           
           {session.tags && session.tags.length > 0 && (
             <div className="flex flex-wrap gap-1 mt-3">
               {session.tags.map((tag, i) => (
-                <Badge key={i} variant="secondary" className="text-xs bg-gray-200 dark:bg-gray-600 text-black dark:text-white">
+                <Badge key={i} variant="secondary" className="text-sm bg-black text-white border border-white">
                   {tag}
                 </Badge>
               ))}
@@ -93,17 +93,17 @@ export const MeditationSessionDialog: React.FC<MeditationSessionDialogProps> = (
           <Button 
             variant="outline" 
             onClick={onToggleFavorite} 
-            className="sm:mr-auto flex items-center gap-1 bg-white dark:bg-gray-700 text-black dark:text-white border-gray-300 dark:border-gray-500"
+            className="sm:mr-auto flex items-center gap-1 bg-black text-white border-2 border-white hover:bg-gray-900"
           >
-            <Heart className={`h-4 w-4 ${isFavorite ? 'fill-rose-500 text-rose-500' : ''}`} />
+            <Heart className={`h-4 w-4 ${isFavorite ? 'fill-rose-500 text-rose-500' : 'text-white'}`} />
             {isFavorite ? 'Favorited' : 'Favorite'}
           </Button>
           
           <Button 
             onClick={() => onStart(session)} 
-            className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-medium"
+            className="w-full sm:w-auto bg-white text-black hover:bg-gray-200 font-bold text-lg border-2 border-white"
           >
-            <Play className="h-4 w-4 mr-2" />
+            <Play className="h-5 w-5 mr-2" />
             Begin Meditation
           </Button>
         </DialogFooter>
