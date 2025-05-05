@@ -4,6 +4,7 @@ export { default as MeditationLibraryBrowser } from './MeditationLibraryBrowser'
 export { default as MeditationHeader } from './MeditationHeader';
 export { default as MeditationSessionView } from './MeditationSessionView';
 export { default as MeditationBenefits } from './MeditationBenefits';
+export { default as EnhancedMeditationSessionView } from './EnhancedMeditationSessionView';
 // Card components
 export { default as MeditationSessionCard } from './MeditationSessionCard';
 export { default as MeditationSessionDialog } from './MeditationSessionDialog';
