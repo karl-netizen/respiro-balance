@@ -19,7 +19,7 @@ const PlayerControls: React.FC<PlayerControlsProps> = ({
       <Button
         variant="outline"
         size="icon"
-        className="h-12 w-12 rounded-full"
+        className="h-12 w-12 rounded-full bg-white text-gray-900 border-2 border-respiro-light hover:bg-respiro-light hover:text-gray-900"
         onClick={onPlayPause}
       >
         {isPlaying ? (
@@ -32,6 +32,7 @@ const PlayerControls: React.FC<PlayerControlsProps> = ({
       <Button
         variant="ghost"
         size="icon"
+        className="text-white hover:text-respiro-light hover:bg-white/20"
         onClick={onSkip}
       >
         <SkipForward className="h-5 w-5" />

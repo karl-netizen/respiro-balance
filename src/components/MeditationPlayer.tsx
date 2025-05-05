@@ -50,27 +50,27 @@ const MeditationPlayer = () => {
   };
   
   return (
-    <div className="glassmorphism-card p-6 max-w-xl mx-auto">
+    <div className="glassmorphism-card p-6 max-w-xl mx-auto bg-gray-900 text-white border border-gray-700 rounded-lg shadow-lg">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="font-semibold text-lg">Respiro Matutinum</h3>
-          <p className="text-sm text-foreground/70">Guided by Maria Aurelia • 10 min</p>
+          <h3 className="font-semibold text-lg text-white">Respiro Matutinum</h3>
+          <p className="text-sm text-gray-300">Guided by Maria Aurelia • 10 min</p>
         </div>
-        <div className="w-12 h-12 rounded-full bg-mindflow-light flex items-center justify-center">
-          <span className="text-mindflow-dark font-medium">10m</span>
+        <div className="w-12 h-12 rounded-full bg-respiro-light flex items-center justify-center">
+          <span className="text-gray-900 font-medium">10m</span>
         </div>
       </div>
       
       <div className="space-y-6">
         <div className="space-y-2">
-          <div className="relative h-2 bg-secondary rounded-full overflow-hidden">
+          <div className="relative h-2 bg-gray-700 rounded-full overflow-hidden">
             <div 
-              className="absolute top-0 left-0 h-full bg-primary rounded-full transition-all duration-300"
+              className="absolute top-0 left-0 h-full bg-respiro-light rounded-full transition-all duration-300"
               style={{ width: `${(progress / duration) * 100}%` }}
             />
           </div>
           
-          <div className="flex justify-between text-xs text-foreground/70">
+          <div className="flex justify-between text-xs text-gray-300">
             <span>{formatTime(progress)}</span>
             <span>{formatTime(duration)}</span>
           </div>
@@ -79,28 +79,28 @@ const MeditationPlayer = () => {
         <div className="flex items-center justify-center gap-4">
           <button 
             onClick={skipBackward}
-            className="p-2 text-foreground/70 hover:text-primary transition-colors"
+            className="p-2 text-gray-300 hover:text-respiro-light transition-colors"
           >
             <SkipBack size={20} />
           </button>
           
           <button 
             onClick={togglePlay}
-            className="w-14 h-14 rounded-full bg-primary text-white flex items-center justify-center hover:bg-mindflow-dark transition-colors"
+            className="w-14 h-14 rounded-full bg-respiro-light text-gray-900 flex items-center justify-center hover:bg-respiro-dark transition-colors"
           >
             {isPlaying ? <Pause size={24} /> : <Play size={24} />}
           </button>
           
           <button 
             onClick={skipForward}
-            className="p-2 text-foreground/70 hover:text-primary transition-colors"
+            className="p-2 text-gray-300 hover:text-respiro-light transition-colors"
           >
             <SkipForward size={20} />
           </button>
         </div>
         
         <div className="flex items-center gap-3">
-          <Volume2 size={16} className="text-foreground/70" />
+          <Volume2 size={16} className="text-gray-300" />
           <Slider
             value={[volume]}
             max={100}
@@ -111,8 +111,8 @@ const MeditationPlayer = () => {
         </div>
       </div>
       
-      <div className="mt-6 p-3 bg-secondary/50 rounded-lg">
-        <p className="text-sm text-foreground/70">
+      <div className="mt-6 p-3 bg-gray-800 rounded-lg border border-gray-700">
+        <p className="text-sm text-gray-300">
           "Begin by finding a comfortable seated position and allow your breath to flow naturally. Notice the rhythm of your inhale and exhale..."
         </p>
       </div>

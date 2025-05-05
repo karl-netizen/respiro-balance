@@ -13,7 +13,7 @@ const Timer: React.FC<TimerProps> = ({ remainingTime }) => {
   };
 
   return (
-    <div className="text-3xl font-mono mb-8">
+    <div className="text-3xl font-mono mb-8 text-white drop-shadow-md font-semibold">
       {formatTime(remainingTime)}
     </div>
   );

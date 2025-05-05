@@ -98,13 +98,13 @@ const MeditationSessionView = () => {
   }
   
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gray-900">
       <Header />
       
       <main className="flex-grow container max-w-5xl mx-auto px-4 py-8">
         <Button 
           variant="ghost" 
-          className="mb-6" 
+          className="mb-6 text-white hover:bg-gray-800" 
           onClick={handleBackToLibrary}
         >
           <ChevronLeft className="h-4 w-4 mr-1" />
@@ -132,7 +132,7 @@ const MeditationSessionView = () => {
           </div>
           
           <div>
-            <h2 className="text-xl font-semibold mb-4">Biometric Feedback</h2>
+            <h2 className="text-xl font-semibold mb-4 text-white">Biometric Feedback</h2>
             
             <BiometricDisplay
               currentBiometrics={currentBiometrics}

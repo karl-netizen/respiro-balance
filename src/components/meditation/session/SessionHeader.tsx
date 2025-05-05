@@ -9,9 +9,9 @@ interface SessionHeaderProps {
 
 const SessionHeader: React.FC<SessionHeaderProps> = ({ session }) => {
   return (
-    <CardHeader>
-      <CardTitle className="text-2xl">{session.title}</CardTitle>
-      <CardDescription>{session.description}</CardDescription>
+    <CardHeader className="bg-gray-800 text-white border-b border-gray-700">
+      <CardTitle className="text-2xl text-white">{session.title}</CardTitle>
+      <CardDescription className="text-gray-300">{session.description}</CardDescription>
     </CardHeader>
   );
 };

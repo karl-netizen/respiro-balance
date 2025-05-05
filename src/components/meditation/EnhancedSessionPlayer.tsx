@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -267,14 +266,14 @@ const EnhancedSessionPlayer: React.FC<EnhancedSessionPlayerProps> = ({
   
   return (
     <>
-      <Card className="w-full">
+      <Card className="w-full bg-gray-900 text-white border-gray-700">
         <CardContent className="pt-6 space-y-4">
           <div className="space-y-2">
-            <div className="flex justify-between text-sm">
+            <div className="flex justify-between text-sm text-white">
               <span>{formatTime(currentTime)}</span>
               <span>{formatTime(duration)}</span>
             </div>
-            <Progress value={progress} className="h-2" />
+            <Progress value={progress} className="h-2 bg-gray-700" indicatorClassName="bg-respiro-light" />
           </div>
           
           <div className="flex justify-between items-center">
@@ -283,7 +282,7 @@ const EnhancedSessionPlayer: React.FC<EnhancedSessionPlayerProps> = ({
                 variant="ghost"
                 size="icon"
                 onClick={handleToggleMute}
-                className="hover:bg-transparent"
+                className="hover:bg-gray-800 text-white"
               >
                 {isMuted ? (
                   <VolumeX className="h-4 w-4" />
@@ -308,6 +307,7 @@ const EnhancedSessionPlayer: React.FC<EnhancedSessionPlayerProps> = ({
                 size="icon"
                 onClick={handleSkipBack}
                 disabled={currentTime < 5}
+                className="text-white hover:bg-gray-800 disabled:text-gray-500"
               >
                 <SkipBack className="h-5 w-5" />
               </Button>
@@ -315,7 +315,7 @@ const EnhancedSessionPlayer: React.FC<EnhancedSessionPlayerProps> = ({
               <Button
                 variant="default"
                 size="icon"
-                className="h-12 w-12 rounded-full bg-primary"
+                className="h-12 w-12 rounded-full bg-respiro-light text-gray-900 hover:bg-respiro-dark"
                 onClick={handlePlayPause}
               >
                 {isPlaying ? (
@@ -330,6 +330,7 @@ const EnhancedSessionPlayer: React.FC<EnhancedSessionPlayerProps> = ({
                 size="icon"
                 onClick={handleSkipForward}
                 disabled={currentTime > duration - 5}
+                className="text-white hover:bg-gray-800 disabled:text-gray-500"
               >
                 <SkipForward className="h-5 w-5" />
               </Button>
@@ -340,11 +341,11 @@ const EnhancedSessionPlayer: React.FC<EnhancedSessionPlayerProps> = ({
           
           {!isPlaying && !sessionCompleted && sessionStarted && (
             <div className="text-center mt-2">
-              <Button variant="ghost" onClick={handlePlayPause}>
+              <Button variant="ghost" onClick={handlePlayPause} className="text-white hover:bg-gray-800">
                 Resume
               </Button>
               
-              <Button variant="ghost" onClick={handleSessionComplete}>
+              <Button variant="ghost" onClick={handleSessionComplete} className="text-white hover:bg-gray-800">
                 End Session
               </Button>
             </div>
