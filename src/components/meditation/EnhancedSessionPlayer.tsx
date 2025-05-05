@@ -62,9 +62,9 @@ const EnhancedSessionPlayer: React.FC<EnhancedSessionPlayerProps> = ({
   
   return (
     <>
-      <Card className="w-full bg-gray-900 text-white border-gray-700 shadow-xl overflow-hidden">
+      <Card className="w-full bg-gray-900 text-white border-gray-600 shadow-xl overflow-hidden">
         <CardContent className="pt-6 space-y-4 bg-gradient-to-b from-gray-800 to-gray-900">
-          <div className="py-2 px-4 bg-gray-800 rounded-md border border-gray-700">
+          <div className="py-2 px-4 bg-gray-800 rounded-md border border-gray-600">
             <h3 className="text-xl font-semibold text-white mb-2 text-center">{session.title}</h3>
             <p className="text-gray-300 text-center">{session.description}</p>
           </div>

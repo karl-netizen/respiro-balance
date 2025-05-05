@@ -25,7 +25,7 @@ const SessionPlayerCard: React.FC<SessionPlayerCardProps> = ({
   onAudioTimeUpdate
 }) => {
   return (
-    <Card className="border-gray-800">
+    <Card className="border-gray-600 bg-gray-900">
       <CardContent className="pt-6 bg-gray-900 rounded-md shadow-lg">
         <EnhancedSessionPlayer
           session={session}
