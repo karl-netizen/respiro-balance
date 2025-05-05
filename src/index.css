@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -14,11 +15,11 @@
 
 /* Styles for the respiro theme */
 .bg-respiro-dark {
-  background-color: #1A202C;
+  background-color: #4DB6AC;  /* Changed from dark gray/black to green */
 }
 
 .bg-respiro-darker {
-  background-color: #2D3748;
+  background-color: #00897B;  /* Changed from darker gray/black to darker green */
 }
 
 .text-respiro-light {
