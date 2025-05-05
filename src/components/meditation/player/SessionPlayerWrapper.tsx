@@ -32,14 +32,16 @@ const SessionPlayerWrapper: React.FC<SessionPlayerWrapperProps> = ({
   });
 
   return (
-    <SessionPlayerCard
-      session={session}
-      onComplete={onComplete}
-      onStart={onStart}
-      onPlayStateChange={onPlayStateChange}
-      biometricData={biometricData}
-      onAudioTimeUpdate={handleAudioTimeUpdate}
-    />
+    <div className="max-w-lg mx-auto shadow-xl">
+      <SessionPlayerCard
+        session={session}
+        onComplete={onComplete}
+        onStart={onStart}
+        onPlayStateChange={onPlayStateChange}
+        biometricData={biometricData}
+        onAudioTimeUpdate={handleAudioTimeUpdate}
+      />
+    </div>
   );
 };
 

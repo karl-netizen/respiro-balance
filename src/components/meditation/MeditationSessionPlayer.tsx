@@ -22,13 +22,15 @@ const MeditationSessionPlayer: React.FC<MeditationSessionPlayerProps> = ({
   biometricData
 }) => {
   return (
-    <SessionPlayerWrapper
-      session={session}
-      onComplete={onComplete}
-      onStart={onStart}
-      onPlayStateChange={onPlayStateChange}
-      biometricData={biometricData}
-    />
+    <div className="bg-gray-900 p-4 rounded-lg shadow-lg">
+      <SessionPlayerWrapper
+        session={session}
+        onComplete={onComplete}
+        onStart={onStart}
+        onPlayStateChange={onPlayStateChange}
+        biometricData={biometricData}
+      />
+    </div>
   );
 };
 

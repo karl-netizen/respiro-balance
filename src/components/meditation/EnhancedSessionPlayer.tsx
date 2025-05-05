@@ -62,8 +62,13 @@ const EnhancedSessionPlayer: React.FC<EnhancedSessionPlayerProps> = ({
   
   return (
     <>
-      <Card className="w-full bg-gray-900 text-white border-gray-700">
-        <CardContent className="pt-6 space-y-4">
+      <Card className="w-full bg-gray-900 text-white border-gray-700 shadow-xl">
+        <CardContent className="pt-6 space-y-4 bg-gradient-to-b from-gray-800 to-gray-900">
+          <div className="py-2">
+            <h3 className="text-xl font-semibold text-white mb-2 text-center">{session.title}</h3>
+            <p className="text-gray-300 text-center">{session.description}</p>
+          </div>
+          
           <ProgressDisplay 
             currentTime={currentTime}
             duration={duration}

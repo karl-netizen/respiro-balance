@@ -16,12 +16,12 @@ const ProgressDisplay: React.FC<ProgressDisplayProps> = ({
   progress
 }) => {
   return (
-    <div className="space-y-2">
-      <div className="flex justify-between text-sm text-white">
-        <span>{formatTime(currentTime)}</span>
-        <span>{formatTime(duration)}</span>
+    <div className="space-y-2 bg-gray-800 p-3 rounded-md">
+      <div className="flex justify-between text-sm text-white font-medium">
+        <span className="text-respiro-light">{formatTime(currentTime)}</span>
+        <span className="text-white">{formatTime(duration)}</span>
       </div>
-      <Progress value={progress} className="h-2 bg-gray-700" />
+      <Progress value={progress} className="h-2 bg-gray-700" indicatorClassName="bg-respiro-light" />
     </div>
   );
 };

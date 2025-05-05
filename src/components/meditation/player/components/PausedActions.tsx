@@ -12,12 +12,20 @@ const PausedActions: React.FC<PausedActionsProps> = ({ onResume, onEndSession, s
   if (!show) return null;
   
   return (
-    <div className="text-center mt-2">
-      <Button variant="ghost" onClick={onResume} className="text-white hover:bg-gray-800">
+    <div className="text-center mt-2 p-3 bg-gray-800 rounded-md flex justify-center space-x-4">
+      <Button 
+        variant="outline" 
+        onClick={onResume} 
+        className="text-white hover:bg-gray-700 border-respiro-light hover:border-respiro hover:text-respiro-light"
+      >
         Resume
       </Button>
       
-      <Button variant="ghost" onClick={onEndSession} className="text-white hover:bg-gray-800">
+      <Button 
+        variant="outline" 
+        onClick={onEndSession} 
+        className="text-white hover:bg-gray-700 border-respiro-light hover:border-respiro hover:text-respiro-light"
+      >
         End Session
       </Button>
     </div>
