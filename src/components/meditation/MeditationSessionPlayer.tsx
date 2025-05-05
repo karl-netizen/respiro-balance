@@ -21,10 +21,18 @@ const MeditationSessionPlayer: React.FC<MeditationSessionPlayerProps> = ({
   onPlayStateChange,
   biometricData
 }) => {
+  // Ensure session has valid properties for rendering
+  const safeSession = {
+    ...session,
+    // Use default values for critical properties if they're missing
+    image_url: session.image_url || '/images/meditations/default-meditation.jpg',
+    icon: session.icon || '🧘'
+  };
+
   return (
     <div className="bg-respiro-dark p-5 rounded-lg shadow-xl border-4 border-white">
       <SessionPlayerWrapper
-        session={session}
+        session={safeSession}
         onComplete={onComplete}
         onStart={onStart}
         onPlayStateChange={onPlayStateChange}

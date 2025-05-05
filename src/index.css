@@ -1,156 +1,41 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Add these styles for the mobile preview mode */
-.mobile-preview-mode {
-  max-width: 375px;
-  margin: 0 auto;
-  position: relative;
-  overflow-x: hidden;
-  border-left: 1px solid #ddd;
-  border-right: 1px solid #ddd;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-  min-height: 100vh;
+/* Define the glassmorphism effect */
+.glassmorphism-card {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(7.2px);
+  -webkit-backdrop-filter: blur(7.2px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-.mobile-preview-mode::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 30px;
-  background: #f0f0f0;
-  border-bottom: 1px solid #ddd;
-  border-radius: 8px 8px 0 0;
-  z-index: 1000;
+/* Styles for the respiro theme */
+.bg-respiro-dark {
+  background-color: #1A202C;
 }
 
-/* Mobile-specific styles */
-.mobile-view {
-  /* Font sizes */
-  --mobile-text-xs: 0.7rem;  /* 11.2px */
-  --mobile-text-sm: 0.813rem; /* 13px */
-  --mobile-text-base: 0.938rem; /* 15px */
-  --mobile-text-lg: 1.063rem; /* 17px */
-  --mobile-text-xl: 1.188rem; /* 19px */
-  --mobile-text-2xl: 1.375rem; /* 22px */
-  
-  /* Spacing */
-  --mobile-spacing-1: 0.25rem; /* 4px */
-  --mobile-spacing-2: 0.5rem;  /* 8px */
-  --mobile-spacing-3: 0.75rem; /* 12px */
-  --mobile-spacing-4: 1rem;    /* 16px */
-  --mobile-spacing-6: 1.5rem;  /* 24px */
+.bg-respiro-darker {
+  background-color: #2D3748;
 }
 
-/* ... keep existing code (mobile view text size classes) */
-
-/* ... keep existing code (spacing adjustments for mobile) */
-
-/* ... keep existing code (grid, card, button adjustments) */
-
-/* ... keep existing code (container padding, list spacing, form element spacing) */
-
-/* Add styles for mobile menu improvements */
-.sheet-content {
-  @apply bg-gray-900 text-white;
+.text-respiro-light {
+  color: #CBD5E0;
 }
 
-/* Ensure mobile menu text is always visible */
-[data-sidebar="menu"] a,
-[data-sidebar="menu"] button,
-[data-sidebar="menu-button"],
-[data-sidebar="menu-sub-button"] {
-  @apply text-white hover:text-respiro-light;
+.border-respiro-light {
+  border-color: #CBD5E0;
 }
 
-/* Dropdown menu item visibility fix */
-.mobile-menu-dropdown-item {
-  @apply text-white hover:text-respiro-light;
+/* Add these rules for meditation images */
+.fallback-active .fallback {
+  display: flex !important;
 }
 
-/* Touch-friendly improvements */
-.mobile-view button,
-.mobile-view a,
-.mobile-view [role="button"] {
-  @apply min-h-[40px] min-w-[40px] flex items-center;
-}
-
-/* Improve tap target sizes */
-.mobile-view .dropdown-menu-item,
-.mobile-view .navigation-menu-item {
-  @apply py-2;
-}
-
-/* Optimize for touch scrolling */
-.mobile-view .overflow-auto,
-.mobile-view .overflow-y-auto {
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Fix for mobile menu visibility */
-.mobile-menu-dropdown-item,
-.sheet-content a,
-.sheet-content button {
-  color: white !important;
-}
-
-.mobile-dropdown-item {
-  @apply bg-gray-800 text-white rounded-md py-1 px-2;
-}
-
-/* Navigation dropdown visibility improvements */
-.navigation-menu-content {
-  @apply z-50 bg-white shadow-lg border !important;
-}
-
-/* Enhanced dropdown styling for better visibility */
-[data-radix-popper-content-wrapper] {
-  z-index: 999 !important;
-}
-
-/* Ensure NavigationMenuContent is visible with proper contrast */
-.navigation-menu-content ul {
-  @apply bg-white border shadow-lg !important;
-}
-
-/* Fix navigation menu viewport visibility with solid background */
-[data-radix-navigation-menu-viewport] {
-  @apply bg-white shadow-lg border !important;
-  z-index: 999 !important;
-}
-
-/* Solid background for dropdown content */
-.dropdown-content {
-  @apply bg-white rounded-md shadow-lg border border-gray-200 !important;
-}
-
-/* Solid background for navigation dropdown */
-.NavigationMenuContent,
-.NavigationMenuViewport {
-  @apply bg-white !important;
-}
-
-/* Enhanced dropdown menu items with better hover states */
-.navigation-menu-content a,
-.dropdown-content a {
-  @apply text-foreground hover:bg-accent hover:text-accent-foreground rounded-md transition-colors !important;
-}
-
-/* Active/selected state for dropdown items */
-.dropdown-active-item {
-  @apply bg-accent text-accent-foreground font-medium !important;
-}
-
-/* Mobile dropdown item enhancement */
-.mobile-dropdown .dropdown-item {
-  @apply block w-full text-left px-3 py-2 text-white hover:bg-gray-700 rounded-md transition-colors !important;
-}
-
-/* Add contrast background to mobile dropdowns */
-.mobile-dropdown-content {
-  @apply bg-gray-800 border border-gray-700 rounded-md shadow-lg !important;
+.meditation-image {
+  background-color: rgba(0, 0, 0, 0.2);
+  background-position: center;
+  background-size: cover;
 }

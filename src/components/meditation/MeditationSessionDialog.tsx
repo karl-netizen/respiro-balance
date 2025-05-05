@@ -38,6 +38,15 @@ export const MeditationSessionDialog: React.FC<MeditationSessionDialogProps> = (
     return null;
   }
 
+  // Handle image error
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    e.currentTarget.style.display = 'none';
+    const fallbackElement = e.currentTarget.nextElementSibling;
+    if (fallbackElement) {
+      fallbackElement.classList.remove('hidden');
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-md bg-respiro-dark border-4 border-white text-white">
@@ -49,15 +58,19 @@ export const MeditationSessionDialog: React.FC<MeditationSessionDialogProps> = (
         </DialogHeader>
         
         <div className="mt-4">
-          {session.image_url && (
-            <div className="relative w-full h-48 mb-4">
+          <div className="relative w-full h-48 mb-4 bg-respiro-dark rounded-md overflow-hidden border-2 border-white">
+            {session.image_url && (
               <img
                 src={session.image_url}
                 alt={session.title}
-                className="w-full h-full object-cover rounded-md border-2 border-white"
+                className="w-full h-full object-cover"
+                onError={handleImageError}
               />
+            )}
+            <div className={`absolute inset-0 flex items-center justify-center ${session.image_url ? 'hidden' : ''}`}>
+              <div className="text-6xl">{session.icon || '🧘'}</div>
             </div>
-          )}
+          </div>
           
           <div className="flex flex-wrap gap-2 mb-3">
             <Badge variant="outline" className="bg-respiro-darker border-2 border-white text-white">
