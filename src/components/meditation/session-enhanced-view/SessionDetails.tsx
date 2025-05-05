@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tag } from 'lucide-react';
 import { MeditationSession } from '@/types/meditation';
-import MeditationAudioPlayer from '../MeditationAudioPlayer';
+import { MeditationAudioPlayer } from '@/components/meditation/audio-player';
 
 interface SessionDetailsProps {
   session: MeditationSession;

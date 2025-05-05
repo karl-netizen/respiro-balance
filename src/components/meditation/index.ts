@@ -17,7 +17,8 @@ export { default as RecentlyPlayedSection } from './RecentlyPlayedSection';
 export { default as FavoritesSection } from './FavoritesSection';
 // Player components
 export { default as MeditationSessionPlayer } from './MeditationSessionPlayer';
-export { default as MeditationAudioPlayer } from './MeditationAudioPlayer';
+// Re-export MeditationAudioPlayer from the new location
+export { MeditationAudioPlayer } from './audio-player';
 export { default as PlayerControls } from './PlayerControls';
 // Biometric components
 export { default as BiometricTracker } from './BiometricTracker';
