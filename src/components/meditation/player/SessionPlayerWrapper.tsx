@@ -32,7 +32,7 @@ const SessionPlayerWrapper: React.FC<SessionPlayerWrapperProps> = ({
   });
 
   return (
-    <div className="max-w-lg mx-auto shadow-xl bg-black rounded-lg overflow-hidden border-4 border-white">
+    <div className="max-w-lg mx-auto shadow-xl bg-respiro-dark rounded-lg overflow-hidden border-4 border-white">
       <SessionPlayerCard
         session={session}
         onComplete={onComplete}

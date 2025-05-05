@@ -62,9 +62,9 @@ const EnhancedSessionPlayer: React.FC<EnhancedSessionPlayerProps> = ({
   
   return (
     <>
-      <Card className="w-full bg-black text-white border-4 border-white shadow-xl overflow-hidden">
-        <CardContent className="pt-6 space-y-4 bg-black">
-          <div className="py-4 px-4 bg-black rounded-md border-4 border-white">
+      <Card className="w-full bg-respiro-dark text-white border-4 border-white shadow-xl overflow-hidden">
+        <CardContent className="pt-6 space-y-4 bg-respiro-dark">
+          <div className="py-4 px-4 bg-respiro-dark rounded-md border-4 border-white">
             <h3 className="text-2xl font-bold text-white mb-2 text-center">{session.title}</h3>
             <p className="text-white text-lg text-center">{session.description}</p>
           </div>
@@ -97,7 +97,7 @@ const EnhancedSessionPlayer: React.FC<EnhancedSessionPlayerProps> = ({
             <div className="text-center mt-6 pb-6">
               <button 
                 onClick={handlePlayPause} 
-                className="px-10 py-6 bg-white text-black rounded-full font-bold text-2xl hover:bg-gray-200 transition-colors shadow-xl border-4 border-white"
+                className="px-10 py-6 bg-white text-respiro-dark rounded-full font-bold text-2xl hover:bg-gray-200 transition-colors shadow-xl border-4 border-white"
               >
                 Begin Here
               </button>
