@@ -1,9 +1,10 @@
 
 import React from 'react';
 import { MeditationSession } from '@/types/meditation';
-import SessionPlayerWrapper from './player/SessionPlayerWrapper';
+import SessionPlayerCard from './components/SessionPlayerCard';
+import { useSessionPlayer } from '../hooks/useSessionPlayer';
 
-interface MeditationSessionPlayerProps {
+interface SessionPlayerWrapperProps {
   session: MeditationSession;
   onComplete?: () => void;
   onStart?: () => void;
@@ -14,22 +15,32 @@ interface MeditationSessionPlayerProps {
   };
 }
 
-const MeditationSessionPlayer: React.FC<MeditationSessionPlayerProps> = ({ 
-  session, 
+const SessionPlayerWrapper: React.FC<SessionPlayerWrapperProps> = ({
+  session,
   onComplete,
   onStart,
   onPlayStateChange,
   biometricData
 }) => {
+  const {
+    handleAudioTimeUpdate
+  } = useSessionPlayer({
+    session,
+    onComplete,
+    onStart,
+    onPlayStateChange
+  });
+
   return (
-    <SessionPlayerWrapper
+    <SessionPlayerCard
       session={session}
       onComplete={onComplete}
       onStart={onStart}
       onPlayStateChange={onPlayStateChange}
       biometricData={biometricData}
+      onAudioTimeUpdate={handleAudioTimeUpdate}
     />
   );
 };
 
-export default MeditationSessionPlayer;
+export default SessionPlayerWrapper;
