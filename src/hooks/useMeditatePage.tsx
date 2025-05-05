@@ -48,6 +48,17 @@ export const useMeditatePage = () => {
   const initialTab = searchParams.get('tab') || 'guided';
   const [activeTab, setActiveTab] = useState(initialTab);
   
+  // Sync activeTab with URL parameter on component mount
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    if (tabParam && tabParam !== activeTab) {
+      setActiveTab(tabParam);
+    } else if (!tabParam && activeTab !== 'guided') {
+      // If no tab in URL but we have an active tab, set it in URL
+      setSearchParams({ tab: activeTab });
+    }
+  }, [searchParams, activeTab, setSearchParams]);
+  
   // Check for session ID in URL on component mount
   useEffect(() => {
     const sessionId = searchParams.get('session');

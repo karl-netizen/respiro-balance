@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
   NavigationMenuItem,
@@ -24,6 +24,7 @@ interface NavDropdownProps {
 
 const NavDropdown = ({ title, items, isActive, onItemClick, activeCategory }: NavDropdownProps) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { isActive: checkIsActive } = useActiveRoute();
   
   // Filter items if activeCategory is provided and this is the meditation dropdown
