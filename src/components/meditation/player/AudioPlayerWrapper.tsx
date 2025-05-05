@@ -1,6 +1,6 @@
 
 import React from 'react';
-import MeditationAudioPlayer from '../MeditationAudioPlayer';
+import { MeditationAudioPlayer } from '../audio-player';
 
 interface AudioPlayerWrapperProps {
   audioUrl: string;
