@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -30,7 +31,7 @@ const Breathe = () => {
     }
     
     // If a technique is specified, scroll to it after a small delay
-    if (technique && techniqueRefs.current[technique]) {
+    if (technique && techniqueRefs.current[technique] && tab === 'techniques') {
       setTimeout(() => {
         techniqueRefs.current[technique]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 300);
@@ -99,89 +100,94 @@ const Breathe = () => {
             
             <TabsContent value="techniques" className="space-y-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Box Breathing Technique */}
-                <Card 
-                  ref={el => techniqueRefs.current['box'] = el}
-                  className={`cursor-pointer transition-all ${initialTechnique === 'box' ? 'ring-2 ring-primary' : ''}`}
-                  onClick={() => handleTechniqueSelect('box')}
-                >
-                  <CardContent className="p-6">
-                    <div className="flex items-start mb-4">
-                      <Wind className="h-8 w-8 text-primary mr-3" />
-                      <div>
-                        <h3 className="text-lg font-semibold">Box Breathing</h3>
-                        <p className="text-muted-foreground">Equal inhale, hold, exhale, hold pattern</p>
+                {/* Only show the selected technique if one is specified, otherwise show all techniques */}
+                {(!initialTechnique || initialTechnique === 'box') && (
+                  <Card 
+                    ref={el => techniqueRefs.current['box'] = el}
+                    className={`cursor-pointer transition-all ${initialTechnique === 'box' ? 'ring-2 ring-primary' : ''}`}
+                    onClick={() => handleTechniqueSelect('box')}
+                  >
+                    <CardContent className="p-6">
+                      <div className="flex items-start mb-4">
+                        <Wind className="h-8 w-8 text-primary mr-3" />
+                        <div>
+                          <h3 className="text-lg font-semibold">Box Breathing</h3>
+                          <p className="text-muted-foreground">Equal inhale, hold, exhale, hold pattern</p>
+                        </div>
                       </div>
-                    </div>
-                    <p className="text-sm">
-                      A technique used by Navy SEALs to calm the nervous system. 
-                      Inhale for 4, hold for 4, exhale for 4, hold for 4.
-                    </p>
-                  </CardContent>
-                </Card>
+                      <p className="text-sm">
+                        A technique used by Navy SEALs to calm the nervous system. 
+                        Inhale for 4, hold for 4, exhale for 4, hold for 4.
+                      </p>
+                    </CardContent>
+                  </Card>
+                )}
                 
-                {/* 4-7-8 Breathing Technique */}
-                <Card 
-                  ref={el => techniqueRefs.current['478'] = el}
-                  className={`cursor-pointer transition-all ${initialTechnique === '478' ? 'ring-2 ring-primary' : ''}`}
-                  onClick={() => handleTechniqueSelect('478')}
-                >
-                  <CardContent className="p-6">
-                    <div className="flex items-start mb-4">
-                      <Wind className="h-8 w-8 text-primary mr-3" />
-                      <div>
-                        <h3 className="text-lg font-semibold">4-7-8 Breathing</h3>
-                        <p className="text-muted-foreground">Deep relaxation breathing pattern</p>
+                {(!initialTechnique || initialTechnique === '478') && (
+                  <Card 
+                    ref={el => techniqueRefs.current['478'] = el}
+                    className={`cursor-pointer transition-all ${initialTechnique === '478' ? 'ring-2 ring-primary' : ''}`}
+                    onClick={() => handleTechniqueSelect('478')}
+                  >
+                    <CardContent className="p-6">
+                      <div className="flex items-start mb-4">
+                        <Wind className="h-8 w-8 text-primary mr-3" />
+                        <div>
+                          <h3 className="text-lg font-semibold">4-7-8 Breathing</h3>
+                          <p className="text-muted-foreground">Deep relaxation breathing pattern</p>
+                        </div>
                       </div>
-                    </div>
-                    <p className="text-sm">
-                      Developed by Dr. Andrew Weil, this technique helps reduce anxiety.
-                      Inhale for 4, hold for 7, exhale for 8.
-                    </p>
-                  </CardContent>
-                </Card>
+                      <p className="text-sm">
+                        Developed by Dr. Andrew Weil, this technique helps reduce anxiety.
+                        Inhale for 4, hold for 7, exhale for 8.
+                      </p>
+                    </CardContent>
+                  </Card>
+                )}
                 
-                {/* Coherent Breathing Technique */}
-                <Card 
-                  ref={el => techniqueRefs.current['coherent'] = el}
-                  className={`cursor-pointer transition-all ${initialTechnique === 'coherent' ? 'ring-2 ring-primary' : ''}`}
-                  onClick={() => handleTechniqueSelect('coherent')}
-                >
-                  <CardContent className="p-6">
-                    <div className="flex items-start mb-4">
-                      <Wind className="h-8 w-8 text-primary mr-3" />
-                      <div>
-                        <h3 className="text-lg font-semibold">Coherent Breathing</h3>
-                        <p className="text-muted-foreground">Balance your nervous system</p>
+                {(!initialTechnique || initialTechnique === 'coherent') && (
+                  <Card 
+                    ref={el => techniqueRefs.current['coherent'] = el}
+                    className={`cursor-pointer transition-all ${initialTechnique === 'coherent' ? 'ring-2 ring-primary' : ''}`}
+                    onClick={() => handleTechniqueSelect('coherent')}
+                  >
+                    <CardContent className="p-6">
+                      <div className="flex items-start mb-4">
+                        <Wind className="h-8 w-8 text-primary mr-3" />
+                        <div>
+                          <h3 className="text-lg font-semibold">Coherent Breathing</h3>
+                          <p className="text-muted-foreground">Balance your nervous system</p>
+                        </div>
                       </div>
-                    </div>
-                    <p className="text-sm">
-                      Breathe at a rate of about 5-7 breaths per minute.
-                      Equal inhale and exhale duration to improve heart rate variability.
-                    </p>
-                  </CardContent>
-                </Card>
+                      <p className="text-sm">
+                        Breathe at a rate of about 5-7 breaths per minute.
+                        Equal inhale and exhale duration to improve heart rate variability.
+                      </p>
+                    </CardContent>
+                  </Card>
+                )}
                 
-                {/* Alternate Nostril Breathing */}
-                <Card 
-                  ref={el => techniqueRefs.current['alternate'] = el}
-                  className={`cursor-pointer transition-all ${initialTechnique === 'alternate' ? 'ring-2 ring-primary' : ''}`}
-                  onClick={() => handleTechniqueSelect('alternate')}
-                >
-                  <CardContent className="p-6">
-                    <div className="flex items-start mb-4">
-                      <Wind className="h-8 w-8 text-primary mr-3" />
-                      <div>
-                        <h3 className="text-lg font-semibold">Alternate Nostril</h3>
-                        <p className="text-muted-foreground">Balance left and right brain</p>
+                {(!initialTechnique || initialTechnique === 'alternate') && (
+                  <Card 
+                    ref={el => techniqueRefs.current['alternate'] = el}
+                    className={`cursor-pointer transition-all ${initialTechnique === 'alternate' ? 'ring-2 ring-primary' : ''}`}
+                    onClick={() => handleTechniqueSelect('alternate')}
+                  >
+                    <CardContent className="p-6">
+                      <div className="flex items-start mb-4">
+                        <Wind className="h-8 w-8 text-primary mr-3" />
+                        <div>
+                          <h3 className="text-lg font-semibold">Alternate Nostril</h3>
+                          <p className="text-muted-foreground">Balance left and right brain</p>
+                        </div>
                       </div>
-                    </div>
-                    <p className="text-sm">
-                      A yogic breathing practice that helps balance the left and right hemispheres of the brain.
-                      Breathe through alternate nostrils in a specific pattern.
-                    </p>
-                  </CardContent>
-                </Card>
+                      <p className="text-sm">
+                        A yogic breathing practice that helps balance the left and right hemispheres of the brain.
+                        Breathe through alternate nostrils in a specific pattern.
+                      </p>
+                    </CardContent>
+                  </Card>
+                )}
               </div>
             </TabsContent>
           </Tabs>
