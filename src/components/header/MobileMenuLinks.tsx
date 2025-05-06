@@ -92,6 +92,10 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
           {
             label: "Coherent Breathing",
             href: "/breathe?tab=techniques&technique=coherent",
+          },
+          {
+            label: "Alternate Nostril",
+            href: "/breathe?tab=techniques&technique=alternate",
           }
         ]}
         toggleMainMenu={toggleMenu}

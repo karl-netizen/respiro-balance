@@ -1,273 +1,192 @@
 
-import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import { BreathingVisualizer } from '@/components/breathing';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowRight, Clock, Wind, Heart, Star } from "lucide-react";
-import { toast } from 'sonner';
-
-const BreatheTechniques = [
-  {
-    id: "box",
-    name: "Box Breathing",
-    description: "Equal inhale, hold, exhale, and pause. Great for focus and stress reduction.",
-    pattern: "4-4-4-4",
-    benefits: ["Reduces stress", "Improves focus", "Calms the nervous system"],
-    color: "blue"
-  },
-  {
-    id: "478",
-    name: "4-7-8 Breathing",
-    description: "Inhale for 4, hold for 7, exhale for 8. Perfect for sleep and anxiety.",
-    pattern: "4-7-8",
-    benefits: ["Promotes sleep", "Reduces anxiety", "Helps control cravings"],
-    color: "indigo"
-  },
-  {
-    id: "coherent",
-    name: "Coherent Breathing",
-    description: "Slow, rhythmic breathing at about 5-6 breaths per minute.",
-    pattern: "5-5",
-    benefits: ["Balances autonomic system", "Improves heart rate variability", "Increases calm"],
-    color: "teal"
-  },
-  {
-    id: "alternate",
-    name: "Alternate Nostril",
-    description: "Balance breathing between left and right nostrils. Promotes balance and clarity.",
-    pattern: "4-4-4-4",
-    benefits: ["Balances hemispheres", "Improves mental clarity", "Reduces stress"],
-    color: "purple"
-  }
-];
+import React, { useEffect, useRef } from 'react';
+import { useLocation, useSearchParams } from 'react-router-dom';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+import BreathingVisualizer from '@/components/breathing/BreathingVisualizer';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent } from '@/components/ui/card';
+import { Clock, Lungs, BookOpen } from 'lucide-react';
 
 const Breathe = () => {
-  const [searchParams] = useSearchParams();
-  const [selectedTechnique, setSelectedTechnique] = useState("box");
-  const [activeTab, setActiveTab] = useState("visualizer");
-  const [completedSessions, setCompletedSessions] = useState<{[key: string]: number}>({});
-  const [favorites, setFavorites] = useState<string[]>([]);
+  const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialTab = searchParams.get('tab') || 'exercises';
+  const initialTechnique = searchParams.get('technique');
+  const [activeTab, setActiveTab] = React.useState(initialTab);
+  const techniqueRefs = useRef<{[key: string]: HTMLDivElement | null}>({
+    'box': null,
+    '478': null,
+    'coherent': null,
+    'alternate': null
+  });
   
-  // Set initial tab based on URL parameter
+  // Handle URL parameters and tab switching
   useEffect(() => {
     const tab = searchParams.get('tab');
-    if (tab === 'techniques') {
-      setActiveTab('techniques');
+    const technique = searchParams.get('technique');
+    
+    if (tab) {
+      setActiveTab(tab);
     }
     
-    // Load completed sessions from localStorage
-    const savedSessions = localStorage.getItem('breathingCompletedSessions');
-    if (savedSessions) {
-      setCompletedSessions(JSON.parse(savedSessions));
-    }
-    
-    // Load favorites from localStorage
-    const savedFavorites = localStorage.getItem('breathingFavorites');
-    if (savedFavorites) {
-      setFavorites(JSON.parse(savedFavorites));
+    // If a technique is specified, scroll to it after a small delay
+    if (technique && techniqueRefs.current[technique]) {
+      setTimeout(() => {
+        techniqueRefs.current[technique]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 300);
     }
   }, [searchParams]);
   
-  const handleSelectTechnique = (techniqueId: string) => {
-    setSelectedTechnique(techniqueId);
-    toast.info(`Selected ${BreatheTechniques.find(t => t.id === techniqueId)?.name}`);
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
     
-    if (activeTab === 'techniques') {
-      setActiveTab('visualizer');
-    }
-  };
-  
-  const handleCompletedSession = (techniqueId: string, durationMinutes: number) => {
-    const newCompleted = { ...completedSessions };
-    newCompleted[techniqueId] = (newCompleted[techniqueId] || 0) + durationMinutes;
-    setCompletedSessions(newCompleted);
-    localStorage.setItem('breathingCompletedSessions', JSON.stringify(newCompleted));
+    // Update URL when tab changes
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set('tab', value);
     
-    toast.success(`Completed ${durationMinutes} minute${durationMinutes !== 1 ? 's' : ''} of ${
-      BreatheTechniques.find(t => t.id === techniqueId)?.name
-    }`);
-  };
-  
-  const handleToggleFavorite = (techniqueId: string) => {
-    let newFavorites: string[];
-    if (favorites.includes(techniqueId)) {
-      newFavorites = favorites.filter(id => id !== techniqueId);
-      toast.info(`Removed ${BreatheTechniques.find(t => t.id === techniqueId)?.name} from favorites`);
-    } else {
-      newFavorites = [...favorites, techniqueId];
-      toast.success(`Added ${BreatheTechniques.find(t => t.id === techniqueId)?.name} to favorites`);
+    // Remove technique parameter if changing away from techniques tab
+    if (value !== 'techniques') {
+      newParams.delete('technique');
     }
     
-    setFavorites(newFavorites);
-    localStorage.setItem('breathingFavorites', JSON.stringify(newFavorites));
+    setSearchParams(newParams);
   };
   
-  const isFavorite = (techniqueId: string): boolean => {
-    return favorites.includes(techniqueId);
+  const handleTechniqueSelect = (technique: string) => {
+    // Update URL when technique changes
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set('technique', technique);
+    if (activeTab !== 'techniques') {
+      newParams.set('tab', 'techniques');
+      setActiveTab('techniques');
+    }
+    setSearchParams(newParams);
+    
+    // Scroll to the selected technique
+    setTimeout(() => {
+      techniqueRefs.current[technique]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 300);
   };
 
-  const totalMinutesCompleted = Object.values(completedSessions).reduce((sum, minutes) => sum + minutes, 0);
-  
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-background">
       <Header />
       
-      <main className="flex-grow">
-        <section className="bg-gradient-to-b from-background to-secondary/20 pt-16 pb-12 px-6">
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-10">
-              <h1 className="text-4xl md:text-5xl font-bold mb-4">Breathe</h1>
-              <p className="text-foreground/70 text-lg max-w-3xl mx-auto">
-                Conscious breathing is your tool for instant calm. Use these exercises anytime to reduce stress and improve focus.
-              </p>
-              
-              <div className="flex flex-wrap justify-center gap-4 mt-6">
-                <div className="bg-card border rounded-md p-4 flex items-center gap-3">
-                  <Clock className="text-primary h-5 w-5" />
-                  <div>
-                    <p className="text-sm text-muted-foreground">Total Time</p>
-                    <p className="font-medium">{totalMinutesCompleted} minutes</p>
-                  </div>
-                </div>
-                <div className="bg-card border rounded-md p-4 flex items-center gap-3">
-                  <Wind className="text-primary h-5 w-5" />
-                  <div>
-                    <p className="text-sm text-muted-foreground">Techniques Tried</p>
-                    <p className="font-medium">{Object.keys(completedSessions).length} / {BreatheTechniques.length}</p>
-                  </div>
-                </div>
-                {Object.keys(completedSessions).length > 0 && (
-                  <div className="bg-card border rounded-md p-4 flex items-center gap-3">
-                    <Heart className="text-primary h-5 w-5" />
-                    <div>
-                      <p className="text-sm text-muted-foreground">Favorite Technique</p>
-                      <p className="font-medium">
-                        {BreatheTechniques.find(t => t.id === 
-                          Object.entries(completedSessions)
-                            .sort((a, b) => b[1] - a[1])[0]?.[0]
-                        )?.name || "None yet"}
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </section>
-        
-        <section className="py-12 px-6">
-          <div className="max-w-6xl mx-auto">
-            <Tabs defaultValue={activeTab} value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-8">
-                <TabsTrigger value="visualizer">Breathing Visualizer</TabsTrigger>
-                <TabsTrigger value="techniques">Techniques</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="visualizer" className="mt-0">
-                <BreathingVisualizer 
-                  selectedTechnique={selectedTechnique}
-                  onSessionComplete={handleCompletedSession}
-                />
-              </TabsContent>
-              
-              <TabsContent value="techniques" className="mt-0">
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                  {BreatheTechniques.map((technique) => (
-                    <Card 
-                      key={technique.id}
-                      className={`cursor-pointer transition-all hover:shadow-md ${
-                        selectedTechnique === technique.id ? "border-primary ring-2 ring-primary/20" : ""
-                      }`}
-                    >
-                      <div className="flex justify-end pt-2 pr-2">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleToggleFavorite(technique.id);
-                          }}
-                          className={`p-1 rounded-full ${
-                            isFavorite(technique.id) 
-                              ? 'text-primary' 
-                              : 'text-muted-foreground'
-                          }`}
-                        >
-                          <Star className="h-5 w-5" fill={isFavorite(technique.id) ? "currentColor" : "none"} />
-                        </button>
+      <main className="flex-grow container mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-3xl md:text-4xl font-bold text-center mb-6">Breathing Exercises</h1>
+          <p className="text-lg text-center text-muted-foreground mb-8">
+            Mindful breathing exercises to reduce stress and increase focus
+          </p>
+          
+          <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+            <TabsList className="grid grid-cols-2 w-full mb-8">
+              <TabsTrigger value="exercises">
+                <Clock className="mr-2 h-4 w-4" />
+                Breathing Exercises
+              </TabsTrigger>
+              <TabsTrigger value="techniques">
+                <BookOpen className="mr-2 h-4 w-4" />
+                Breathing Techniques
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="exercises" className="space-y-8">
+              <BreathingVisualizer 
+                selectedTechnique={initialTechnique || undefined} 
+              />
+            </TabsContent>
+            
+            <TabsContent value="techniques" className="space-y-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Box Breathing Technique */}
+                <Card 
+                  ref={el => techniqueRefs.current['box'] = el}
+                  className={`cursor-pointer transition-all ${initialTechnique === 'box' ? 'ring-2 ring-primary' : ''}`}
+                  onClick={() => handleTechniqueSelect('box')}
+                >
+                  <CardContent className="p-6">
+                    <div className="flex items-start mb-4">
+                      <Lungs className="h-8 w-8 text-primary mr-3" />
+                      <div>
+                        <h3 className="text-lg font-semibold">Box Breathing</h3>
+                        <p className="text-muted-foreground">Equal inhale, hold, exhale, hold pattern</p>
                       </div>
-                      <CardHeader className="pt-0">
-                        <CardTitle>{technique.name}</CardTitle>
-                        <CardDescription>Pattern: {technique.pattern}</CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="mb-4">{technique.description}</p>
-                        <div className="text-sm text-foreground/70">
-                          <strong>Benefits:</strong>
-                          <ul className="list-disc list-inside mt-1">
-                            {technique.benefits.map((benefit, i) => (
-                              <li key={i}>{benefit}</li>
-                            ))}
-                          </ul>
-                        </div>
-                        
-                        <div className="mt-4 flex justify-between items-center">
-                          <div className="text-sm text-muted-foreground">
-                            {completedSessions[technique.id] 
-                              ? `${completedSessions[technique.id]} min completed` 
-                              : 'Not tried yet'}
-                          </div>
-                          <button 
-                            onClick={() => handleSelectTechnique(technique.id)}
-                            className="text-primary hover:underline text-sm font-medium"
-                          >
-                            Try Now
-                          </button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+                    </div>
+                    <p className="text-sm">
+                      A technique used by Navy SEALs to calm the nervous system. 
+                      Inhale for 4, hold for 4, exhale for 4, hold for 4.
+                    </p>
+                  </CardContent>
+                </Card>
                 
-                <div className="bg-secondary/20 p-6 rounded-lg">
-                  <h3 className="text-xl font-semibold mb-4">How to Practice</h3>
-                  <div className="grid md:grid-cols-3 gap-6">
-                    <div className="bg-background/80 p-4 rounded-md">
-                      <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center mb-3">
-                        <Clock className="w-5 h-5 text-primary" />
+                {/* 4-7-8 Breathing Technique */}
+                <Card 
+                  ref={el => techniqueRefs.current['478'] = el}
+                  className={`cursor-pointer transition-all ${initialTechnique === '478' ? 'ring-2 ring-primary' : ''}`}
+                  onClick={() => handleTechniqueSelect('478')}
+                >
+                  <CardContent className="p-6">
+                    <div className="flex items-start mb-4">
+                      <Lungs className="h-8 w-8 text-primary mr-3" />
+                      <div>
+                        <h3 className="text-lg font-semibold">4-7-8 Breathing</h3>
+                        <p className="text-muted-foreground">Deep relaxation breathing pattern</p>
                       </div>
-                      <h4 className="font-medium mb-2">Set Aside Time</h4>
-                      <p className="text-sm text-foreground/70">
-                        Start with just 5 minutes daily. Gradually increase as the practice becomes familiar.
-                      </p>
                     </div>
-                    
-                    <div className="bg-background/80 p-4 rounded-md">
-                      <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center mb-3">
-                        <Wind className="w-5 h-5 text-primary" />
+                    <p className="text-sm">
+                      Developed by Dr. Andrew Weil, this technique helps reduce anxiety.
+                      Inhale for 4, hold for 7, exhale for 8.
+                    </p>
+                  </CardContent>
+                </Card>
+                
+                {/* Coherent Breathing Technique */}
+                <Card 
+                  ref={el => techniqueRefs.current['coherent'] = el}
+                  className={`cursor-pointer transition-all ${initialTechnique === 'coherent' ? 'ring-2 ring-primary' : ''}`}
+                  onClick={() => handleTechniqueSelect('coherent')}
+                >
+                  <CardContent className="p-6">
+                    <div className="flex items-start mb-4">
+                      <Lungs className="h-8 w-8 text-primary mr-3" />
+                      <div>
+                        <h3 className="text-lg font-semibold">Coherent Breathing</h3>
+                        <p className="text-muted-foreground">Balance your nervous system</p>
                       </div>
-                      <h4 className="font-medium mb-2">Focus on Technique</h4>
-                      <p className="text-sm text-foreground/70">
-                        Follow the breathing pattern precisely. The timing is important for maximum benefit.
-                      </p>
                     </div>
-                    
-                    <div className="bg-background/80 p-4 rounded-md">
-                      <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center mb-3">
-                        <ArrowRight className="w-5 h-5 text-primary" />
+                    <p className="text-sm">
+                      Breathe at a rate of about 5-7 breaths per minute.
+                      Equal inhale and exhale duration to improve heart rate variability.
+                    </p>
+                  </CardContent>
+                </Card>
+                
+                {/* Alternate Nostril Breathing */}
+                <Card 
+                  ref={el => techniqueRefs.current['alternate'] = el}
+                  className={`cursor-pointer transition-all ${initialTechnique === 'alternate' ? 'ring-2 ring-primary' : ''}`}
+                  onClick={() => handleTechniqueSelect('alternate')}
+                >
+                  <CardContent className="p-6">
+                    <div className="flex items-start mb-4">
+                      <Lungs className="h-8 w-8 text-primary mr-3" />
+                      <div>
+                        <h3 className="text-lg font-semibold">Alternate Nostril</h3>
+                        <p className="text-muted-foreground">Balance left and right brain</p>
                       </div>
-                      <h4 className="font-medium mb-2">Be Consistent</h4>
-                      <p className="text-sm text-foreground/70">
-                        Practice at the same time each day to build a consistent habit and maximize benefits.
-                      </p>
                     </div>
-                  </div>
-                </div>
-              </TabsContent>
-            </Tabs>
-          </div>
-        </section>
+                    <p className="text-sm">
+                      A yogic breathing practice that helps balance the left and right hemispheres of the brain.
+                      Breathe through alternate nostrils in a specific pattern.
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
       </main>
       
       <Footer />

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import BreathingCircle from './BreathingCircle';
@@ -48,53 +47,15 @@ const BreathingVisualizer: React.FC<BreathingVisualizerProps> = ({
     const technique = searchParams.get('technique');
     
     if (tab === 'techniques') {
-      // If we arrived here with the techniques tab parameter, update the parent tab
-      const tabsElement = document.querySelector('[role="tablist"]');
-      if (tabsElement) {
-        const techniquesTab = Array.from(tabsElement.children).find(
-          child => child.textContent?.includes('Techniques')
-        );
-        if (techniquesTab && techniquesTab instanceof HTMLElement) {
-          techniquesTab.click();
-        }
-      }
-      
       // If a specific technique was requested, select it
       if (technique && ['box', '478', 'coherent', 'alternate'].includes(technique)) {
         selectTechnique(technique);
-        
-        // Select the technique card on the techniques tab
-        setTimeout(() => {
-          const techniqueCards = document.querySelectorAll('.cursor-pointer');
-          const targetCard = Array.from(techniqueCards).find(
-            card => card.textContent?.includes(
-              technique === 'box' ? 'Box Breathing' : 
-              technique === '478' ? '4-7-8' : 
-              technique === 'coherent' ? 'Coherent' :
-              'Alternate Nostril'
-            )
-          );
-          
-          if (targetCard instanceof HTMLElement) {
-            targetCard.click();
-          }
-        }, 100); // Small delay to ensure DOM is ready
-      }
-      
-      // Remove the parameters to avoid reapplying on refresh
-      if (!isActive) {
-        searchParams.delete('tab');
-        searchParams.delete('technique');
-        setSearchParams(searchParams);
       }
     } else if (technique && ['box', '478', 'coherent', 'alternate'].includes(technique) && !isActive) {
       // If only technique parameter is present and not on techniques tab
       selectTechnique(technique);
-      // Remove the technique parameter after applying
-      searchParams.delete('technique');
-      setSearchParams(searchParams);
     }
-  }, [searchParams, setSearchParams, selectTechnique, isActive]);
+  }, [searchParams, selectTechnique, isActive]);
 
   // Start timing when breathing exercise begins
   useEffect(() => {

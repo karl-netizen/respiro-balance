@@ -26,7 +26,8 @@ export const breathingSection: NavSection = {
     { label: "Breathing Techniques", path: "/breathe?tab=techniques" },
     { label: "Box Breathing", path: "/breathe?tab=techniques&technique=box" },
     { label: "4-7-8 Breathing", path: "/breathe?tab=techniques&technique=478" },
-    { label: "Coherent Breathing", path: "/breathe?tab=techniques&technique=coherent" }
+    { label: "Coherent Breathing", path: "/breathe?tab=techniques&technique=coherent" },
+    { label: "Alternate Nostril", path: "/breathe?tab=techniques&technique=alternate" }
   ]
 };
 
