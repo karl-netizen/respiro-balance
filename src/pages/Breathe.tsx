@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -6,7 +5,7 @@ import Footer from '@/components/Footer';
 import BreathingVisualizer from '@/components/breathing/BreathingVisualizer';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
-import { Clock, Lungs, BookOpen } from 'lucide-react';
+import { Clock, Wind, BookOpen, Lungs } from 'lucide-react';
 
 const Breathe = () => {
   const location = useLocation();

@@ -1,11 +1,12 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import BreathingCircle from './BreathingCircle';
 import BreathingControls from './BreathingControls';
 import BreathingInfo from './BreathingInfo';
+import SessionTimer from './SessionTimer';
+import SessionSummary from './SessionSummary';
 import { useBreathingLogic } from './useBreathingLogic';
-import { AlertCircle, Clock } from 'lucide-react';
-import { Progress } from '@/components/ui/progress';
 
 interface BreathingVisualizerProps {
   selectedTechnique?: string;
@@ -114,34 +115,18 @@ const BreathingVisualizer: React.FC<BreathingVisualizerProps> = ({
         
         <div className="flex flex-col items-center max-w-md mx-auto">
           {sessionDuration > 0 && !isActive && (
-            <div className="w-full mb-6 p-4 bg-card border rounded-lg">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="font-medium">Session Completed</h3>
-                <span className="text-sm text-muted-foreground">{formatTime(sessionDuration)}</span>
-              </div>
-              <Progress value={100} className="h-2" />
-              {sessionDuration < 30 ? (
-                <div className="flex items-center gap-2 mt-4 text-sm text-amber-600">
-                  <AlertCircle className="h-4 w-4" />
-                  <span>Sessions under 30 seconds aren't tracked. Try again for longer!</span>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2 mt-4 text-sm text-green-600">
-                  <Clock className="h-4 w-4" />
-                  <span>Great job! This session has been added to your stats.</span>
-                </div>
-              )}
-            </div>
+            <SessionSummary 
+              duration={sessionDuration} 
+              formatTime={formatTime} 
+            />
           )}
           
           {isActive && (
-            <div className="w-full mb-6 p-4 bg-card border rounded-lg">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="font-medium">Session in Progress</h3>
-                <span className="text-sm">{formatTime(sessionElapsed)}</span>
-              </div>
-              <Progress value={sessionElapsed % 60 / 60 * 100} className="h-2" />
-            </div>
+            <SessionTimer
+              isActive={isActive}
+              sessionElapsed={sessionElapsed}
+              formatTime={formatTime}
+            />
           )}
           
           <BreathingCircle 
