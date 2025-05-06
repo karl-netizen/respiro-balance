@@ -5,7 +5,7 @@ import Footer from '@/components/Footer';
 import BreathingVisualizer from '@/components/breathing/BreathingVisualizer';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
-import { Clock, Wind, BookOpen, Lungs } from 'lucide-react';
+import { Clock, Wind, BookOpen } from 'lucide-react';
 
 const Breathe = () => {
   const location = useLocation();
@@ -107,7 +107,7 @@ const Breathe = () => {
                 >
                   <CardContent className="p-6">
                     <div className="flex items-start mb-4">
-                      <Lungs className="h-8 w-8 text-primary mr-3" />
+                      <Wind className="h-8 w-8 text-primary mr-3" />
                       <div>
                         <h3 className="text-lg font-semibold">Box Breathing</h3>
                         <p className="text-muted-foreground">Equal inhale, hold, exhale, hold pattern</p>
@@ -128,7 +128,7 @@ const Breathe = () => {
                 >
                   <CardContent className="p-6">
                     <div className="flex items-start mb-4">
-                      <Lungs className="h-8 w-8 text-primary mr-3" />
+                      <Wind className="h-8 w-8 text-primary mr-3" />
                       <div>
                         <h3 className="text-lg font-semibold">4-7-8 Breathing</h3>
                         <p className="text-muted-foreground">Deep relaxation breathing pattern</p>
@@ -149,7 +149,7 @@ const Breathe = () => {
                 >
                   <CardContent className="p-6">
                     <div className="flex items-start mb-4">
-                      <Lungs className="h-8 w-8 text-primary mr-3" />
+                      <Wind className="h-8 w-8 text-primary mr-3" />
                       <div>
                         <h3 className="text-lg font-semibold">Coherent Breathing</h3>
                         <p className="text-muted-foreground">Balance your nervous system</p>
@@ -170,7 +170,7 @@ const Breathe = () => {
                 >
                   <CardContent className="p-6">
                     <div className="flex items-start mb-4">
-                      <Lungs className="h-8 w-8 text-primary mr-3" />
+                      <Wind className="h-8 w-8 text-primary mr-3" />
                       <div>
                         <h3 className="text-lg font-semibold">Alternate Nostril</h3>
                         <p className="text-muted-foreground">Balance left and right brain</p>
