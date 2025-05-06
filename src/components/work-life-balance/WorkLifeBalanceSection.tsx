@@ -1,8 +1,8 @@
 
 import React from 'react';
-import { BalanceMeterCard } from './BalanceMeterCard';
-import { BreakRemindersCard } from './BreakRemindersCard';
-import { FocusModeCard } from './FocusModeCard';
+import BalanceMeterCard from './BalanceMeterCard';
+import BreakRemindersCard from './BreakRemindersCard';
+import FocusModeCard from './FocusModeCard';
 import BiofeedbackCard from '@/components/biofeedback/BiofeedbackCard';
 
 const WorkLifeBalanceSection = () => {
