@@ -150,7 +150,7 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
       </Link>
       
       <Link
-        to="/#pricing"
+        to="/landing#pricing"
         className={cn("flex items-center gap-2 text-white hover:text-respiro-light py-2 button-transition", location.hash === '#pricing' && "text-respiro-light font-medium")}
         onClick={toggleMenu}
       >
