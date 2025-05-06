@@ -3,9 +3,10 @@ import React from 'react';
 import BreathingCircle from '../BreathingCircle';
 import BreathingControls from '../BreathingControls';
 import BreathingInfo from '../BreathingInfo';
+import { BreathingPhase } from '../types';
 
 interface VisualizerContentProps {
-  breathingPhase: string;
+  breathingPhase: BreathingPhase;
   count: number;
   isActive: boolean;
   voiceEnabled: boolean;
