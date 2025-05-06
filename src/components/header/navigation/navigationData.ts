@@ -29,3 +29,13 @@ export const breathingSection: NavSection = {
     { label: "Coherent Breathing", path: "/breathe?tab=techniques&technique=coherent" }
   ]
 };
+
+export const workLifeBalanceSection: NavSection = {
+  title: "Work-Life Balance",
+  items: [
+    { label: "Balance Tools", path: "/work-life-balance" },
+    { label: "Break Reminders", path: "/work-life-balance#breaks" },
+    { label: "Focus Mode", path: "/work-life-balance#focus" },
+    { label: "Biofeedback", path: "/work-life-balance#biofeedback" }
+  ]
+};

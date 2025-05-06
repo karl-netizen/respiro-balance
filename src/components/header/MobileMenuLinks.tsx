@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import { 
   Home, Gauge, LineChart, Settings, BookOpen, Heart, 
-  Clock, Sunrise
+  Clock, Sunrise, Briefcase
 } from "lucide-react";
 import MobileDropdown from "./MobileDropdown";
 
@@ -93,6 +93,30 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
           {
             label: "Coherent Breathing",
             href: "/breathe?tab=techniques&technique=coherent",
+          }
+        ]}
+        toggleMainMenu={toggleMenu}
+      />
+      
+      <MobileDropdown
+        title="Work-Life Balance"
+        icon={<Briefcase className="h-4 w-4" />}
+        items={[
+          {
+            label: "Balance Tools",
+            href: "/work-life-balance",
+          },
+          {
+            label: "Break Reminders",
+            href: "/work-life-balance#breaks",
+          },
+          {
+            label: "Focus Mode",
+            href: "/work-life-balance#focus",
+          },
+          {
+            label: "Biofeedback",
+            href: "/work-life-balance#biofeedback",
           }
         ]}
         toggleMainMenu={toggleMenu}

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import ViewportToggle from '@/components/layout/ViewportToggle';
@@ -25,7 +24,8 @@ import Settings from '@/pages/Settings';
 import TermsPage from '@/pages/TermsPage';
 import PrivacyPage from '@/pages/PrivacyPage';
 import SubscriptionPage from '@/pages/SubscriptionPage';
-import NotFound from '@/pages/NotFound'; // Import the NotFound page
+import NotFound from '@/pages/NotFound';
+import WorkLifeBalance from '@/pages/WorkLifeBalance';
 
 const App: React.FC = () => {
   const [isMobileView, setIsMobileView] = useState(false);
@@ -73,6 +73,9 @@ const App: React.FC = () => {
         
         {/* Breathing routes */}
         <Route path="/breathe" element={<Breathe />} />
+        
+        {/* Work-Life Balance route */}
+        <Route path="/work-life-balance" element={<WorkLifeBalance />} />
         
         {/* Progress routes */}
         <Route path="/progress" element={<Progress />} />

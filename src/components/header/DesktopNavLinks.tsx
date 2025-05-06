@@ -9,7 +9,11 @@ import {
 import { useActiveRoute } from "./navigation/navigationUtils";
 import NavLink from "./navigation/NavLink";
 import NavDropdown from "./navigation/NavDropdown";
-import { meditateSection, breathingSection } from "./navigation/navigationData";
+import { 
+  meditateSection, 
+  breathingSection, 
+  workLifeBalanceSection 
+} from "./navigation/navigationData";
 
 const DesktopNavLinks = () => {
   const navigate = useNavigate();
@@ -68,6 +72,14 @@ const DesktopNavLinks = () => {
           title={breathingSection.title}
           items={breathingSection.items}
           isActive={isActive('/breathe')}
+          onItemClick={handleNavClick}
+        />
+        
+        {/* Work-Life Balance dropdown */}
+        <NavDropdown
+          title={workLifeBalanceSection.title}
+          items={workLifeBalanceSection.items}
+          isActive={isActive('/work-life-balance')}
           onItemClick={handleNavClick}
         />
 

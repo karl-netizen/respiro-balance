@@ -97,10 +97,18 @@ const WorkLifeBalanceSection = () => {
         </div>
         
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-          <BalanceMeterCard />
-          <BreakRemindersCard />
-          <FocusModeCard />
-          <BiofeedbackCard />
+          <div id="meter">
+            <BalanceMeterCard />
+          </div>
+          <div id="breaks">
+            <BreakRemindersCard />
+          </div>
+          <div id="focus">
+            <FocusModeCard />
+          </div>
+          <div id="biofeedback">
+            <BiofeedbackCard />
+          </div>
         </div>
         
         <div className="mt-12 text-center">
