@@ -117,12 +117,18 @@ const BreathingCircle: React.FC<BreathingCircleProps> = ({
     }
   }, [breathingPhase, techniqueStyles]);
 
+  // Use different sizes for mobile and desktop
+  const circleSize = "w-full max-w-[250px] h-[250px] sm:w-[280px] sm:h-[280px]";
+  const middleRingSize = "w-full max-w-[200px] h-[200px] sm:w-[230px] sm:h-[230px]";
+  const innerCircleSize = "w-full max-w-[170px] h-[170px] sm:w-[200px] sm:h-[200px]";
+
   return (
-    <div className="relative flex justify-center items-center mb-8">
+    <div className="relative flex justify-center items-center mb-6">
       {/* Outer ring */}
       <div
         className={cn(
-          "absolute rounded-full w-[280px] h-[280px] opacity-30",
+          "absolute rounded-full opacity-30",
+          circleSize,
           phaseStyles.outerRing,
           phaseStyles.animationSpeed,
           animationScale
@@ -132,7 +138,8 @@ const BreathingCircle: React.FC<BreathingCircleProps> = ({
       {/* Middle ring */}
       <div
         className={cn(
-          "absolute rounded-full w-[230px] h-[230px] border-4",
+          "absolute rounded-full border-4",
+          middleRingSize,
           techniqueStyles.borderColor,
           phaseStyles.animationSpeed,
           animationScale
@@ -142,7 +149,8 @@ const BreathingCircle: React.FC<BreathingCircleProps> = ({
       {/* Inner circle */}
       <div
         className={cn(
-          "rounded-full w-[200px] h-[200px] flex flex-col justify-center items-center shadow-md",
+          "rounded-full flex flex-col justify-center items-center shadow-md",
+          innerCircleSize,
           techniqueStyles.glowColor,
           phaseStyles.innerCircle,
           phaseStyles.animationSpeed,
@@ -150,10 +158,10 @@ const BreathingCircle: React.FC<BreathingCircleProps> = ({
         )}
       >
         <div className="text-center">
-          <p className={cn("text-2xl font-bold mb-1 uppercase", phaseStyles.textClass)}>
+          <p className={cn("text-xl sm:text-2xl font-bold mb-1 uppercase", phaseStyles.textClass)}>
             {breathingPhase}
           </p>
-          <p className={cn("text-5xl font-bold", phaseStyles.textClass)}>{count}</p>
+          <p className={cn("text-4xl sm:text-5xl font-bold", phaseStyles.textClass)}>{count}</p>
         </div>
       </div>
     </div>

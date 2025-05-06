@@ -31,14 +31,14 @@ const BreathingControls: React.FC<BreathingControlsProps> = ({
   ];
 
   return (
-    <div className="w-full max-w-md mb-8">
+    <div className="w-full mb-4">
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <Select value={selectedTechnique} onValueChange={onSelectTechnique} disabled={isActive}>
-            <SelectTrigger className="w-full max-w-[250px]">
+            <SelectTrigger className="w-full max-w-[250px] bg-white dark:bg-gray-800">
               <SelectValue placeholder="Select Technique" />
             </SelectTrigger>
-            <SelectContent className="bg-white">
+            <SelectContent className="bg-white dark:bg-gray-800">
               {techniques.map(technique => (
                 <SelectItem key={technique.id} value={technique.id}>
                   <div className="flex items-center gap-2">

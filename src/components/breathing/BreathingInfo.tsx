@@ -73,7 +73,7 @@ const BreathingInfo: React.FC<BreathingInfoProps> = ({ techniqueId, voiceEnabled
   const info = getTechniqueInfo();
 
   return (
-    <div className="w-full">
+    <div className="w-full mt-4">
       <div className="bg-card border rounded-lg p-4">
         <h3 className={cn("font-bold mb-2", info.color)}>{info.name}</h3>
         <p className="text-sm text-muted-foreground mb-3">{info.description}</p>

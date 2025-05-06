@@ -6,7 +6,7 @@ import Footer from '@/components/Footer';
 import BreathingVisualizer from '@/components/breathing/BreathingVisualizer';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
-import { Clock, Wind, BookOpen } from 'lucide-react';
+import { Wind } from 'lucide-react';
 
 const Breathe = () => {
   const location = useLocation();
@@ -83,11 +83,11 @@ const Breathe = () => {
           <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
             <TabsList className="grid grid-cols-2 w-full mb-8">
               <TabsTrigger value="exercises">
-                <Clock className="mr-2 h-4 w-4" />
+                <Wind className="mr-2 h-4 w-4" />
                 Breathing Exercises
               </TabsTrigger>
               <TabsTrigger value="techniques">
-                <BookOpen className="mr-2 h-4 w-4" />
+                <Wind className="mr-2 h-4 w-4" />
                 Breathing Techniques
               </TabsTrigger>
             </TabsList>
@@ -100,7 +100,7 @@ const Breathe = () => {
             
             <TabsContent value="techniques" className="space-y-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Only show the selected technique if one is specified, otherwise show all techniques */}
+                {/* Only show the techniques if no specific one is selected, or show only the selected one */}
                 {(!initialTechnique || initialTechnique === 'box') && (
                   <Card 
                     ref={el => techniqueRefs.current['box'] = el}

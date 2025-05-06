@@ -47,16 +47,10 @@ const BreathingVisualizer: React.FC<BreathingVisualizerProps> = ({
     const tab = searchParams.get('tab');
     const technique = searchParams.get('technique');
     
-    if (tab === 'techniques') {
-      // If a specific technique was requested, select it
-      if (technique && ['box', '478', 'coherent', 'alternate'].includes(technique)) {
-        selectTechnique(technique);
-      }
-    } else if (technique && ['box', '478', 'coherent', 'alternate'].includes(technique) && !isActive) {
-      // If only technique parameter is present and not on techniques tab
+    if (technique && ['box', '478', 'coherent', 'alternate'].includes(technique)) {
       selectTechnique(technique);
     }
-  }, [searchParams, selectTechnique, isActive]);
+  }, [searchParams, selectTechnique]);
 
   // Start timing when breathing exercise begins
   useEffect(() => {
@@ -103,17 +97,17 @@ const BreathingVisualizer: React.FC<BreathingVisualizerProps> = ({
   };
 
   return (
-    <section className="py-8 px-6 bg-secondary/30 rounded-lg" id="breathing-visualizer">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-8">
+    <section className="py-6 px-4 bg-secondary/30 rounded-lg" id="breathing-visualizer">
+      <div className="mx-auto">
+        <div className="text-center mb-6">
           <h2 className="text-2xl md:text-3xl font-bold mb-2">Breathing Visualizer</h2>
-          <p className="text-foreground/70 max-w-2xl mx-auto">
+          <p className="text-foreground/70 mx-auto">
             Use this guided breathing exercise to find calm and focus in just a few minutes.
-            Follow the animation and synchronize your breath for an immediate sense of relaxation.
+            Follow the animation and synchronize your breath.
           </p>
         </div>
         
-        <div className="flex flex-col items-center max-w-md mx-auto">
+        <div className="flex flex-col items-center mx-auto">
           {sessionDuration > 0 && !isActive && (
             <SessionSummary 
               duration={sessionDuration} 
@@ -129,26 +123,32 @@ const BreathingVisualizer: React.FC<BreathingVisualizerProps> = ({
             />
           )}
           
-          <BreathingCircle 
-            breathingPhase={breathingPhase} 
-            count={count} 
-            techniqueId={currentTechnique}
-          />
+          <div className="w-full max-w-md mx-auto">
+            <BreathingCircle 
+              breathingPhase={breathingPhase} 
+              count={count} 
+              techniqueId={currentTechnique}
+            />
+          </div>
           
-          <BreathingControls 
-            isActive={isActive}
-            voiceEnabled={voiceEnabled}
-            selectedTechnique={currentTechnique}
-            onSelectTechnique={selectTechnique}
-            onStart={startBreathing}
-            onStop={stopBreathing}
-            onToggleVoice={toggleVoice}
-          />
+          <div className="w-full max-w-md mx-auto">
+            <BreathingControls 
+              isActive={isActive}
+              voiceEnabled={voiceEnabled}
+              selectedTechnique={currentTechnique}
+              onSelectTechnique={selectTechnique}
+              onStart={startBreathing}
+              onStop={stopBreathing}
+              onToggleVoice={toggleVoice}
+            />
+          </div>
           
-          <BreathingInfo 
-            voiceEnabled={voiceEnabled}
-            techniqueId={currentTechnique}
-          />
+          <div className="w-full max-w-md mx-auto mt-4">
+            <BreathingInfo 
+              techniqueId={currentTechnique}
+              voiceEnabled={voiceEnabled}
+            />
+          </div>
         </div>
       </div>
     </section>
