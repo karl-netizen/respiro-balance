@@ -1,21 +1,49 @@
 
-import React, { createContext, useContext } from 'react';
+import React from 'react';
 import { useSubscription, SubscriptionTier } from '@/hooks/useSubscription';
 import { UserProfile } from '@/types/supabase';
+import SubscriptionContext from '@/hooks/useSubscriptionContext';
 
-interface SubscriptionContextValue {
-  subscriptionData: Partial<UserProfile> | null;
-  isLoading: boolean;
-  isPremium: boolean;
-  hasExceededUsageLimit: boolean;
-  tierName: string;
-  startPremiumCheckout: () => Promise<string>;
-  manageSubscription: () => Promise<string>;
-  updateUsage: (minutes: number) => void;
-  getFeatureAccess: (featureKey: string) => boolean;
+interface SubscriptionProviderProps {
+  children: React.ReactNode;
 }
 
-export const SubscriptionContext = createContext<SubscriptionContextValue | undefined>(undefined);
+export const SubscriptionProvider: React.FC<SubscriptionProviderProps> = ({ children }) => {
+  const {
+    subscriptionData,
+    isLoading,
+    isPremium,
+    hasExceededUsageLimit,
+    startPremiumCheckout,
+    manageSubscription,
+    updateUsage,
+  } = useSubscription();
+
+  const getFeatureAccess = (featureKey: string): boolean => {
+    const tier = subscriptionData?.subscription_tier || 'free';
+    return SUBSCRIPTION_FEATURES[tier as SubscriptionTier].includes(featureKey);
+  };
+
+  const tierName = formatTierName(subscriptionData?.subscription_tier as SubscriptionTier);
+
+  const value = {
+    subscriptionData,
+    isLoading,
+    isPremium,
+    hasExceededUsageLimit,
+    tierName,
+    startPremiumCheckout,
+    manageSubscription,
+    updateUsage,
+    getFeatureAccess,
+  };
+
+  return (
+    <SubscriptionContext.Provider value={value}>
+      {children}
+    </SubscriptionContext.Provider>
+  );
+};
 
 // Define feature access for different subscription tiers
 const SUBSCRIPTION_FEATURES: Record<SubscriptionTier, string[]> = {
@@ -82,39 +110,4 @@ const formatTierName = (tier?: SubscriptionTier): string => {
   }
 };
 
-export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const {
-    subscriptionData,
-    isLoading,
-    isPremium,
-    hasExceededUsageLimit,
-    startPremiumCheckout,
-    manageSubscription,
-    updateUsage,
-  } = useSubscription();
-
-  const getFeatureAccess = (featureKey: string): boolean => {
-    const tier = subscriptionData?.subscription_tier || 'free';
-    return SUBSCRIPTION_FEATURES[tier as SubscriptionTier].includes(featureKey);
-  };
-
-  const tierName = formatTierName(subscriptionData?.subscription_tier as SubscriptionTier);
-
-  const value = {
-    subscriptionData,
-    isLoading,
-    isPremium,
-    hasExceededUsageLimit,
-    tierName,
-    startPremiumCheckout,
-    manageSubscription,
-    updateUsage,
-    getFeatureAccess,
-  };
-
-  return (
-    <SubscriptionContext.Provider value={value}>
-      {children}
-    </SubscriptionContext.Provider>
-  );
-};
+export default SubscriptionProvider;

@@ -31,11 +31,7 @@ export const SubscriptionProvider = ({ children }: { children: ReactNode }) => {
     updateUsage
   };
   
-  return (
-    <SubscriptionContext.Provider value={value}>
-      {children}
-    </SubscriptionContext.Provider>
-  );
+  return { Provider: SubscriptionContext.Provider, value, children };
 };
 
 export const useSubscriptionContext = (): SubscriptionContextType => {
@@ -45,3 +41,5 @@ export const useSubscriptionContext = (): SubscriptionContextType => {
   }
   return context;
 };
+
+export default SubscriptionContext;
