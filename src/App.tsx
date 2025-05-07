@@ -63,7 +63,7 @@ function App() {
                   <Route path="/reset-password" element={<ResetPasswordPage />} />
                   
                   {/* Protected Routes */}
-                  <Route element={<RequireAuth />}>
+                  <Route element={<RequireAuth>{null}</RequireAuth>}>
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/onboarding" element={<OnboardingPage />} />
                     <Route path="/morning-ritual" element={<MorningRitual />} />

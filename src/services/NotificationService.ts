@@ -217,17 +217,23 @@ class NotificationService {
     // Use service worker notification if available (works when app is closed)
     if (this.serviceWorkerRegistration) {
       try {
-        await this.serviceWorkerRegistration.showNotification(title, {
+        const notificationOptions: NotificationOptions & { vibrate?: number[] } = {
           body: message,
           icon: '/favicon.ico',
           badge: '/favicon.ico',
-          vibrate: [100, 50, 100],
           ...options,
           data: {
             ...options.data,
             applicationTag: 'respiro-balance'
           }
-        });
+        };
+        
+        // Add vibration pattern if supported by the browser
+        if ('vibrate' in navigator) {
+          notificationOptions.vibrate = [100, 50, 100];
+        }
+        
+        await this.serviceWorkerRegistration.showNotification(title, notificationOptions);
       } catch (error) {
         console.error('Error showing notification through service worker:', error);
         this.showFallbackNotification(title, message, options);
