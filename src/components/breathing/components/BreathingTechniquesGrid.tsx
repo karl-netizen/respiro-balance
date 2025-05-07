@@ -40,21 +40,20 @@ const BreathingTechniquesGrid: React.FC<BreathingTechniquesGridProps> = ({
     }
   ];
 
+  // Always show all techniques when on the techniques tab
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {techniqueData.map(technique => (
-        (!selectedTechnique || selectedTechnique === technique.id) && (
-          <TechniqueCard
-            key={technique.id}
-            technique={technique.id}
-            isSelected={selectedTechnique === technique.id}
-            title={technique.title}
-            subtitle={technique.subtitle}
-            description={technique.description}
-            forwardedRef={(el) => techniqueRefs.current[technique.id] = el}
-            onClick={() => onTechniqueSelect(technique.id)}
-          />
-        )
+        <TechniqueCard
+          key={technique.id}
+          technique={technique.id}
+          isSelected={selectedTechnique === technique.id}
+          title={technique.title}
+          subtitle={technique.subtitle}
+          description={technique.description}
+          forwardedRef={(el) => techniqueRefs.current[technique.id] = el}
+          onClick={() => onTechniqueSelect(technique.id)}
+        />
       ))}
     </div>
   );

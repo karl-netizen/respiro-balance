@@ -40,8 +40,8 @@ export const useBreathePageLogic = () => {
     const newParams = new URLSearchParams(searchParams);
     newParams.set('tab', value);
     
-    // Remove technique parameter if changing away from techniques tab
-    if (value !== 'techniques') {
+    // Remove technique parameter if changing to exercises tab
+    if (value === 'exercises') {
       newParams.delete('technique');
     }
     
@@ -52,10 +52,11 @@ export const useBreathePageLogic = () => {
     // Update URL when technique changes
     const newParams = new URLSearchParams(searchParams);
     newParams.set('technique', technique);
-    if (activeTab !== 'techniques') {
-      newParams.set('tab', 'techniques');
-      setActiveTab('techniques');
-    }
+    
+    // If selecting a technique, always ensure we're on the techniques tab
+    newParams.set('tab', 'techniques');
+    setActiveTab('techniques');
+    
     setSearchParams(newParams);
     
     // Scroll to the selected technique
@@ -64,16 +65,14 @@ export const useBreathePageLogic = () => {
     }, 300);
   };
 
-  // Reset technique when switching to techniques tab
+  // Handle tab click - specifically fixes the "Breathing Techniques" tab click issue
   const handleTabClick = (tab: string) => {
     if (tab === 'techniques') {
-      // If we're already on the techniques tab with a technique selected,
-      // clear the technique parameter to show all techniques
-      if (activeTab === 'techniques' && searchParams.has('technique')) {
-        const newParams = new URLSearchParams(searchParams);
-        newParams.delete('technique');
-        setSearchParams(newParams);
-      }
+      // When clicking on techniques tab, always show all techniques
+      const newParams = new URLSearchParams(searchParams);
+      newParams.set('tab', 'techniques');
+      newParams.delete('technique'); // Remove any selected technique to show all
+      setSearchParams(newParams);
     }
     handleTabChange(tab);
   };
