@@ -107,5 +107,4 @@ export const ChartTooltip = ({ children }: { children: ReactNode }) => {
   );
 };
 
-// Export a placeholder for the ChartTooltipContent
-export const ChartTooltipContent = ChartTooltipContent;
+// The duplicate export has been removed
