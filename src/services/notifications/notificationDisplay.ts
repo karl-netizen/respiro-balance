@@ -1,14 +1,19 @@
 
 import { serviceWorkerManager } from "./serviceWorkerManager";
 
+// Define an extended interface for notification options to handle vibrate pattern
+interface ExtendedNotificationOptions extends NotificationOptions {
+  vibrate?: number[];
+}
+
 class NotificationDisplay {
-  async showNotification(title: string, message: string, options: NotificationOptions = {}) {
+  async showNotification(title: string, message: string, options: ExtendedNotificationOptions = {}) {
     // Use service worker notification if available (works when app is closed)
     const serviceWorkerRegistration = serviceWorkerManager.getServiceWorkerRegistration();
     
     if (serviceWorkerRegistration) {
       try {
-        const notificationOptions: NotificationOptions & { vibrate?: number[] } = {
+        const notificationOptions: ExtendedNotificationOptions = {
           body: message,
           icon: '/favicon.ico',
           badge: '/favicon.ico',
@@ -34,7 +39,7 @@ class NotificationDisplay {
     }
   }
 
-  private showFallbackNotification(title: string, message: string, options: NotificationOptions = {}) {
+  private showFallbackNotification(title: string, message: string, options: ExtendedNotificationOptions = {}) {
     try {
       new Notification(title, {
         body: message,

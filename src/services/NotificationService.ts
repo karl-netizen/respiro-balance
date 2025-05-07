@@ -1,6 +1,6 @@
 
 import { UserPreferences } from "@/context/types";
-import { BreakType, BreakReminder, NotificationPermissionState } from "./notifications/types";
+import type { BreakType, BreakReminder, NotificationPermissionState } from "./notifications/types";
 import { defaultBreakReminders } from "./notifications/defaults";
 import { serviceWorkerManager } from "./notifications/serviceWorkerManager";
 import { permissionManager } from "./notifications/permissionManager";
@@ -8,7 +8,8 @@ import { notificationDisplay } from "./notifications/notificationDisplay";
 import { breakReminderScheduler } from "./notifications/breakReminderScheduler";
 
 // Re-export types and defaults
-export { BreakType, type BreakReminder, type NotificationPermissionState, defaultBreakReminders };
+export { defaultBreakReminders };
+export type { BreakType, BreakReminder, NotificationPermissionState };
 
 class NotificationService {
   constructor() {
