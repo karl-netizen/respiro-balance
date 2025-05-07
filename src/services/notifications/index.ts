@@ -3,7 +3,7 @@
 export { 
   notificationService,
   defaultBreakReminders,
-  type BreakReminder,
-  type BreakType, 
-  type NotificationPermissionState 
 } from "../NotificationService";
+
+export type { BreakReminder, BreakType, NotificationPermissionState } from "./types";
+
