@@ -30,11 +30,22 @@ const BreathingControls: React.FC<BreathingControlsProps> = ({
     { id: "alternate", name: "Alternate Nostril" }
   ];
 
+  const handleTechniqueChange = (techniqueId: string) => {
+    // Stop any active breathing session when changing techniques
+    if (isActive) {
+      onStop();
+    }
+    onSelectTechnique(techniqueId);
+  };
+
   return (
     <div className="w-full mb-4">
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
-          <Select value={selectedTechnique} onValueChange={onSelectTechnique} disabled={isActive}>
+          <Select 
+            value={selectedTechnique} 
+            onValueChange={handleTechniqueChange}
+          >
             <SelectTrigger className="w-full max-w-[250px] bg-white dark:bg-gray-800">
               <SelectValue placeholder="Select Technique" />
             </SelectTrigger>

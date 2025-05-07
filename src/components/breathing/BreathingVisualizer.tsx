@@ -31,21 +31,29 @@ const BreathingVisualizer: React.FC<BreathingVisualizerProps> = ({
     cyclesCompleted
   } = useBreathingLogic();
 
-  // Apply technique from props
+  // Apply technique from props or URL parameter
   useEffect(() => {
-    if (selectedTechnique && selectedTechnique !== currentTechnique) {
-      selectTechnique(selectedTechnique);
-    }
-  }, [selectedTechnique, currentTechnique, selectTechnique]);
-
-  // Handle tab selection and technique selection from URL query parameters
-  useEffect(() => {
+    // Check URL parameter first
     const technique = searchParams.get('technique');
     
     if (technique && ['box', '478', 'coherent', 'alternate'].includes(technique)) {
       selectTechnique(technique);
+    } 
+    // If no URL parameter but prop is provided
+    else if (selectedTechnique && selectedTechnique !== currentTechnique) {
+      selectTechnique(selectedTechnique);
     }
-  }, [searchParams, selectTechnique]);
+  }, [searchParams, selectedTechnique, selectTechnique]);
+
+  // Handle technique selection change
+  const handleTechniqueSelect = (technique: string) => {
+    selectTechnique(technique);
+    
+    // Update URL to reflect the selected technique
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set('technique', technique);
+    setSearchParams(newParams);
+  };
 
   return (
     <section className="py-6 px-4 bg-secondary/30 rounded-lg" id="breathing-visualizer">
@@ -66,7 +74,7 @@ const BreathingVisualizer: React.FC<BreathingVisualizerProps> = ({
               isActive={isActive}
               voiceEnabled={voiceEnabled}
               selectedTechnique={currentTechnique}
-              onSelectTechnique={selectTechnique}
+              onSelectTechnique={handleTechniqueSelect}
               onStart={startBreathing}
               onStop={stopBreathing}
               onToggleVoice={toggleVoice}

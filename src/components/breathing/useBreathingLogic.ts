@@ -1,5 +1,5 @@
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { BreathingPhase } from './types';
 import { toast } from 'sonner';
 import { breathingPatterns } from './data/breathingPatterns';
@@ -21,6 +21,12 @@ export function useBreathingLogic() {
     }
   };
   
+  // Update pattern when technique changes
+  useEffect(() => {
+    patternRef.current = breathingPatterns[selectedTechnique];
+    resetTimer();
+  }, [selectedTechnique]);
+  
   // Timer logic
   const { 
     breathingPhase, 
@@ -41,6 +47,7 @@ export function useBreathingLogic() {
       
       // If already active, notify of technique change
       if (isActive) {
+        stopBreathing();
         toast.info(`Switched to ${patternRef.current.name}`, {
           description: patternRef.current.description
         });

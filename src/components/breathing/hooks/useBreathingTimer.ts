@@ -20,11 +20,15 @@ export function useBreathingTimer({
   const [count, setCount] = useState(pattern.inhale);
   const cyclesCompletedRef = useRef<number>(0);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const currentPatternRef = useRef(pattern);
 
   // Reset count when pattern changes
   useEffect(() => {
-    setBreathingPhase('inhale');
-    setCount(pattern.inhale);
+    if (currentPatternRef.current !== pattern) {
+      currentPatternRef.current = pattern;
+      setBreathingPhase('inhale');
+      setCount(pattern.inhale);
+    }
   }, [pattern]);
 
   // Handle breathing timer
@@ -98,6 +102,7 @@ export function useBreathingTimer({
   const resetTimer = () => {
     setBreathingPhase('inhale');
     setCount(pattern.inhale);
+    cyclesCompletedRef.current = 0;
   };
 
   return {
