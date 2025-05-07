@@ -2,7 +2,13 @@
 import { useState, useEffect } from 'react';
 import { useUserPreferences } from '@/context';
 import { supabase } from '@/lib/supabase';
-import { BreakReminder, BreakType, NotificationPermissionState, defaultBreakReminders, notificationService } from '@/services/NotificationService';
+import { 
+  BreakReminder, 
+  BreakType, 
+  NotificationPermissionState, 
+  defaultBreakReminders,
+  notificationService 
+} from '@/services/notifications';
 
 export const useBreakReminderSettings = () => {
   const { preferences, updatePreferences } = useUserPreferences();
