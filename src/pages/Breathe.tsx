@@ -69,6 +69,20 @@ const Breathe = () => {
     }, 300);
   };
 
+  // Reset technique when switching to techniques tab
+  const handleTabClick = (tab: string) => {
+    if (tab === 'techniques') {
+      // If we're already on the techniques tab with a technique selected,
+      // clear the technique parameter to show all techniques
+      if (activeTab === 'techniques' && searchParams.has('technique')) {
+        const newParams = new URLSearchParams(searchParams);
+        newParams.delete('technique');
+        setSearchParams(newParams);
+      }
+    }
+    handleTabChange(tab);
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
@@ -82,11 +96,11 @@ const Breathe = () => {
           
           <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
             <TabsList className="grid grid-cols-2 w-full mb-8">
-              <TabsTrigger value="exercises">
+              <TabsTrigger value="exercises" onClick={() => handleTabClick('exercises')}>
                 <Wind className="mr-2 h-4 w-4" />
                 Breathing Exercises
               </TabsTrigger>
-              <TabsTrigger value="techniques">
+              <TabsTrigger value="techniques" onClick={() => handleTabClick('techniques')}>
                 <Wind className="mr-2 h-4 w-4" />
                 Breathing Techniques
               </TabsTrigger>
@@ -101,10 +115,10 @@ const Breathe = () => {
             <TabsContent value="techniques" className="space-y-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Only show the techniques if no specific one is selected, or show only the selected one */}
-                {(!initialTechnique || initialTechnique === 'box') && (
+                {(!searchParams.get('technique') || searchParams.get('technique') === 'box') && (
                   <Card 
                     ref={el => techniqueRefs.current['box'] = el}
-                    className={`cursor-pointer transition-all ${initialTechnique === 'box' ? 'ring-2 ring-primary' : ''}`}
+                    className={`cursor-pointer transition-all ${searchParams.get('technique') === 'box' ? 'ring-2 ring-primary' : ''}`}
                     onClick={() => handleTechniqueSelect('box')}
                   >
                     <CardContent className="p-6">
@@ -123,10 +137,10 @@ const Breathe = () => {
                   </Card>
                 )}
                 
-                {(!initialTechnique || initialTechnique === '478') && (
+                {(!searchParams.get('technique') || searchParams.get('technique') === '478') && (
                   <Card 
                     ref={el => techniqueRefs.current['478'] = el}
-                    className={`cursor-pointer transition-all ${initialTechnique === '478' ? 'ring-2 ring-primary' : ''}`}
+                    className={`cursor-pointer transition-all ${searchParams.get('technique') === '478' ? 'ring-2 ring-primary' : ''}`}
                     onClick={() => handleTechniqueSelect('478')}
                   >
                     <CardContent className="p-6">
@@ -145,10 +159,10 @@ const Breathe = () => {
                   </Card>
                 )}
                 
-                {(!initialTechnique || initialTechnique === 'coherent') && (
+                {(!searchParams.get('technique') || searchParams.get('technique') === 'coherent') && (
                   <Card 
                     ref={el => techniqueRefs.current['coherent'] = el}
-                    className={`cursor-pointer transition-all ${initialTechnique === 'coherent' ? 'ring-2 ring-primary' : ''}`}
+                    className={`cursor-pointer transition-all ${searchParams.get('technique') === 'coherent' ? 'ring-2 ring-primary' : ''}`}
                     onClick={() => handleTechniqueSelect('coherent')}
                   >
                     <CardContent className="p-6">
@@ -167,10 +181,10 @@ const Breathe = () => {
                   </Card>
                 )}
                 
-                {(!initialTechnique || initialTechnique === 'alternate') && (
+                {(!searchParams.get('technique') || searchParams.get('technique') === 'alternate') && (
                   <Card 
                     ref={el => techniqueRefs.current['alternate'] = el}
-                    className={`cursor-pointer transition-all ${initialTechnique === 'alternate' ? 'ring-2 ring-primary' : ''}`}
+                    className={`cursor-pointer transition-all ${searchParams.get('technique') === 'alternate' ? 'ring-2 ring-primary' : ''}`}
                     onClick={() => handleTechniqueSelect('alternate')}
                   >
                     <CardContent className="p-6">
