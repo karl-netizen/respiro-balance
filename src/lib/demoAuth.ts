@@ -20,3 +20,8 @@ export const DEMO_SESSION: Session = {
   expires_at: new Date().getTime() + 3600000,
   user: DEMO_USER,
 };
+
+// Export demoAuth object to maintain compatibility with existing code
+export const demoAuth = {
+  isDemo: true
+};

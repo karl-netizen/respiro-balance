@@ -9,3 +9,12 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 export const isSupabaseConfigured = (): boolean => {
   return !!(SUPABASE_URL && SUPABASE_PUBLISHABLE_KEY);
 };
+
+// Add a handleSupabaseError utility function
+export const handleSupabaseError = (error: any, defaultMessage: string): void => {
+  const errorMessage = error.message || error.error_description || defaultMessage;
+  toast.error(errorMessage);
+};
+
+// Add toast import at the top
+import { toast } from 'sonner';

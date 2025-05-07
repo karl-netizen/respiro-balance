@@ -1,4 +1,3 @@
-
 import { UserPreferencesProvider } from './UserPreferencesProvider';
 import { useUserPreferences } from './hooks/useUserPreferences';
 import { UserPreferencesContext } from './UserPreferencesContext';
@@ -7,6 +6,7 @@ import { ThemeProvider } from './ThemeProvider';
 import { AuthProvider } from './AuthProvider';
 import { NotificationsProvider } from './NotificationsProvider';
 import { SubscriptionProvider } from './SubscriptionProvider';
+import { FocusProvider } from './FocusProvider';
 
 // Define RequireAuthProps type if it's not already exported from AuthProvider
 interface RequireAuthProps {
@@ -21,6 +21,7 @@ export {
   AuthProvider,
   NotificationsProvider,
   SubscriptionProvider,
+  FocusProvider,
 };
 
 export type {

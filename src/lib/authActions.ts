@@ -1,6 +1,11 @@
-import { supabase, demoAuth, handleSupabaseError } from '@/lib/supabase';
+import { supabase, handleSupabaseError } from '@/lib/supabase';
 import { toast } from 'sonner';
 import { NavigateFunction } from 'react-router-dom';
+
+// Define demoAuth locally instead of importing it
+export const demoAuth = {
+  isDemo: true
+};
 
 export const signInWithEmail = async (
   email: string, 
