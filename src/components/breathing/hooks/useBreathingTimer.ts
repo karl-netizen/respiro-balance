@@ -21,25 +21,38 @@ export function useBreathingTimer({
   const cyclesCompletedRef = useRef<number>(0);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const currentPatternRef = useRef(pattern);
+  
+  // Cleanup function to clear timer
+  const clearBreathingTimer = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  };
 
   // Reset count when pattern changes
   useEffect(() => {
+    console.log("Pattern changed:", pattern.name);
     if (currentPatternRef.current !== pattern) {
       currentPatternRef.current = pattern;
       setBreathingPhase('inhale');
       setCount(pattern.inhale);
     }
+    
+    // Clean up any existing timer
+    return clearBreathingTimer;
   }, [pattern]);
 
   // Handle breathing timer
   useEffect(() => {
+    // Clear any existing timer first
+    clearBreathingTimer();
+    
     if (!isActive) {
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
       return;
     }
+    
+    console.log("Starting breathing timer, phase:", breathingPhase);
 
     timerRef.current = setInterval(() => {
       setCount((prevCount) => {
@@ -91,15 +104,11 @@ export function useBreathingTimer({
       });
     }, 1000);
 
-    return () => {
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
-    };
+    return clearBreathingTimer;
   }, [isActive, breathingPhase, pattern, onPhaseChange]);
 
   const resetTimer = () => {
+    console.log("Resetting timer");
     setBreathingPhase('inhale');
     setCount(pattern.inhale);
     cyclesCompletedRef.current = 0;

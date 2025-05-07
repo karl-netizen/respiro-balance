@@ -37,6 +37,12 @@ const BreathingControls: React.FC<BreathingControlsProps> = ({
     }
     onSelectTechnique(techniqueId);
   };
+  
+  // Debug handler for start button
+  const handleStart = () => {
+    console.log("Start button clicked");
+    onStart();
+  };
 
   return (
     <div className="w-full mb-4">
@@ -79,7 +85,7 @@ const BreathingControls: React.FC<BreathingControlsProps> = ({
             <Button 
               size="lg" 
               className="w-full py-6 text-lg"
-              onClick={onStart}
+              onClick={handleStart}
             >
               <Play className="mr-2 h-5 w-5" /> Start Breathing
             </Button>

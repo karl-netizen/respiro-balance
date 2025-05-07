@@ -23,6 +23,7 @@ export function useBreathingLogic() {
   
   // Update pattern when technique changes
   useEffect(() => {
+    console.log("Selected technique changed:", selectedTechnique);
     patternRef.current = breathingPatterns[selectedTechnique];
     resetTimer();
   }, [selectedTechnique]);
@@ -42,6 +43,7 @@ export function useBreathingLogic() {
 
   const selectTechnique = (techniqueId: string) => {
     if (breathingPatterns[techniqueId]) {
+      console.log("Selecting technique:", techniqueId);
       setSelectedTechnique(techniqueId);
       patternRef.current = breathingPatterns[techniqueId];
       
@@ -56,6 +58,7 @@ export function useBreathingLogic() {
   };
 
   const startBreathing = () => {
+    console.log("Starting breathing exercise:", patternRef.current.name);
     setIsActive(true);
     resetTimer();
     
@@ -69,6 +72,7 @@ export function useBreathingLogic() {
   };
 
   const stopBreathing = () => {
+    console.log("Stopping breathing exercise");
     setIsActive(false);
     resetTimer();
     
