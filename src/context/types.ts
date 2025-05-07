@@ -1,6 +1,6 @@
-
 import { Dispatch, SetStateAction } from 'react';
 import { BluetoothDevice as SupabaseBluetoothDevice } from '@/types/supabase';
+import { BreakReminder, BreakType } from '@/services/NotificationService';
 
 // Use the imported type directly
 export type BluetoothDevice = SupabaseBluetoothDevice;
@@ -115,6 +115,10 @@ export interface UserPreferences {
   enableSessionReminders?: boolean;
   enableProgressUpdates?: boolean;
   enableRecommendations?: boolean;
+  
+  // Work-Life Balance Break Reminders
+  breakReminders?: Record<BreakType, BreakReminder>;
+  breakNotificationsEnabled?: boolean;
   
   // Business
   businessAttribution?: string;

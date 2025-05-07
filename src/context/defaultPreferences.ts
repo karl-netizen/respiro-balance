@@ -1,5 +1,6 @@
 
 import { UserPreferences } from './types';
+import { defaultBreakReminders } from '@/services/NotificationService';
 
 const defaultPreferences: UserPreferences = {
   theme: 'light' as 'light' | 'dark' | 'system',
@@ -70,6 +71,10 @@ const defaultPreferences: UserPreferences = {
   enableSessionReminders: true,
   enableProgressUpdates: true,
   enableRecommendations: true,
+  
+  // Work-Life Balance Break Reminders
+  breakReminders: defaultBreakReminders,
+  breakNotificationsEnabled: false,
   
   // Business
   businessAttribution: '',
