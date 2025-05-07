@@ -1,105 +1,94 @@
 
-import { isSameDay, parseISO, format, differenceInDays } from 'date-fns';
+import { differenceInCalendarDays, isSameDay, format, startOfDay, parseISO } from 'date-fns';
 
-// Helper function to calculate current streak
-export function calculateStreak(sessions: any[]): number {
+// Calculate current streak based on completed sessions
+export const calculateStreak = (sessions: any[]): number => {
   if (!sessions.length) return 0;
   
   // Sort sessions by date (newest first)
-  const sortedSessions = [...sessions].sort((a, b) => 
-    new Date(b.started_at).getTime() - new Date(a.started_at).getTime()
-  );
+  const sortedSessions = [...sessions]
+    .filter(session => session.completed)
+    .sort((a, b) => {
+      const dateA = new Date(a.completed_at || a.started_at);
+      const dateB = new Date(b.completed_at || b.started_at);
+      return dateB.getTime() - dateA.getTime();
+    });
   
-  // Check if there's a session for today
-  const today = new Date();
-  const hasSessionToday = sortedSessions.some(session => 
-    isSameDay(parseISO(session.started_at), today)
-  );
+  if (!sortedSessions.length) return 0;
   
-  // If no session today, check if there was one yesterday
-  if (!hasSessionToday) {
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    
-    const hasSessionYesterday = sortedSessions.some(session => 
-      isSameDay(parseISO(session.started_at), yesterday)
-    );
-    
-    // If no session yesterday either, streak is 0
-    if (!hasSessionYesterday) return 0;
+  const today = startOfDay(new Date());
+  let currentDate = startOfDay(new Date(sortedSessions[0].completed_at || sortedSessions[0].started_at));
+  
+  // If the most recent session is not today or yesterday, the streak is broken
+  if (differenceInCalendarDays(today, currentDate) > 1) {
+    return 0;
   }
   
-  // Group sessions by day
-  const sessionsByDay = new Map();
+  let streak = 1;
+  let previousDate = currentDate;
+  
+  // Create a map of days with completed sessions
+  const completedDays = new Map<string, boolean>();
   sortedSessions.forEach(session => {
-    const date = format(parseISO(session.started_at), 'yyyy-MM-dd');
-    if (!sessionsByDay.has(date)) {
-      sessionsByDay.set(date, true);
-    }
+    const dateStr = format(new Date(session.completed_at || session.started_at), 'yyyy-MM-dd');
+    completedDays.set(dateStr, true);
   });
   
-  // Convert to array of dates
-  const sessionDates = Array.from(sessionsByDay.keys())
-    .map(dateStr => parseISO(dateStr))
-    .sort((a, b) => b.getTime() - a.getTime()); // Newest first
+  // Count the streak by checking each previous day
+  let checkDate = startOfDay(new Date(currentDate));
+  checkDate.setDate(checkDate.getDate() - 1); // Start checking from yesterday
   
-  // Calculate consecutive days
-  let streak = 1; // Start with 1 (today or yesterday)
-  let currentDate = sessionDates[0];
-  
-  for (let i = 1; i < sessionDates.length; i++) {
-    const prevDate = new Date(currentDate);
-    prevDate.setDate(prevDate.getDate() - 1);
-    
-    if (isSameDay(prevDate, sessionDates[i])) {
-      streak++;
-      currentDate = sessionDates[i];
-    } else {
-      break; // Streak is broken
-    }
+  while (completedDays.has(format(checkDate, 'yyyy-MM-dd'))) {
+    streak++;
+    checkDate.setDate(checkDate.getDate() - 1);
   }
   
   return streak;
-}
+};
 
-// Helper function to calculate longest streak
-export function calculateLongestStreak(sessions: any[]): number {
+// Calculate longest streak achieved
+export const calculateLongestStreak = (sessions: any[]): number => {
   if (!sessions.length) return 0;
   
   // Sort sessions by date (oldest first)
-  const sortedSessions = [...sessions].sort((a, b) => 
-    new Date(a.started_at).getTime() - new Date(b.started_at).getTime()
-  );
+  const sortedSessions = [...sessions]
+    .filter(session => session.completed)
+    .sort((a, b) => {
+      const dateA = new Date(a.completed_at || a.started_at);
+      const dateB = new Date(b.completed_at || b.started_at);
+      return dateA.getTime() - dateB.getTime();
+    });
   
-  // Group sessions by day to handle multiple sessions in a day
-  const sessionsByDay = new Map<string, true>();
+  if (!sortedSessions.length) return 0;
+  
+  // Create a set of unique dates with completed sessions
+  const uniqueDates = new Set<string>();
   sortedSessions.forEach(session => {
-    const date = format(parseISO(session.started_at), 'yyyy-MM-dd');
-    sessionsByDay.set(date, true);
+    const dateStr = format(new Date(session.completed_at || session.started_at), 'yyyy-MM-dd');
+    uniqueDates.add(dateStr);
   });
   
-  // Convert to array of dates
-  const sessionDates = Array.from(sessionsByDay.keys())
+  // Convert to array of dates and sort
+  const dates = Array.from(uniqueDates)
     .map(dateStr => parseISO(dateStr))
-    .sort((a, b) => a.getTime() - b.getTime()); // Oldest first
+    .sort((a, b) => a.getTime() - b.getTime());
   
   let currentStreak = 1;
-  let longestStreak = 1;
+  let maxStreak = 1;
   
-  // Iterate through dates to find consecutive days
-  for (let i = 1; i < sessionDates.length; i++) {
-    const prevDate = sessionDates[i - 1];
-    const currDate = sessionDates[i];
+  for (let i = 1; i < dates.length; i++) {
+    const prevDate = dates[i - 1];
+    const currDate = dates[i];
     
-    // If dates are consecutive
-    if (differenceInDays(currDate, prevDate) === 1) {
+    if (differenceInCalendarDays(currDate, prevDate) === 1) {
+      // Consecutive days
       currentStreak++;
-      longestStreak = Math.max(longestStreak, currentStreak);
-    } else if (differenceInDays(currDate, prevDate) > 1) {
+      maxStreak = Math.max(maxStreak, currentStreak);
+    } else {
       // Streak broken
       currentStreak = 1;
     }
   }
   
-  return longestStreak;
-}
+  return maxStreak;
+};

@@ -51,6 +51,14 @@ export const useMeditationStats = () => {
       session => isWithinLastWeek(new Date(session.started_at))
     ).length;
     
+    // Sessions this week (for stats)
+    const sessionsThisWeek = weeklyCompleted;
+    
+    // Calculate completion rate
+    const completionRate = sessions.length > 0 
+      ? Math.round((completedSessions.length / sessions.length) * 100) 
+      : 0;
+    
     // Generate monthly trend (for the chart)
     const monthlyTrend = generateMonthlyTrend(completedSessions);
     
@@ -94,6 +102,8 @@ export const useMeditationStats = () => {
       longestStreak,
       weeklyGoal,
       weeklyCompleted,
+      sessionsThisWeek,
+      completionRate,
       monthlyTrend,
       dailyMinutes,
       lastSession: lastSessionName,

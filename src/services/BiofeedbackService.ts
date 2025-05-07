@@ -1,512 +1,315 @@
 
-import { BluetoothDevice } from '@/types/supabase';
-import { notificationService } from './NotificationService';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
 import { BiometricData } from '@/components/meditation/types/BiometricTypes';
+import { toast } from 'sonner';
 
-// Define available device types
-export enum BiofeedbackDeviceType {
-  HEART_RATE = 'heart_rate',
-  BREATH_MONITOR = 'breath_monitor',
-  EEG = 'eeg',
-  GSR = 'gsr'  // Galvanic Skin Response
-}
-
-// Store device characteristics UUIDs
-const HEART_RATE_SERVICE_UUID = 'heart_rate';
-const HEART_RATE_CHARACTERISTIC_UUID = 'heart_rate_measurement';
-const BODY_SENSOR_LOCATION_CHARACTERISTIC_UUID = 'body_sensor_location';
-
-// Possible device connection states
-export enum ConnectionState {
-  DISCONNECTED = 'disconnected',
-  CONNECTING = 'connecting',
-  CONNECTED = 'connected',
-  ERROR = 'error'
-}
-
-// Interface for connected device
-export interface ConnectedDevice {
-  device: BluetoothDevice;
+export interface BluetoothDeviceInfo {
+  id: string;
+  name?: string;
+  deviceType: string;
+  connected: boolean;
   gatt?: BluetoothRemoteGATTServer;
-  characteristics?: Map<string, BluetoothRemoteGATTCharacteristic>;
-  lastSyncTime?: Date;
-  connectionState: ConnectionState;
 }
 
-class BiofeedbackService {
-  private connectedDevices: Map<string, ConnectedDevice> = new Map();
-  private listeners: Map<string, Set<(data: BiometricData) => void>> = new Map();
-  private offlineCache: BiometricData[] = [];
-  private isOnline: boolean = navigator.onLine;
+export interface BiometricReadingOptions {
+  samplingRate?: number;
+  duration?: number;
+  processRealTime?: boolean;
+  saveToDatabase?: boolean;
+}
 
-  constructor() {
-    // Set up online/offline detection
-    window.addEventListener('online', this.handleOnlineStatus.bind(this));
-    window.addEventListener('offline', this.handleOnlineStatus.bind(this));
-    
-    // Check for web bluetooth support
-    this.checkBluetoothSupport();
+export class BiofeedbackService {
+  private static instance: BiofeedbackService;
+  private devices: Map<string, BluetoothDeviceInfo> = new Map();
+  private heartRateCharacteristic?: BluetoothRemoteGATTCharacteristic;
+  private onDataUpdateCallbacks: ((data: BiometricData) => void)[] = [];
+  private isMonitoring = false;
+  private userId?: string;
+
+  private constructor() {
+    // Private constructor to enforce singleton pattern
   }
 
-  private checkBluetoothSupport(): boolean {
-    if (!navigator.bluetooth) {
-      console.warn('Web Bluetooth API is not available in this browser or device');
-      return false;
+  public static getInstance(): BiofeedbackService {
+    if (!BiofeedbackService.instance) {
+      BiofeedbackService.instance = new BiofeedbackService();
     }
-    return true;
+    return BiofeedbackService.instance;
   }
 
-  private handleOnlineStatus() {
-    this.isOnline = navigator.onLine;
-    
-    if (this.isOnline) {
-      this.syncOfflineData();
+  public setUserId(userId: string): void {
+    this.userId = userId;
+  }
+
+  public async scanForDevices(): Promise<BluetoothDeviceInfo[]> {
+    try {
+      if (!navigator.bluetooth) {
+        throw new Error('Web Bluetooth API not available');
+      }
+
+      const device = await navigator.bluetooth.requestDevice({
+        filters: [
+          { services: ['heart_rate'] },
+          { services: ['battery_service'] },
+          { namePrefix: 'Polar' },
+          { namePrefix: 'Fitbit' },
+          { namePrefix: 'Garmin' }
+        ],
+        optionalServices: ['heart_rate', 'battery_service', 'device_information']
+      });
+
+      if (!device.gatt) {
+        throw new Error('GATT server not available');
+      }
+
+      const deviceInfo: BluetoothDeviceInfo = {
+        id: device.id,
+        name: device.name,
+        deviceType: this.determineDeviceType(device.name || ''),
+        connected: device.gatt.connected
+      };
+
+      this.devices.set(device.id, deviceInfo);
+      
+      // Setup disconnect listener
+      if ('addEventListener' in device) {
+        (device as EventTarget).addEventListener('gattserverdisconnected', () => {
+          this.handleDeviceDisconnection(device.id);
+        });
+      }
+      
+      return Array.from(this.devices.values());
+    } catch (error) {
+      console.error('Error scanning for Bluetooth devices:', error);
+      throw error;
     }
   }
 
-  /**
-   * Connect to a Bluetooth device
-   */
-  async connectDevice(deviceType: BiofeedbackDeviceType = BiofeedbackDeviceType.HEART_RATE): Promise<BluetoothDevice | null> {
-    if (!this.checkBluetoothSupport()) return null;
+  public async connectToDevice(deviceId: string): Promise<BluetoothDeviceInfo> {
+    const deviceInfo = this.devices.get(deviceId);
+    
+    if (!deviceInfo) {
+      throw new Error('Device not found');
+    }
 
     try {
-      // Request device based on type
-      let requestOptions: RequestDeviceOptions = {
-        acceptAllDevices: true
-      };
-      
-      if (deviceType === BiofeedbackDeviceType.HEART_RATE) {
-        requestOptions = {
-          filters: [{ services: ['heart_rate'] }]
-        };
-      }
-      
-      // Show a notification that we're connecting
-      toast.info('Searching for biofeedback devices...');
-
-      // Request the device
-      const device = await navigator.bluetooth.requestDevice(requestOptions);
-      
-      if (!device) {
-        toast.error('No device selected');
-        return null;
-      }
-      
-      // Set up device disconnection listener
-      device.addEventListener('gattserverdisconnected', () => this.handleDeviceDisconnect(device.id));
-
-      // Save the device info
-      const deviceInfo: BluetoothDevice = {
-        id: device.id,
-        name: device.name || 'Unknown Device',
-        type: deviceType,
-        connected: true
-      };
-
-      // Connect to GATT server
-      toast.loading('Connecting to device...');
-      const gattServer = await device.gatt?.connect();
-      
-      if (!gattServer) {
-        toast.error('Failed to connect to device');
-        return null;
-      }
-      
-      // Store the connected device
-      this.connectedDevices.set(device.id, {
-        device: deviceInfo,
-        gatt: gattServer,
-        characteristics: new Map(),
-        connectionState: ConnectionState.CONNECTED,
-        lastSyncTime: new Date()
+      const device = await navigator.bluetooth.requestDevice({
+        filters: [{ deviceId }],
+        optionalServices: ['heart_rate', 'battery_service', 'device_information']
       });
 
-      // Start reading data from the device
-      this.startDeviceDataReading(device.id, deviceType);
+      if (!device.gatt) {
+        throw new Error('GATT server not available');
+      }
+
+      const server = await device.gatt.connect();
+      deviceInfo.gatt = server;
+      deviceInfo.connected = true;
       
-      toast.success(`Connected to ${device.name}`, {
-        description: 'The device is now sending biometric data'
-      });
+      this.devices.set(deviceId, deviceInfo);
       
-      // Return the connected device info
+      // Try to get heart rate service
+      await this.setupHeartRateMonitoring(server);
+      
       return deviceInfo;
     } catch (error) {
-      console.error('Error connecting to device:', error);
-      toast.error('Error connecting to device', {
-        description: error instanceof Error ? error.message : 'Please try again'
-      });
-      return null;
+      console.error(`Error connecting to device ${deviceId}:`, error);
+      throw error;
     }
   }
 
-  /**
-   * Disconnect a specific device
-   */
-  async disconnectDevice(deviceId: string): Promise<boolean> {
-    const connectedDevice = this.connectedDevices.get(deviceId);
+  public async disconnectFromDevice(deviceId: string): Promise<void> {
+    const deviceInfo = this.devices.get(deviceId);
     
-    if (!connectedDevice) {
-      console.warn('Device not found:', deviceId);
-      return false;
+    if (!deviceInfo || !deviceInfo.gatt) {
+      return;
     }
-    
+
     try {
-      // Disconnect GATT connection
-      if (connectedDevice.gatt && connectedDevice.gatt.connected) {
-        connectedDevice.gatt.disconnect();
-      }
+      // Stop monitoring before disconnecting
+      this.stopMonitoring();
       
-      // Remove device from connected devices
-      this.connectedDevices.delete(deviceId);
-      
-      toast.success(`Disconnected from ${connectedDevice.device.name}`);
-      return true;
+      deviceInfo.gatt.disconnect();
+      deviceInfo.connected = false;
+      this.devices.set(deviceId, deviceInfo);
     } catch (error) {
-      console.error('Error disconnecting device:', error);
-      toast.error('Error disconnecting device');
-      return false;
+      console.error(`Error disconnecting from device ${deviceId}:`, error);
     }
   }
 
-  /**
-   * Handle device disconnection event
-   */
-  private handleDeviceDisconnect(deviceId: string) {
-    const device = this.connectedDevices.get(deviceId);
+  public getConnectedDevices(): BluetoothDeviceInfo[] {
+    return Array.from(this.devices.values()).filter(device => device.connected);
+  }
+
+  public addDataUpdateListener(callback: (data: BiometricData) => void): void {
+    this.onDataUpdateCallbacks.push(callback);
+  }
+
+  public removeDataUpdateListener(callback: (data: BiometricData) => void): void {
+    this.onDataUpdateCallbacks = this.onDataUpdateCallbacks.filter(cb => cb !== callback);
+  }
+
+  public async startMonitoring(options: BiometricReadingOptions = {}): Promise<void> {
+    if (!this.heartRateCharacteristic) {
+      throw new Error('Heart rate characteristic not available. Connect to a device first.');
+    }
+
+    this.isMonitoring = true;
     
-    if (device) {
-      device.connectionState = ConnectionState.DISCONNECTED;
-      
-      toast.warning(`${device.device.name} disconnected`, {
-        description: 'The connection to your device has been lost'
-      });
-      
-      // Update device info
-      const updatedDevice = { ...device.device, connected: false };
-      this.connectedDevices.set(deviceId, { ...device, device: updatedDevice });
-    }
-  }
-
-  /**
-   * Start reading data from the connected device
-   */
-  private async startDeviceDataReading(deviceId: string, deviceType: BiofeedbackDeviceType) {
-    const connectedDevice = this.connectedDevices.get(deviceId);
-    if (!connectedDevice || !connectedDevice.gatt) return;
-
     try {
-      // Handle based on device type
-      if (deviceType === BiofeedbackDeviceType.HEART_RATE) {
-        await this.setupHeartRateMonitoring(deviceId);
-      }
-      // Add other device types as needed
-    } catch (error) {
-      console.error('Error starting device readings:', error);
-    }
-  }
-
-  /**
-   * Set up heart rate monitoring for connected device
-   */
-  private async setupHeartRateMonitoring(deviceId: string) {
-    const device = this.connectedDevices.get(deviceId);
-    if (!device || !device.gatt) return;
-
-    try {
-      // Get the Heart Rate service
-      const service = await device.gatt.getPrimaryService(HEART_RATE_SERVICE_UUID);
+      await this.heartRateCharacteristic.startNotifications();
       
-      // Get the Heart Rate Measurement characteristic
-      const heartRateChar = await service.getCharacteristic(HEART_RATE_CHARACTERISTIC_UUID);
-      
-      // Store the characteristic
-      device.characteristics = device.characteristics || new Map();
-      device.characteristics.set(HEART_RATE_CHARACTERISTIC_UUID, heartRateChar);
-      
-      // Start notifications
-      await heartRateChar.startNotifications();
-      
-      // Listen for heart rate data
-      heartRateChar.addEventListener('characteristicvaluechanged', 
-        (event) => this.handleHeartRateData(deviceId, event)
+      this.heartRateCharacteristic.addEventListener('characteristicvaluechanged', 
+        // Use type assertion to handle the event properly
+        ((event: Event) => {
+          // Cast the event target to the correct type with an assertion
+          const characteristic = event.target as unknown as BluetoothRemoteGATTCharacteristic;
+          this.handleHeartRateChange(characteristic);
+        }) as EventListener
       );
-      
-      console.log('Heart rate monitoring started');
+    } catch (error) {
+      console.error('Error starting heart rate notifications:', error);
+      this.isMonitoring = false;
+      throw error;
+    }
+  }
+
+  public stopMonitoring(): void {
+    if (this.heartRateCharacteristic && this.isMonitoring) {
+      try {
+        this.heartRateCharacteristic.stopNotifications();
+        this.isMonitoring = false;
+      } catch (error) {
+        console.error('Error stopping heart rate notifications:', error);
+      }
+    }
+  }
+
+  public isMonitoringActive(): boolean {
+    return this.isMonitoring;
+  }
+
+  private async setupHeartRateMonitoring(server: BluetoothRemoteGATTServer): Promise<void> {
+    try {
+      const service = await server.getPrimaryService('heart_rate');
+      this.heartRateCharacteristic = await service.getCharacteristic('heart_rate_measurement');
     } catch (error) {
       console.error('Error setting up heart rate monitoring:', error);
+      throw error;
     }
   }
 
-  /**
-   * Handle heart rate data from device
-   */
-  private handleHeartRateData(deviceId: string, event: Event) {
-    // Get the value from the event
-    const target = event.target as BluetoothRemoteGATTCharacteristic;
-    const value = target.value;
+  private handleHeartRateChange(characteristic: BluetoothRemoteGATTCharacteristic): void {
+    if (!characteristic.value) {
+      return;
+    }
     
-    if (!value) return;
-    
-    // Parse heart rate data according to Bluetooth GATT specification
-    // The first byte contains flags for how to read the data
+    const value = characteristic.value;
     const flags = value.getUint8(0);
     const rate16Bits = flags & 0x1;
     let heartRate: number;
     
     if (rate16Bits) {
-      heartRate = value.getUint16(1, true); // true means little-endian
+      heartRate = value.getUint16(1, true);
     } else {
       heartRate = value.getUint8(1);
     }
     
-    // Calculate HRV (simplified approach - would be more sophisticated in production)
-    // In a real app, you would collect multiple intervals and do statistical analysis
-    let hrv: number | undefined;
-    
-    if (flags & 0x10) {  // Check if RR-Interval data is present
-      const rrCount = (value.byteLength - 2) / 2;
-      let totalRr = 0;
-      let minRr = Infinity;
-      let maxRr = 0;
-      
-      for (let i = 0; i < rrCount; i++) {
-        const rrInterval = value.getUint16(2 + i * 2, true) / 1024 * 1000; // Convert to ms
-        totalRr += rrInterval;
-        minRr = Math.min(minRr, rrInterval);
-        maxRr = Math.max(maxRr, rrInterval);
-      }
-      
-      if (rrCount > 0) {
-        // Calculate SDNN (Standard Deviation of NN intervals) - a common HRV metric
-        // This is a very simplified version
-        hrv = maxRr - minRr;
-      }
-    }
-    
-    // Calculate respiratory rate (estimated)
-    // Using the relationship between heart rate and breathing
-    // This is a simplified estimation, not medically accurate
-    const respiratoryRate = Math.max(Math.round(heartRate / 4), 8);
-    
-    // Calculate stress score (simplified algorithm)
-    // In a real app, this would use more sophisticated analysis
-    let stressScore = 100 - ((hrv || 50) / 100) * 100;
-    stressScore = Math.max(0, Math.min(100, stressScore));
+    // Calculate mock HRV and stress values based on heart rate
+    // In a real app, these would come from more sophisticated algorithms
+    const hrv = this.calculateMockHRV(heartRate);
+    const stressScore = this.calculateMockStressScore(heartRate, hrv);
     
     // Create biometric data object
     const biometricData: BiometricData = {
+      id: `temp-${Date.now()}`,
+      user_id: this.userId || 'anonymous',
       heart_rate: heartRate,
       hrv: hrv,
-      respiratory_rate: respiratoryRate,
-      stress_score: Math.round(stressScore),
-      timestamp: new Date().toISOString()
+      stress_score: stressScore,
+      recorded_at: new Date().toISOString(),
+      device_source: this.devices.values().next().value?.name || 'unknown'
     };
     
-    // Process the biometric data
-    this.processData(deviceId, biometricData);
-  }
-
-  /**
-   * Process and store biometric data
-   */
-  private processData(deviceId: string, data: BiometricData) {
-    // Notify all registered listeners
-    this.notifyListeners(deviceId, data);
+    // Notify all listeners
+    this.onDataUpdateCallbacks.forEach(callback => callback(biometricData));
     
-    // Store data (in Supabase if online, otherwise cache)
-    this.storeData(data);
+    // Save to database if user is authenticated
+    this.saveDataToDatabase(biometricData);
   }
-
-  /**
-   * Store biometric data in Supabase
-   */
-  private async storeData(data: BiometricData) {
-    if (this.isOnline) {
-      // If we're online, store directly in Supabase
-      try {
-        const user = (await supabase.auth.getUser()).data.user;
-        
-        if (user) {
-          // Add user ID to the data
-          const dataToStore = {
-            ...data,
-            user_id: user.id
-          };
-          
-          // Store in Supabase
-          const { error } = await supabase
-            .from('biometric_data')
-            .insert(dataToStore);
-            
-          if (error) {
-            console.error('Error storing biometric data:', error);
-            // Cache data if storage fails
-            this.offlineCache.push(data);
-          }
-        }
-      } catch (error) {
-        console.error('Error storing biometric data:', error);
-        // Cache data if error occurs
-        this.offlineCache.push(data);
-      }
-    } else {
-      // If we're offline, add to offline cache
-      this.offlineCache.push(data);
+  
+  private handleDeviceDisconnection(deviceId: string): void {
+    const deviceInfo = this.devices.get(deviceId);
+    
+    if (deviceInfo) {
+      deviceInfo.connected = false;
+      this.devices.set(deviceId, deviceInfo);
       
-      // Store in local storage
-      this.updateOfflineCache();
-    }
-  }
-
-  /**
-   * Update offline cache in local storage
-   */
-  private updateOfflineCache() {
-    try {
-      // Save to local storage
-      localStorage.setItem('biometric_offline_cache', JSON.stringify(this.offlineCache));
-    } catch (error) {
-      console.error('Error saving offline biometric data:', error);
-    }
-  }
-
-  /**
-   * Load cached data from storage
-   */
-  private loadOfflineCache() {
-    try {
-      const cached = localStorage.getItem('biometric_offline_cache');
-      if (cached) {
-        this.offlineCache = JSON.parse(cached);
+      // Stop monitoring if this was the active device
+      if (this.isMonitoring) {
+        this.stopMonitoring();
       }
-    } catch (error) {
-      console.error('Error loading cached biometric data:', error);
-    }
-  }
-
-  /**
-   * Sync offline data when connection is restored
-   */
-  private async syncOfflineData() {
-    if (this.offlineCache.length === 0) return;
-    
-    // Load any cached data from storage
-    this.loadOfflineCache();
-    
-    if (this.offlineCache.length > 0) {
-      toast.loading(`Syncing ${this.offlineCache.length} cached biometric readings...`);
       
-      try {
-        const user = (await supabase.auth.getUser()).data.user;
-        
-        if (user) {
-          // Add user ID to each entry
-          const dataToSync = this.offlineCache.map(data => ({
-            ...data,
-            user_id: user.id
-          }));
-          
-          // Upload to Supabase in batches
-          const batchSize = 50;
-          for (let i = 0; i < dataToSync.length; i += batchSize) {
-            const batch = dataToSync.slice(i, i + batchSize);
-            
-            const { error } = await supabase
-              .from('biometric_data')
-              .insert(batch);
-              
-            if (error) {
-              console.error('Error syncing biometric data batch:', error);
-              // Stop on first error
-              break;
-            }
-          }
-          
-          // Clear cache if successful
-          this.offlineCache = [];
-          this.updateOfflineCache();
-          
-          toast.success('Biometric data synchronized successfully');
-        }
-      } catch (error) {
-        console.error('Error syncing biometric data:', error);
-        toast.error('Failed to sync some biometric data');
-      }
+      console.log(`Device ${deviceId} disconnected`);
+      
+      // Notify listeners that device was disconnected
+      // We could implement a separate listener system for device states
     }
   }
 
-  /**
-   * Register a listener for biometric data
-   */
-  addListener(deviceId: string, listener: (data: BiometricData) => void): void {
-    if (!this.listeners.has(deviceId)) {
-      this.listeners.set(deviceId, new Set());
+  private determineDeviceType(deviceName: string): string {
+    const nameLower = deviceName.toLowerCase();
+    if (nameLower.includes('polar')) return 'Polar';
+    if (nameLower.includes('fitbit')) return 'Fitbit';
+    if (nameLower.includes('garmin')) return 'Garmin';
+    if (nameLower.includes('apple')) return 'Apple Watch';
+    return 'Unknown Device';
+  }
+  
+  // Mock calculations - in a real app these would use proper algorithms
+  private calculateMockHRV(heartRate: number): number {
+    // Simple mock calculation: higher HR generally corresponds to lower HRV
+    // Real HRV calculation requires beat-to-beat intervals
+    const baseHRV = 65; // Average HRV
+    const hrFactor = Math.max(0, (80 - heartRate) / 2); // Higher HR = lower HRV
+    return Math.round(baseHRV + hrFactor + (Math.random() * 10 - 5)); // Add some randomness
+  }
+  
+  private calculateMockStressScore(heartRate: number, hrv: number): number {
+    // Simplified mock calculation: higher HR and lower HRV generally means higher stress
+    // Real stress algorithms are much more complex
+    const baseStress = 50; // Base stress level (0-100)
+    const hrFactor = Math.max(0, (heartRate - 70) * 1.2);
+    const hrvFactor = Math.max(0, (50 - hrv) * 0.8);
+    
+    // Calculate stress score (0-100)
+    return Math.min(100, Math.max(0, Math.round(baseStress + hrFactor + hrvFactor)));
+  }
+  
+  private async saveDataToDatabase(data: BiometricData): Promise<void> {
+    // Only save if user is authenticated and has an ID
+    if (!this.userId) return;
+    
+    try {
+      const { error } = await supabase
+        .from('biometric_data')
+        .insert({
+          user_id: this.userId,
+          heart_rate: data.heart_rate,
+          hrv: data.hrv,
+          stress_score: data.stress_score,
+          recorded_at: data.recorded_at,
+          device_source: data.device_source,
+        });
+      
+      if (error) throw error;
+    } catch (err) {
+      console.error('Error saving biometric data to database:', err);
     }
-    
-    this.listeners.get(deviceId)?.add(listener);
-  }
-
-  /**
-   * Remove a listener
-   */
-  removeListener(deviceId: string, listener: (data: BiometricData) => void): void {
-    this.listeners.get(deviceId)?.delete(listener);
-  }
-
-  /**
-   * Notify all registered listeners with new data
-   */
-  private notifyListeners(deviceId: string, data: BiometricData): void {
-    // Notify device-specific listeners
-    this.listeners.get(deviceId)?.forEach(listener => listener(data));
-    
-    // Notify "all" listeners
-    this.listeners.get('all')?.forEach(listener => listener(data));
-  }
-
-  /**
-   * Get all connected devices
-   */
-  getConnectedDevices(): BluetoothDevice[] {
-    return Array.from(this.connectedDevices.values())
-      .map(connected => connected.device);
-  }
-
-  /**
-   * Check if a device is connected
-   */
-  isDeviceConnected(deviceId: string): boolean {
-    const device = this.connectedDevices.get(deviceId);
-    return !!(device && device.connectionState === ConnectionState.CONNECTED);
-  }
-
-  /**
-   * Generate simulated biometric data for testing
-   */
-  generateSimulatedData(
-    baseHeartRate: number = 70, 
-    baseHrv: number = 50, 
-    baseRespiratoryRate: number = 14, 
-    baseStressScore: number = 60
-  ): BiometricData {
-    // Add some randomness to the values
-    const hr = Math.max(40, Math.min(180, baseHeartRate + (Math.random() * 10 - 5)));
-    const hrv = Math.max(20, Math.min(100, baseHrv + (Math.random() * 10 - 5)));
-    const resp = Math.max(8, Math.min(20, baseRespiratoryRate + (Math.random() * 2 - 1)));
-    const stress = Math.max(0, Math.min(100, baseStressScore + (Math.random() * 10 - 5)));
-    
-    return {
-      heart_rate: Math.round(hr),
-      hrv: Math.round(hrv),
-      respiratory_rate: Math.round(resp),
-      stress_score: Math.round(stress),
-      coherence: Math.random() * 0.5 + 0.3 // 0.3-0.8 range
-    };
   }
 }
 
-// Export singleton instance
-export const biofeedbackService = new BiofeedbackService();
+// Create a singleton instance
+export const biofeedbackService = BiofeedbackService.getInstance();
+
+export default biofeedbackService;

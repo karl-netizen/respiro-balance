@@ -56,7 +56,7 @@ const WeeklyProgressCard: React.FC<WeeklyProgressCardProps> = ({ meditationStats
               <div 
                 className={`w-10 h-10 rounded-full flex items-center justify-center mb-1
                   ${session.completed 
-                    ? 'bg-primary text-white' 
+                    ? 'bg-primary text-primary-foreground' 
                     : session.today 
                       ? 'border-2 border-primary text-primary' 
                       : 'bg-secondary/50 text-foreground/50'
@@ -66,7 +66,7 @@ const WeeklyProgressCard: React.FC<WeeklyProgressCardProps> = ({ meditationStats
               </div>
               <span className={`text-xs ${session.today ? 'font-bold' : ''}`}>{session.day}</span>
               {session.today && (
-                <div className="absolute -top-2 -right-2 text-xs bg-primary text-white rounded-full px-1">
+                <div className="absolute -top-2 -right-2 text-xs bg-primary text-primary-foreground rounded-full px-1">
                   Today
                 </div>
               )}

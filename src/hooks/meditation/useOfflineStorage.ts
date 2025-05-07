@@ -1,52 +1,67 @@
 
 import { MeditationSession } from '@/types/meditation';
 
-// Local storage keys
-export const OFFLINE_SESSIONS_KEY = 'offline_meditation_sessions';
-export const SESSION_SYNC_QUEUE_KEY = 'meditation_session_sync_queue';
-
-export interface SyncQueueItem {
-  operation: 'start' | 'complete';
-  data: any;
-  timestamp: string;
-}
-
 export function useOfflineStorage() {
-  // Offline sessions storage helpers
+  // Load sessions from localStorage
   const getOfflineSessions = (): MeditationSession[] => {
-    const sessions = localStorage.getItem(OFFLINE_SESSIONS_KEY);
-    return sessions ? JSON.parse(sessions) : [];
+    try {
+      const storedSessions = localStorage.getItem('offlineMeditationSessions');
+      return storedSessions ? JSON.parse(storedSessions) : [];
+    } catch (error) {
+      console.error('Failed to load offline sessions:', error);
+      return [];
+    }
   };
-
-  const saveOfflineSessions = (sessions: MeditationSession[]) => {
-    localStorage.setItem(OFFLINE_SESSIONS_KEY, JSON.stringify(sessions));
+  
+  // Save sessions to localStorage
+  const saveOfflineSessions = (sessions: MeditationSession[]): void => {
+    try {
+      localStorage.setItem('offlineMeditationSessions', JSON.stringify(sessions));
+    } catch (error) {
+      console.error('Failed to save offline sessions:', error);
+    }
   };
-
-  // Sync queue helpers
-  const getSyncQueue = (): SyncQueueItem[] => {
-    const queue = localStorage.getItem(SESSION_SYNC_QUEUE_KEY);
-    return queue ? JSON.parse(queue) : [];
+  
+  // Queue a session to be synced later
+  const queueSessionForSync = (session: Partial<MeditationSession>): void => {
+    try {
+      const pendingSyncs = getPendingSyncs();
+      pendingSyncs.push({
+        type: 'createSession',
+        data: session,
+        timestamp: new Date().toISOString()
+      });
+      localStorage.setItem('pendingMeditationSyncs', JSON.stringify(pendingSyncs));
+    } catch (error) {
+      console.error('Failed to queue session for sync:', error);
+    }
   };
-
-  const addToSyncQueue = (operation: 'start' | 'complete', data: any) => {
-    const queue = getSyncQueue();
-    queue.push({
-      operation,
-      data,
-      timestamp: new Date().toISOString()
-    });
-    localStorage.setItem(SESSION_SYNC_QUEUE_KEY, JSON.stringify(queue));
+  
+  // Get pending syncs from localStorage
+  const getPendingSyncs = (): Array<{
+    type: string;
+    data: any;
+    timestamp: string;
+  }> => {
+    try {
+      const pendingSyncs = localStorage.getItem('pendingMeditationSyncs');
+      return pendingSyncs ? JSON.parse(pendingSyncs) : [];
+    } catch (error) {
+      console.error('Failed to get pending syncs:', error);
+      return [];
+    }
   };
-
-  const clearSyncQueue = () => {
-    localStorage.removeItem(SESSION_SYNC_QUEUE_KEY);
+  
+  // Clear pending syncs from localStorage
+  const clearPendingSyncs = (): void => {
+    localStorage.removeItem('pendingMeditationSyncs');
   };
   
   return {
     getOfflineSessions,
     saveOfflineSessions,
-    getSyncQueue,
-    addToSyncQueue,
-    clearSyncQueue
+    queueSessionForSync,
+    getPendingSyncs,
+    clearPendingSyncs
   };
 }

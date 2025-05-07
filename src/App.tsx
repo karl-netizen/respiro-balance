@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import {
@@ -11,6 +12,7 @@ import {
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 import FocusModePage from './pages/FocusModePage';
+import Progress from './pages/Progress';
 // Import other pages as needed
 
 function App() {
@@ -25,6 +27,7 @@ function App() {
                   <Route path="/" element={<Home />} />
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/focus" element={<FocusModePage />} />
+                  <Route path="/progress" element={<Progress />} />
                   {/* Add other routes as needed */}
                 </Routes>
               </FocusProvider>

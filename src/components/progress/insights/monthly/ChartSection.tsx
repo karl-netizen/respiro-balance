@@ -2,9 +2,7 @@
 import React, { useState } from 'react';
 import { 
   ChartContainer, 
-  ChartTooltip, 
   ChartTooltipContent,
-  ChartLegend,
   ChartLegendContent
 } from "@/components/ui/chart";
 import { 
@@ -21,7 +19,6 @@ import {
   ReferenceLine,
   ReferenceArea
 } from "recharts";
-import { MeditationStats } from '../../types/meditationStats';
 import { Button } from "@/components/ui/button";
 import { Calendar, BarChart2, LineChart as LineChartIcon, LayoutGrid } from "lucide-react";
 

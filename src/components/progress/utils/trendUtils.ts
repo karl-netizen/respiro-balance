@@ -1,59 +1,68 @@
 
-import { parseISO, differenceInDays, format, subDays } from 'date-fns';
+import { format, parseISO, subDays, startOfDay, addDays, isWithinInterval } from 'date-fns';
+import { getDateKey } from './dateUtils';
 
-// Helper function to generate monthly trend data
-export function generateMonthlyTrend(sessions: any[]): number[] {
-  const last30Days = Array(30).fill(0);
+// Generate monthly trend data for charts
+export const generateMonthlyTrend = (sessions: any[]): number[] => {
+  const today = new Date();
+  const lastMonth = Array.from({ length: 30 }, (_, i) => {
+    const date = subDays(today, 29 - i);
+    return format(date, 'yyyy-MM-dd');
+  });
+  
+  // Create a map of dates to session counts
+  const sessionsByDate: Record<string, number> = {};
   
   sessions.forEach(session => {
-    const sessionDate = parseISO(session.started_at);
-    const daysAgo = differenceInDays(new Date(), sessionDate);
+    if (!session.started_at) return;
     
-    if (daysAgo >= 0 && daysAgo < 30) {
-      // Add session duration to the appropriate day
-      last30Days[daysAgo] += session.duration;
+    const dateKey = format(new Date(session.started_at), 'yyyy-MM-dd');
+    sessionsByDate[dateKey] = (sessionsByDate[dateKey] || 0) + 1;
+  });
+  
+  // Map the sessions to the last 30 days
+  return lastMonth.map(dateStr => sessionsByDate[dateStr] || 0);
+};
+
+// Generate daily activity data for detailed charts
+export const generateDailyActivity = (sessions: any[]): Array<{ day: string; minutes: number; sessions: number }> => {
+  const today = new Date();
+  const lastWeek = Array.from({ length: 7 }, (_, i) => {
+    const date = subDays(today, 6 - i);
+    return {
+      date,
+      dateStr: format(date, 'yyyy-MM-dd'),
+      dayName: format(date, 'EEE')
+    };
+  });
+  
+  // Initialize the result with zero values
+  const result = lastWeek.map(day => ({
+    day: day.dateStr,
+    dayName: day.dayName,
+    minutes: 0,
+    sessions: 0
+  }));
+  
+  // Aggregate session data by day
+  sessions.forEach(session => {
+    if (!session.started_at || !session.completed) return;
+    
+    const sessionDate = new Date(session.started_at);
+    const dayIndex = lastWeek.findIndex(day => 
+      format(day.date, 'yyyy-MM-dd') === format(sessionDate, 'yyyy-MM-dd')
+    );
+    
+    if (dayIndex !== -1) {
+      result[dayIndex].minutes += session.duration;
+      result[dayIndex].sessions += 1;
     }
   });
   
-  // Group by weeks (rough approximation)
-  const weeklyData = [];
-  for (let i = 0; i < 4; i++) {
-    const weekTotal = last30Days.slice(i * 7, (i + 1) * 7).reduce((sum, val) => sum + val, 0);
-    weeklyData.push(weekTotal);
-  }
-  
-  // Add some historical data to make the chart look nicer
-  // In a real app, you'd fetch older data instead
-  return [15, 25, 40, 45, 30, 50, 65].concat(weeklyData.reverse());
-}
-
-// Helper function to generate daily activity data for the last 7 days
-export function generateDailyActivity(sessions: any[]): Array<{day: string, minutes: number, sessions: number}> {
-  const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  const today = new Date();
-  const result = [];
-  
-  // Generate data for the last 7 days
-  for (let i = 6; i >= 0; i--) {
-    const date = subDays(today, i);
-    const dayName = dayNames[date.getDay()];
-    const formattedDate = format(date, 'yyyy-MM-dd');
-    
-    // Find sessions for this day
-    const daysSessions = sessions.filter(session => {
-      const sessionDate = parseISO(session.started_at);
-      return format(sessionDate, 'yyyy-MM-dd') === formattedDate;
-    });
-    
-    // Calculate total minutes for the day
-    const dayMinutes = daysSessions.reduce((total, session) => total + session.duration, 0);
-    
-    result.push({
-      day: dayName,
-      minutes: dayMinutes,
-      sessions: daysSessions.length
-    });
-  }
-  
-  return result;
-}
+  // Format the final result
+  return result.map(item => ({
+    day: item.dateStr,
+    minutes: item.minutes,
+    sessions: item.sessions
+  }));
+};

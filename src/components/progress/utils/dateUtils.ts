@@ -1,22 +1,18 @@
 
-import { 
-  format, 
-  isToday, 
-  parseISO, 
-  differenceInDays, 
-  isSameDay,
-  subWeeks,
-  isAfter
-} from 'date-fns';
+import { subDays, isAfter, isBefore, startOfDay, endOfDay } from 'date-fns';
 
-// Helper function to check if a date is within the last week
-export function isWithinLastWeek(date: Date): boolean {
-  const oneWeekAgo = subWeeks(new Date(), 1);
-  return isAfter(date, oneWeekAgo);
-}
+export const isWithinLastWeek = (date: Date): boolean => {
+  const today = new Date();
+  const sevenDaysAgo = subDays(today, 7);
+  return isAfter(date, startOfDay(sevenDaysAgo)) && isBefore(date, endOfDay(today));
+};
 
-// Helper function to format date to check if it's today or a specific date
-export function formatSessionDate(dateString: string): string {
-  const date = new Date(dateString);
-  return isToday(date) ? "Today" : format(date, "MMM d");
-}
+export const isWithinLastMonth = (date: Date): boolean => {
+  const today = new Date();
+  const thirtyDaysAgo = subDays(today, 30);
+  return isAfter(date, startOfDay(thirtyDaysAgo)) && isBefore(date, endOfDay(today));
+};
+
+export const getDateKey = (date: Date): string => {
+  return date.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+};

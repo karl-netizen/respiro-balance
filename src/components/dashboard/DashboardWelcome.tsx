@@ -1,43 +1,45 @@
 
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Sun, Moon, Sunrise, Sunset } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Sun, PlusCircle } from 'lucide-react';
 
 interface DashboardWelcomeProps {
-  userName: string;
+  userName?: string;
 }
 
-const DashboardWelcome: React.FC<DashboardWelcomeProps> = ({ userName }) => {
-  const hour = new Date().getHours();
-  
-  // Determine greeting and icon based on time of day
+const DashboardWelcome: React.FC<DashboardWelcomeProps> = ({ userName = 'there' }) => {
+  // Get current time to determine greeting
+  const currentHour = new Date().getHours();
   let greeting = '';
-  let Icon = Sun;
   
-  if (hour < 6) {
-    greeting = 'Good night';
-    Icon = Moon;
-  } else if (hour < 12) {
+  if (currentHour < 12) {
     greeting = 'Good morning';
-    Icon = Sunrise;
-  } else if (hour < 18) {
+  } else if (currentHour < 18) {
     greeting = 'Good afternoon';
-    Icon = Sun;
   } else {
     greeting = 'Good evening';
-    Icon = Sunset;
   }
-  
+
   return (
-    <div className="mb-6">
-      <div className="flex items-center mb-2">
-        <Icon className="mr-2 h-6 w-6 text-primary" />
-        <h1 className="text-2xl md:text-3xl font-bold">{greeting}, {userName}</h1>
-      </div>
-      <p className="text-muted-foreground">
-        Your mindfulness journey continues. Let's take a moment to check in.
-      </p>
-    </div>
+    <Card className="mb-6 bg-gradient-to-r from-primary/10 to-secondary/10">
+      <CardContent className="p-6">
+        <div className="flex items-center mb-4">
+          <div className="p-2 bg-primary/20 rounded-full mr-3">
+            <Sun className="h-6 w-6 text-primary" />
+          </div>
+          <h1 className="text-2xl font-bold">{greeting}, {userName}!</h1>
+        </div>
+        
+        <p className="text-muted-foreground mb-4">
+          Welcome to your personal mindfulness dashboard. Track your progress and continue your journey.
+        </p>
+        
+        <Button className="flex items-center gap-2">
+          <PlusCircle className="h-4 w-4" /> New Meditation
+        </Button>
+      </CardContent>
+    </Card>
   );
 };
 

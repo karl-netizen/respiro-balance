@@ -21,12 +21,12 @@ export const useUserPreferences = (): UserPreferencesContextType => {
 };
 
 // Export providers
-export { UserPreferencesProvider, FocusProvider };
+export { UserPreferencesProvider, AuthProvider, NotificationsProvider, SubscriptionProvider, FocusProvider, ThemeProvider };
 
 // Export types for use in other components
 export * from './types';
 
-// Import Focus Provider
+// AppProviders component with proper provider nesting
 export const AppProviders: React.FC<{ children: React.ReactNode }> = ({ 
   children 
 }) => {

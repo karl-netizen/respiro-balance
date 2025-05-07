@@ -1,22 +1,13 @@
 
-import OverviewTab from './OverviewTab';
-import InsightsTab from './InsightsTab';
-import AchievementsTab from './AchievementsTab';
-import CorrelationsTab from './CorrelationsTab';
-import ProgressHero from './ProgressHero';
-import { useMeditationStats } from './useMeditationStats';
-import WellbeingCorrelationCard from './WellbeingCorrelationCard';
-import AchievementCard from './AchievementCard';
-import ShareableReport from './ShareableReport';
+// Main components
+export { default as ProgressHero } from './ProgressHero';
+export { default as OverviewTab } from './OverviewTab';
+export { default as InsightsTab } from './InsightsTab';
+export { default as CorrelationsTab } from './CorrelationsTab';
+export { default as AchievementsTab } from './AchievementsTab';
 
-export {
-  OverviewTab,
-  InsightsTab,
-  AchievementsTab,
-  CorrelationsTab,
-  ProgressHero,
-  useMeditationStats,
-  WellbeingCorrelationCard,
-  AchievementCard,
-  ShareableReport
-};
+// Hooks
+export { useMeditationStats } from './useMeditationStats';
+
+// Types
+export type { MeditationStats, SessionDay } from './types/meditationStats';

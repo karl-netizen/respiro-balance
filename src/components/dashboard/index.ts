@@ -1,21 +1,12 @@
 
-import DashboardWelcome from './DashboardWelcome';
-import DashboardStats from './DashboardStats';
-import WeeklyProgressCard from './WeeklyProgressCard';
-import MoodTracker from './MoodTracker';
-import RecommendationCard from './RecommendationCard';
-import QuickAccessSection from './QuickAccessSection';
-import ActivityCalendar from './ActivityCalendar';
-import { ActivityEntry } from './ActivityCalendar';
+// Core components
+export { default as DashboardWelcome } from './DashboardWelcome';
+export { default as DashboardStats } from './DashboardStats';
+export { default as WeeklyProgressCard } from './WeeklyProgressCard';
+export { default as MoodTracker } from './MoodTracker';
+export { default as RecommendationCard } from './RecommendationCard';
+export { default as QuickAccessSection } from './QuickAccessSection';
+export { default as ActivityCalendar } from './ActivityCalendar';
 
-export {
-  DashboardWelcome,
-  DashboardStats,
-  WeeklyProgressCard,
-  MoodTracker,
-  RecommendationCard,
-  QuickAccessSection,
-  ActivityCalendar
-};
-
-export type { ActivityEntry };
+// Types
+export type { ActivityEntry } from './ActivityCalendar';

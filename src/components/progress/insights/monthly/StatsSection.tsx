@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { TrendingUp } from "lucide-react";
-import { MeditationStats } from '../../useMeditationStats';
+import { MeditationStats } from '../../types/meditationStats';
 
 interface StatsSectionProps {
   meditationStats: MeditationStats;

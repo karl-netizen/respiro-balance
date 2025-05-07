@@ -1,156 +1,109 @@
-
 import { useOfflineStorage } from './useOfflineStorage';
 import { useMeditationApi } from './useMeditationApi';
-import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { MeditationSession } from '@/types/meditation';
-import { toast } from 'sonner';
+import { User } from '@/hooks/useAuth';
 
 export function useOfflineSync(
-  userId: string | undefined, 
+  userId: string | undefined,
   updateUsage: (minutes: number) => void,
-  invalidateQueries: () => void
+  onSyncComplete: () => void
 ) {
-  const { 
-    getSyncQueue, 
-    clearSyncQueue, 
-    saveOfflineSessions, 
-    getOfflineSessions 
-  } = useOfflineStorage();
+  const { queueSessionForSync, getPendingSyncs, clearPendingSyncs } = useOfflineStorage();
+  const api = useMeditationApi(userId);
   
-  const { getSession } = useMeditationApi(userId);
-
-  // Process offline sync
-  const processOfflineSync = async (): Promise<boolean> => {
-    if (!userId || !isSupabaseConfigured()) return false;
+  // Process any pending offline syncs
+  const processOfflineSync = async (): Promise<void> => {
+    if (!userId) return;
     
-    const queue = getSyncQueue();
-    if (queue.length === 0) return false;
+    const pendingSyncs = getPendingSyncs();
+    if (!pendingSyncs.length) return;
     
-    console.log(`Processing ${queue.length} offline meditation session operations`);
-    
-    let successCount = 0;
-    
-    for (const item of queue) {
+    for (const sync of pendingSyncs) {
       try {
-        if (item.operation === 'start') {
-          await supabase
-            .from('meditation_sessions')
-            .insert(item.data);
-          successCount++;
-        } else if (item.operation === 'complete') {
-          // For complete operations, first check if the session exists in Supabase
-          const { data: existingSession } = await supabase
-            .from('meditation_sessions')
-            .select('id, duration')
-            .eq('id', item.data.id)
-            .single();
-            
-          if (existingSession) {
-            // Update existing session
-            await supabase
-              .from('meditation_sessions')
-              .update({ completed: true })
-              .eq('id', item.data.id);
-              
-            // Update usage minutes
-            updateUsage(existingSession.duration);
-          } else {
-            // Session doesn't exist in Supabase yet, create it as completed
-            await supabase
-              .from('meditation_sessions')
-              .insert({
-                ...item.data,
-                completed: true
-              });
-              
-            // Update usage minutes if duration is available
-            if (item.data.duration) {
-              updateUsage(item.data.duration);
-            }
+        if (sync.type === 'createSession') {
+          const sessionData = sync.data;
+          await api.createSession(sessionData);
+          
+          // If the session was completed, update usage
+          if (sessionData.completed && sessionData.duration) {
+            updateUsage(sessionData.duration);
           }
-          successCount++;
+        } else if (sync.type === 'completeSession') {
+          await api.completeSession(sync.data.sessionId);
+          
+          // Update usage for completed session
+          if (sync.data.duration) {
+            updateUsage(sync.data.duration);
+          }
         }
       } catch (error) {
-        console.error(`Error processing offline sync item (${item.operation}):`, error);
+        console.error('Failed to sync offline data:', error);
+        // Keep the sync in the queue if it fails
+        // In a more advanced implementation, we might want to limit retries
+        return;
       }
     }
     
-    if (successCount > 0) {
-      clearSyncQueue();
-      if (successCount === queue.length) {
-        toast("Sync complete", {
-          description: `Successfully synchronized ${successCount} meditation sessions`
-        });
-      } else {
-        toast("Partial sync complete", {
-          description: `Synchronized ${successCount} of ${queue.length} meditation sessions`
-        });
-      }
-      
-      // Clear offline sessions that have been synced
-      saveOfflineSessions([]);
-      
-      // Refresh the data
-      invalidateQueries();
-      return true;
-    }
+    // Clear pending syncs if all were successful
+    clearPendingSyncs();
     
-    return false;
+    // Notify that sync is complete
+    onSyncComplete();
   };
-
-  // Handle offline session start
+  
+  // Handle starting a session while offline
   const handleOfflineSessionStart = (
-    newSession: Omit<MeditationSession, 'id'>, 
-    user: { id: string }
+    newSession: Omit<MeditationSession, "id">, 
+    user: User
   ): string => {
-    // Generate a client-side ID
-    const sessionId = `offline-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    // Create temporary ID
+    const offlineId = `offline-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
     
-    // Add session to offline store
-    const offlineSessions = getOfflineSessions();
-    const sessionWithId = { ...newSession, id: sessionId } as MeditationSession;
-    offlineSessions.unshift(sessionWithId);
-    saveOfflineSessions(offlineSessions);
+    // Queue for sync
+    queueSessionForSync({
+      ...newSession,
+      id: offlineId
+    });
     
-    // Add to sync queue
-    const { addToSyncQueue } = useOfflineStorage();
-    addToSyncQueue('start', newSession);
-    
-    return sessionId;
+    return offlineId;
   };
-
-  // Handle offline session completion
+  
+  // Handle completing a session while offline
   const handleOfflineSessionComplete = async (
     sessionId: string, 
-    user: { id: string }
+    user: User
   ): Promise<void> => {
-    // Update offline session
-    const offlineSessions = getOfflineSessions();
-    const sessionToUpdate = offlineSessions.find(session => session.id === sessionId);
-    
-    if (sessionToUpdate) {
-      // Update session in offline storage
-      const updatedSessions = offlineSessions.map(session => {
-        if (session.id === sessionId) {
-          return { ...session, completed: true };
+    // If it's an offline ID, update the queued session
+    if (sessionId.startsWith('offline-')) {
+      const pendingSyncs = getPendingSyncs();
+      const updatedSyncs = pendingSyncs.map(sync => {
+        if (sync.type === 'createSession' && sync.data.id === sessionId) {
+          return {
+            ...sync,
+            data: {
+              ...sync.data,
+              completed: true,
+              completed_at: new Date().toISOString()
+            }
+          };
         }
-        return session;
+        return sync;
       });
-      saveOfflineSessions(updatedSessions);
-      
-      // Add to sync queue
-      const { addToSyncQueue } = useOfflineStorage();
-      addToSyncQueue('complete', { 
-        id: sessionId, 
-        user_id: user.id,
-        duration: sessionToUpdate.duration 
+      localStorage.setItem('pendingMeditationSyncs', JSON.stringify(updatedSyncs));
+    } else {
+      // It's a real session ID from the database, queue completion
+      queueSessionForSync({
+        type: 'completeSession',
+        data: {
+          sessionId,
+          completed: true,
+          completed_at: new Date().toISOString()
+        },
+        timestamp: new Date().toISOString()
       });
-      
-      // Update usage tracking
-      updateUsage(sessionToUpdate.duration);
     }
   };
-
+  
   return {
     processOfflineSync,
     handleOfflineSessionStart,

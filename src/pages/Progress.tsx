@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -9,16 +9,14 @@ import {
   OverviewTab, 
   InsightsTab, 
   AchievementsTab,
-  CorrelationsTab,
-  useMeditationStats
+  CorrelationsTab
 } from "@/components/progress";
+import { useMeditationStats } from "@/components/progress/useMeditationStats";
 import { useSubscriptionContext } from "@/hooks/useSubscriptionContext";
 import { useIsMobile } from "@/hooks/use-mobile";
-import ViewportToggle from "@/components/layout/ViewportToggle";
 import SubscriptionBanner from "@/components/subscription/SubscriptionBanner";
-import { ActivityCalendar, ActivityEntry } from '@/components/dashboard';
+import { ActivityCalendar } from "@/components/dashboard";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Achievement } from '@/types/achievements';
 
 const Progress = () => {
   const { preferences } = useUserPreferences();
@@ -49,28 +47,12 @@ const Progress = () => {
     navigate(`${location.pathname}?${params.toString()}`, { replace: true });
   };
   
-  // Listen for URL changes
-  useEffect(() => {
-    setActiveTab(getTabFromUrl());
-  }, [location]);
-  
-  // Generate activity data for calendar in the correct format
-  const activityData: ActivityEntry[] = meditationStats.dailyMinutes?.map(day => ({
-    date: day.day, // This is already a string in YYYY-MM-DD format
+  // Generate activity data for calendar
+  const activityData = meditationStats.dailyMinutes?.map(day => ({
+    date: day.day,
     value: day.minutes,
     type: day.sessions > 0 ? 'meditation' : undefined
   })) || [];
-  
-  // Convert achievements to match the expected type
-  const achievements: Achievement[] = meditationStats.achievements.map(achievement => ({
-    id: achievement.name.toLowerCase().replace(/\s+/g, '-'), // Create ID from name
-    name: achievement.name,
-    description: achievement.description,
-    icon: achievement.icon || "award",
-    unlocked: achievement.unlocked,
-    progress: achievement.progress || 0,
-    unlockedDate: achievement.unlockedDate
-  }));
   
   return (
     <div className={`min-h-screen flex flex-col ${isMobile ? 'mobile-view' : ''}`}>
@@ -125,7 +107,15 @@ const Progress = () => {
               </TabsContent>
               
               <TabsContent value="achievements" className="mt-0">
-                <AchievementsTab achievements={achievements} />
+                <AchievementsTab achievements={meditationStats.achievements.map(achievement => ({
+                  id: achievement.name.toLowerCase().replace(/\s+/g, '-'),
+                  name: achievement.name,
+                  description: achievement.description,
+                  icon: achievement.icon || "award",
+                  unlocked: achievement.unlocked,
+                  progress: achievement.progress || 0,
+                  unlockedDate: achievement.unlockedDate
+                }))} />
               </TabsContent>
             </Tabs>
           </div>
@@ -133,7 +123,6 @@ const Progress = () => {
       </main>
       
       <Footer />
-      <ViewportToggle />
     </div>
   );
 };

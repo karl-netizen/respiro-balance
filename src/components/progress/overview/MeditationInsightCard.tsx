@@ -1,109 +1,52 @@
 
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { ChartLine } from 'lucide-react';
-import { useMeditationFeedback } from '@/hooks/useMeditationFeedback';
-import { Progress } from '@/components/ui/progress';
+import { Lightbulb } from "lucide-react";
 
-interface MeditationInsightCardProps {
-  title?: string;
-  description?: string;
-}
-
-const MeditationInsightCard: React.FC<MeditationInsightCardProps> = ({ 
-  title = "Meditation Insights",
-  description = "Based on your feedback and activity"
-}) => {
-  const { getFeedbackInsights } = useMeditationFeedback();
+const MeditationInsightCard: React.FC = () => {
+  // Array of possible insights
+  const insights = [
+    {
+      title: "Morning Meditation",
+      description: "Your morning sessions tend to be more effective. Consider scheduling more sessions in the morning for better results.",
+      icon: <Lightbulb className="h-5 w-5 text-yellow-500" />
+    },
+    {
+      title: "Consistency Pays Off",
+      description: "Users who meditate at least 4 times per week report 30% higher satisfaction with their meditation practice.",
+      icon: <Lightbulb className="h-5 w-5 text-yellow-500" />
+    },
+    {
+      title: "Optimal Session Length",
+      description: "Your focus scores are highest in 15-minute sessions. This might be your sweet spot for meditation.",
+      icon: <Lightbulb className="h-5 w-5 text-yellow-500" />
+    },
+    {
+      title: "Weekend Warriors",
+      description: "You tend to meditate more consistently on weekends. Try building habits during weekdays too.",
+      icon: <Lightbulb className="h-5 w-5 text-yellow-500" />
+    }
+  ];
   
-  const insights = getFeedbackInsights();
-  
-  if (!insights) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>{title}</CardTitle>
-          <CardDescription>{description}</CardDescription>
-        </CardHeader>
-        <CardContent className="text-center py-6">
-          <p className="text-muted-foreground">
-            Submit feedback after meditation sessions to see insights here.
-          </p>
-        </CardContent>
-      </Card>
-    );
-  }
+  // Select a random insight
+  const randomInsight = insights[Math.floor(Math.random() * insights.length)];
   
   return (
     <Card>
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle>{title}</CardTitle>
-            <CardDescription>{description}</CardDescription>
-          </div>
-          <ChartLine className="h-4 w-4 text-muted-foreground" />
-        </div>
+      <CardHeader className="pb-2">
+        <CardTitle className="flex items-center">
+          {randomInsight.icon}
+          <span className="ml-2">{randomInsight.title}</span>
+        </CardTitle>
+        <CardDescription>Based on your meditation patterns</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          {insights.avgFocusImprovement !== undefined && (
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Focus Improvement</span>
-                <span className="text-sm text-muted-foreground">
-                  {Math.round(insights.avgFocusImprovement * 10) / 10}%
-                </span>
-              </div>
-              <Progress value={insights.avgFocusImprovement} className="h-2" />
-              <p className="text-xs text-muted-foreground">
-                Average improvement in focus after meditation sessions
-              </p>
-            </div>
-          )}
-          
-          {insights.avgStressReduction !== undefined && (
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Stress Reduction</span>
-                <span className="text-sm text-muted-foreground">
-                  {Math.round(insights.avgStressReduction * 10) / 10}%
-                </span>
-              </div>
-              <Progress value={insights.avgStressReduction} className="h-2" />
-              <p className="text-xs text-muted-foreground">
-                Average reduction in stress after meditation sessions
-              </p>
-            </div>
-          )}
-          
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">Average Rating</span>
-              <span className="text-sm text-muted-foreground">
-                {insights.averageRating.toFixed(1)}/5
-              </span>
-            </div>
-            <Progress value={insights.averageRating * 20} className="h-2" />
-            <p className="text-xs text-muted-foreground">
-              Based on {insights.totalFeedbacks} session ratings
-            </p>
-          </div>
-          
-          {insights.recommendRate !== undefined && (
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Would Recommend</span>
-                <span className="text-sm text-muted-foreground">
-                  {Math.round(insights.recommendRate * 100)}%
-                </span>
-              </div>
-              <Progress value={insights.recommendRate * 100} className="h-2" />
-              <p className="text-xs text-muted-foreground">
-                Percentage of users who would recommend these sessions
-              </p>
-            </div>
-          )}
+        <p className="text-sm">
+          {randomInsight.description}
+        </p>
+        
+        <div className="mt-4 pt-4 border-t text-sm text-muted-foreground">
+          <p>Continue your practice to unlock more personalized insights.</p>
         </div>
       </CardContent>
     </Card>

@@ -1,6 +1,5 @@
 
 import React from 'react';
-import MeditationPlayer from "@/components/MeditationPlayer";
 import { 
   StatsCards, 
   WeeklyProgressCard, 
@@ -92,7 +91,10 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ meditationStats, sessions }) 
         <div className="md:col-span-2">
           <div>
             <h3 className="text-xl font-bold mb-4">Continue Your Practice</h3>
-            <MeditationPlayer />
+            <div className="bg-muted/30 p-6 rounded-lg text-center">
+              <p className="text-lg mb-2">Choose a meditation session</p>
+              <p className="text-muted-foreground">Select from recommended or favorite sessions</p>
+            </div>
           </div>
         </div>
         

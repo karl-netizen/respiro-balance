@@ -3,6 +3,7 @@ export interface MeditationStats {
   totalSessions: number;
   totalMinutes: number;
   streak: number;
+  longestStreak: number;
   weeklyGoal: number;
   weeklyCompleted: number;
   monthlyTrend: number[];
@@ -20,7 +21,6 @@ export interface MeditationStats {
     withoutMeditation: number;
   };
   // New fields for enhanced visualizations
-  longestStreak: number;
   sessionsThisWeek: number;
   completionRate: number;
   dailyMinutes: Array<{
