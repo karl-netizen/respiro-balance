@@ -44,6 +44,7 @@ export interface FocusStats {
   mostProductiveTime: string;
   weeklyFocusGoal: number;
   weeklyFocusProgress: number;
+  sessionsThisWeek?: number; // Added this missing property
 }
 
 export type FocusTimerState = 'idle' | 'work' | 'break' | 'long-break' | 'paused' | 'completed';

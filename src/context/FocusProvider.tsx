@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { useUserPreferences } from '@/context';
 import { FocusSettings, FocusSession, FocusTimerState, FocusStats } from '@/components/focus-mode/types';
@@ -102,25 +101,32 @@ export const FocusProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (!user) return;
     
     try {
-      // Fetch stats from Supabase
+      // Using type assertion to fix Supabase typing issue
       const { data, error } = await supabase
-        .from('focus_sessions')
+        .from('focus_sessions' as any)
         .select('*')
         .eq('user_id', user.id);
         
       if (error) throw error;
       
       if (data && data.length > 0) {
-        // Calculate stats from sessions
-        const totalSessions = data.length;
-        const completedSessions = data.filter(s => s.completed).length;
-        const totalMinutes = data.reduce((sum, session) => sum + (session.duration || 0), 0);
+        // Calculate stats from sessions - using type assertion since we know the shape of our data
+        const sessionsData = data as unknown as Array<{
+          completed: boolean;
+          duration: number;
+          start_time: string;
+          focus_score: number;
+        }>;
+        
+        const totalSessions = sessionsData.length;
+        const completedSessions = sessionsData.filter(s => s.completed).length;
+        const totalMinutes = sessionsData.reduce((sum, session) => sum + (session.duration || 0), 0);
         
         // Calculate weekly focus time
         const oneWeekAgo = new Date();
         oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
         
-        const weeklyData = data.filter(session => 
+        const weeklyData = sessionsData.filter(session => 
           new Date(session.start_time) >= oneWeekAgo
         );
         
@@ -137,7 +143,7 @@ export const FocusProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           totalSessions,
           totalFocusTime: totalMinutes,
           weeklyFocusTime: weeklyMinutes,
-          averageFocusScore: data.reduce((sum, s) => sum + (s.focus_score || 0), 0) / totalSessions,
+          averageFocusScore: sessionsData.reduce((sum, s) => sum + (s.focus_score || 0), 0) / totalSessions,
           longestStreak,
           currentStreak,
           completionRate: (completedSessions / totalSessions) * 100,
@@ -145,13 +151,20 @@ export const FocusProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           mostProductiveTime: 'Morning', // This would need more complex calculation
           weeklyFocusGoal: preferences.focusChallenges?.includes('deepWork') ? 900 : 600,
           weeklyFocusProgress: (weeklyMinutes / (preferences.focusChallenges?.includes('deepWork') ? 900 : 600)) * 100,
+          sessionsThisWeek: weeklyData.length,
         });
       } else {
-        setStats(defaultStats);
+        setStats({
+          ...defaultStats,
+          sessionsThisWeek: 0,
+        });
       }
     } catch (error) {
       console.error('Error fetching focus stats:', error);
-      setStats(defaultStats);
+      setStats({
+        ...defaultStats,
+        sessionsThisWeek: 0,
+      });
     }
   };
 
@@ -383,8 +396,9 @@ export const FocusProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     // Save to Supabase if user is logged in
     if (user) {
       try {
+        // Using type assertion to fix Supabase typing issue
         const { error } = await supabase
-          .from('focus_sessions')
+          .from('focus_sessions' as any)
           .insert({
             id: completedSession.id,
             user_id: user.id,

@@ -1,8 +1,7 @@
-
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Chart, Target, Trophy, Clock } from 'lucide-react';
+import { BarChart3, Target, Trophy, Clock } from 'lucide-react';
 import { FocusStats as FocusStatsType } from './types';
 
 interface FocusStatsProps {
@@ -59,7 +58,7 @@ export const FocusStats: React.FC<FocusStatsProps> = ({ stats }) => {
         <StatCard 
           title="Focus Score"
           value={`${Math.round(stats.averageFocusScore)}/100`}
-          icon={<Chart className="h-4 w-4 text-yellow-500" />}
+          icon={<BarChart3 className="h-4 w-4 text-yellow-500" />}
         />
         
         <StatCard 

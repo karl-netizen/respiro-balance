@@ -8,7 +8,7 @@ import { FocusTimer } from './FocusTimer';
 import { FocusControls } from './FocusControls';
 import { FocusSessionSummary } from './FocusSessionSummary';
 import { FocusSettingsDialog } from './FocusSettingsDialog';
-import { Chart, Target, Save } from 'lucide-react';
+import { BarChart3, Target, Save } from 'lucide-react'; // Changed Chart to BarChart3
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FocusStats } from './FocusStats';
 import { FocusHistory } from './FocusHistory';

@@ -66,6 +66,81 @@ export type Database = {
           },
         ]
       }
+      focus_achievements: {
+        Row: {
+          achievement_key: string
+          created_at: string
+          id: string
+          progress: number | null
+          unlocked_at: string
+          user_id: string
+        }
+        Insert: {
+          achievement_key: string
+          created_at?: string
+          id?: string
+          progress?: number | null
+          unlocked_at?: string
+          user_id: string
+        }
+        Update: {
+          achievement_key?: string
+          created_at?: string
+          id?: string
+          progress?: number | null
+          unlocked_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      focus_sessions: {
+        Row: {
+          break_intervals: number | null
+          completed: boolean | null
+          created_at: string
+          distractions: number | null
+          duration: number | null
+          end_time: string | null
+          focus_score: number | null
+          id: string
+          notes: string | null
+          start_time: string
+          tags: string[] | null
+          user_id: string
+          work_intervals: number | null
+        }
+        Insert: {
+          break_intervals?: number | null
+          completed?: boolean | null
+          created_at?: string
+          distractions?: number | null
+          duration?: number | null
+          end_time?: string | null
+          focus_score?: number | null
+          id?: string
+          notes?: string | null
+          start_time?: string
+          tags?: string[] | null
+          user_id: string
+          work_intervals?: number | null
+        }
+        Update: {
+          break_intervals?: number | null
+          completed?: boolean | null
+          created_at?: string
+          distractions?: number | null
+          duration?: number | null
+          end_time?: string | null
+          focus_score?: number | null
+          id?: string
+          notes?: string | null
+          start_time?: string
+          tags?: string[] | null
+          user_id?: string
+          work_intervals?: number | null
+        }
+        Relationships: []
+      }
       meditation_sessions: {
         Row: {
           category: string | null

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -65,13 +64,13 @@ const FocusModeCard = () => {
           {isActive && (
             <Progress 
               value={progress} 
-              className="h-2" 
-              indicatorClassName={timerState === 'work' 
-                ? 'bg-primary' 
-                : timerState === 'break' 
-                ? 'bg-green-500' 
-                : 'bg-blue-500'
-              }
+              className={`h-2 ${
+                timerState === 'work' 
+                  ? 'bg-primary/20' 
+                  : timerState === 'break' 
+                  ? 'bg-green-500/20' 
+                  : 'bg-blue-500/20'
+              }`}
             />
           )}
           

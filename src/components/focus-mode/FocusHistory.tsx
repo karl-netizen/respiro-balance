@@ -21,8 +21,9 @@ export const FocusHistory: React.FC = () => {
   
   const fetchSessionHistory = async () => {
     try {
+      // Using type assertion to fix Supabase typing issue
       const { data, error } = await supabase
-        .from('focus_sessions')
+        .from('focus_sessions' as any)
         .select('*')
         .eq('user_id', user?.id)
         .order('start_time', { ascending: false })

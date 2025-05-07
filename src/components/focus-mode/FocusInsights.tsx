@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Chart } from 'lucide-react';
+import { BarChart3 } from 'lucide-react'; // Changed from Chart to BarChart3
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { useFocusMode } from '@/context/FocusProvider';
 import { FocusActivityEntry } from './types';
@@ -30,7 +30,7 @@ export const FocusInsights: React.FC = () => {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Chart className="h-5 w-5 text-primary" />
+          <BarChart3 className="h-5 w-5 text-primary" />
           Focus Insights
         </CardTitle>
       </CardHeader>
@@ -72,7 +72,7 @@ export const FocusInsights: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 text-center">
           <div>
             <p className="text-muted-foreground text-sm">Weekly Sessions</p>
-            <p className="text-2xl font-bold">{stats?.sessionsThisWeek || data.reduce((sum, item) => sum + item.sessions, 0)}</p>
+            <p className="text-2xl font-bold">{stats?.totalSessions || data.reduce((sum, item) => sum + item.sessions, 0)}</p>
           </div>
           <div>
             <p className="text-muted-foreground text-sm">Weekly Minutes</p>

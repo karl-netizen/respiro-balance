@@ -1,3 +1,4 @@
+
 import { createContext, useContext } from "react";
 import { UserPreferencesContextType } from './types';
 import { UserPreferencesProvider } from './UserPreferencesProvider';
@@ -19,8 +20,8 @@ export const useUserPreferences = (): UserPreferencesContextType => {
   return context;
 };
 
-// Export the provider
-export { UserPreferencesProvider };
+// Export providers
+export { UserPreferencesProvider, FocusProvider };
 
 // Export types for use in other components
 export * from './types';
