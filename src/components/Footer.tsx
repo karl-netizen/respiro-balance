@@ -26,9 +26,9 @@ const Footer = () => {
           <div>
             <h4 className="font-medium mb-4">Features</h4>
             <ul className="space-y-2 text-sm">
-              <li><Link to="/#meditate" className="hover:text-primary transition-colors">Meditation</Link></li>
+              <li><Link to="/meditate" className="hover:text-primary transition-colors">Meditation</Link></li>
               <li><Link to="/breathe" className="hover:text-primary transition-colors">Breathing Exercises</Link></li>
-              <li><Link to="/#balance" className="hover:text-primary transition-colors">Work-Life Balance</Link></li>
+              <li><Link to="/work-life-balance" className="hover:text-primary transition-colors">Work-Life Balance</Link></li>
               <li><Link to="/progress" className="hover:text-primary transition-colors">Progress Tracking</Link></li>
               <li><Link to="/morning-ritual" className="hover:text-primary transition-colors">Morning Ritual</Link></li>
             </ul>
