@@ -70,7 +70,25 @@ export class BiofeedbackService {
       // Notify listeners
       if (this.currentData) {
         this.dataListeners.forEach(listener => {
-          listener.update(this.currentData as BiometricData);
+          // Ensure we have all required fields before sending to listeners
+          const completeData: BiometricData = {
+            id: `mock-${Date.now()}`,
+            user_id: this.userId || 'mock-user',
+            timestamp: new Date().toISOString(),
+            heart_rate: this.currentData?.heart_rate || 70,
+            hrv: this.currentData?.hrv || 50,
+            breath_rate: this.currentData?.breath_rate || 14,
+            brainwaves: this.currentData?.brainwaves || {
+              alpha: 5,
+              beta: 10,
+              delta: 2,
+              gamma: 1,
+              theta: 4
+            },
+            ...this.currentData
+          };
+          
+          listener.update(completeData);
         });
       }
     }, 1000);

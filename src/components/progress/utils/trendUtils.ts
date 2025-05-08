@@ -31,14 +31,14 @@ export const generateDailyActivity = (sessions: any[]): Array<{ day: string; min
     const date = subDays(today, 6 - i);
     return {
       date,
-      dateStr: format(date, 'yyyy-MM-dd'),
+      day: format(date, 'yyyy-MM-dd'),
       dayName: format(date, 'EEE')
     };
   });
   
   // Initialize the result with zero values
   const result = lastWeek.map(day => ({
-    day: day.dateStr,
+    day: day.day,  // This is the dateStr we need
     dayName: day.dayName,
     minutes: 0,
     sessions: 0
@@ -61,7 +61,7 @@ export const generateDailyActivity = (sessions: any[]): Array<{ day: string; min
   
   // Format the final result
   return result.map(item => ({
-    day: item.dateStr,
+    day: item.day,
     minutes: item.minutes,
     sessions: item.sessions
   }));

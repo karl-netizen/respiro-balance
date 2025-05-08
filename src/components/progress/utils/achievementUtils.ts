@@ -75,7 +75,12 @@ const achievementDefinitions = [
 
 // Calculate achievements based on user's meditation data
 export const calculateAchievements = (sessions: any[]) => {
-  if (!sessions.length) return achievementDefinitions.map(a => ({ ...a, unlocked: false, progress: 0 }));
+  if (!sessions.length) return achievementDefinitions.map(a => ({ 
+    ...a, 
+    unlocked: false, 
+    progress: 0,
+    unlockedDate: undefined 
+  }));
   
   const totalSessions = sessions.length;
   const totalMinutes = sessions.reduce((sum, s) => sum + (s.duration || 0), 0);
