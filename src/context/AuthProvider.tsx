@@ -3,7 +3,7 @@ import React, { ReactNode, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthInitialization } from '@/hooks/useAuthInitialization';
 import { useAuthMethods } from '@/hooks/useAuthMethods';
-import { AuthContext } from './AuthContext';
+import AuthContext from './AuthContext';
 
 interface AuthProviderProps {
   children: ReactNode;

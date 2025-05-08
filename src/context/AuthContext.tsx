@@ -17,7 +17,7 @@ export interface AuthContextType {
 }
 
 // Create the context with a default value
-const AuthContext = createContext<AuthContextType>({
+export const AuthContext = createContext<AuthContextType>({
   user: null,
   session: null,
   isLoading: true,

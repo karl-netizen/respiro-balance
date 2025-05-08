@@ -106,5 +106,3 @@ export const ChartTooltip = ({ children }: { children: ReactNode }) => {
     </div>
   );
 };
-
-// Removed the duplicate export that was causing the error

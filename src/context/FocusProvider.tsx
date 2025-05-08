@@ -21,6 +21,23 @@ interface FocusStats {
   averageFocusTime: number;
   longestStreak: number;
   currentStreak: number;
+  weeklyFocusTime: number;
+  averageFocusScore: number;
+  completionRate: number;
+  distractionsPerSession: number;
+  totalFocusTime: number;
+  workToBreakRatio: number;
+}
+
+interface FocusSettings {
+  workDuration: number;
+  breakDuration: number;
+  longBreakDuration: number;
+  sessionsBeforeLongBreak: number;
+  autoStartBreaks: boolean;
+  autoStartPomodoros: boolean;
+  enableSounds: boolean;
+  enableNotifications: boolean;
 }
 
 interface FocusContextType {
@@ -35,6 +52,11 @@ interface FocusContextType {
   skipInterval: () => void;
   logDistraction: () => void;
   addSessionNote: (note: string) => void;
+  settings?: FocusSettings;
+  updateSettings?: (settings: Partial<FocusSettings>) => void;
+  remaining?: number;
+  progress?: number;
+  currentInterval?: string;
 }
 
 const initialStats: FocusStats = {
@@ -43,7 +65,24 @@ const initialStats: FocusStats = {
   totalDays: 0,
   averageFocusTime: 0,
   longestStreak: 0,
-  currentStreak: 0
+  currentStreak: 0,
+  weeklyFocusTime: 0,
+  averageFocusScore: 85,
+  completionRate: 0,
+  distractionsPerSession: 0,
+  totalFocusTime: 0,
+  workToBreakRatio: 4
+};
+
+const initialSettings: FocusSettings = {
+  workDuration: 25 * 60, // 25 minutes in seconds
+  breakDuration: 5 * 60, // 5 minutes in seconds
+  longBreakDuration: 15 * 60, // 15 minutes in seconds
+  sessionsBeforeLongBreak: 4,
+  autoStartBreaks: true,
+  autoStartPomodoros: false,
+  enableSounds: true,
+  enableNotifications: true
 };
 
 const FocusContext = createContext<FocusContextType | undefined>(undefined);
@@ -53,6 +92,9 @@ export const FocusProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const [currentSession, setCurrentSession] = useState<FocusSession | null>(null);
   const [timeRemaining, setTimeRemaining] = useState(25 * 60); // Default focus time: 25 minutes
   const [stats, setStats] = useState<FocusStats>(initialStats);
+  const [settings, setSettings] = useState<FocusSettings>(initialSettings);
+  const [progress, setProgress] = useState(0);
+  const [currentInterval, setCurrentInterval] = useState('work');
   
   // Start a new focus session
   const startSession = () => {
@@ -68,7 +110,9 @@ export const FocusProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     
     setCurrentSession(newSession);
     setTimerState('work');
-    setTimeRemaining(25 * 60); // 25 minutes for work interval
+    setTimeRemaining(settings.workDuration);
+    setCurrentInterval('work');
+    setProgress(0);
   };
   
   // Pause the current session
@@ -106,7 +150,9 @@ export const FocusProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       setStats(prev => ({
         ...prev,
         totalSessions: prev.totalSessions + 1,
-        totalMinutes: prev.totalMinutes + durationMinutes
+        totalMinutes: prev.totalMinutes + durationMinutes,
+        weeklyFocusTime: prev.weeklyFocusTime + durationMinutes,
+        totalFocusTime: prev.totalFocusTime + durationMinutes
       }));
     }
   };
@@ -115,10 +161,12 @@ export const FocusProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const skipInterval = () => {
     if (timerState === 'work') {
       setTimerState('break');
-      setTimeRemaining(5 * 60); // 5 minutes for break
+      setTimeRemaining(settings.breakDuration);
+      setCurrentInterval('break');
     } else if (timerState === 'break' || timerState === 'long-break') {
       setTimerState('work');
-      setTimeRemaining(25 * 60); // 25 minutes for work
+      setTimeRemaining(settings.workDuration);
+      setCurrentInterval('work');
     }
   };
   
@@ -142,6 +190,11 @@ export const FocusProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     }
   };
   
+  // Update settings
+  const updateSettings = (newSettings: Partial<FocusSettings>) => {
+    setSettings(prev => ({ ...prev, ...newSettings }));
+  };
+  
   const value: FocusContextType = {
     timerState,
     currentSession,
@@ -153,7 +206,12 @@ export const FocusProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     completeSession,
     skipInterval,
     logDistraction,
-    addSessionNote
+    addSessionNote,
+    settings,
+    updateSettings,
+    remaining: timeRemaining,
+    progress,
+    currentInterval
   };
   
   return (

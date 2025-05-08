@@ -10,6 +10,7 @@ interface SubscriptionContextType {
   hasExceededUsageLimit: boolean;
   updateUsage: (minutes: number) => void;
   tierName: string;
+  isSubscribed: boolean;
   subscriptionData?: {
     meditation_minutes_used: number;
     meditation_minutes_limit: number;
@@ -30,6 +31,7 @@ export const SubscriptionProvider: React.FC<{ children: ReactNode }> = ({ childr
   
   const value: SubscriptionContextType = {
     isPremium: false,
+    isSubscribed: false,
     tier: 'free' as const,
     expiresAt: null,
     minutesUsed,
