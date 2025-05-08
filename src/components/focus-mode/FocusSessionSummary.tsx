@@ -27,7 +27,7 @@ export const FocusSessionSummary: React.FC<FocusSessionSummaryProps> = ({ sessio
   
   const completedAt = session.endTime ? new Date(session.endTime) : new Date();
   const startedAt = session.startTime ? new Date(session.startTime) : new Date();
-  const focusScore = session.focus_score || 0;
+  const focusScore = session.focusScore || 0;
   
   const getDuration = () => {
     if (session.duration) {
@@ -71,12 +71,12 @@ export const FocusSessionSummary: React.FC<FocusSessionSummaryProps> = ({ sessio
         
         <Card className="p-3">
           <p className="text-xs text-muted-foreground">Tasks Completed</p>
-          <p className="text-xl font-semibold">{session.task_completed ? "Yes" : "No"}</p>
+          <p className="text-xl font-semibold">{session.completed ? "Yes" : "No"}</p>
         </Card>
         
         <Card className="p-3">
           <p className="text-xs text-muted-foreground">Distractions</p>
-          <p className="text-xl font-semibold">{session.distraction_count || 0}</p>
+          <p className="text-xl font-semibold">{session.distractions || 0}</p>
         </Card>
       </div>
       
@@ -105,14 +105,14 @@ export const FocusSessionSummary: React.FC<FocusSessionSummaryProps> = ({ sessio
             </li>
           )}
           
-          {(session.distraction_count || 0) > 2 && (
+          {(session.distractions || 0) > 2 && (
             <li className="flex gap-2 items-start">
               <Badge className="bg-orange-100 text-orange-800 mt-0.5">Tip</Badge>
               <span>Try minimizing distractions by silencing notifications.</span>
             </li>
           )}
           
-          {session.task_completed && (
+          {session.completed && (
             <li className="flex gap-2 items-start">
               <Badge className="bg-blue-100 text-blue-800 mt-0.5">Achievement</Badge>
               <span>You completed your task. Great job!</span>

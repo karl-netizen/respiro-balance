@@ -30,13 +30,13 @@ const FocusMode: React.FC = () => {
       // Convert the current session to match the expected FocusSession type
       const formattedSession: Partial<FocusSession> = {
         id: currentSession?.id || '',
-        user_id: currentSession?.userId || '',
+        userId: currentSession?.userId || '',
         startTime: currentSession?.startTime || '',
         endTime: currentSession?.endTime,
         duration: currentSession?.duration,
-        task_completed: currentSession?.completed || false,
-        distraction_count: currentSession?.distractions || 0,
-        focus_score: currentSession?.focusScore,
+        completed: currentSession?.completed || false,
+        distractions: currentSession?.distractions || 0,
+        focusScore: currentSession?.focusScore,
         notes: currentSession?.notes,
         tags: currentSession?.tags
       };
@@ -106,19 +106,7 @@ const FocusMode: React.FC = () => {
         
         <TabsContent value="stats" className="p-0">
           <CardContent className="pt-6">
-            {/* Convert stats to match the expected FocusStats type */}
-            {stats && <FocusStats stats={{
-              totalSessions: stats.totalSessions || 0,
-              totalMinutes: stats.totalMinutes || stats.totalFocusTime || 0,
-              averageSessionLength: stats.averageFocusTime || 0,
-              mostProductiveDay: stats.mostProductiveDay || 'Monday',
-              mostProductiveTime: stats.mostProductiveTime || '9:00 AM',
-              highestFocusScore: stats.averageFocusScore || 0,
-              weeklyMinutes: [0, 0, 0, 0, 0, 0, 0], // default empty array
-              distractionRate: stats.distractionsPerSession || 0,
-              completionRate: stats.completionRate || 0,
-              streak: stats.currentStreak || 0
-            }} />}
+            {stats && <FocusStats stats={stats} />}
           </CardContent>
         </TabsContent>
         
