@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Card, 
   CardHeader, 
@@ -30,7 +30,7 @@ interface BiofeedbackDisplayProps {
   showControls?: boolean;
   showTabs?: boolean;
   initialTab?: string;
-  biometricData?: BiometricData;
+  biometricData?: BiometricData | Partial<BiometricData>;
   isSessionActive?: boolean;
 }
 
@@ -42,6 +42,7 @@ const BiofeedbackDisplay: React.FC<BiofeedbackDisplayProps> = ({
   isSessionActive = false
 }) => {
   const [activeTab, setActiveTab] = useState<string>(initialTab);
+  const [completeData, setCompleteData] = useState<BiometricData | null>(null);
   
   const {
     connectDevice,
@@ -54,8 +55,38 @@ const BiofeedbackDisplay: React.FC<BiofeedbackDisplayProps> = ({
     isSimulating
   } = useBiofeedback();
 
-  // Use provided data or data from the hook
-  const displayData = biometricData || currentBiometrics;
+  // Convert partial data to complete data with defaults
+  useEffect(() => {
+    if (biometricData) {
+      // Create a complete BiometricData object with default values for required fields
+      const complete: BiometricData = {
+        id: biometricData.id || `temp-${Date.now()}`,
+        user_id: biometricData.user_id || 'unknown',
+        timestamp: biometricData.timestamp || new Date().toISOString(),
+        heart_rate: biometricData.heart_rate || (biometricData as any).heartRate || 0,
+        hrv: biometricData.hrv || 0,
+        breath_rate: biometricData.breath_rate || (biometricData as any).breathRate || 0,
+        ...biometricData as any // Include any other fields
+      };
+      
+      setCompleteData(complete);
+    } else if (currentBiometrics) {
+      // If no provided data, use current biometrics from hook
+      const complete: BiometricData = {
+        id: currentBiometrics.id || `temp-${Date.now()}`,
+        user_id: currentBiometrics.user_id || 'unknown',
+        timestamp: currentBiometrics.timestamp || new Date().toISOString(),
+        heart_rate: currentBiometrics.heart_rate || (currentBiometrics as any).heartRate || 0,
+        hrv: currentBiometrics.hrv || 0,
+        breath_rate: currentBiometrics.breath_rate || (currentBiometrics as any).breathRate || 0,
+        ...currentBiometrics as any
+      };
+      
+      setCompleteData(complete);
+    } else {
+      setCompleteData(null);
+    }
+  }, [biometricData, currentBiometrics]);
   
   // Handle connecting a device
   const handleConnectDevice = async () => {
@@ -78,8 +109,22 @@ const BiofeedbackDisplay: React.FC<BiofeedbackDisplayProps> = ({
     }
   };
 
+  // Helper functions to safely convert partial data to complete data
+  const getHeartRateData = (): BiometricData => {
+    return completeData as BiometricData;
+  };
+  
+  const getBreathingData = (): BiometricData => {
+    return completeData as BiometricData;
+  };
+  
+  const getBrainwaveData = (): BiometricData | null => {
+    if (!completeData || !completeData.brainwaves) return null;
+    return completeData;
+  };
+
   // If no data and not in session, show connection prompt
-  if (!displayData && !isSessionActive && showControls) {
+  if (!completeData && !isSessionActive && showControls) {
     return (
       <Card className="w-full">
         <CardHeader>
@@ -160,7 +205,7 @@ const BiofeedbackDisplay: React.FC<BiofeedbackDisplayProps> = ({
       </CardHeader>
       
       <CardContent>
-        {showTabs && displayData ? (
+        {showTabs && completeData ? (
           <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="w-full">
               <TabsTrigger value="heart-rate" className="flex-1">Heart</TabsTrigger>
@@ -169,18 +214,18 @@ const BiofeedbackDisplay: React.FC<BiofeedbackDisplayProps> = ({
             </TabsList>
             
             <TabsContent value="heart-rate" className="pt-4">
-              <HeartRateTab biometricData={displayData} />
+              <HeartRateTab biometricData={getHeartRateData()} />
             </TabsContent>
             
             <TabsContent value="breathing" className="pt-4">
-              <BreathingTab biometricData={displayData} />
+              <BreathingTab biometricData={getBreathingData()} />
             </TabsContent>
             
             <TabsContent value="stress" className="pt-4">
-              <StressTab biometricData={displayData} />
+              <StressTab biometricData={getHeartRateData()} />
             </TabsContent>
           </Tabs>
-        ) : displayData ? (
+        ) : completeData ? (
           <div className="space-y-3">
             {/* Heart Rate */}
             <div>
@@ -189,9 +234,9 @@ const BiofeedbackDisplay: React.FC<BiofeedbackDisplayProps> = ({
                   <Heart className="h-3 w-3 text-red-500 mr-1" />
                   <span>Heart Rate</span>
                 </div>
-                <span>{displayData.heart_rate} bpm</span>
+                <span>{completeData.heart_rate} bpm</span>
               </div>
-              <Progress value={(displayData.heart_rate || 70) / 2} className="h-2" />
+              <Progress value={(completeData.heart_rate || 70) / 2} className="h-2" />
             </div>
             
             {/* HRV */}
@@ -201,9 +246,9 @@ const BiofeedbackDisplay: React.FC<BiofeedbackDisplayProps> = ({
                   <Activity className="h-3 w-3 text-blue-500 mr-1" />
                   <span>HRV</span>
                 </div>
-                <span>{displayData.hrv} ms</span>
+                <span>{completeData.hrv} ms</span>
               </div>
-              <Progress value={(displayData.hrv || 50) / 2} className="h-2" />
+              <Progress value={(completeData.hrv || 50) / 2} className="h-2" />
             </div>
             
             {/* Stress Level */}
@@ -213,9 +258,9 @@ const BiofeedbackDisplay: React.FC<BiofeedbackDisplayProps> = ({
                   <LineChart className="h-3 w-3 text-amber-500 mr-1" />
                   <span>Stress Level</span>
                 </div>
-                <span>{displayData.stress_score}/100</span>
+                <span>{completeData.stress_level}/100</span>
               </div>
-              <Progress value={displayData.stress_score || 50} className="h-2" />
+              <Progress value={completeData.stress_level || 50} className="h-2" />
             </div>
           </div>
         ) : (
