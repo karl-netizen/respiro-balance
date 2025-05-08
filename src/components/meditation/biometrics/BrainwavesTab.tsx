@@ -15,7 +15,8 @@ const BrainwavesTab: React.FC<BrainwavesTabProps> = ({ biometricData }) => {
       alpha: { min: 0, max: 10 },
       beta: { min: 0, max: 20 },
       theta: { min: 0, max: 8 },
-      delta: { min: 0, max: 4 }
+      delta: { min: 0, max: 4 },
+      gamma: { min: 0, max: 2 }
     };
     
     const { min, max } = ranges[type as keyof typeof ranges] || { min: 0, max: 100 };
@@ -23,8 +24,11 @@ const BrainwavesTab: React.FC<BrainwavesTabProps> = ({ biometricData }) => {
     return Math.min(Math.max(percentage, 0), 100);
   };
 
+  // Safely access brainwave values
   const alphaValue = biometricData.brainwaves?.alpha || 0;
   const thetaValue = biometricData.brainwaves?.theta || 0;
+  const betaValue = biometricData.brainwaves?.beta || 0;
+  const deltaValue = biometricData.brainwaves?.delta || 0;
 
   return (
     <div className="space-y-3">
@@ -45,6 +49,26 @@ const BrainwavesTab: React.FC<BrainwavesTabProps> = ({ biometricData }) => {
         </div>
         <Progress 
           value={brainwaveToPercentage(thetaValue, 'theta')}
+          className="h-2"
+        />
+      </div>
+      <div>
+        <div className="flex justify-between text-sm text-muted-foreground mb-1">
+          <span>Beta Waves (Focus)</span>
+          <span>{`${betaValue.toFixed(1)} μV`}</span>
+        </div>
+        <Progress 
+          value={brainwaveToPercentage(betaValue, 'beta')}
+          className="h-2"
+        />
+      </div>
+      <div>
+        <div className="flex justify-between text-sm text-muted-foreground mb-1">
+          <span>Delta Waves (Deep Sleep)</span>
+          <span>{`${deltaValue.toFixed(1)} μV`}</span>
+        </div>
+        <Progress 
+          value={brainwaveToPercentage(deltaValue, 'delta')}
           className="h-2"
         />
       </div>

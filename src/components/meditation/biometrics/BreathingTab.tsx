@@ -14,21 +14,35 @@ const BreathingTab: React.FC<BreathingTabProps> = ({
   showChange = false, 
   change 
 }) => {
+  // Get the breath rate from any of the possible property names
+  const breathRate = biometricData.breath_rate || 
+                     biometricData.breathRate || 
+                     biometricData.respiratory_rate || 
+                     0;
+  
+  // Calculate the coherence value (or use default if not available)
+  const coherence = biometricData.coherence || 0;
+  
+  // Format the respiratory rate change value if available
+  const respiratoryRateChange = change?.respiratory_rate || 
+                               change?.breath_rate || 
+                               0;
+
   return (
     <div className="space-y-3">
       <div>
         <div className="flex justify-between text-sm text-muted-foreground mb-1">
           <span>Breath Rate</span>
-          <span>{`${(biometricData.breath_rate || biometricData.breathRate || biometricData.respiratory_rate || 0).toFixed(1)} bpm`}</span>
+          <span>{`${breathRate.toFixed(1)} bpm`}</span>
         </div>
         <Progress 
-          value={((biometricData.breath_rate || biometricData.breathRate || biometricData.respiratory_rate || 0) / 20) * 100}
+          value={(breathRate / 20) * 100}
           className="h-2"
         />
         {showChange && change && (
           <div className="text-xs text-right mt-1">
-            <span className={change.respiratory_rate && change.respiratory_rate < 0 ? "text-green-500" : "text-red-500"}>
-              {change.respiratory_rate && change.respiratory_rate > 0 ? "+" : ""}{change.respiratory_rate}/min
+            <span className={respiratoryRateChange < 0 ? "text-green-500" : "text-red-500"}>
+              {respiratoryRateChange > 0 ? "+" : ""}{respiratoryRateChange}/min
             </span>
           </div>
         )}
@@ -36,10 +50,10 @@ const BreathingTab: React.FC<BreathingTabProps> = ({
       <div>
         <div className="flex justify-between text-sm text-muted-foreground mb-1">
           <span>Coherence Score</span>
-          <span>{`${((biometricData.coherence || 0) * 100).toFixed(0)}%`}</span>
+          <span>{`${(coherence * 100).toFixed(0)}%`}</span>
         </div>
         <Progress 
-          value={(biometricData.coherence || 0) * 100}
+          value={coherence * 100}
           className="h-2"
         />
       </div>

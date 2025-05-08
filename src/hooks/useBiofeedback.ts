@@ -2,8 +2,17 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from './useAuth';
 import { BiofeedbackService } from '@/services/BiofeedbackService';
+import { BiometricData, ConnectionState } from '@/components/meditation/types/BiometricTypes';
 
-// Simplified mock implementation to fix build errors
+// Interface for device information
+export interface DeviceInfo {
+  id: string;
+  name: string;
+  type: string;
+  connected: boolean;
+}
+
+// Create a singleton instance of the service
 const biofeedbackService = new BiofeedbackService();
 
 export const useBiofeedback = () => {
@@ -14,74 +23,65 @@ export const useBiofeedback = () => {
   const [stressLevel, setStressLevel] = useState<number | null>(null);
   const [isMonitoring, setIsMonitoring] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
   const [availableDevices, setAvailableDevices] = useState<string[]>([]);
+  const [connectedDevices, setConnectedDevices] = useState<DeviceInfo[]>([]);
   const [error, setError] = useState<string | null>(null);
-
-  // Setup effect for user ID
-  useEffect(() => {
-    if (user?.id) {
-      biofeedbackService.userId = user.id;
-    }
-  }, [user]);
-
-  // Setup effect for data listeners
-  useEffect(() => {
-    const handleBiometricUpdate = (data: any) => {
-      if (data.heart_rate) setHeartRate(data.heart_rate);
-      if (data.hrv) setHrv(data.hrv);
-      if (data.respiratory_rate) setRespiratoryRate(data.respiratory_rate);
-      if (data.stress_score) setStressLevel(data.stress_score);
-    };
-
-    const listener = { update: handleBiometricUpdate };
-    
-    // Mock implementation to fix build errors
-    if (biofeedbackService.onDataUpdate) {
-      biofeedbackService.onDataUpdate(listener);
-    }
-
-    return () => {
-      if (biofeedbackService.offDataUpdate) {
-        biofeedbackService.offDataUpdate(listener);
-      }
-    };
-  }, []);
-
-  // Scan for available devices
+  const [currentBiometrics, setCurrentBiometrics] = useState<Partial<BiometricData> | null>(null);
+  const [isSimulating, setIsSimulating] = useState(false);
+  
+  // Function to scan for available devices
   const scanForDevices = async () => {
     try {
       setError(null);
       // Mock implementation
-      const devices = await biofeedbackService.scanDevices();
-      setAvailableDevices(devices);
-      return devices;
+      const mockDevices = ['Device 1', 'Device 2', 'Polar H10'];
+      setAvailableDevices(mockDevices);
+      return mockDevices;
     } catch (err: any) {
       setError(err.message);
       return [];
     }
   };
 
-  // Connect to a device
-  const connectDevice = async (deviceId: string) => {
+  // Function to connect to a device
+  const connectDevice = async (deviceId?: string) => {
     try {
+      setIsConnecting(true);
       setError(null);
-      // Mock implementation
-      await biofeedbackService.connect(deviceId);
-      setIsConnected(true);
-      return true;
+      
+      const success = await biofeedbackService.connect();
+      
+      if (success) {
+        setIsConnected(true);
+        
+        // Add mock device to connected devices
+        const mockDeviceInfo: DeviceInfo = {
+          id: deviceId || 'mock-device-id',
+          name: deviceId || 'Heart Rate Monitor',
+          type: 'heart_rate_monitor',
+          connected: true
+        };
+        
+        setConnectedDevices([mockDeviceInfo]);
+      }
+      
+      setIsConnecting(false);
+      return success;
     } catch (err: any) {
       setError(err.message);
+      setIsConnecting(false);
       return false;
     }
   };
 
-  // Disconnect from a device
-  const disconnectDevice = async () => {
+  // Function to disconnect from a device
+  const disconnectDevice = async (deviceId?: string) => {
     try {
-      // Mock implementation
       await biofeedbackService.disconnect();
       setIsConnected(false);
       setIsMonitoring(false);
+      setConnectedDevices([]);
       return true;
     } catch (err: any) {
       setError(err.message);
@@ -89,7 +89,7 @@ export const useBiofeedback = () => {
     }
   };
 
-  // Start monitoring biometrics
+  // Function to start monitoring biometrics
   const startMonitoring = async () => {
     if (!isConnected) {
       setError("No device connected");
@@ -97,20 +97,36 @@ export const useBiofeedback = () => {
     }
 
     try {
-      // Mock implementation
       await biofeedbackService.startMonitoring();
       setIsMonitoring(true);
-      return true;
+      
+      // Set up interval to get current data
+      const interval = setInterval(() => {
+        const data = biofeedbackService.getCurrentData();
+        if (data) {
+          setCurrentBiometrics(data);
+          if (data.heart_rate) setHeartRate(data.heart_rate);
+          if (data.hrv) setHrv(data.hrv);
+          if (data.breath_rate || data.respiratory_rate) {
+            setRespiratoryRate(data.breath_rate || data.respiratory_rate);
+          }
+          if (data.stress_level || data.stress_score) {
+            setStressLevel(data.stress_level || data.stress_score);
+          }
+        }
+      }, 1000);
+      
+      // Clean up interval on unmount
+      return () => clearInterval(interval);
     } catch (err: any) {
       setError(err.message);
       return false;
     }
   };
 
-  // Stop monitoring biometrics
+  // Function to stop monitoring biometrics
   const stopMonitoring = async () => {
     try {
-      // Mock implementation
       await biofeedbackService.stopMonitoring();
       setIsMonitoring(false);
       return true;
@@ -120,6 +136,54 @@ export const useBiofeedback = () => {
     }
   };
 
+  // Simulation functionality
+  const startSimulation = () => {
+    setIsSimulating(true);
+    
+    // Mock data
+    const simulateData = () => {
+      const mockData: Partial<BiometricData> = {
+        heart_rate: 60 + Math.floor(Math.random() * 20),
+        hrv: 40 + Math.floor(Math.random() * 30),
+        breath_rate: 12 + Math.floor(Math.random() * 6),
+        stress_level: Math.floor(Math.random() * 100),
+        focus_score: 60 + Math.floor(Math.random() * 40),
+        brainwaves: {
+          alpha: Math.random() * 10,
+          beta: Math.random() * 20,
+          delta: Math.random() * 5,
+          gamma: Math.random() * 2,
+          theta: Math.random() * 8
+        }
+      };
+      
+      setCurrentBiometrics(mockData);
+      setHeartRate(mockData.heart_rate || null);
+      setHrv(mockData.hrv || null);
+      setRespiratoryRate(mockData.breath_rate || null);
+      setStressLevel(mockData.stress_level || null);
+    };
+    
+    // Initial simulation
+    simulateData();
+    
+    // Set interval for ongoing simulation
+    const interval = setInterval(simulateData, 2000);
+    
+    // Return cleanup function
+    return () => clearInterval(interval);
+  };
+
+  // Function to stop simulation
+  const stopSimulation = () => {
+    setIsSimulating(false);
+    setCurrentBiometrics(null);
+    setHeartRate(null);
+    setHrv(null);
+    setRespiratoryRate(null);
+    setStressLevel(null);
+  };
+
   return {
     heartRate,
     hrv,
@@ -127,12 +191,18 @@ export const useBiofeedback = () => {
     stressLevel,
     isMonitoring,
     isConnected,
+    isConnecting,
     availableDevices,
+    connectedDevices,
+    currentBiometrics,
+    isSimulating,
     error,
     scanForDevices,
     connectDevice,
     disconnectDevice,
     startMonitoring,
-    stopMonitoring
+    stopMonitoring,
+    startSimulation,
+    stopSimulation
   };
 };
