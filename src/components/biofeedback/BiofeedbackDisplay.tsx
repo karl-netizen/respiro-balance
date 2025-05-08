@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   Card, 
   CardHeader, 
@@ -8,23 +8,16 @@ import {
   CardFooter, 
   CardDescription 
 } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { 
-  Heart, 
-  Activity, 
-  LineChart, 
-  Bluetooth, 
-  BluetoothOff,
-  BluetoothSearching 
-} from "lucide-react";
-import { useBiofeedback } from '@/hooks/useBiofeedback'; 
+import { Activity, Bluetooth } from "lucide-react";
+import { useBiofeedback } from '@/hooks/useBiofeedback';
 import { BiometricData } from '@/components/meditation/types/BiometricTypes';
-import HeartRateTab from './tabs/HeartRateTab';
-import BreathingTab from '../meditation/biometrics/BreathingTab';
-import StressTab from './tabs/StressTab';
-import { ConnectedDevicesList } from './';
+import { 
+  ConnectionPrompt, 
+  BiofeedbackControls,
+  BiometricSummary,
+  TabsContainer,
+  DataConverter
+} from './components';
 
 interface BiofeedbackDisplayProps {
   showControls?: boolean;
@@ -42,7 +35,6 @@ const BiofeedbackDisplay: React.FC<BiofeedbackDisplayProps> = ({
   isSessionActive = false
 }) => {
   const [activeTab, setActiveTab] = useState<string>(initialTab);
-  const [completeData, setCompleteData] = useState<BiometricData | null>(null);
   
   const {
     connectDevice,
@@ -55,39 +47,6 @@ const BiofeedbackDisplay: React.FC<BiofeedbackDisplayProps> = ({
     isSimulating
   } = useBiofeedback();
 
-  // Convert partial data to complete data with defaults
-  useEffect(() => {
-    if (biometricData) {
-      // Create a complete BiometricData object with default values for required fields
-      const complete: BiometricData = {
-        id: biometricData.id || `temp-${Date.now()}`,
-        user_id: biometricData.user_id || 'unknown',
-        timestamp: biometricData.timestamp || new Date().toISOString(),
-        heart_rate: biometricData.heart_rate || (biometricData as any).heartRate || 0,
-        hrv: biometricData.hrv || 0,
-        breath_rate: biometricData.breath_rate || (biometricData as any).breathRate || 0,
-        ...biometricData as any // Include any other fields
-      };
-      
-      setCompleteData(complete);
-    } else if (currentBiometrics) {
-      // If no provided data, use current biometrics from hook
-      const complete: BiometricData = {
-        id: currentBiometrics.id || `temp-${Date.now()}`,
-        user_id: currentBiometrics.user_id || 'unknown',
-        timestamp: currentBiometrics.timestamp || new Date().toISOString(),
-        heart_rate: currentBiometrics.heart_rate || (currentBiometrics as any).heartRate || 0,
-        hrv: currentBiometrics.hrv || 0,
-        breath_rate: currentBiometrics.breath_rate || (currentBiometrics as any).breathRate || 0,
-        ...currentBiometrics as any
-      };
-      
-      setCompleteData(complete);
-    } else {
-      setCompleteData(null);
-    }
-  }, [biometricData, currentBiometrics]);
-  
   // Handle connecting a device
   const handleConnectDevice = async () => {
     await connectDevice();
@@ -109,22 +68,8 @@ const BiofeedbackDisplay: React.FC<BiofeedbackDisplayProps> = ({
     }
   };
 
-  // Helper functions to safely convert partial data to complete data
-  const getHeartRateData = (): BiometricData => {
-    return completeData as BiometricData;
-  };
-  
-  const getBreathingData = (): BiometricData => {
-    return completeData as BiometricData;
-  };
-  
-  const getBrainwaveData = (): BiometricData | null => {
-    if (!completeData || !completeData.brainwaves) return null;
-    return completeData;
-  };
-
   // If no data and not in session, show connection prompt
-  if (!completeData && !isSessionActive && showControls) {
+  if (!biometricData && !currentBiometrics && !isSessionActive && showControls) {
     return (
       <Card className="w-full">
         <CardHeader>
@@ -137,50 +82,14 @@ const BiofeedbackDisplay: React.FC<BiofeedbackDisplayProps> = ({
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center justify-center py-8">
-          {isConnecting ? (
-            <div className="text-center">
-              <BluetoothSearching className="h-12 w-12 text-primary animate-pulse mx-auto mb-4" />
-              <p className="text-lg font-medium mb-2">Searching for devices</p>
-              <p className="text-muted-foreground text-sm">
-                Make sure your device is nearby and in pairing mode
-              </p>
-            </div>
-          ) : connectedDevices.length > 0 ? (
-            <div className="w-full">
-              <div className="mb-6 flex items-center justify-center">
-                <Bluetooth className="h-10 w-10 text-green-500 mr-2" />
-                <div>
-                  <h3 className="text-lg font-medium">Devices Connected</h3>
-                  <p className="text-sm text-muted-foreground">{connectedDevices.length} device(s) ready</p>
-                </div>
-              </div>
-              <ConnectedDevicesList 
-                devices={connectedDevices}
-                isTeamOrEnterprise={false}
-                onDisconnect={disconnectDevice}
-              />
-            </div>
-          ) : (
-            <div className="text-center">
-              <BluetoothOff className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-lg font-medium mb-2">No Device Connected</p>
-              <p className="text-muted-foreground text-sm mb-6">
-                Connect a compatible biofeedback device to see your metrics
-              </p>
-              <div className="flex flex-col gap-2 w-full max-w-xs">
-                <Button onClick={handleConnectDevice} className="w-full">
-                  Connect Device
-                </Button>
-                <Button 
-                  onClick={handleToggleSimulation} 
-                  variant="outline"
-                  className="w-full"
-                >
-                  Simulate Data
-                </Button>
-              </div>
-            </div>
-          )}
+          <ConnectionPrompt 
+            isConnecting={isConnecting}
+            connectedDevices={connectedDevices}
+            onConnectDevice={handleConnectDevice}
+            onDisconnectDevice={disconnectDevice}
+            onToggleSimulation={handleToggleSimulation}
+            isSimulating={isSimulating}
+          />
         </CardContent>
       </Card>
     );
@@ -205,107 +114,42 @@ const BiofeedbackDisplay: React.FC<BiofeedbackDisplayProps> = ({
       </CardHeader>
       
       <CardContent>
-        {showTabs && completeData ? (
-          <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="w-full">
-              <TabsTrigger value="heart-rate" className="flex-1">Heart</TabsTrigger>
-              <TabsTrigger value="breathing" className="flex-1">Breathing</TabsTrigger>
-              <TabsTrigger value="stress" className="flex-1">Stress</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="heart-rate" className="pt-4">
-              <HeartRateTab biometricData={getHeartRateData()} />
-            </TabsContent>
-            
-            <TabsContent value="breathing" className="pt-4">
-              <BreathingTab biometricData={getBreathingData()} />
-            </TabsContent>
-            
-            <TabsContent value="stress" className="pt-4">
-              <StressTab biometricData={getHeartRateData()} />
-            </TabsContent>
-          </Tabs>
-        ) : completeData ? (
-          <div className="space-y-3">
-            {/* Heart Rate */}
-            <div>
-              <div className="flex justify-between text-sm text-muted-foreground mb-1">
-                <div className="flex items-center">
-                  <Heart className="h-3 w-3 text-red-500 mr-1" />
-                  <span>Heart Rate</span>
+        <DataConverter 
+          biometricData={biometricData} 
+          currentBiometrics={currentBiometrics}
+        >
+          {(completeData) => (
+            <>
+              {showTabs && completeData ? (
+                <TabsContainer 
+                  activeTab={activeTab}
+                  onTabChange={setActiveTab}
+                  biometricData={completeData}
+                />
+              ) : completeData ? (
+                <BiometricSummary data={completeData} />
+              ) : (
+                <div className="text-center py-6">
+                  <p className="text-muted-foreground">
+                    {isSessionActive ? "Waiting for biometric data..." : "No biometric data available"}
+                  </p>
                 </div>
-                <span>{completeData.heart_rate} bpm</span>
-              </div>
-              <Progress value={(completeData.heart_rate || 70) / 2} className="h-2" />
-            </div>
-            
-            {/* HRV */}
-            <div>
-              <div className="flex justify-between text-sm text-muted-foreground mb-1">
-                <div className="flex items-center">
-                  <Activity className="h-3 w-3 text-blue-500 mr-1" />
-                  <span>HRV</span>
-                </div>
-                <span>{completeData.hrv} ms</span>
-              </div>
-              <Progress value={(completeData.hrv || 50) / 2} className="h-2" />
-            </div>
-            
-            {/* Stress Level */}
-            <div>
-              <div className="flex justify-between text-sm text-muted-foreground mb-1">
-                <div className="flex items-center">
-                  <LineChart className="h-3 w-3 text-amber-500 mr-1" />
-                  <span>Stress Level</span>
-                </div>
-                <span>{completeData.stress_level}/100</span>
-              </div>
-              <Progress value={completeData.stress_level || 50} className="h-2" />
-            </div>
-          </div>
-        ) : (
-          <div className="text-center py-6">
-            <p className="text-muted-foreground">
-              {isSessionActive ? "Waiting for biometric data..." : "No biometric data available"}
-            </p>
-          </div>
-        )}
+              )}
+            </>
+          )}
+        </DataConverter>
       </CardContent>
       
       {showControls && (
         <CardFooter>
           <div className="w-full flex flex-col gap-2">
-            {connectedDevices.length > 0 ? (
-              <div className="flex gap-2">
-                <Button 
-                  onClick={handleDisconnectAll} 
-                  variant="outline" 
-                  className="flex-1"
-                >
-                  Disconnect
-                </Button>
-                <Button 
-                  onClick={handleToggleSimulation} 
-                  variant={isSimulating ? "destructive" : "secondary"}
-                  className="flex-1"
-                >
-                  {isSimulating ? "Stop Simulation" : "Simulate Data"}
-                </Button>
-              </div>
-            ) : (
-              <div className="flex gap-2">
-                <Button onClick={handleConnectDevice} className="flex-1">
-                  Connect Device
-                </Button>
-                <Button 
-                  onClick={handleToggleSimulation} 
-                  variant="outline"
-                  className="flex-1"
-                >
-                  Simulate Data
-                </Button>
-              </div>
-            )}
+            <BiofeedbackControls 
+              connectedDevicesCount={connectedDevices.length}
+              onDisconnectAll={handleDisconnectAll}
+              onToggleSimulation={handleToggleSimulation}
+              isSimulating={isSimulating}
+              onConnectDevice={handleConnectDevice}
+            />
           </div>
         </CardFooter>
       )}
