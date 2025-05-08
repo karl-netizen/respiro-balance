@@ -27,6 +27,10 @@ interface FocusStats {
   distractionsPerSession: number;
   totalFocusTime: number;
   workToBreakRatio: number;
+  mostProductiveDay?: string;
+  mostProductiveTime?: string;
+  weeklyFocusGoal?: number;
+  weeklyFocusProgress?: number;
 }
 
 interface FocusSettings {
@@ -36,8 +40,11 @@ interface FocusSettings {
   sessionsBeforeLongBreak: number;
   autoStartBreaks: boolean;
   autoStartPomodoros: boolean;
+  autoStartWork?: boolean;
   enableSounds: boolean;
   enableNotifications: boolean;
+  blockNotifications?: boolean;
+  longBreakAfterIntervals?: number;
 }
 
 interface FocusContextType {
@@ -57,6 +64,7 @@ interface FocusContextType {
   remaining?: number;
   progress?: number;
   currentInterval?: string;
+  isActive?: boolean;
 }
 
 const initialStats: FocusStats = {
@@ -71,7 +79,11 @@ const initialStats: FocusStats = {
   completionRate: 0,
   distractionsPerSession: 0,
   totalFocusTime: 0,
-  workToBreakRatio: 4
+  workToBreakRatio: 4,
+  mostProductiveDay: 'Monday',
+  mostProductiveTime: '10:00 AM',
+  weeklyFocusGoal: 10,
+  weeklyFocusProgress: 4
 };
 
 const initialSettings: FocusSettings = {
@@ -81,8 +93,11 @@ const initialSettings: FocusSettings = {
   sessionsBeforeLongBreak: 4,
   autoStartBreaks: true,
   autoStartPomodoros: false,
+  autoStartWork: false,
   enableSounds: true,
-  enableNotifications: true
+  enableNotifications: true,
+  blockNotifications: false,
+  longBreakAfterIntervals: 4
 };
 
 const FocusContext = createContext<FocusContextType | undefined>(undefined);
@@ -95,6 +110,7 @@ export const FocusProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const [settings, setSettings] = useState<FocusSettings>(initialSettings);
   const [progress, setProgress] = useState(0);
   const [currentInterval, setCurrentInterval] = useState('work');
+  const [isActive, setIsActive] = useState(false);
   
   // Start a new focus session
   const startSession = () => {
@@ -113,12 +129,14 @@ export const FocusProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setTimeRemaining(settings.workDuration);
     setCurrentInterval('work');
     setProgress(0);
+    setIsActive(true);
   };
   
   // Pause the current session
   const pauseSession = () => {
     if (timerState !== 'idle' && timerState !== 'completed') {
       setTimerState('paused');
+      setIsActive(false);
     }
   };
   
@@ -126,6 +144,7 @@ export const FocusProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const resumeSession = () => {
     if (timerState === 'paused') {
       setTimerState('work'); // Assume we resume to work state
+      setIsActive(true);
     }
   };
   
@@ -145,6 +164,7 @@ export const FocusProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       
       setCurrentSession(completedSession);
       setTimerState('completed');
+      setIsActive(false);
       
       // Update stats
       setStats(prev => ({
@@ -152,7 +172,8 @@ export const FocusProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         totalSessions: prev.totalSessions + 1,
         totalMinutes: prev.totalMinutes + durationMinutes,
         weeklyFocusTime: prev.weeklyFocusTime + durationMinutes,
-        totalFocusTime: prev.totalFocusTime + durationMinutes
+        totalFocusTime: prev.totalFocusTime + durationMinutes,
+        weeklyFocusProgress: (prev.weeklyFocusProgress || 0) + durationMinutes / 60
       }));
     }
   };
@@ -211,7 +232,8 @@ export const FocusProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     updateSettings,
     remaining: timeRemaining,
     progress,
-    currentInterval
+    currentInterval,
+    isActive
   };
   
   return (

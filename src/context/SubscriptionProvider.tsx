@@ -1,20 +1,24 @@
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
+// Define subscription data type
+interface SubscriptionData {
+  meditation_minutes_used: number;
+  meditation_minutes_limit: number;
+  subscription_period_end?: string;
+}
+
 interface SubscriptionContextType {
   isPremium: boolean;
-  tier: 'free' | 'basic' | 'premium';
+  isSubscribed: boolean;
+  tier: 'free' | 'basic' | 'premium' | 'pro';
+  tierName: string;
   expiresAt: string | null;
   minutesUsed: number;
   minutesLimit: number;
   hasExceededUsageLimit: boolean;
   updateUsage: (minutes: number) => void;
-  tierName: string;
-  isSubscribed: boolean;
-  subscriptionData?: {
-    meditation_minutes_used: number;
-    meditation_minutes_limit: number;
-  };
+  subscriptionData?: SubscriptionData;
   startPremiumCheckout?: () => Promise<void>;
   manageSubscription?: () => Promise<void>;
 }
@@ -32,13 +36,13 @@ export const SubscriptionProvider: React.FC<{ children: ReactNode }> = ({ childr
   const value: SubscriptionContextType = {
     isPremium: false,
     isSubscribed: false,
-    tier: 'free' as const,
+    tier: 'free',
+    tierName: 'Free',
     expiresAt: null,
     minutesUsed,
     minutesLimit,
     hasExceededUsageLimit: minutesUsed >= minutesLimit,
     updateUsage,
-    tierName: 'Free',
     subscriptionData: {
       meditation_minutes_used: minutesUsed,
       meditation_minutes_limit: minutesLimit
