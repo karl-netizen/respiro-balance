@@ -2,7 +2,7 @@
 import React, { createContext, useContext, ReactNode } from 'react';
 
 // Define the types for the chart configuration
-interface ChartConfig {
+export interface ChartConfig {
   [key: string]: {
     label: string;
     theme: {

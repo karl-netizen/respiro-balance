@@ -9,7 +9,13 @@ interface SubscriptionContextType {
   minutesLimit: number;
   hasExceededUsageLimit: boolean;
   updateUsage: (minutes: number) => void;
-  tierName?: string; // Added to fix error in AccountSection.tsx
+  tierName: string;
+  subscriptionData?: {
+    meditation_minutes_used: number;
+    meditation_minutes_limit: number;
+  };
+  startPremiumCheckout?: () => Promise<void>;
+  manageSubscription?: () => Promise<void>;
 }
 
 const SubscriptionContext = createContext<SubscriptionContextType | undefined>(undefined);
@@ -22,7 +28,7 @@ export const SubscriptionProvider: React.FC<{ children: ReactNode }> = ({ childr
     setMinutesUsed(prev => prev + minutes);
   };
   
-  const value = {
+  const value: SubscriptionContextType = {
     isPremium: false,
     tier: 'free' as const,
     expiresAt: null,
@@ -30,7 +36,19 @@ export const SubscriptionProvider: React.FC<{ children: ReactNode }> = ({ childr
     minutesLimit,
     hasExceededUsageLimit: minutesUsed >= minutesLimit,
     updateUsage,
-    tierName: 'Free' // Added to fix error in AccountSection.tsx
+    tierName: 'Free',
+    subscriptionData: {
+      meditation_minutes_used: minutesUsed,
+      meditation_minutes_limit: minutesLimit
+    },
+    startPremiumCheckout: async () => {
+      console.log('Upgrading to premium subscription');
+      // This would be implemented with actual payment processing
+    },
+    manageSubscription: async () => {
+      console.log('Managing existing subscription');
+      // This would be implemented with actual subscription management
+    }
   };
   
   return (
