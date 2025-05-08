@@ -1,112 +1,135 @@
-import { useOfflineStorage } from './useOfflineStorage';
-import { useMeditationApi } from './useMeditationApi';
-import { MeditationSession } from '@/types/meditation';
-import { User } from '@/hooks/useAuth';
 
-export function useOfflineSync(
-  userId: string | undefined,
-  updateUsage: (minutes: number) => void,
-  onSyncComplete: () => void
-) {
-  const { queueSessionForSync, getPendingSyncs, clearPendingSyncs } = useOfflineStorage();
-  const api = useMeditationApi(userId);
-  
-  // Process any pending offline syncs
-  const processOfflineSync = async (): Promise<void> => {
-    if (!userId) return;
-    
-    const pendingSyncs = getPendingSyncs();
-    if (!pendingSyncs.length) return;
-    
-    for (const sync of pendingSyncs) {
-      try {
-        if (sync.type === 'createSession') {
-          const sessionData = sync.data;
-          await api.createSession(sessionData);
-          
-          // If the session was completed, update usage
-          if (sessionData.completed && sessionData.duration) {
-            updateUsage(sessionData.duration);
-          }
-        } else if (sync.type === 'completeSession') {
-          await api.completeSession(sync.data.sessionId);
-          
-          // Update usage for completed session
-          if (sync.data.duration) {
-            updateUsage(sync.data.duration);
-          }
-        }
-      } catch (error) {
-        console.error('Failed to sync offline data:', error);
-        // Keep the sync in the queue if it fails
-        // In a more advanced implementation, we might want to limit retries
-        return;
-      }
-    }
-    
-    // Clear pending syncs if all were successful
-    clearPendingSyncs();
-    
-    // Notify that sync is complete
-    onSyncComplete();
-  };
-  
-  // Handle starting a session while offline
-  const handleOfflineSessionStart = (
-    newSession: Omit<MeditationSession, "id">, 
-    user: User
-  ): string => {
-    // Create temporary ID
-    const offlineId = `offline-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-    
-    // Queue for sync
-    queueSessionForSync({
-      ...newSession,
-      id: offlineId
-    });
-    
-    return offlineId;
-  };
-  
-  // Handle completing a session while offline
-  const handleOfflineSessionComplete = async (
-    sessionId: string, 
-    user: User
-  ): Promise<void> => {
-    // If it's an offline ID, update the queued session
-    if (sessionId.startsWith('offline-')) {
-      const pendingSyncs = getPendingSyncs();
-      const updatedSyncs = pendingSyncs.map(sync => {
-        if (sync.type === 'createSession' && sync.data.id === sessionId) {
-          return {
-            ...sync,
-            data: {
-              ...sync.data,
-              completed: true,
-              completed_at: new Date().toISOString()
-            }
-          };
-        }
-        return sync;
-      });
-      localStorage.setItem('pendingMeditationSyncs', JSON.stringify(updatedSyncs));
-    } else {
-      // It's a real session ID from the database, queue completion
-      queueSessionForSync({
-        type: 'completeSession',
-        data: {
-          sessionId,
-          completed: true,
-          completed_at: new Date().toISOString()
-        },
-        timestamp: new Date().toISOString()
-      });
-    }
-  };
-  
-  return {
-    processOfflineSync,
-    handleOfflineSessionStart,
-    handleOfflineSessionComplete
-  };
+import { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase';
+import { MeditationSession } from '@/types/meditation';
+import { useAuth } from '@/hooks/useAuth';
+
+// Define the offline sync state interface
+interface OfflineSyncState {
+  isSyncing: boolean;
+  lastSyncTime: Date | null;
+  pendingSessions: MeditationSession[];
+  syncErrors: string[];
 }
+
+export const useOfflineSync = () => {
+  const { user } = useAuth();
+  const [syncState, setSyncState] = useState<OfflineSyncState>({
+    isSyncing: false,
+    lastSyncTime: null,
+    pendingSessions: [],
+    syncErrors: []
+  });
+
+  // Load pending sessions from localStorage
+  const loadPendingSessions = () => {
+    try {
+      const pendingSessionsStr = localStorage.getItem('pendingMeditationSessions');
+      if (pendingSessionsStr) {
+        const pendingSessions = JSON.parse(pendingSessionsStr) as MeditationSession[];
+        setSyncState(prev => ({ ...prev, pendingSessions }));
+      }
+    } catch (err: any) {
+      console.error('Error loading pending sessions:', err);
+    }
+  };
+
+  // Save pending sessions to localStorage
+  const savePendingSessions = (sessions: MeditationSession[]) => {
+    try {
+      localStorage.setItem('pendingMeditationSessions', JSON.stringify(sessions));
+    } catch (err: any) {
+      console.error('Error saving pending sessions:', err);
+    }
+  };
+
+  // Add a session to the pending queue
+  const addPendingSession = (session: MeditationSession) => {
+    setSyncState(prev => {
+      const updatedSessions = [...prev.pendingSessions, session];
+      savePendingSessions(updatedSessions);
+      return { ...prev, pendingSessions: updatedSessions };
+    });
+  };
+
+  // Sync pending sessions with the server
+  const syncPendingSessions = async () => {
+    if (syncState.isSyncing || !user || syncState.pendingSessions.length === 0) {
+      return;
+    }
+
+    setSyncState(prev => ({ ...prev, isSyncing: true }));
+    const errors: string[] = [];
+
+    try {
+      const sessionsToSync = [...syncState.pendingSessions];
+      const successfulSyncs: string[] = [];
+
+      for (const session of sessionsToSync) {
+        try {
+          // Prepare the session for syncing (ensure required fields)
+          const syncedSession: Partial<MeditationSession> = {
+            ...session,
+            user_id: user.id,
+            session_type: session.session_type || 'timed',
+          };
+
+          // Remove local-only fields if any
+          delete (syncedSession as any).localId;
+
+          // Add to Supabase
+          const { error } = await supabase
+            .from('meditation_sessions')
+            .insert([syncedSession]);
+
+          if (error) {
+            throw new Error(`Supabase error: ${error.message}`);
+          }
+
+          successfulSyncs.push(session.id);
+        } catch (err: any) {
+          errors.push(`Failed to sync session ${session.id}: ${err.message}`);
+        }
+      }
+
+      // Remove successfully synced sessions
+      if (successfulSyncs.length > 0) {
+        const remainingSessions = syncState.pendingSessions.filter(
+          session => !successfulSyncs.includes(session.id)
+        );
+        savePendingSessions(remainingSessions);
+        setSyncState(prev => ({
+          ...prev,
+          pendingSessions: remainingSessions,
+          lastSyncTime: new Date()
+        }));
+      }
+    } catch (err: any) {
+      errors.push(`General sync error: ${err.message}`);
+    } finally {
+      setSyncState(prev => ({ 
+        ...prev, 
+        isSyncing: false,
+        syncErrors: [...prev.syncErrors, ...errors]
+      }));
+    }
+  };
+
+  // Load pending sessions on mount
+  useEffect(() => {
+    loadPendingSessions();
+  }, []);
+
+  // Auto-sync when user changes (becomes available)
+  useEffect(() => {
+    if (user && syncState.pendingSessions.length > 0) {
+      syncPendingSessions();
+    }
+  }, [user, syncState.pendingSessions.length]);
+
+  return {
+    syncState,
+    addPendingSession,
+    syncPendingSessions
+  };
+};

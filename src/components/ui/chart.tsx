@@ -30,10 +30,12 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
     <ChartContext.Provider value={config}>
       <div 
         className={className}
-        style={Object.entries(config).reduce((styles, [key, value]) => ({
-          ...styles,
-          [`--color-${key}`]: value.theme.light
-        }), {})}
+        style={{
+          ...Object.entries(config).reduce((styles, [key, value]) => ({
+            ...styles,
+            [`--color-${key}`]: value.theme.light
+          }), {})
+        } as React.CSSProperties}
       >
         {children}
       </div>
@@ -42,7 +44,7 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
 };
 
 // Custom tooltip component that uses the chart config
-export const ChartTooltipContent: React.FC<any> = (props) => {
+export const ChartTooltipContent: React.FC<{ active?: boolean; payload?: any[]; label?: string; }> = (props) => {
   const { active, payload, label } = props;
   const config = useContext(ChartContext);
   
@@ -72,7 +74,7 @@ export const ChartTooltipContent: React.FC<any> = (props) => {
   );
 };
 
-export const ChartLegendContent: React.FC<any> = (props) => {
+export const ChartLegendContent: React.FC<{ payload?: any[] }> = (props) => {
   const { payload } = props;
   const config = useContext(ChartContext);
   

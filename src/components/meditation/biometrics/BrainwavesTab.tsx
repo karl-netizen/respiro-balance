@@ -23,25 +23,28 @@ const BrainwavesTab: React.FC<BrainwavesTabProps> = ({ biometricData }) => {
     return Math.min(Math.max(percentage, 0), 100);
   };
 
+  const alphaValue = biometricData.brainwaves?.alpha || 0;
+  const thetaValue = biometricData.brainwaves?.theta || 0;
+
   return (
     <div className="space-y-3">
       <div>
         <div className="flex justify-between text-sm text-muted-foreground mb-1">
           <span>Alpha Waves (Relaxation)</span>
-          <span>{`${((biometricData.brainwaves?.alpha || 0)).toFixed(1)} μV`}</span>
+          <span>{`${alphaValue.toFixed(1)} μV`}</span>
         </div>
         <Progress 
-          value={brainwaveToPercentage(biometricData.brainwaves?.alpha || 0, 'alpha')}
+          value={brainwaveToPercentage(alphaValue, 'alpha')}
           className="h-2"
         />
       </div>
       <div>
         <div className="flex justify-between text-sm text-muted-foreground mb-1">
           <span>Theta Waves (Meditation)</span>
-          <span>{`${((biometricData.brainwaves?.theta || 0)).toFixed(1)} μV`}</span>
+          <span>{`${thetaValue.toFixed(1)} μV`}</span>
         </div>
         <Progress 
-          value={brainwaveToPercentage(biometricData.brainwaves?.theta || 0, 'theta')}
+          value={brainwaveToPercentage(thetaValue, 'theta')}
           className="h-2"
         />
       </div>

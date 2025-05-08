@@ -44,10 +44,10 @@ const HeartRateVariabilityTab: React.FC<HeartRateVariabilityTabProps> = ({
       <div>
         <div className="flex justify-between text-sm text-muted-foreground mb-1">
           <span>Heart Rate</span>
-          <span>{`${biometricData.heartRate || biometricData.heart_rate || 0} bpm`}</span>
+          <span>{`${biometricData.heart_rate || biometricData.heartRate || 0} bpm`}</span>
         </div>
         <Progress 
-          value={((biometricData.heartRate || biometricData.heart_rate || 0) - 50) / 100 * 100}
+          value={((biometricData.heart_rate || biometricData.heartRate || 0) - 50) / 100 * 100}
           className="h-2"
         />
         {showChange && change && (

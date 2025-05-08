@@ -19,10 +19,10 @@ const BreathingTab: React.FC<BreathingTabProps> = ({
       <div>
         <div className="flex justify-between text-sm text-muted-foreground mb-1">
           <span>Breath Rate</span>
-          <span>{`${(biometricData.breathRate || biometricData.respiratory_rate || 0).toFixed(1)} bpm`}</span>
+          <span>{`${(biometricData.breath_rate || biometricData.breathRate || biometricData.respiratory_rate || 0).toFixed(1)} bpm`}</span>
         </div>
         <Progress 
-          value={((biometricData.breathRate || biometricData.respiratory_rate || 0) / 20) * 100}
+          value={((biometricData.breath_rate || biometricData.breathRate || biometricData.respiratory_rate || 0) / 20) * 100}
           className="h-2"
         />
         {showChange && change && (
