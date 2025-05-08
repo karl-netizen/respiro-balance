@@ -1,43 +1,41 @@
 
 import React from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import HeartRateTab from '../tabs/HeartRateTab';
-import BreathingTab from '../../meditation/biometrics/BreathingTab';
-import StressTab from '../tabs/StressTab';
 import { BiometricData } from '@/components/meditation/types/BiometricTypes';
 
 interface TabsContainerProps {
-  activeTab: string;
-  onTabChange: (tab: string) => void;
-  biometricData: BiometricData;
+  data: BiometricData;
 }
 
-const TabsContainer: React.FC<TabsContainerProps> = ({ 
-  activeTab, 
-  onTabChange,
-  biometricData
-}) => {
+export const TabsContainer: React.FC<TabsContainerProps> = ({ data }) => {
+  if (!data.brainwaves) return null;
+  
   return (
-    <Tabs value={activeTab} onValueChange={onTabChange} className="w-full">
-      <TabsList className="w-full">
-        <TabsTrigger value="heart-rate" className="flex-1">Heart</TabsTrigger>
-        <TabsTrigger value="breathing" className="flex-1">Breathing</TabsTrigger>
-        <TabsTrigger value="stress" className="flex-1">Stress</TabsTrigger>
-      </TabsList>
-      
-      <TabsContent value="heart-rate" className="pt-4">
-        <HeartRateTab biometricData={biometricData} />
-      </TabsContent>
-      
-      <TabsContent value="breathing" className="pt-4">
-        <BreathingTab biometricData={biometricData} />
-      </TabsContent>
-      
-      <TabsContent value="stress" className="pt-4">
-        <StressTab biometricData={biometricData} />
-      </TabsContent>
-    </Tabs>
+    <div className="mt-4">
+      <div className="col-span-full bg-card rounded-md p-3 shadow-sm">
+        <h3 className="text-lg font-medium mb-1">Brainwaves</h3>
+        <div className="grid grid-cols-5 gap-2">
+          <div>
+            <p className="text-sm">Alpha</p>
+            <p className="text-xl font-bold">{data.brainwaves.alpha.toFixed(2)}</p>
+          </div>
+          <div>
+            <p className="text-sm">Beta</p>
+            <p className="text-xl font-bold">{data.brainwaves.beta.toFixed(2)}</p>
+          </div>
+          <div>
+            <p className="text-sm">Delta</p>
+            <p className="text-xl font-bold">{data.brainwaves.delta.toFixed(2)}</p>
+          </div>
+          <div>
+            <p className="text-sm">Gamma</p>
+            <p className="text-xl font-bold">{data.brainwaves.gamma.toFixed(2)}</p>
+          </div>
+          <div>
+            <p className="text-sm">Theta</p>
+            <p className="text-xl font-bold">{data.brainwaves.theta.toFixed(2)}</p>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
-
-export default TabsContainer;

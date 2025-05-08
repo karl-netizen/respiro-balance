@@ -12,6 +12,7 @@ import { BarChart3, Target, Save } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FocusStats } from './FocusStats';
 import { FocusHistory } from './FocusHistory';
+import { FocusSession } from './types';
 
 const FocusMode: React.FC = () => {
   const { 
@@ -26,7 +27,21 @@ const FocusMode: React.FC = () => {
 
   const renderContent = () => {
     if (timerState === 'completed') {
-      return <FocusSessionSummary session={currentSession} />;
+      // Convert the current session to match the expected FocusSession type
+      const formattedSession: Partial<FocusSession> = {
+        id: currentSession?.id || '',
+        user_id: currentSession?.userId || '',
+        startTime: currentSession?.startTime || '',
+        endTime: currentSession?.endTime,
+        duration: currentSession?.duration,
+        task_completed: currentSession?.completed || false,
+        distraction_count: currentSession?.distractions || 0,
+        focus_score: currentSession?.focusScore,
+        notes: currentSession?.notes,
+        tags: currentSession?.tags
+      };
+      
+      return <FocusSessionSummary session={formattedSession} />;
     }
     
     return (
@@ -91,7 +106,19 @@ const FocusMode: React.FC = () => {
         
         <TabsContent value="stats" className="p-0">
           <CardContent className="pt-6">
-            <FocusStats stats={stats} />
+            {/* Convert stats to match the expected FocusStats type */}
+            {stats && <FocusStats stats={{
+              totalSessions: stats.totalSessions || 0,
+              totalMinutes: stats.totalMinutes || stats.totalFocusTime || 0,
+              averageSessionLength: stats.averageFocusTime || 0,
+              mostProductiveDay: stats.mostProductiveDay || 'Monday',
+              mostProductiveTime: stats.mostProductiveTime || '9:00 AM',
+              highestFocusScore: stats.averageFocusScore || 0,
+              weeklyMinutes: [0, 0, 0, 0, 0, 0, 0], // default empty array
+              distractionRate: stats.distractionsPerSession || 0,
+              completionRate: stats.completionRate || 0,
+              streak: stats.currentStreak || 0
+            }} />}
           </CardContent>
         </TabsContent>
         
