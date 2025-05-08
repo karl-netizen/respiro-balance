@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { useFocusMode } from '@/context/FocusProvider';
+import { useFocus } from '@/context/FocusProvider';
 import { Button } from '@/components/ui/button';
 import { FocusSession } from './types';
 import { Badge } from '@/components/ui/badge';
@@ -12,7 +11,7 @@ interface FocusSessionSummaryProps {
 }
 
 export const FocusSessionSummary: React.FC<FocusSessionSummaryProps> = ({ session }) => {
-  const { startSession } = useFocusMode();
+  const { startSession } = useFocus();
   
   if (!session) {
     return (

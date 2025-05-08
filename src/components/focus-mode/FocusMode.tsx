@@ -3,12 +3,12 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { useFocusMode } from '@/context/FocusProvider';
+import { useFocus } from '@/context/FocusProvider';
 import { FocusTimer } from './FocusTimer';
 import { FocusControls } from './FocusControls';
 import { FocusSessionSummary } from './FocusSessionSummary';
 import { FocusSettingsDialog } from './FocusSettingsDialog';
-import { BarChart3, Target, Save } from 'lucide-react'; // Changed Chart to BarChart3
+import { BarChart3, Target, Save } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FocusStats } from './FocusStats';
 import { FocusHistory } from './FocusHistory';
@@ -19,7 +19,7 @@ const FocusMode: React.FC = () => {
     startSession, 
     currentSession,
     stats
-  } = useFocusMode();
+  } = useFocus();
   
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('timer');

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
@@ -6,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { useFocusMode } from '@/context/FocusProvider';
+import { useFocus } from '@/context/FocusProvider';
 
 interface FocusSettingsDialogProps {
   open: boolean;
@@ -17,7 +16,7 @@ export const FocusSettingsDialog: React.FC<FocusSettingsDialogProps> = ({
   open, 
   onOpenChange 
 }) => {
-  const { settings, updateSettings } = useFocusMode();
+  const { settings, updateSettings } = useFocus();
   
   const handleNumberChange = (key: keyof typeof settings) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value);

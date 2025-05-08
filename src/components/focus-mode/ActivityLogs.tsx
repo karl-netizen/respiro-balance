@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { useFocusMode } from '@/context/FocusProvider';
+import { useFocus } from '@/context/FocusProvider';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -8,7 +7,7 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 
 export const ActivityLogs: React.FC = () => {
-  const { currentSession, timerState } = useFocusMode();
+  const { currentSession, timerState } = useFocus();
   const [isOpen, setIsOpen] = useState(false);
   const [note, setNote] = useState('');
   

@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { useFocusMode } from '@/context/FocusProvider';
+import { useFocus } from '@/context/FocusProvider';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Clock } from 'lucide-react';
@@ -12,7 +11,7 @@ export const FocusTimer: React.FC = () => {
     progress, 
     currentInterval,
     settings
-  } = useFocusMode();
+  } = useFocus();
   
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);

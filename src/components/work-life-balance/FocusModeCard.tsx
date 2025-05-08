@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,11 +8,11 @@ import { useUserPreferences } from "@/context";
 import { formatTime } from "./utils";
 import { Progress } from "@/components/ui/progress";
 import { useNavigate } from "react-router-dom";
-import { useFocusMode } from "@/context/FocusProvider";
+import { useFocus } from "@/context/FocusProvider";
 
 const FocusModeCard = () => {
   const { preferences } = useUserPreferences();
-  const { isActive, timerState, remaining, progress, stats } = useFocusMode();
+  const { isActive, timerState, remaining, progress, stats } = useFocus();
   const navigate = useNavigate();
 
   const getTimeDisplay = () => {

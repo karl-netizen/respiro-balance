@@ -1,13 +1,13 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BarChart3 } from 'lucide-react'; // Changed from Chart to BarChart3
+import { BarChart3 } from 'lucide-react'; 
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { useFocusMode } from '@/context/FocusProvider';
+import { useFocus } from '@/context/FocusProvider';
 import { FocusActivityEntry } from './types';
 
 export const FocusInsights: React.FC = () => {
-  const { stats } = useFocusMode();
+  const { stats } = useFocus();
+  
   const [data, setData] = React.useState<FocusActivityEntry[]>([]);
   
   React.useEffect(() => {

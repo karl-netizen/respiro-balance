@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useFocusMode } from '@/context/FocusProvider';
+import { useFocus } from '@/context/FocusProvider';
 import { Button } from '@/components/ui/button';
 import { ActivityLogs } from './ActivityLogs';
 import { Play, Pause, SkipForward, Ban, Save } from 'lucide-react';
@@ -13,7 +13,7 @@ export const FocusControls: React.FC = () => {
     completeSession, 
     skipInterval,
     logDistraction
-  } = useFocusMode();
+  } = useFocus();
   
   const isPaused = timerState === 'paused';
   const isActive = timerState !== 'idle' && timerState !== 'completed';
