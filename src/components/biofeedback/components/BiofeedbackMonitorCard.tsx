@@ -42,10 +42,12 @@ const BiofeedbackMonitorCard: React.FC<BiofeedbackMonitorCardProps> = ({
           <ConnectionPrompt isMonitoring={isMonitoring} />
         ) : (
           <BiometricSummary 
-            heartRate={biometricData.heartRate}
-            hrv={biometricData.hrv}
-            stress={biometricData.stress}
-            coherence={biometricData.coherence}
+            data={{
+              heartRate: biometricData.heartRate,
+              hrv: biometricData.hrv,
+              stress: biometricData.stress,
+              coherence: biometricData.coherence
+            }}
             loading={isMonitoring && !biometricData.heartRate}
           />
         )}

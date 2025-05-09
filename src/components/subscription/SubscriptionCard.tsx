@@ -1,14 +1,18 @@
 
 import React from 'react';
 import { useSubscriptionContext } from '@/hooks/useSubscriptionContext';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Crown, Check, Calendar } from 'lucide-react';
 import { format } from 'date-fns';
 
-export const SubscriptionCard = () => {
+export interface SubscriptionCardProps {
+  // Add any props if needed
+}
+
+export const SubscriptionCard: React.FC<SubscriptionCardProps> = () => {
   const { 
     subscriptionData, 
     isPremium, 
@@ -19,19 +23,29 @@ export const SubscriptionCard = () => {
   
   const handleUpgrade = async () => {
     try {
-      const checkoutUrl = await startPremiumCheckout();
-      window.location.href = checkoutUrl;
+      if (startPremiumCheckout) {
+        const checkoutUrl = await startPremiumCheckout();
+        if (checkoutUrl) window.location.href = checkoutUrl;
+        return checkoutUrl || ""; // Return empty string if undefined
+      }
+      return "";
     } catch (error) {
       console.error('Error starting checkout:', error);
+      return "";
     }
   };
   
   const handleManage = async () => {
     try {
-      const portalUrl = await manageSubscription();
-      window.location.href = portalUrl;
+      if (manageSubscription) {
+        const portalUrl = await manageSubscription();
+        if (portalUrl) window.location.href = portalUrl;
+        return portalUrl || ""; // Return empty string if undefined
+      }
+      return "";
     } catch (error) {
       console.error('Error opening customer portal:', error);
+      return "";
     }
   };
   

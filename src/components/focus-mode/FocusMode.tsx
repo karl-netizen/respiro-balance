@@ -28,20 +28,21 @@ const FocusMode: React.FC = () => {
   const renderContent = () => {
     if (timerState === 'completed') {
       // Convert the current session to match the expected FocusSession type
-      const formattedSession: Partial<FocusSession> = {
+      const formattedSession: FocusSession = {
         id: currentSession?.id || '',
-        userId: currentSession?.userId || '',
-        startTime: currentSession?.startTime || '',
-        endTime: currentSession?.endTime,
+        user_id: currentSession?.user_id || '', // Corrected from userId to user_id
+        startTime: currentSession?.startTime ? currentSession.startTime.toString() : '', // Convert to string if needed
+        endTime: currentSession?.endTime ? currentSession.endTime.toString() : undefined, // Convert to string if needed
         duration: currentSession?.duration,
-        completed: currentSession?.completed || false,
-        distractions: currentSession?.distractions || 0,
-        focusScore: currentSession?.focusScore,
-        notes: currentSession?.notes,
-        tags: currentSession?.tags
+        label: currentSession?.label,
+        tags: currentSession?.tags || [],
+        task_completed: !!currentSession?.completed, // Ensure boolean, mapping completed to task_completed
+        distraction_count: currentSession?.distractions || 0, // Map distractions to distraction_count
+        focus_score: currentSession?.focusScore, // Map focusScore to focus_score
+        notes: currentSession?.notes
       };
       
-      return <FocusSessionSummary session={formattedSession} />;
+      return <FocusSessionSummary session={formattedSession as FocusSession} />;
     }
     
     return (
@@ -106,7 +107,12 @@ const FocusMode: React.FC = () => {
         
         <TabsContent value="stats" className="p-0">
           <CardContent className="pt-6">
-            {stats && <FocusStats stats={stats} />}
+            {stats && 
+              <FocusStats stats={{
+                ...stats,
+                mostProductiveDay: stats.mostProductiveDay || 'N/A' // Ensure required field has a value
+              }} />
+            }
           </CardContent>
         </TabsContent>
         
