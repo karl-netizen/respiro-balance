@@ -20,6 +20,8 @@ import Breathe from './pages/Breathe';
 import LandingPage from './pages/LandingPage';
 import Meditate from './pages/Meditate';
 import MeditationSessionView from './pages/MeditationSessionView';
+import MorningRitual from './pages/MorningRitual';
+import Account from './pages/Account';
 
 function App() {
   return (
@@ -41,6 +43,8 @@ function App() {
                   <Route path="/breathe" element={<Breathe />} />
                   <Route path="/meditate" element={<Meditate />} />
                   <Route path="/meditate/session/:sessionId" element={<MeditationSessionView />} />
+                  <Route path="/morning-ritual" element={<MorningRitual />} />
+                  <Route path="/account" element={<Account />} />
                 </Routes>
               </FocusProvider>
             </SubscriptionProvider>
