@@ -1,5 +1,7 @@
 
 import React from 'react';
+import { Button } from '@/components/ui/button';
+import { Play, Pause } from 'lucide-react';
 
 interface BiofeedbackControlsProps {
   isMonitoring: boolean;
@@ -7,33 +9,45 @@ interface BiofeedbackControlsProps {
   onStopMonitoring: () => void;
 }
 
-export const BiofeedbackControls: React.FC<BiofeedbackControlsProps> = ({
-  isMonitoring,
-  onStartMonitoring,
-  onStopMonitoring
+export const BiofeedbackControls: React.FC<BiofeedbackControlsProps> = ({ 
+  isMonitoring, 
+  onStartMonitoring, 
+  onStopMonitoring 
 }) => {
+  const [isStarting, setIsStarting] = React.useState(false);
+
+  const handleStartMonitoring = async () => {
+    setIsStarting(true);
+    try {
+      await onStartMonitoring();
+    } finally {
+      setIsStarting(false);
+    }
+  };
+
   return (
-    <div className="flex justify-between items-center mb-4">
-      <h2 className="text-xl font-semibold">Biofeedback Data</h2>
-      <div>
-        {isMonitoring ? (
-          <button 
-            onClick={onStopMonitoring}
-            className="bg-destructive text-destructive-foreground px-4 py-2 rounded-md"
-          >
-            Stop Monitoring
-          </button>
-        ) : (
-          <button 
-            onClick={async () => {
-              await onStartMonitoring();
-            }}
-            className="bg-primary text-primary-foreground px-4 py-2 rounded-md"
-          >
-            Start Monitoring
-          </button>
-        )}
-      </div>
+    <div className="flex justify-center my-4">
+      {isMonitoring ? (
+        <Button 
+          variant="outline" 
+          onClick={onStopMonitoring}
+          className="flex items-center gap-2"
+        >
+          <Pause className="h-4 w-4" />
+          Stop Monitoring
+        </Button>
+      ) : (
+        <Button 
+          onClick={handleStartMonitoring}
+          disabled={isStarting}
+          className="flex items-center gap-2"
+        >
+          <Play className="h-4 w-4" />
+          {isStarting ? 'Starting...' : 'Start Monitoring'}
+        </Button>
+      )}
     </div>
   );
 };
+
+export default BiofeedbackControls;
