@@ -49,6 +49,32 @@ const BiofeedbackCard = () => {
     }
   };
 
+  // Create promise-based handlers to match the new component props
+  const handleScanForDevices = async (): Promise<void> => {
+    setIsConnecting(true);
+    try {
+      await connectBluetoothDevice();
+    } finally {
+      setIsConnecting(false);
+    }
+  };
+
+  const handleConnectDeviceById = async (deviceId: string): Promise<void> => {
+    try {
+      await connectBluetoothDevice();
+    } catch (error) {
+      console.error("Failed to connect device:", error);
+    }
+  };
+
+  const handleDisconnectDeviceById = async (deviceId: string): Promise<void> => {
+    try {
+      await disconnectBluetoothDevice(deviceId);
+    } catch (error) {
+      console.error("Failed to disconnect device:", error);
+    }
+  };
+
   return (
     <Card className="bg-white/80 backdrop-blur-sm hover:shadow-lg transition-all duration-300">
       <CardHeader>
@@ -67,9 +93,11 @@ const BiofeedbackCard = () => {
           {preferences.hasWearableDevice ? (
             <div>
               <ConnectedDevicesList 
-                devices={preferences.connectedDevices} 
-                isTeamOrEnterprise={isTeamOrEnterprise}
-                onDisconnect={disconnectBluetoothDevice}
+                devices={preferences.connectedDevices || []} 
+                onScanForDevices={handleScanForDevices}
+                onConnectDevice={handleConnectDeviceById}
+                onDisconnectDevice={handleDisconnectDeviceById}
+                disabled={isConnecting}
               />
               
               {isTeamOrEnterprise && showTeamFeatures && (
@@ -79,7 +107,10 @@ const BiofeedbackCard = () => {
           ) : isConnecting ? (
             <DeviceSearching />
           ) : (
-            <NoDevicesView isTeamOrEnterprise={isTeamOrEnterprise} />
+            <NoDevicesView 
+              onScanForDevices={handleScanForDevices}
+              disabled={isConnecting}
+            />
           )}
           
           <div className="flex items-center space-x-2 pt-4">

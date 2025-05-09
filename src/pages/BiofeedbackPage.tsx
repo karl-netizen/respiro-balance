@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { 
@@ -9,11 +9,11 @@ import {
   DeviceSearching,
   TeamFeatures
 } from '@/components/biofeedback';
-import { HeartRateTab, StressTab, HeartRateTabProps, StressTabProps } from '@/components/biofeedback/tabs';
+import { HeartRateTab, StressTab } from '@/components/biofeedback/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { useBiofeedback } from '@/hooks/biofeedback/useBiofeedback';
-import { Heart, Activity, Search, Settings } from 'lucide-react';
+import { Heart, Activity, Settings } from 'lucide-react';
 import { BluetoothDevice } from '@/types/supabase';
 
 // Define the biometric data interface
@@ -23,20 +23,6 @@ interface BiometricData {
   current: number;
   resting?: number;
   history: number[];
-}
-
-// Modified Component prop types to match the actual implementations
-interface NoDevicesViewProps {
-  onScan: () => Promise<boolean | void>;
-  disabled: boolean;
-}
-
-interface ConnectedDevicesListProps {
-  devices: BluetoothDevice[];
-  onScan: () => Promise<boolean | void>;
-  onConnect: (deviceId: string) => Promise<boolean>;
-  onDisconnect: (deviceId: string) => Promise<boolean>;
-  disabled: boolean;
 }
 
 // Updated BiofeedbackDisplayProps to match the actual component
@@ -109,14 +95,28 @@ const BiofeedbackPage: React.FC = () => {
     history: [25, 30, 28, 35, 40, 32, 28]
   };
 
-  // Fix the return type issue by adapting this function to return boolean or void
-  const handleScanForDevices = async (): Promise<boolean | void> => {
+  // Updated handlers to match the new component props
+  const handleScanForDevices = async (): Promise<void> => {
     try {
-      const result = await scanForDevices();
-      return result;
+      await scanForDevices();
     } catch (error) {
       console.error('Error scanning for devices:', error);
-      return false;
+    }
+  };
+
+  const handleConnectDevice = async (deviceId: string): Promise<void> => {
+    try {
+      await connectDevice(deviceId);
+    } catch (error) {
+      console.error('Error connecting device:', error);
+    }
+  };
+
+  const handleDisconnectDevice = async (deviceId: string): Promise<void> => {
+    try {
+      await disconnectDevice(deviceId);
+    } catch (error) {
+      console.error('Error disconnecting device:', error);
     }
   };
 
@@ -151,15 +151,15 @@ const BiofeedbackPage: React.FC = () => {
                   <DeviceSearching />
                 ) : devices.length === 0 ? (
                   <NoDevicesView
-                    onScan={handleScanForDevices}
+                    onScanForDevices={handleScanForDevices}
                     disabled={isScanning || isConnecting}
                   />
                 ) : (
                   <ConnectedDevicesList
                     devices={devices}
-                    onScan={handleScanForDevices}
-                    onConnect={connectDevice}
-                    onDisconnect={disconnectDevice}
+                    onScanForDevices={handleScanForDevices}
+                    onConnectDevice={handleConnectDevice}
+                    onDisconnectDevice={handleDisconnectDevice}
                     disabled={isScanning || isConnecting}
                   />
                 )}
