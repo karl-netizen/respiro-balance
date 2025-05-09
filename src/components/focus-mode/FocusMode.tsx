@@ -36,9 +36,9 @@ const FocusMode: React.FC = () => {
         duration: currentSession?.duration,
         label: currentSession?.label || '',
         tags: currentSession?.tags || [],
-        task_completed: !!currentSession?.completed,
-        distraction_count: currentSession?.distractions || 0,
-        focus_score: currentSession?.focusScore,
+        taskCompleted: !!currentSession?.completed,
+        distractionCount: currentSession?.distractions || 0,
+        focusScore: currentSession?.focusScore,
         notes: currentSession?.notes
       };
       
@@ -110,12 +110,16 @@ const FocusMode: React.FC = () => {
             {stats && 
               <FocusStats stats={{
                 ...stats,
-                mostProductiveDay: stats.mostProductiveDay || 'N/A',
-                mostProductiveTime: stats.mostProductiveTime || 'N/A', // Make sure this is provided
+                totalSessions: stats.totalSessions,
+                totalMinutes: stats.totalMinutes,
                 averageSessionLength: stats.averageSessionLength || 0,
+                mostProductiveDay: stats.mostProductiveDay || 'N/A',
+                mostProductiveTime: stats.mostProductiveTime || 'N/A',
+                highestFocusScore: stats.highestFocusScore || 0,
                 weeklyMinutes: stats.weeklyMinutes || [0,0,0,0,0,0,0],
                 distractionRate: stats.distractionRate || 0,
-                completionRate: stats.completionRate || 0
+                completionRate: stats.completionRate || 0,
+                streak: stats.streak || 0
               }} />
             }
           </CardContent>

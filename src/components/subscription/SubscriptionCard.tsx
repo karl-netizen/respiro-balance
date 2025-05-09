@@ -7,6 +7,13 @@ export interface SubscriptionCardProps {
   // Add any props if needed
 }
 
+// Define the expected SubscriptionData type to match our usage
+interface SubscriptionData {
+  status?: string;
+  current_period_end?: string;
+  // Add other fields as needed
+}
+
 export const SubscriptionCard: React.FC<SubscriptionCardProps> = () => {
   const { 
     isSubscribed, 
@@ -52,11 +59,11 @@ export const SubscriptionCard: React.FC<SubscriptionCardProps> = () => {
             {subscriptionData.status === 'active' ? (
               <p>
                 Your subscription is active until{' '}
-                {new Date(subscriptionData.current_period_end).toLocaleDateString()}
+                {new Date(subscriptionData.current_period_end || Date.now()).toLocaleDateString()}
               </p>
             ) : (
               <p>
-                Your subscription status: {subscriptionData.status}
+                Your subscription status: {subscriptionData.status || 'unknown'}
               </p>
             )}
           </div>

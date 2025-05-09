@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -27,15 +28,15 @@ export const FocusStats: React.FC<FocusStatsProps> = ({ stats }) => {
         <div className="flex justify-between items-center">
           <h3 className="text-sm font-medium">Weekly Focus Goal</h3>
           <span className="text-sm text-muted-foreground">
-            {stats.weeklyFocusTime} / {stats.weeklyFocusGoal} minutes
+            {stats.weeklyFocusTime || 0} / {stats.weeklyFocusGoal || 120} minutes
           </span>
         </div>
         
-        <Progress value={stats.weeklyFocusProgress} className="h-2" />
+        <Progress value={stats.weeklyFocusProgress || 0} className="h-2" />
         
         <p className="text-xs text-muted-foreground">
-          {stats.weeklyFocusProgress < 100
-            ? `${Math.round(stats.weeklyFocusProgress)}% of your weekly goal`
+          {(stats.weeklyFocusProgress || 0) < 100
+            ? `${Math.round(stats.weeklyFocusProgress || 0)}% of your weekly goal`
             : "Weekly goal achieved! 🎉"
           }
         </p>
@@ -45,7 +46,7 @@ export const FocusStats: React.FC<FocusStatsProps> = ({ stats }) => {
       <div className="grid grid-cols-2 gap-4">
         <StatCard 
           title="Total Focus Time"
-          value={`${stats.totalFocusTime} min`}
+          value={`${stats.totalFocusTime || stats.totalMinutes} min`}
           icon={<Clock className="h-4 w-4 text-blue-500" />}
         />
         
@@ -57,13 +58,13 @@ export const FocusStats: React.FC<FocusStatsProps> = ({ stats }) => {
         
         <StatCard 
           title="Focus Score"
-          value={`${Math.round(stats.averageFocusScore)}/100`}
+          value={`${Math.round(stats.averageFocusScore || stats.highestFocusScore || 0)}/100`}
           icon={<BarChart3 className="h-4 w-4 text-yellow-500" />}
         />
         
         <StatCard 
           title="Best Streak"
-          value={`${stats.longestStreak} days`}
+          value={`${stats.longestStreak || stats.streak} days`}
           icon={<Trophy className="h-4 w-4 text-orange-500" />}
         />
       </div>
@@ -88,7 +89,7 @@ export const FocusStats: React.FC<FocusStatsProps> = ({ stats }) => {
             </li>
             <li className="flex justify-between">
               <span>Current streak</span>
-              <span className="font-medium">{stats.currentStreak} days</span>
+              <span className="font-medium">{stats.currentStreak || 0} days</span>
             </li>
           </ul>
         </div>
