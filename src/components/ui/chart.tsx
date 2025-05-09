@@ -44,7 +44,13 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
 };
 
 // Custom tooltip component that uses the chart config
-export const ChartTooltipContent: React.FC<{ active?: boolean; payload?: any[]; label?: string; }> = (props) => {
+export interface ChartTooltipContentProps {
+  active?: boolean;
+  payload?: any[];
+  label?: string;
+}
+
+export const ChartTooltipContent: React.FC<ChartTooltipContentProps> = (props) => {
   const { active, payload, label } = props;
   const config = useContext(ChartContext);
   
@@ -74,7 +80,11 @@ export const ChartTooltipContent: React.FC<{ active?: boolean; payload?: any[]; 
   );
 };
 
-export const ChartLegendContent: React.FC<{ payload?: any[] }> = (props) => {
+export interface ChartLegendContentProps {
+  payload?: any[];
+}
+
+export const ChartLegendContent: React.FC<ChartLegendContentProps> = (props) => {
   const { payload } = props;
   const config = useContext(ChartContext);
   
@@ -101,7 +111,16 @@ export const ChartLegendContent: React.FC<{ payload?: any[] }> = (props) => {
 };
 
 // Export the ChartTooltip for direct use
-export const ChartTooltip = ({ children }: { children: ReactNode }) => {
+export interface ChartTooltipProps {
+  children?: ReactNode;
+  content?: React.ReactElement;
+}
+
+export const ChartTooltip: React.FC<ChartTooltipProps> = ({ children, content }) => {
+  if (content) {
+    return content;
+  }
+  
   return (
     <div className="bg-popover/95 border rounded-md shadow-md p-2">
       {children}

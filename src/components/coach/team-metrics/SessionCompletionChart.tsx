@@ -2,7 +2,7 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { DateRange } from "react-day-picker";
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { ChartConfig, ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { generateMockChartData } from "@/components/coach/utils/chartUtils";
 
@@ -15,10 +15,28 @@ const SessionCompletionChart: React.FC<SessionCompletionChartProps> = ({ timeRan
   // Generate mock data based on the selected time range
   const data = generateMockChartData(timeRange, "completion");
 
-  const chartConfig = {
-    completed: { color: "hsl(var(--primary))" },
-    scheduled: { color: "hsl(var(--muted-foreground))" },
-    missed: { color: "hsl(var(--destructive))" }
+  const chartConfig: ChartConfig = {
+    completed: {
+      label: "Completed",
+      theme: {
+        light: "hsl(var(--primary))",
+        dark: "hsl(var(--primary-dark))"
+      }
+    },
+    scheduled: {
+      label: "Scheduled",
+      theme: {
+        light: "hsl(var(--muted-foreground))",
+        dark: "hsl(var(--muted-foreground-dark))"
+      }
+    },
+    missed: {
+      label: "Missed",
+      theme: {
+        light: "hsl(var(--destructive))",
+        dark: "hsl(var(--destructive-dark))"
+      }
+    }
   };
 
   return (
@@ -31,7 +49,7 @@ const SessionCompletionChart: React.FC<SessionCompletionChartProps> = ({ timeRan
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" />
                 <YAxis />
-                <ChartTooltip content={<ChartTooltipContent />} />
+                <Tooltip content={(props) => <ChartTooltipContent {...props} />} />
                 <Legend />
                 <Area type="monotone" dataKey="completed" stackId="1" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.6} name="Completed" />
                 <Area type="monotone" dataKey="scheduled" stackId="1" stroke="hsl(var(--muted-foreground))" fill="hsl(var(--muted-foreground))" fillOpacity={0.4} name="Scheduled" />

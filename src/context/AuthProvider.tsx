@@ -9,11 +9,20 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+// Extend useAuthMethods to include needed methods
+interface ExtendedAuthMethods {
+  signUp: (email: string, password: string, metadata?: Record<string, any>) => Promise<any>;
+  updateProfile: (data: any) => Promise<void>;
+  verifyEmail: (token: string) => Promise<any>;
+  resendVerificationEmail: (email: string) => Promise<any>;
+}
+
 export function AuthProvider({ children }: AuthProviderProps) {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const { user, session, loading: initializing } = useAuthInitialization();
-  const authMethods = useAuthMethods(navigate, setLoading);
+  // Use the auth methods with proper type casting
+  const authMethods = useAuthMethods(navigate, setLoading) as unknown as ExtendedAuthMethods;
   
   // Create the combined auth context value
   const value = {

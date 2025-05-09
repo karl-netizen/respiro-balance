@@ -2,7 +2,7 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { DateRange } from "react-day-picker";
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { ChartConfig, ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { generateMockChartData } from "@/components/coach/utils/chartUtils";
 
@@ -15,10 +15,28 @@ const TeamOverviewChart: React.FC<TeamOverviewChartProps> = ({ timeRange, dateRa
   // Generate mock data based on the selected time range
   const data = generateMockChartData(timeRange, "overview");
 
-  const chartConfig = {
-    sessions: { color: "hsl(var(--primary))" },
-    minutes: { color: "hsl(var(--secondary))" },
-    stress: { color: "hsl(var(--destructive))" }
+  const chartConfig: ChartConfig = {
+    sessions: {
+      label: "Sessions",
+      theme: {
+        light: "hsl(var(--primary))",
+        dark: "hsl(var(--primary-dark))"
+      }
+    },
+    minutes: {
+      label: "Minutes",
+      theme: {
+        light: "hsl(var(--secondary))",
+        dark: "hsl(var(--secondary-dark))"
+      }
+    },
+    stress: {
+      label: "Stress Level",
+      theme: {
+        light: "hsl(var(--destructive))",
+        dark: "hsl(var(--destructive-dark))"
+      }
+    }
   };
 
   return (
@@ -31,7 +49,7 @@ const TeamOverviewChart: React.FC<TeamOverviewChartProps> = ({ timeRange, dateRa
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" />
                 <YAxis />
-                <ChartTooltip content={<ChartTooltipContent />} />
+                <Tooltip content={(props) => <ChartTooltipContent {...props} />} />
                 <Legend />
                 <Bar dataKey="sessions" fill="hsl(var(--primary))" name="Sessions" />
                 <Bar dataKey="minutes" fill="hsl(var(--secondary))" name="Minutes" />

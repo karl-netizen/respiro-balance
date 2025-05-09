@@ -2,7 +2,7 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { DateRange } from "react-day-picker";
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { ChartConfig, ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { generateMockChartData } from "@/components/coach/utils/chartUtils";
 
@@ -15,10 +15,28 @@ const StressLevelChart: React.FC<StressLevelChartProps> = ({ timeRange, dateRang
   // Generate mock data based on the selected time range
   const data = generateMockChartData(timeRange, "stress");
 
-  const chartConfig = {
-    high: { color: "hsl(var(--destructive))" },
-    moderate: { color: "hsl(var(--warning))" },
-    low: { color: "hsl(var(--success))" }
+  const chartConfig: ChartConfig = {
+    high: {
+      label: "High Stress",
+      theme: {
+        light: "hsl(var(--destructive))",
+        dark: "hsl(var(--destructive-dark))"
+      }
+    },
+    moderate: {
+      label: "Moderate Stress",
+      theme: {
+        light: "hsl(var(--warning))",
+        dark: "hsl(var(--warning-dark))"
+      }
+    },
+    low: {
+      label: "Low Stress",
+      theme: {
+        light: "hsl(var(--success))",
+        dark: "hsl(var(--success-dark))"
+      }
+    }
   };
 
   return (
@@ -31,7 +49,7 @@ const StressLevelChart: React.FC<StressLevelChartProps> = ({ timeRange, dateRang
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" />
                 <YAxis />
-                <ChartTooltip content={<ChartTooltipContent />} />
+                <Tooltip content={(props) => <ChartTooltipContent {...props} />} />
                 <Legend />
                 <Line type="monotone" dataKey="high" stroke="hsl(var(--destructive))" name="High Stress" />
                 <Line type="monotone" dataKey="moderate" stroke="hsl(var(--warning))" name="Moderate Stress" />

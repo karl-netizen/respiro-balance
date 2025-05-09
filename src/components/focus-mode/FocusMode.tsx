@@ -30,19 +30,19 @@ const FocusMode: React.FC = () => {
       // Convert the current session to match the expected FocusSession type
       const formattedSession: FocusSession = {
         id: currentSession?.id || '',
-        user_id: currentSession?.user_id || '', // Corrected from userId to user_id
-        startTime: currentSession?.startTime ? currentSession.startTime.toString() : '', // Convert to string if needed
-        endTime: currentSession?.endTime ? currentSession.endTime.toString() : undefined, // Convert to string if needed
+        userId: currentSession?.userId || '', 
+        startTime: currentSession?.startTime ? currentSession.startTime.toString() : '',
+        endTime: currentSession?.endTime ? currentSession.endTime.toString() : undefined,
         duration: currentSession?.duration,
-        label: currentSession?.label,
+        label: currentSession?.label || '',
         tags: currentSession?.tags || [],
-        task_completed: !!currentSession?.completed, // Ensure boolean, mapping completed to task_completed
-        distraction_count: currentSession?.distractions || 0, // Map distractions to distraction_count
-        focus_score: currentSession?.focusScore, // Map focusScore to focus_score
+        task_completed: !!currentSession?.completed,
+        distraction_count: currentSession?.distractions || 0,
+        focus_score: currentSession?.focusScore,
         notes: currentSession?.notes
       };
       
-      return <FocusSessionSummary session={formattedSession as FocusSession} />;
+      return <FocusSessionSummary session={formattedSession} />;
     }
     
     return (
@@ -110,7 +110,12 @@ const FocusMode: React.FC = () => {
             {stats && 
               <FocusStats stats={{
                 ...stats,
-                mostProductiveDay: stats.mostProductiveDay || 'N/A' // Ensure required field has a value
+                mostProductiveDay: stats.mostProductiveDay || 'N/A',
+                mostProductiveTime: stats.mostProductiveTime || 'N/A', // Make sure this is provided
+                averageSessionLength: stats.averageSessionLength || 0,
+                weeklyMinutes: stats.weeklyMinutes || [0,0,0,0,0,0,0],
+                distractionRate: stats.distractionRate || 0,
+                completionRate: stats.completionRate || 0
               }} />
             }
           </CardContent>

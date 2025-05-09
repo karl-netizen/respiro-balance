@@ -1,32 +1,62 @@
 
-import { BiometricData, ConnectionState } from '@/components/meditation/types/BiometricTypes';
-
-// Interface for device information
+// Define types for biofeedback functionality
 export interface DeviceInfo {
   id: string;
   name: string;
-  type: string;
   connected: boolean;
+  deviceType?: string;
+  batteryLevel?: number;
+}
+
+export interface BiometricData {
+  heartRate?: number;
+  hrv?: number;
+  stress?: number;
+  coherence?: number;
+  timestamp?: number;
 }
 
 export interface BiofeedbackHookReturn {
-  heartRate: number | null;
-  hrv: number | null;
-  respiratoryRate: number | null;
-  stressLevel: number | null;
   isMonitoring: boolean;
-  isConnected: boolean;
-  isConnecting: boolean;
-  availableDevices: string[];
-  connectedDevices: DeviceInfo[];
-  currentBiometrics: Partial<BiometricData> | null;
-  isSimulating: boolean;
-  error: string | null;
-  scanForDevices: () => Promise<string[]>;
-  connectDevice: (deviceId?: string) => Promise<boolean>;
-  disconnectDevice: (deviceId?: string) => Promise<boolean>;
   startMonitoring: () => Promise<boolean>;
-  stopMonitoring: () => Promise<boolean>;
-  startSimulation: () => (() => void);
-  stopSimulation: () => void;
+  stopMonitoring: () => void;
+  connectedDevice: DeviceInfo | null;
+  scanForDevices: () => Promise<void>;
+  connectToDevice: (deviceId: string) => Promise<void>;
+  disconnectDevice: (deviceId: string) => Promise<void>;
+  devices: DeviceInfo[];
+  biometricData: BiometricData;
+  isScanning: boolean;
+  error: Error | null;
+}
+
+export interface SensorReading {
+  type: string;
+  value: number;
+  timestamp: number;
+}
+
+export interface Device {
+  id: string;
+  name: string;
+  connected: boolean;
+  services: string[];
+  characteristics: string[];
+}
+
+export interface DeviceConnectionOptions {
+  filters: Array<{
+    services?: string[];
+    name?: string;
+    namePrefix?: string;
+  }>;
+  optionalServices: string[];
+}
+
+export interface SimulationOptions {
+  interval: number;
+  heartRateMin: number;
+  heartRateMax: number;
+  hrvMin: number;
+  hrvMax: number;
 }
