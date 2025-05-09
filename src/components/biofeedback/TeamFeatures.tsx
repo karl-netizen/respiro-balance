@@ -1,45 +1,36 @@
 
-import { Users, AlertCircle } from "lucide-react";
-import { Switch } from "@/components/ui/switch";
+import React from 'react';
+import { Button } from '@/components/ui/button';
+import { UserPlus, Share2, Lock } from 'lucide-react';
 
-const TeamFeatures = () => {
+export const TeamFeatures: React.FC = () => {
   return (
-    <div className="mt-4">
-      <h4 className="text-sm font-semibold mb-2">Team Features</h4>
+    <div className="space-y-4">
+      <div className="text-center mb-2">
+        <p className="text-sm text-muted-foreground">
+          Share your biofeedback data with your wellness team for better insights and coaching.
+        </p>
+      </div>
       
       <div className="space-y-2">
-        <div className="flex items-center justify-between p-2 bg-secondary/30 rounded">
-          <div className="flex items-center">
-            <Users className="h-4 w-4 text-primary mr-2" />
-            <span className="text-sm">Team data sharing</span>
-          </div>
-          <Switch 
-            checked={true} 
-            onCheckedChange={() => {}}
-          />
-        </div>
+        <Button variant="outline" className="w-full justify-start" size="sm">
+          <UserPlus className="h-4 w-4 mr-2" /> 
+          Invite Team Member
+        </Button>
         
-        <div className="flex items-center justify-between p-2 bg-secondary/30 rounded">
-          <div className="flex items-center">
-            <AlertCircle className="h-4 w-4 text-primary mr-2" />
-            <span className="text-sm">Coach access</span>
-          </div>
-          <Switch 
-            checked={true} 
-            onCheckedChange={() => {}}
-          />
-        </div>
+        <Button variant="outline" className="w-full justify-start" size="sm">
+          <Share2 className="h-4 w-4 mr-2" /> 
+          Share Report
+        </Button>
         
-        <div className="flex items-center justify-between p-2 bg-secondary/30 rounded">
-          <div className="flex items-center">
-            <AlertCircle className="h-4 w-4 text-primary mr-2" />
-            <span className="text-sm">Stress alerts</span>
-          </div>
-          <Switch 
-            checked={false} 
-            onCheckedChange={() => {}}
-          />
-        </div>
+        <Button variant="outline" className="w-full justify-start" size="sm">
+          <Lock className="h-4 w-4 mr-2" /> 
+          Privacy Settings
+        </Button>
+      </div>
+      
+      <div className="bg-muted/40 p-3 rounded text-xs text-muted-foreground">
+        <p>Premium feature: Upgrade your plan for advanced team collaboration features.</p>
       </div>
     </div>
   );

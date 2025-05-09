@@ -1,15 +1,7 @@
 
-import BiofeedbackCard from './BiofeedbackCard';
-import ConnectedDevicesList from './ConnectedDevicesList';
-import NoDevicesView from './NoDevicesView';
-import DeviceSearching from './DeviceSearching';
-import BiofeedbackDisplay from './BiofeedbackDisplay';
-
-export { 
-  BiofeedbackCard, 
-  ConnectedDevicesList, 
-  NoDevicesView, 
-  DeviceSearching,
-  BiofeedbackDisplay
-};
-export default BiofeedbackCard;
+// Re-export all biofeedback components
+export { default as BiofeedbackDisplay } from './BiofeedbackDisplay';
+export { default as NoDevicesView } from './NoDevicesView';
+export { default as ConnectedDevicesList } from './ConnectedDevicesList';
+export { default as DeviceSearching } from './DeviceSearching';
+export { default as TeamFeatures } from './TeamFeatures';
