@@ -17,6 +17,7 @@ import BiofeedbackPage from './pages/BiofeedbackPage';
 import WorkLifeBalance from './pages/WorkLifeBalance';
 import BreakSettingsPage from './pages/BreakSettingsPage';
 import Breathe from './pages/Breathe';
+import LandingPage from './pages/LandingPage';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
               <FocusProvider>
                 <Routes>
                   <Route path="/" element={<Home />} />
+                  <Route path="/landing" element={<LandingPage />} />
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/focus" element={<FocusModePage />} />
                   <Route path="/progress" element={<Progress />} />

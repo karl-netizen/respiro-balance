@@ -50,9 +50,9 @@ const DesktopNavLinks = () => {
         {/* Home link */}
         <NavigationMenuItem>
           <NavLink 
-            to="/landing"
-            isActive={isActive('/landing')}
-            onClick={() => handleNavClick("/landing")}
+            to="/"
+            isActive={isActive('/')}
+            onClick={() => handleNavClick("/")}
           >
             Home
           </NavLink>
