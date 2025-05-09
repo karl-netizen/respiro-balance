@@ -195,3 +195,6 @@ export const useBiofeedback = (): BiofeedbackHookReturn => {
     isSimulating
   };
 };
+
+// Export the BiofeedbackHookReturn type for re-export in other files
+export type { BiofeedbackHookReturn };

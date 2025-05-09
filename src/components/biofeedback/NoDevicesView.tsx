@@ -1,12 +1,19 @@
 
 import React from "react";
 import { Check } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface NoDevicesViewProps {
   isTeamOrEnterprise?: boolean;
+  onScan: () => Promise<boolean | void>;
+  disabled: boolean;
 }
 
-const NoDevicesView: React.FC<NoDevicesViewProps> = ({ isTeamOrEnterprise = false }) => {
+const NoDevicesView: React.FC<NoDevicesViewProps> = ({ 
+  isTeamOrEnterprise = false,
+  onScan,
+  disabled 
+}) => {
   return (
     <div className="text-center py-4">
       <div className="flex flex-col items-center space-y-2 mb-4">
@@ -22,8 +29,17 @@ const NoDevicesView: React.FC<NoDevicesViewProps> = ({ isTeamOrEnterprise = fals
           : "Connect a wearable device to track your heart rate and other biofeedback data"}
       </p>
       
+      <Button 
+        variant="outline" 
+        onClick={onScan}
+        disabled={disabled}
+        className="w-full"
+      >
+        Scan for Devices
+      </Button>
+      
       {isTeamOrEnterprise && (
-        <div className="text-xs text-primary bg-primary/10 p-2 rounded-md">
+        <div className="text-xs text-primary bg-primary/10 p-2 rounded-md mt-4">
           Team & Enterprise feature: Connect and monitor multiple devices
         </div>
       )}

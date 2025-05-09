@@ -6,23 +6,41 @@ import { BluetoothDevice } from "@/types/supabase";
 
 interface ConnectedDevicesListProps {
   devices: BluetoothDevice[];
-  isTeamOrEnterprise: boolean;
-  onDisconnect: (deviceId: string) => void;
+  isTeamOrEnterprise?: boolean;
+  onDisconnect: (deviceId: string) => Promise<boolean>;
+  onConnect: (deviceId: string) => Promise<boolean>;
+  onScan: () => Promise<boolean | void>;
+  disabled: boolean;
 }
 
 const ConnectedDevicesList = ({ 
   devices, 
-  isTeamOrEnterprise, 
-  onDisconnect 
+  isTeamOrEnterprise = false,
+  onDisconnect,
+  onConnect,
+  onScan,
+  disabled
 }: ConnectedDevicesListProps) => {
   if (!Array.isArray(devices) || devices.length === 0) {
     return null;
   }
 
   return (
-    <>
+    <div className="space-y-4">
+      <div className="flex justify-between mb-2">
+        <h3 className="font-medium">Connected Devices</h3>
+        <Button 
+          variant="outline" 
+          size="sm"
+          onClick={onScan}
+          disabled={disabled}
+        >
+          Scan Again
+        </Button>
+      </div>
+      
       {devices.map((device) => (
-        <div key={device.id} className="border rounded-lg p-3 mb-3">
+        <div key={device.id} className="border rounded-lg p-3">
           <div className="flex items-center justify-between mb-2">
             <span className="font-medium">{device.name}</span>
             {isTeamOrEnterprise && (
@@ -32,21 +50,32 @@ const ConnectedDevicesList = ({
           
           <DeviceMetrics />
           
-          {isTeamOrEnterprise && (
-            <div className="mt-3 pt-3 border-t">
+          <div className="mt-3 pt-3 border-t flex gap-2">
+            {!device.connected ? (
+              <Button 
+                variant="default" 
+                size="sm" 
+                className="w-full"
+                onClick={() => onConnect(device.id)}
+                disabled={disabled}
+              >
+                Connect
+              </Button>
+            ) : (
               <Button 
                 variant="outline" 
                 size="sm" 
                 className="w-full text-destructive"
                 onClick={() => onDisconnect(device.id)}
+                disabled={disabled}
               >
-                Disconnect Device
+                Disconnect
               </Button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       ))}
-    </>
+    </div>
   );
 };
 
