@@ -13,7 +13,7 @@ const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const isHomePage = location.pathname === "/";
+  const isHomePage = location.pathname === "/" || location.pathname === "/landing";
   const isTransparent = isHomePage;
 
   const toggleMobileMenu = useCallback(() => {
@@ -23,13 +23,13 @@ const Header = () => {
   const handleLogoClick = useCallback(() => {
     console.log("Logo clicked! Current path:", location.pathname);
     
-    if (location.pathname === "/") {
+    if (location.pathname === "/landing" || location.pathname === "/") {
       console.log("Already on homepage, scrolling to top");
       window.scrollTo({top: 0, behavior: 'smooth'});
     } else {
       console.log("Navigating to homepage");
-      // Navigate to homepage, then scroll to top
-      navigate("/");
+      // Navigate to landing page, then scroll to top
+      navigate("/landing");
       
       // Use a longer delay to ensure navigation completes
       setTimeout(() => {

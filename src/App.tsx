@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import {
   ThemeProvider,
   UserPreferencesProvider,
@@ -32,7 +32,8 @@ function App() {
             <SubscriptionProvider>
               <FocusProvider>
                 <Routes>
-                  <Route path="/" element={<Home />} />
+                  {/* Redirect root to landing page */}
+                  <Route path="/" element={<Navigate replace to="/landing" />} />
                   <Route path="/landing" element={<LandingPage />} />
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/focus" element={<FocusModePage />} />

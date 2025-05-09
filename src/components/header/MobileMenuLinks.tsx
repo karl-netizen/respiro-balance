@@ -18,8 +18,8 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
   const location = useLocation();
   
   const isActive = (path: string) => {
-    if (path === '/') {
-      return location.pathname === path;
+    if (path === '/landing' || path === '/') {
+      return location.pathname === '/landing' || location.pathname === '/';
     }
     return location.pathname === path || location.pathname.startsWith(path + '/');
   }
@@ -27,8 +27,9 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
   return (
     <div className="flex-1 overflow-auto py-2 space-y-2 z-50">
       <Link
-        to="/"
-        className={cn("flex items-center gap-2 text-white hover:text-respiro-light py-2 button-transition", isActive('/') && "text-respiro-light font-medium")}
+        to="/landing"
+        className={cn("flex items-center gap-2 text-white hover:text-respiro-light py-2 button-transition", 
+                     (isActive('/landing') || isActive('/')) && "text-respiro-light font-medium")}
         onClick={toggleMenu}
       >
         <Home className="h-4 w-4" />
@@ -154,7 +155,7 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
       </Link>
       
       <Link
-        to="/#pricing"
+        to="/landing#pricing"
         className={cn("flex items-center gap-2 text-white hover:text-respiro-light py-2 button-transition", location.hash === '#pricing' && "text-respiro-light font-medium")}
         onClick={toggleMenu}
       >
