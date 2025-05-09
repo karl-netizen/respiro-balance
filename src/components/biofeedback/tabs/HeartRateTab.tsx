@@ -1,118 +1,109 @@
 
 import React from 'react';
-import { Progress } from '@/components/ui/progress';
-import { Heart } from 'lucide-react';
-import { BiometricData } from '@/components/meditation/types/BiometricTypes';
+import {
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis
+} from 'recharts';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { BiometricData } from '../sections/BiometricMonitorSection';
 
 interface HeartRateTabProps {
   biometricData: BiometricData;
 }
 
-const HeartRateTab: React.FC<HeartRateTabProps> = ({ biometricData }) => {
-  // Heart rate zone calculation
-  const getHeartRateZone = (heartRate: number): string => {
-    if (heartRate < 60) return "Rest";
-    if (heartRate < 80) return "Light";
-    if (heartRate < 100) return "Moderate";
-    if (heartRate < 120) return "Vigorous";
-    return "Intense";
-  };
-  
-  // Heart rate zone style
-  const getHeartRateZoneStyle = (heartRate: number): string => {
-    if (heartRate < 60) return "text-blue-500";
-    if (heartRate < 80) return "text-green-500";
-    if (heartRate < 100) return "text-yellow-500";
-    if (heartRate < 120) return "text-orange-500";
-    return "text-red-500";
-  };
-  
-  // HRV classification
-  const getHRVClass = (hrv: number): string => {
-    if (hrv < 20) return "Poor";
-    if (hrv < 40) return "Below Average";
-    if (hrv < 60) return "Average";
-    if (hrv < 80) return "Good";
-    return "Excellent";
-  };
+const mockData = [
+  { time: '9:00', heartRate: 75 },
+  { time: '10:00', heartRate: 72 },
+  { time: '11:00', heartRate: 80 },
+  { time: '12:00', heartRate: 85 },
+  { time: '13:00', heartRate: 78 },
+  { time: '14:00', heartRate: 76 },
+  { time: '15:00', heartRate: 72 }
+];
 
-  const heartRate = biometricData.heart_rate || biometricData.heartRate || 70;
-  const hrv = biometricData.hrv || 50;
+export const HeartRateTab: React.FC<HeartRateTabProps> = ({ biometricData }) => {
+  const renderCustomTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-background border p-3 rounded-md shadow">
+          <p className="font-medium">{`Time: ${payload[0].payload.time}`}</p>
+          <p className="text-red-500">{`Heart Rate: ${payload[0].value} BPM`}</p>
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
     <div className="space-y-6">
-      {/* Heart Rate Meter */}
-      <div className="mb-6 relative">
-        <div className="flex justify-center items-center mb-4">
-          <div className="bg-card p-4 rounded-full shadow-sm relative">
-            <div className="relative w-32 h-32 rounded-full flex items-center justify-center border-8 border-muted">
-              <Heart className="h-10 w-10 text-red-500 animate-pulse" />
-              <div className="absolute inset-0 rounded-full">
-                {/* Animated pulse rings */}
-                <div className="animate-ping absolute inset-0 rounded-full bg-red-100 opacity-20"></div>
-                <div className="animate-ping absolute inset-0 rounded-full bg-red-200 opacity-10" style={{ animationDelay: '0.3s' }}></div>
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle>Heart Rate Monitoring</CardTitle>
+          <CardDescription>
+            Track your heart rate fluctuations over time
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                data={mockData}
+                margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+              >
+                <XAxis dataKey="time" />
+                <YAxis domain={['dataMin - 10', 'dataMax + 10']} />
+                <Tooltip content={renderCustomTooltip} />
+                <Line
+                  type="monotone"
+                  dataKey="heartRate"
+                  stroke="#ef4444"
+                  strokeWidth={2}
+                  dot={{ r: 4 }}
+                  activeDot={{ r: 6 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle>Heart Rate Analysis</CardTitle>
+          <CardDescription>
+            Insights into your cardiac activity
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <h4 className="font-medium text-sm text-muted-foreground">Current</h4>
+                <p className="text-3xl font-bold mt-1">{biometricData.current} <span className="text-lg font-normal">BPM</span></p>
+              </div>
+              <div>
+                <h4 className="font-medium text-sm text-muted-foreground">Resting</h4>
+                <p className="text-3xl font-bold mt-1">{biometricData.resting || '--'} <span className="text-lg font-normal">BPM</span></p>
               </div>
             </div>
-            <div className="absolute top-0 left-0 right-0 flex justify-center -mt-2">
-              <span className={`text-xs font-medium px-2 py-1 rounded ${getHeartRateZoneStyle(heartRate)}`}>
-                {getHeartRateZone(heartRate)}
-              </span>
+            
+            <div className="border-t pt-4">
+              <h4 className="font-medium">Heart Rate Zone</h4>
+              <p className="mt-1 text-muted-foreground">
+                {biometricData.current < 60 
+                  ? 'Rest zone - Your heart rate indicates you are relaxed or at rest' 
+                  : biometricData.current < 100 
+                    ? 'Normal zone - Your heart rate is within the typical range'
+                    : 'Active zone - Your heart rate is elevated, possibly due to activity or stress'}
+              </p>
             </div>
           </div>
-        </div>
-        
-        <div className="text-center mb-4">
-          <div className="text-4xl font-bold">{heartRate}</div>
-          <div className="text-xs text-muted-foreground">BEATS PER MINUTE</div>
-        </div>
-        
-        {/* Heart rate zones scale */}
-        <div className="w-full h-2 bg-muted rounded-full overflow-hidden flex">
-          <div className="bg-blue-500 h-full flex-1"></div>
-          <div className="bg-green-500 h-full flex-1"></div>
-          <div className="bg-yellow-500 h-full flex-1"></div>
-          <div className="bg-orange-500 h-full flex-1"></div>
-          <div className="bg-red-500 h-full flex-1"></div>
-        </div>
-        <div className="flex justify-between text-xs text-muted-foreground mt-1">
-          <span>Rest</span>
-          <span>Light</span>
-          <span>Moderate</span>
-          <span>Vigorous</span>
-          <span>Max</span>
-        </div>
-      </div>
-      
-      {/* HRV Section */}
-      <div>
-        <div className="flex justify-between mb-1">
-          <span className="text-sm font-medium">Heart Rate Variability</span>
-          <span className="text-sm text-muted-foreground">{hrv} ms</span>
-        </div>
-        <Progress value={(hrv / 100) * 100} className="h-2" />
-        <div className="flex justify-between text-xs text-muted-foreground mt-1">
-          <span>0 ms</span>
-          <span className="text-xs">{getHRVClass(hrv)}</span>
-          <span>100 ms</span>
-        </div>
-      </div>
-      
-      {/* Explanation */}
-      <div className="pt-4 border-t text-sm text-muted-foreground">
-        <h4 className="font-medium text-foreground mb-1">What does this mean?</h4>
-        <p className="mb-2">
-          Heart rate variability (HRV) measures the variation in time between heartbeats. 
-          Higher HRV generally indicates better cardiovascular health and resilience to stress.
-        </p>
-        <p>
-          Your current HRV of {hrv} ms is {getHRVClass(hrv).toLowerCase()}, 
-          which suggests {
-            hrv < 40 ? "you may benefit from stress management practices" : 
-            hrv > 60 ? "your body is handling stress effectively" : 
-            "your stress response is normal"
-          }.
-        </p>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

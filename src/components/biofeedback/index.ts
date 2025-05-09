@@ -6,6 +6,7 @@ export { default as ConnectedDevicesList } from './ConnectedDevicesList';
 export { default as DeviceSearching } from './DeviceSearching';
 export { default as TeamFeatures } from './TeamFeatures';
 export { default as BiofeedbackCard } from './cards/BiofeedbackCard';
+export { default as EmptyStateCard } from './EmptyStateCard';
 
 // Export layout and sections
 export { default as BiofeedbackLayout } from './layout/BiofeedbackLayout';

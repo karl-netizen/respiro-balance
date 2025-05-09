@@ -1,34 +1,37 @@
 
-import React, { useState, useEffect, ReactNode } from 'react';
+import React from 'react';
 import { BiometricData } from '@/components/meditation/types/BiometricTypes';
 
 interface DataConverterProps {
   partialData?: Partial<BiometricData>;
-  children: (data: BiometricData | null) => ReactNode;
+  children: (data: BiometricData | null) => React.ReactNode;
 }
 
-export const DataConverter: React.FC<DataConverterProps> = ({ partialData, children }) => {
-  const [completeData, setCompleteData] = useState<BiometricData | null>(null);
-  
-  // Use effect to convert partial data to complete data with defaults
-  useEffect(() => {
-    if (partialData) {
-      // Create a complete BiometricData object with default values for required fields
-      const complete: BiometricData = {
-        id: partialData.id || `temp-${Date.now()}`, // Generate a temporary ID if not provided
-        user_id: partialData.user_id || 'unknown',
-        timestamp: partialData.timestamp || new Date().toISOString(),
-        heart_rate: partialData.heart_rate || partialData.heartRate || 0,
-        hrv: partialData.hrv || 0,
-        breath_rate: partialData.breath_rate || partialData.breathRate || 0,
-        ...partialData // Include any other fields from partial data
-      };
-      
-      setCompleteData(complete);
-    } else {
-      setCompleteData(null);
-    }
-  }, [partialData]);
+export const DataConverter: React.FC<DataConverterProps> = ({ 
+  partialData, 
+  children 
+}) => {
+  // If no partial data is provided, return null
+  if (!partialData) {
+    return <>{children(null)}</>;
+  }
+
+  // Create a complete BiometricData object from partial data
+  const completeData: BiometricData = {
+    id: partialData.id || `temp-${Date.now()}`,
+    user_id: partialData.user_id || 'unknown',
+    timestamp: partialData.timestamp || new Date().toISOString(),
+    heart_rate: partialData.heart_rate || partialData.heartRate || 0,
+    hrv: partialData.hrv || 0,
+    respiratory_rate: partialData.respiratory_rate || 
+                     partialData.breath_rate || 
+                     partialData.breathRate || 0,
+    stress_level: partialData.stress_level || partialData.stress_score || 0,
+    coherence: partialData.coherence || 0,
+    ...partialData
+  };
 
   return <>{children(completeData)}</>;
 };
+
+export default DataConverter;

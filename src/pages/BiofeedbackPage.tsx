@@ -4,7 +4,6 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useBiofeedback } from '@/hooks/biofeedback';
 import BiofeedbackLayout from '@/components/biofeedback/layout/BiofeedbackLayout';
-import { Activity } from 'lucide-react';
 
 const BiofeedbackPage: React.FC = () => {
   const { 

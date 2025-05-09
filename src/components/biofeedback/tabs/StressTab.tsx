@@ -1,149 +1,113 @@
 
 import React from 'react';
-import { Progress } from '@/components/ui/progress';
-import { Activity, Smile, Frown, Meh } from 'lucide-react';
-import { BiometricData } from '@/components/meditation/types/BiometricTypes';
+import {
+  Area,
+  AreaChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis
+} from 'recharts';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { BiometricData } from '../sections/BiometricMonitorSection';
 
 interface StressTabProps {
   biometricData: BiometricData;
 }
 
-const StressTab: React.FC<StressTabProps> = ({ biometricData }) => {
-  const stressScore = biometricData.stress_score || 50;
-  
-  // Get stress level category
-  const getStressLevel = (score: number): string => {
-    if (score < 30) return "Low";
-    if (score < 60) return "Moderate";
-    return "High";
-  };
-  
-  // Get stress icon based on level
-  const getStressIcon = (score: number) => {
-    if (score < 30) return <Smile className="h-6 w-6 text-green-500" />;
-    if (score < 60) return <Meh className="h-6 w-6 text-yellow-500" />;
-    return <Frown className="h-6 w-6 text-red-500" />;
-  };
-  
-  // Get stress color based on level
-  const getStressColor = (score: number): string => {
-    if (score < 30) return "bg-green-500";
-    if (score < 60) return "bg-yellow-500";
-    return "bg-red-500";
-  };
-  
-  // Get indication text based on stress level
-  const getIndicationText = (score: number): string => {
-    if (score < 30) return "Your stress levels are low, indicating good stress management.";
-    if (score < 60) return "Your stress levels are moderate, typical for daily activities.";
-    return "Your stress levels are high. Consider taking a break or practicing mindfulness.";
+const mockData = [
+  { time: '9:00', stress: 15 },
+  { time: '10:00', stress: 25 },
+  { time: '11:00', stress: 40 },
+  { time: '12:00', stress: 30 },
+  { time: '13:00', stress: 45 },
+  { time: '14:00', stress: 35 },
+  { time: '15:00', stress: 20 }
+];
+
+export const StressTab: React.FC<StressTabProps> = ({ biometricData }) => {
+  const renderCustomTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-background border p-3 rounded-md shadow">
+          <p className="font-medium">{`Time: ${payload[0].payload.time}`}</p>
+          <p className="text-purple-500">{`Stress Level: ${payload[0].value}`}</p>
+        </div>
+      );
+    }
+    return null;
   };
 
   return (
     <div className="space-y-6">
-      {/* Stress Meter */}
-      <div className="mb-6">
-        <div className="flex justify-center items-center mb-4">
-          <div className="text-center">
-            <div className="flex justify-center mb-2">
-              {getStressIcon(stressScore)}
-            </div>
-            <div className="text-3xl font-bold">{stressScore}</div>
-            <div className="text-sm font-medium text-muted-foreground">
-              Stress Score
-            </div>
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle>Stress Level Over Time</CardTitle>
+          <CardDescription>
+            Monitoring stress response patterns throughout your session
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart
+                data={mockData}
+                margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+              >
+                <defs>
+                  <linearGradient id="stressGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="rgb(124, 58, 237)" stopOpacity={0.8} />
+                    <stop offset="95%" stopColor="rgb(124, 58, 237)" stopOpacity={0.1} />
+                  </linearGradient>
+                </defs>
+                <XAxis dataKey="time" />
+                <YAxis />
+                <Tooltip content={renderCustomTooltip} />
+                <Area
+                  type="monotone"
+                  dataKey="stress"
+                  stroke="rgb(124, 58, 237)"
+                  fillOpacity={1}
+                  fill="url(#stressGradient)"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
           </div>
-        </div>
-        
-        <div className="relative pt-1">
-          <div className="flex mb-2 items-center justify-between">
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle>Stress Insights</CardTitle>
+          <CardDescription>
+            Analysis of your stress response patterns
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
             <div>
-              <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-green-600 bg-green-100">
-                Low
-              </span>
+              <h4 className="font-medium">Current Stress Level</h4>
+              <p className="text-3xl font-bold mt-1">{biometricData.current}%</p>
+              <p className="text-muted-foreground text-sm">
+                {biometricData.current < 30 
+                  ? 'Low stress - You are in a relaxed state' 
+                  : biometricData.current < 70 
+                    ? 'Moderate stress - Within normal range'
+                    : 'High stress - Consider a mindfulness exercise'}
+              </p>
             </div>
-            <div>
-              <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-yellow-600 bg-yellow-100">
-                Moderate
-              </span>
-            </div>
-            <div>
-              <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-red-600 bg-red-100">
-                High
-              </span>
+            
+            <div className="border-t pt-4">
+              <h4 className="font-medium">Recommendations</h4>
+              <ul className="mt-2 space-y-2 text-sm">
+                <li>• Practice deep breathing exercises during elevated stress periods</li>
+                <li>• Consider scheduling regular short meditation breaks</li>
+                <li>• Stay hydrated to help maintain lower stress levels</li>
+              </ul>
             </div>
           </div>
-          <div className="w-full h-3 bg-muted rounded-full">
-            <div 
-              className={`h-full rounded-full ${getStressColor(stressScore)} transition-all duration-500`}
-              style={{ width: `${stressScore}%` }}
-            ></div>
-          </div>
-        </div>
-      </div>
-      
-      {/* Current Reading */}
-      <div className="border rounded-md p-4">
-        <h4 className="text-sm font-medium mb-2">Current Reading</h4>
-        <p className="text-sm text-muted-foreground mb-3">{getIndicationText(stressScore)}</p>
-        
-        <div className="space-y-3">
-          {/* HRV as stress indicator */}
-          <div>
-            <div className="flex justify-between text-xs text-muted-foreground mb-1">
-              <span>HRV (Stress Indicator)</span>
-              <span>{biometricData.hrv || 50} ms</span>
-            </div>
-            <Progress 
-              value={Math.min(100, ((biometricData.hrv || 50) / 100) * 100)} 
-              className="h-1"
-            />
-          </div>
-          
-          {/* Heart Rate */}
-          <div>
-            <div className="flex justify-between text-xs text-muted-foreground mb-1">
-              <span>Heart Rate</span>
-              <span>{biometricData.heart_rate || 70} bpm</span>
-            </div>
-            <Progress 
-              value={Math.min(100, ((biometricData.heart_rate || 70) / 160) * 100)} 
-              className="h-1"
-            />
-          </div>
-        </div>
-      </div>
-      
-      {/* Recommendations */}
-      <div className="border-t pt-4">
-        <h4 className="text-sm font-medium mb-2">Recommendations</h4>
-        <ul className="space-y-2 text-sm">
-          {stressScore >= 60 && (
-            <>
-              <li className="flex items-start">
-                <span className="mr-2 bg-primary/20 p-1 rounded">•</span>
-                <span>Try a quick 5-minute breathing exercise</span>
-              </li>
-              <li className="flex items-start">
-                <span className="mr-2 bg-primary/20 p-1 rounded">•</span>
-                <span>Step away from screens for at least 15 minutes</span>
-              </li>
-            </>
-          )}
-          
-          {stressScore >= 30 && (
-            <li className="flex items-start">
-              <span className="mr-2 bg-primary/20 p-1 rounded">•</span>
-              <span>Schedule a short meditation session</span>
-            </li>
-          )}
-          
-          <li className="flex items-start">
-            <span className="mr-2 bg-primary/20 p-1 rounded">•</span>
-            <span>Stay hydrated and maintain regular breaks</span>
-          </li>
-        </ul>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
