@@ -6,37 +6,43 @@ import {
   BiofeedbackDisplay,
   NoDevicesView,
   ConnectedDevicesList,
-  DeviceSearching
+  DeviceSearching,
+  TeamFeatures
 } from '@/components/biofeedback';
-import { HeartRateTab, StressTab } from '@/components/biofeedback/tabs';
+import { HeartRateTab, StressTab, HeartRateTabProps, StressTabProps } from '@/components/biofeedback/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { useBiofeedback } from '@/hooks/biofeedback';
 import { Heart, Activity, Search, Settings } from 'lucide-react';
+import { BluetoothDevice } from '@/types/supabase';
 
-// Add TeamFeatures component if it's missing
-const TeamFeatures = () => {
-  return (
-    <div className="text-center py-4">
-      <p className="text-muted-foreground mb-2">Share biofeedback data with your wellness team</p>
-      <button className="bg-primary/10 text-primary px-4 py-2 rounded-md text-sm">
-        Configure Team Access
-      </button>
-    </div>
-  );
-};
+// Define the biometric data interface
+interface BiometricData {
+  id: string;
+  user_id: string;
+  current: number;
+  resting?: number;
+  history: number[];
+}
 
-// Define the prop types for the components that were causing errors
+// Component prop types
+interface BiofeedbackDisplayProps {
+  value: number;
+  label: string;
+  type: string;
+  restingValue?: number;
+}
+
 interface NoDevicesViewProps {
   onScanForDevices: () => Promise<boolean | void>;
   disabled: boolean;
 }
 
 interface ConnectedDevicesListProps {
-  devices: any[];
+  devices: BluetoothDevice[];
   onScanForDevices: () => Promise<boolean | void>;
-  onConnectDevice: (deviceId: string) => Promise<void>;
-  onDisconnectDevice: (deviceId: string) => Promise<void>;
+  onConnectDevice: (deviceId: string) => Promise<boolean>;
+  onDisconnectDevice: (deviceId: string) => Promise<boolean>;
   disabled: boolean;
 }
 
@@ -45,14 +51,6 @@ interface BiofeedbackCardProps {
   title: string;
   description: string;
   icon: React.ReactNode;
-}
-
-// Define BiofeedbackDisplay props
-interface BiofeedbackDisplayProps {
-  value: number;
-  label: string;
-  type: string;
-  restingValue?: number;
 }
 
 const BiofeedbackCard: React.FC<BiofeedbackCardProps> = ({ 
@@ -86,33 +84,36 @@ const BiofeedbackPage: React.FC = () => {
     heartRate = 0,
     stress = 0,
     restingHeartRate = 0,
-    connectDevice = async () => {},
-    disconnectDevice = async () => {},
-    scanForDevices = async () => {},
+    connectDevice = async () => false,
+    disconnectDevice = async () => false,
+    scanForDevices = async () => false,
     isSimulating = false
-  } = useBiofeedback() || {};
+  } = useBiofeedback();
   
   // Create mock biometric data for tabs
-  const mockBiometricData = {
-    heartRate: {
-      current: heartRate,
-      resting: restingHeartRate,
-      history: [65, 68, 72, 70, 75, 78, 76]
-    },
-    stress: {
-      current: stress,
-      history: [25, 30, 28, 35, 40, 32, 28]
-    }
+  const mockHeartRateData: BiometricData = {
+    id: 'hr-1',
+    user_id: 'user-1',
+    current: heartRate,
+    resting: restingHeartRate,
+    history: [65, 68, 72, 70, 75, 78, 76]
+  };
+  
+  const mockStressData: BiometricData = {
+    id: 'stress-1',
+    user_id: 'user-1',
+    current: stress,
+    history: [25, 30, 28, 35, 40, 32, 28]
   };
 
   // Fix the return type issue by adapting this function to return boolean or void
   const handleScanForDevices = async (): Promise<boolean | void> => {
     try {
-      await scanForDevices();
-      return true; // Return true on success
+      const result = await scanForDevices();
+      return result;
     } catch (error) {
       console.error('Error scanning for devices:', error);
-      return false; // Return false on error
+      return false;
     }
   };
   
@@ -181,7 +182,7 @@ const BiofeedbackPage: React.FC = () => {
                       restingValue={restingHeartRate}
                       type="heart-rate"
                     />
-                    <HeartRateTab biometricData={mockBiometricData.heartRate} />
+                    <HeartRateTab biometricData={mockHeartRateData} />
                   </TabsContent>
                   
                   <TabsContent value="stress" className="space-y-4">
@@ -190,7 +191,7 @@ const BiofeedbackPage: React.FC = () => {
                       label="Level"
                       type="stress"
                     />
-                    <StressTab biometricData={mockBiometricData.stress} />
+                    <StressTab biometricData={mockStressData} />
                   </TabsContent>
                 </Tabs>
               </BiofeedbackCard>

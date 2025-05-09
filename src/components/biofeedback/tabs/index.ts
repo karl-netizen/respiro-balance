@@ -4,9 +4,20 @@ export { default as StressTab } from './StressTab';
 
 // Export the expected prop types for these components
 export interface HeartRateTabProps {
-  biometricData: any; // Using any for simplicity, but should be properly typed
+  biometricData: {
+    id: string;
+    user_id: string;
+    current: number;
+    resting?: number;
+    history: number[];
+  };
 }
 
 export interface StressTabProps {
-  biometricData: any; // Using any for simplicity, but should be properly typed  
+  biometricData: {
+    id: string;
+    user_id: string;
+    current: number;
+    history: number[];
+  };
 }

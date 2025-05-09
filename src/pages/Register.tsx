@@ -39,7 +39,8 @@ const Register = () => {
   const onSubmit = async (data: FormData) => {
     setError(null);
     try {
-      await signUp(data.email, data.password, data.firstName);
+      // Fixed the type error by passing an object as the third parameter
+      await signUp(data.email, data.password, { firstName: data.firstName });
       setSuccess(true);
       toast("Account created successfully", {
         description: "Please check your email to verify your account"

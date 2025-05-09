@@ -1,100 +1,120 @@
 
 import React from 'react';
-import { useSubscriptionContext } from '../../hooks/useSubscriptionContext';
-import { Button } from '../ui/button';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
-export interface SubscriptionCardProps {
-  // Add any props if needed
-}
-
-// Define the expected SubscriptionData type to match our usage
+// Define the types for the subscription data
 interface SubscriptionData {
-  status?: string;
-  current_period_end?: string;
-  // Add other fields as needed
+  status: string;
+  current_period_end: string;
+  cancel_at_period_end: boolean;
+  tier: string;
 }
 
-export const SubscriptionCard: React.FC<SubscriptionCardProps> = () => {
-  const { 
-    isSubscribed, 
-    tierName, 
-    subscriptionData, 
-    startPremiumCheckout, 
-    manageSubscription 
-  } = useSubscriptionContext();
+interface SubscriptionCardProps {
+  title: string;
+  description: string;
+  features: string[];
+  price: number;
+  interval?: 'month' | 'year';
+  highlighted?: boolean;
+  subscription?: SubscriptionData;
+  onSubscribe: () => void;
+  onManage?: () => void;
+}
 
-  // Fix the type issues by properly handling return values
-  const handleStartCheckout = async () => {
-    try {
-      if (startPremiumCheckout) {
-        await startPremiumCheckout();
-      }
-    } catch (error) {
-      console.error('Error starting checkout:', error);
-    }
-  };
+export const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
+  title,
+  description,
+  features,
+  price,
+  interval = 'month',
+  highlighted = false,
+  subscription,
+  onSubscribe,
+  onManage
+}) => {
+  const isActive = subscription?.status === 'active';
+  const isCurrentPlan = isActive && subscription?.tier === title.toLowerCase();
 
-  const handleManageSubscription = async () => {
-    try {
-      if (manageSubscription) {
-        await manageSubscription();
-      }
-    } catch (error) {
-      console.error('Error managing subscription:', error);
-    }
+  // Format date for display
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric'
+    });
   };
 
   return (
-    <div className="bg-card rounded-lg shadow-md p-6">
-      <h2 className="text-2xl font-bold mb-4">Your Subscription</h2>
-      
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-lg font-medium">Current Plan</span>
-          <span className="text-lg font-bold">{tierName}</span>
+    <Card className={`flex flex-col h-full ${highlighted ? 'border-primary shadow-lg' : ''}`}>
+      <CardHeader className={`${highlighted ? 'bg-primary/5' : ''}`}>
+        <div className="flex justify-between items-center mb-2">
+          <h3 className="text-xl font-bold">{title}</h3>
+          {highlighted && <span className="bg-primary/20 text-primary text-xs px-2 py-1 rounded-full">Popular</span>}
         </div>
-        
-        {isSubscribed && subscriptionData && (
-          <div className="text-sm text-muted-foreground">
-            {subscriptionData.status === 'active' ? (
-              <p>
-                Your subscription is active until{' '}
-                {new Date(subscriptionData.current_period_end || Date.now()).toLocaleDateString()}
-              </p>
-            ) : (
-              <p>
-                Your subscription status: {subscriptionData.status || 'unknown'}
+        <p className="text-muted-foreground text-sm">{description}</p>
+      </CardHeader>
+      <CardContent className="flex-grow">
+        <div className="mb-6">
+          <span className="text-3xl font-bold">${price}</span>
+          <span className="text-muted-foreground">/{interval}</span>
+        </div>
+
+        <ul className="space-y-2">
+          {features.map((feature, index) => (
+            <li key={index} className="flex items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-5 h-5 text-green-500 mr-2"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span className="text-sm">{feature}</span>
+            </li>
+          ))}
+        </ul>
+
+        {isCurrentPlan && subscription && (
+          <div className="mt-4 p-3 bg-muted/40 rounded-md">
+            <p className="text-xs text-muted-foreground mb-1">
+              {subscription.status === 'active' ? 'Active subscription' : 'Subscription status: ' + subscription.status}
+            </p>
+            {subscription.current_period_end && (
+              <p className="text-xs text-muted-foreground">
+                {subscription.cancel_at_period_end 
+                  ? `Cancels on ${formatDate(subscription.current_period_end)}` 
+                  : `Renews on ${formatDate(subscription.current_period_end)}`}
               </p>
             )}
           </div>
         )}
-      </div>
-      
-      <div className="space-y-4">
-        {!isSubscribed ? (
+      </CardContent>
+      <CardFooter>
+        {isCurrentPlan ? (
           <Button 
-            className="w-full bg-primary text-primary-foreground"
-            onClick={handleStartCheckout}
-          >
-            Upgrade to Premium
-          </Button>
-        ) : (
-          <Button 
+            onClick={onManage} 
+            variant="outline" 
             className="w-full"
-            variant="outline"
-            onClick={handleManageSubscription}
           >
             Manage Subscription
           </Button>
+        ) : (
+          <Button 
+            onClick={onSubscribe} 
+            variant={highlighted ? "default" : "outline"} 
+            className="w-full"
+          >
+            {isActive ? 'Change Plan' : 'Subscribe'}
+          </Button>
         )}
-        
-        {!isSubscribed && (
-          <p className="text-sm text-muted-foreground text-center">
-            Unlock unlimited meditation minutes, personalized insights, and more.
-          </p>
-        )}
-      </div>
-    </div>
+      </CardFooter>
+    </Card>
   );
 };
 
