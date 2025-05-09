@@ -12,7 +12,7 @@ import {
 import { HeartRateTab, StressTab, HeartRateTabProps, StressTabProps } from '@/components/biofeedback/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { useBiofeedback } from '@/hooks/biofeedback';
+import { useBiofeedback } from '@/hooks/biofeedback/useBiofeedback';
 import { Heart, Activity, Search, Settings } from 'lucide-react';
 import { BluetoothDevice } from '@/types/supabase';
 
@@ -25,25 +25,26 @@ interface BiometricData {
   history: number[];
 }
 
-// Component prop types
-interface BiofeedbackDisplayProps {
-  value: number;
-  label: string;
-  type: string;
-  restingValue?: number;
-}
-
+// Modified Component prop types to match the actual implementations
 interface NoDevicesViewProps {
-  onScanForDevices: () => Promise<boolean | void>;
+  onScan: () => Promise<boolean | void>;
   disabled: boolean;
 }
 
 interface ConnectedDevicesListProps {
   devices: BluetoothDevice[];
-  onScanForDevices: () => Promise<boolean | void>;
-  onConnectDevice: (deviceId: string) => Promise<boolean>;
-  onDisconnectDevice: (deviceId: string) => Promise<boolean>;
+  onScan: () => Promise<boolean | void>;
+  onConnect: (deviceId: string) => Promise<boolean>;
+  onDisconnect: (deviceId: string) => Promise<boolean>;
   disabled: boolean;
+}
+
+// Updated BiofeedbackDisplayProps to match the actual component
+interface BiofeedbackDisplayProps {
+  partialData?: Partial<BiometricData>;
+  isMonitoring: boolean;
+  onStartMonitoring: () => Promise<boolean>;
+  onStopMonitoring: () => void;
 }
 
 interface BiofeedbackCardProps {
@@ -89,6 +90,8 @@ const BiofeedbackPage: React.FC = () => {
     scanForDevices = async () => false,
     isSimulating = false
   } = useBiofeedback();
+
+  const [isMonitoring, setIsMonitoring] = useState(false);
   
   // Create mock biometric data for tabs
   const mockHeartRateData: BiometricData = {
@@ -116,6 +119,15 @@ const BiofeedbackPage: React.FC = () => {
       return false;
     }
   };
+
+  const startMonitoring = async (): Promise<boolean> => {
+    setIsMonitoring(true);
+    return true;
+  };
+
+  const stopMonitoring = () => {
+    setIsMonitoring(false);
+  };
   
   return (
     <>
@@ -139,15 +151,15 @@ const BiofeedbackPage: React.FC = () => {
                   <DeviceSearching />
                 ) : devices.length === 0 ? (
                   <NoDevicesView
-                    onScanForDevices={handleScanForDevices}
+                    onScan={handleScanForDevices}
                     disabled={isScanning || isConnecting}
                   />
                 ) : (
                   <ConnectedDevicesList
                     devices={devices}
-                    onScanForDevices={handleScanForDevices}
-                    onConnectDevice={connectDevice}
-                    onDisconnectDevice={disconnectDevice}
+                    onScan={handleScanForDevices}
+                    onConnect={connectDevice}
+                    onDisconnect={disconnectDevice}
                     disabled={isScanning || isConnecting}
                   />
                 )}
@@ -177,19 +189,20 @@ const BiofeedbackPage: React.FC = () => {
                   
                   <TabsContent value="heart-rate" className="space-y-4">
                     <BiofeedbackDisplay
-                      value={heartRate}
-                      label="BPM"
-                      restingValue={restingHeartRate}
-                      type="heart-rate"
+                      partialData={mockHeartRateData}
+                      isMonitoring={isMonitoring}
+                      onStartMonitoring={startMonitoring}
+                      onStopMonitoring={stopMonitoring}
                     />
                     <HeartRateTab biometricData={mockHeartRateData} />
                   </TabsContent>
                   
                   <TabsContent value="stress" className="space-y-4">
                     <BiofeedbackDisplay
-                      value={stress}
-                      label="Level"
-                      type="stress"
+                      partialData={mockStressData}
+                      isMonitoring={isMonitoring}
+                      onStartMonitoring={startMonitoring}
+                      onStopMonitoring={stopMonitoring}
                     />
                     <StressTab biometricData={mockStressData} />
                   </TabsContent>

@@ -1,9 +1,8 @@
 
-export { useBiofeedback } from './useBiofeedback';
+import { BluetoothDevice } from '@/types/supabase';
 
-// Define the return type of useBiofeedback hook
 export interface BiofeedbackHookReturn {
-  devices: any[];
+  devices: BluetoothDevice[];
   isScanning: boolean;
   isConnecting: boolean;
   heartRate: number;

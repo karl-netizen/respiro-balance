@@ -13,6 +13,24 @@ import MeditationHistoryList from '@/components/meditation/MeditationHistoryList
 const Account = () => {
   const navigate = useNavigate();
   
+  // Define subscription plan details
+  const subscriptionPlan = {
+    title: "Free Plan",
+    description: "Basic access to meditation content",
+    features: [
+      "10 meditation sessions per month",
+      "Basic analytics",
+      "Mobile access"
+    ],
+    price: 0,
+    interval: "month" as const
+  };
+
+  // Handler for subscription button
+  const handleSubscribe = () => {
+    navigate('/subscription');
+  };
+  
   return (
     <>
       <Header />
@@ -35,7 +53,14 @@ const Account = () => {
           
           <TabsContent value="subscription" className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <SubscriptionCard />
+              <SubscriptionCard 
+                title={subscriptionPlan.title}
+                description={subscriptionPlan.description}
+                features={subscriptionPlan.features}
+                price={subscriptionPlan.price}
+                interval={subscriptionPlan.interval}
+                onSubscribe={handleSubscribe}
+              />
               <AccountSubscriptionSettings />
             </div>
           </TabsContent>

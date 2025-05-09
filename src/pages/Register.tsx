@@ -1,15 +1,16 @@
 
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useAuth } from "@/hooks/useAuth";
-import { toast } from "sonner";
+import { useAuth } from '@/hooks/useAuth';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { toast } from 'sonner';
 
+// Define form validation schema
 const formSchema = z.object({
   firstName: z.string().min(1, { message: "First name is required" }),
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -22,12 +23,13 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-const Register = () => {
-  const { signUp, loading } = useAuth();
+const Register: React.FC = () => {
+  const navigate = useNavigate();
+  const { signUp } = useAuth();
+  const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate();
-
+  
   const {
     register,
     handleSubmit,
@@ -38,13 +40,15 @@ const Register = () => {
 
   const onSubmit = async (data: FormData) => {
     setError(null);
+    setLoading(true);
+    
     try {
-      // Fixed the type error by passing an object as the third parameter
       await signUp(data.email, data.password, { firstName: data.firstName });
       setSuccess(true);
       toast("Account created successfully", {
         description: "Please check your email to verify your account"
       });
+      
       // In development, auto-redirect after 3 seconds
       setTimeout(() => {
         navigate('/login');
@@ -52,6 +56,8 @@ const Register = () => {
     } catch (err: any) {
       setError(err.message || "Failed to create account");
       console.error("Signup error:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
