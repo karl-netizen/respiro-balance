@@ -3,16 +3,13 @@ export { useBiofeedback } from './useBiofeedback';
 export type { BiofeedbackHookReturn } from './types';
 export type { BiometricReadings } from './types';
 
-// Export additional hooks
-export { useBiofeedbackConnection } from './useBiofeedbackConnection';
-export { useBiofeedbackMonitoring } from './useBiofeedbackMonitoring';
-export { useBiofeedbackStorage } from './useBiofeedbackStorage';
+// Since these imported modules don't actually exist yet, let's remove them
+// export { useBiofeedbackConnection } from './useBiofeedbackConnection';
+// export { useBiofeedbackMonitoring } from './useBiofeedbackMonitoring';
+// export { useBiofeedbackStorage } from './useBiofeedbackStorage';
 
-// Export specific types from biofeedbackTypes without re-exporting BiofeedbackHookReturn
+// Export specific types from biofeedbackTypes that do exist
 import { 
-  BiofeedbackDevice, 
-  BiofeedbackSettings,
-  BiofeedbackDeviceState,
   DeviceInfo,
   BiometricData,
   SensorReading,
@@ -22,9 +19,6 @@ import {
 } from './biofeedbackTypes';
 
 export type {
-  BiofeedbackDevice,
-  BiofeedbackSettings,
-  BiofeedbackDeviceState,
   DeviceInfo,
   BiometricData,
   SensorReading,
