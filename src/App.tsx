@@ -13,7 +13,9 @@ import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 import FocusModePage from './pages/FocusModePage';
 import Progress from './pages/Progress';
-// Import other pages as needed
+import BiofeedbackPage from './pages/BiofeedbackPage';
+import WorkLifeBalance from './pages/WorkLifeBalance';
+import BreakSettingsPage from './pages/BreakSettingsPage';
 
 function App() {
   return (
@@ -28,7 +30,9 @@ function App() {
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/focus" element={<FocusModePage />} />
                   <Route path="/progress" element={<Progress />} />
-                  {/* Add other routes as needed */}
+                  <Route path="/biofeedback" element={<BiofeedbackPage />} />
+                  <Route path="/work-life-balance" element={<WorkLifeBalance />} />
+                  <Route path="/work-life-balance/break-settings" element={<BreakSettingsPage />} />
                 </Routes>
               </FocusProvider>
             </SubscriptionProvider>
