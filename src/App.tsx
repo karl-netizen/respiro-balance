@@ -16,6 +16,7 @@ import Progress from './pages/Progress';
 import BiofeedbackPage from './pages/BiofeedbackPage';
 import WorkLifeBalance from './pages/WorkLifeBalance';
 import BreakSettingsPage from './pages/BreakSettingsPage';
+import Breathe from './pages/Breathe';
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
                   <Route path="/biofeedback" element={<BiofeedbackPage />} />
                   <Route path="/work-life-balance" element={<WorkLifeBalance />} />
                   <Route path="/work-life-balance/break-settings" element={<BreakSettingsPage />} />
+                  <Route path="/breathe" element={<Breathe />} />
                 </Routes>
               </FocusProvider>
             </SubscriptionProvider>
