@@ -2,19 +2,13 @@
 import React from "react";
 import { useUserPreferences } from "@/context";
 import { Sun, Clock, Calendar } from "lucide-react";
+import { useTimeAwareness } from "@/hooks/useTimeAwareness";
 
 const RitualHero = () => {
   const { preferences } = useUserPreferences();
+  const { getGreeting } = useTimeAwareness();
   const morningActivities = preferences.morningActivities || [];
   const ritualsCount = preferences.morningRituals?.length || 0;
-  
-  // Get greeting based on time of day
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return "Good morning";
-    if (hour < 18) return "Good afternoon";
-    return "Good evening";
-  };
 
   return (
     <div className="bg-gradient-to-b from-primary/10 to-background py-12 px-4">

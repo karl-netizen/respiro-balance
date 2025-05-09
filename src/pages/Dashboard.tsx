@@ -18,12 +18,14 @@ import SubscriptionBanner from '@/components/subscription/SubscriptionBanner';
 import { MeditationStats } from '@/components/progress/types/meditationStats';
 import { format, subDays } from 'date-fns';
 import { useMeditationSessions } from '@/hooks/useMeditationSessions';
+import { useTimeAwareness } from '@/hooks/useTimeAwareness';
 
 const Dashboard = () => {
   const { user } = useAuth();
   const { isPremium } = useSubscriptionContext();
   const { sessions } = useMeditationSessions();
   const [currentMood, setCurrentMood] = useState<string | null>(null);
+  const { timePeriod, recommendations, recordMood, getGreeting } = useTimeAwareness();
   
   // Mock meditation stats - would come from API in real implementation
   const meditationStats: MeditationStats = {
@@ -59,12 +61,13 @@ const Dashboard = () => {
   // Handle mood selection
   const handleMoodSelect = (mood: string) => {
     setCurrentMood(mood);
-    // In real implementation, save to user profile
-    console.log(`Mood selected: ${mood}`);
+    // Record mood in TimeAwarenessService
+    recordMood(mood);
     
     // Store the mood in local storage for persistence
     localStorage.setItem('currentMood', mood);
     localStorage.setItem('moodTimestamp', new Date().toISOString());
+    console.log(`Mood selected: ${mood} during ${timePeriod}`);
   };
   
   // Load saved mood from local storage on component mount
@@ -126,7 +129,11 @@ const Dashboard = () => {
       <Header />
       
       <main className="flex-grow container mx-auto px-4 py-8">
-        <DashboardWelcome userName={userName} />
+        <DashboardWelcome 
+          userName={userName} 
+          greeting={getGreeting(userName)} 
+          timePeriod={timePeriod}
+        />
         
         {!isPremium && <SubscriptionBanner />}
         
@@ -135,10 +142,7 @@ const Dashboard = () => {
             <MoodTracker onMoodSelect={handleMoodSelect} currentMood={currentMood} />
             <RecommendationCard 
               currentMood={currentMood} 
-              timeOfDay={
-                new Date().getHours() < 12 ? 'morning' :
-                new Date().getHours() < 18 ? 'afternoon' : 'evening'
-              }
+              timeOfDay={timePeriod}
               recentSessions={sessions?.length || 0}
             />
             <ActivityCalendar data={activityData} />

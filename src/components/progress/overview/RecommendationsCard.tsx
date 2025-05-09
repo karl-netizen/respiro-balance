@@ -3,9 +3,11 @@ import React from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { SunMedium, Moon, Sunset } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTimeAwareness } from '@/hooks/useTimeAwareness';
+import { TimePeriod } from '@/services/TimeAwarenessService';
 
 interface RecommendationsCardProps {
-  timeOfDay: 'morning' | 'afternoon' | 'evening';
+  timeOfDay: TimePeriod;
   recentSessions: number;
   preferredDuration?: number;
 }
@@ -15,6 +17,8 @@ const RecommendationsCard: React.FC<RecommendationsCardProps> = ({
   recentSessions,
   preferredDuration = 10
 }) => {
+  const { recommendations } = useTimeAwareness();
+  
   // Get time-of-day specific recommendations
   const getRecommendations = () => {
     switch(timeOfDay) {
@@ -24,7 +28,7 @@ const RecommendationsCard: React.FC<RecommendationsCardProps> = ({
           title: "Morning Meditation",
           sessions: [
             { name: "Energizing Breath", duration: 5, type: "Breathing" },
-            { name: "Morning Clarity", duration: 10, type: "Guided" },
+            { name: recommendations.meditation.title, duration: recommendations.meditation.duration, type: "Guided" },
             { name: "Rise and Shine", duration: 15, type: "Music" }
           ]
         };
@@ -33,8 +37,8 @@ const RecommendationsCard: React.FC<RecommendationsCardProps> = ({
           icon: <Sunset className="h-5 w-5 text-orange-500" />,
           title: "Afternoon Reset",
           sessions: [
-            { name: "Midday Refocus", duration: 5, type: "Breathing" },
-            { name: "Stress Relief", duration: 10, type: "Guided" },
+            { name: recommendations.breathing.title, duration: recommendations.breathing.duration, type: "Breathing" },
+            { name: recommendations.meditation.title, duration: recommendations.meditation.duration, type: "Guided" },
             { name: "Afternoon Calm", duration: 15, type: "Music" }
           ]
         };
@@ -44,8 +48,18 @@ const RecommendationsCard: React.FC<RecommendationsCardProps> = ({
           title: "Evening Wind Down",
           sessions: [
             { name: "Deep Relaxation", duration: 5, type: "Breathing" },
-            { name: "Sleep Preparation", duration: 10, type: "Guided" },
+            { name: recommendations.meditation.title, duration: recommendations.meditation.duration, type: "Guided" },
             { name: "Night Peace", duration: 20, type: "Music" }
+          ]
+        };
+      case 'night':
+        return {
+          icon: <Moon className="h-5 w-5 text-indigo-500" />,
+          title: "Before Sleep",
+          sessions: [
+            { name: recommendations.breathing.title, duration: recommendations.breathing.duration, type: "Breathing" },
+            { name: recommendations.meditation.title, duration: recommendations.meditation.duration, type: "Guided" },
+            { name: "Sleep Sounds", duration: 30, type: "Music" }
           ]
         };
       default:
@@ -61,22 +75,22 @@ const RecommendationsCard: React.FC<RecommendationsCardProps> = ({
     }
   };
   
-  const recommendations = getRecommendations();
+  const recommendationsData = getRecommendations();
   
   // Filter to get sessions close to preferred duration
-  const filteredSessions = recommendations.sessions.filter(
+  const filteredSessions = recommendationsData.sessions.filter(
     session => Math.abs(session.duration - preferredDuration) <= 10
   );
   
   // Use filtered or all if none match
-  const sessionsToShow = filteredSessions.length > 0 ? filteredSessions : recommendations.sessions;
+  const sessionsToShow = filteredSessions.length > 0 ? filteredSessions : recommendationsData.sessions;
   
   return (
     <Card>
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center">
-          {recommendations.icon}
-          <span className="ml-2">{recommendations.title}</span>
+          {recommendationsData.icon}
+          <span className="ml-2">{recommendationsData.title}</span>
         </CardTitle>
         <CardDescription>Recommended sessions for this time</CardDescription>
       </CardHeader>

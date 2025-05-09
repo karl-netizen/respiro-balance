@@ -1,45 +1,48 @@
 
 import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Sun, PlusCircle } from 'lucide-react';
+import { TimePeriod } from '@/services/TimeAwarenessService';
+import { Sun, Moon, Sunset, Cloud } from 'lucide-react';
 
 interface DashboardWelcomeProps {
-  userName?: string;
+  userName: string;
+  greeting?: string;
+  timePeriod?: TimePeriod;
 }
 
-const DashboardWelcome: React.FC<DashboardWelcomeProps> = ({ userName = 'there' }) => {
-  // Get current time to determine greeting
-  const currentHour = new Date().getHours();
-  let greeting = '';
-  
-  if (currentHour < 12) {
-    greeting = 'Good morning';
-  } else if (currentHour < 18) {
-    greeting = 'Good afternoon';
-  } else {
-    greeting = 'Good evening';
-  }
+const DashboardWelcome: React.FC<DashboardWelcomeProps> = ({ 
+  userName, 
+  greeting,
+  timePeriod = 'morning' 
+}) => {
+  // Get appropriate icon based on time period
+  const getTimeIcon = () => {
+    switch (timePeriod) {
+      case 'morning':
+        return <Sun className="h-6 w-6 text-amber-500" />;
+      case 'afternoon':
+        return <Cloud className="h-6 w-6 text-blue-500" />;
+      case 'evening':
+        return <Sunset className="h-6 w-6 text-orange-500" />;
+      case 'night':
+        return <Moon className="h-6 w-6 text-indigo-600" />;
+      default:
+        return <Sun className="h-6 w-6 text-amber-500" />;
+    }
+  };
+
+  // Generate greeting if not provided
+  const greetingMessage = greeting || `Good ${timePeriod}, ${userName}`;
 
   return (
-    <Card className="mb-6 bg-gradient-to-r from-primary/10 to-secondary/10">
-      <CardContent className="p-6">
-        <div className="flex items-center mb-4">
-          <div className="p-2 bg-primary/20 rounded-full mr-3">
-            <Sun className="h-6 w-6 text-primary" />
-          </div>
-          <h1 className="text-2xl font-bold">{greeting}, {userName}!</h1>
-        </div>
-        
-        <p className="text-muted-foreground mb-4">
-          Welcome to your personal mindfulness dashboard. Track your progress and continue your journey.
-        </p>
-        
-        <Button className="flex items-center gap-2">
-          <PlusCircle className="h-4 w-4" /> New Meditation
-        </Button>
-      </CardContent>
-    </Card>
+    <div className="mb-8">
+      <div className="flex items-center gap-3 mb-2">
+        {getTimeIcon()}
+        <h1 className="text-3xl font-bold">{greetingMessage}</h1>
+      </div>
+      <p className="text-muted-foreground">
+        Welcome to your personal wellness dashboard. Here's your progress at a glance.
+      </p>
+    </div>
   );
 };
 

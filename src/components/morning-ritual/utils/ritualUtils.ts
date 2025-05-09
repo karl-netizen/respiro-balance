@@ -1,9 +1,9 @@
-
 /**
  * Utility functions for ritual management
  */
 import { MorningRitual, RitualStatus, CompletionRecord } from "@/context/types";
 import { shouldDoRitualToday, shouldDoRitualYesterday, wasCompletedOnDate, wasCompletedToday } from "./dateUtils";
+import { TimeAwarenessService } from "@/services/TimeAwarenessService";
 
 /**
  * Generate a unique ID for a new ritual
@@ -25,13 +25,21 @@ export const getSuggestedActivities = (
   morningEnergyLevel: number = 5,
   existingActivities: string[] = []
 ): string[] => {
+  const timePeriod = TimeAwarenessService.getCurrentTimePeriod();
+  
   // Base suggestions everyone should consider
   const baseSuggestions = ["hydration", "meditation"];
   
+  // Time of day may impact energy level or other factors
+  const adjustedEnergyLevel = 
+    timePeriod === 'morning' ? morningEnergyLevel : 
+    timePeriod === 'night' ? Math.max(2, morningEnergyLevel - 3) : 
+    morningEnergyLevel;
+  
   // Energy-based suggestions
-  const energyBasedSuggestions = morningEnergyLevel <= 3
+  const energyBasedSuggestions = adjustedEnergyLevel <= 3
     ? ["journaling", "stretching"] // Low energy
-    : morningEnergyLevel >= 8
+    : adjustedEnergyLevel >= 8
       ? ["exercise", "cold_shower"] // High energy
       : ["stretching", "planning"]; // Medium energy
   

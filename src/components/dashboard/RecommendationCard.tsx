@@ -4,17 +4,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Brain, Flame, Heart, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useTimeAwareness } from '@/hooks/useTimeAwareness';
+import { TimePeriod } from '@/services/TimeAwarenessService';
 
 export interface RecommendationCardProps {
   currentMood?: string | null;
-  timeOfDay?: 'morning' | 'afternoon' | 'evening';
+  timeOfDay?: TimePeriod;
   recentSessions?: number;
 }
 
 const RecommendationCard: React.FC<RecommendationCardProps> = ({ currentMood, timeOfDay, recentSessions }) => {
   const navigate = useNavigate();
+  const { recommendations } = useTimeAwareness();
   
-  // Determine recommendations based on mood
+  // Determine recommendations based on mood and time of day
   const getRecommendations = () => {
     switch (currentMood) {
       case 'happy':
@@ -54,18 +57,88 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({ currentMood, ti
           ]
         };
       default:
-        return {
-          title: 'Recommended For You',
-          description: 'Based on your meditation history and preferences',
-          sessions: [
-            { id: 'daily-1', title: 'Daily Calm', duration: 10, icon: <Sparkles className="h-5 w-5" /> },
-            { id: 'focus-2', title: 'Focus Enhancer', duration: 15, icon: <Brain className="h-5 w-5" /> }
-          ]
-        };
+        // If no mood is selected, use time-based recommendations
+        if (timeOfDay === 'morning') {
+          return {
+            title: 'Morning Recommendations',
+            description: 'Start your day with these mindful practices',
+            sessions: [
+              { 
+                id: 'morning-med-1', 
+                title: recommendations.meditation.title, 
+                duration: recommendations.meditation.duration, 
+                icon: <Sparkles className="h-5 w-5" /> 
+              },
+              { 
+                id: 'morning-breath-1', 
+                title: recommendations.breathing.title, 
+                duration: recommendations.breathing.duration, 
+                icon: <Flame className="h-5 w-5" /> 
+              }
+            ]
+          };
+        } else if (timeOfDay === 'afternoon') {
+          return {
+            title: 'Afternoon Recommendations',
+            description: 'Reset and refocus with these midday practices',
+            sessions: [
+              { 
+                id: 'afternoon-med-1', 
+                title: recommendations.meditation.title, 
+                duration: recommendations.meditation.duration, 
+                icon: <Brain className="h-5 w-5" /> 
+              },
+              { 
+                id: 'afternoon-breath-1', 
+                title: recommendations.breathing.title, 
+                duration: recommendations.breathing.duration, 
+                icon: <Heart className="h-5 w-5" /> 
+              }
+            ]
+          };
+        } else if (timeOfDay === 'evening') {
+          return {
+            title: 'Evening Recommendations',
+            description: 'Wind down and transition from your workday',
+            sessions: [
+              { 
+                id: 'evening-med-1', 
+                title: recommendations.meditation.title, 
+                duration: recommendations.meditation.duration, 
+                icon: <Heart className="h-5 w-5" /> 
+              },
+              { 
+                id: 'evening-breath-1', 
+                title: recommendations.breathing.title, 
+                duration: recommendations.breathing.duration, 
+                icon: <Brain className="h-5 w-5" /> 
+              }
+            ]
+          };
+        } else {
+          return {
+            title: 'Night Recommendations',
+            description: 'Prepare your mind and body for restful sleep',
+            sessions: [
+              { 
+                id: 'night-med-1', 
+                title: recommendations.meditation.title, 
+                duration: recommendations.meditation.duration, 
+                icon: <Heart className="h-5 w-5" /> 
+              },
+              { 
+                id: 'night-breath-1', 
+                title: recommendations.breathing.title, 
+                duration: recommendations.breathing.duration, 
+                icon: <Flame className="h-5 w-5" /> 
+              }
+            ]
+          };
+        }
     }
   };
   
-  const recommendations = getRecommendations();
+  const recommendationsData = getRecommendations();
   
   const handleSessionClick = (sessionId: string) => {
     navigate(`/meditate/session/${sessionId}`);
@@ -74,14 +147,14 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({ currentMood, ti
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{recommendations.title}</CardTitle>
+        <CardTitle>{recommendationsData.title}</CardTitle>
         <CardDescription>
-          {recommendations.description}
+          {recommendationsData.description}
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
-          {recommendations.sessions.map((session) => (
+          {recommendationsData.sessions.map((session) => (
             <div 
               key={session.id}
               className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted cursor-pointer"
