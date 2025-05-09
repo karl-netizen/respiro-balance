@@ -1,5 +1,5 @@
 
-import { createContext } from 'react';
+import { createContext, useContext } from 'react';
 
 // Extend the AuthContextType to include all necessary methods
 export interface AuthContextType {
@@ -32,5 +32,14 @@ const AuthContext = createContext<AuthContextType>({
   verifyEmail: async () => null,
   resendVerificationEmail: async () => null
 });
+
+// Export the useAuth hook
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
 
 export default AuthContext;

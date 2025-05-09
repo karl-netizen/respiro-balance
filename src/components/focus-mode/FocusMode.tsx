@@ -30,7 +30,7 @@ const FocusMode: React.FC = () => {
       // Convert the current session to match the expected FocusSession type
       const formattedSession: FocusSession = {
         id: currentSession?.id || '',
-        userId: currentSession?.userId || '', 
+        userId: currentSession?.user_id || currentSession?.userId || '', 
         startTime: currentSession?.startTime ? currentSession.startTime.toString() : '',
         endTime: currentSession?.endTime ? currentSession.endTime.toString() : undefined,
         duration: currentSession?.duration,
