@@ -18,6 +18,8 @@ import WorkLifeBalance from './pages/WorkLifeBalance';
 import BreakSettingsPage from './pages/BreakSettingsPage';
 import Breathe from './pages/Breathe';
 import LandingPage from './pages/LandingPage';
+import Meditate from './pages/Meditate';
+import MeditationSessionView from './pages/MeditationSessionView';
 
 function App() {
   return (
@@ -37,6 +39,8 @@ function App() {
                   <Route path="/work-life-balance" element={<WorkLifeBalance />} />
                   <Route path="/work-life-balance/break-settings" element={<BreakSettingsPage />} />
                   <Route path="/breathe" element={<Breathe />} />
+                  <Route path="/meditate" element={<Meditate />} />
+                  <Route path="/meditate/session/:sessionId" element={<MeditationSessionView />} />
                 </Routes>
               </FocusProvider>
             </SubscriptionProvider>
