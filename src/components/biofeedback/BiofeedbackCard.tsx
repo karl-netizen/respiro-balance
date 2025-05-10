@@ -51,7 +51,7 @@ const BiofeedbackCard = () => {
     }
   };
 
-  // Create promise-based handlers to match the new component props
+  // Update return type to Promise<void> to match the interface
   const handleScanForDevices = async (deviceType?: string, options?: any): Promise<void> => {
     setIsConnecting(true);
     try {
@@ -61,6 +61,7 @@ const BiofeedbackCard = () => {
     }
   };
 
+  // Update return type to Promise<void> to match the interface
   const handleConnectDeviceById = async (deviceId: string, callback?: () => void): Promise<void> => {
     try {
       await connectBluetoothDevice("heart_rate_monitor", { deviceId, callback });
@@ -69,6 +70,7 @@ const BiofeedbackCard = () => {
     }
   };
 
+  // Update return type to Promise<void> to match the interface
   const handleDisconnectDeviceById = async (deviceId: string, callback?: () => void): Promise<void> => {
     try {
       await disconnectBluetoothDevice(deviceId, callback);

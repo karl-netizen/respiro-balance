@@ -8,6 +8,11 @@ export function useDeviceManagement() {
   const [isScanning, setIsScanning] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   
+  // Add explicit return type: boolean
+  const isBluetoothAvailable = (): boolean => {
+    return typeof navigator !== 'undefined' && !!navigator.bluetooth;
+  };
+  
   // Scan for available Bluetooth devices
   const scanForDevices = async (deviceType?: string, options?: any): Promise<boolean> => {
     try {
@@ -50,7 +55,7 @@ export function useDeviceManagement() {
     }
   };
 
-  // Stop ongoing scan
+  // Stop ongoing scan with explicit Promise<void> return type
   const stopScan = async (deviceType?: string, callback?: () => void): Promise<void> => {
     setIsScanning(false);
     
@@ -59,7 +64,7 @@ export function useDeviceManagement() {
     }
   };
 
-  // Connect to a specific device
+  // Connect to a specific device with explicit Promise<boolean> return type
   const connectDevice = async (deviceId: string, options?: any): Promise<boolean> => {
     try {
       setIsConnecting(true);
@@ -89,7 +94,7 @@ export function useDeviceManagement() {
     }
   };
 
-  // Disconnect from a device
+  // Disconnect from a device with explicit Promise<boolean> return type
   const disconnectDevice = async (deviceId: string, options?: any): Promise<boolean> => {
     try {
       const success = await DeviceService.disconnectFromDevice(deviceId);
@@ -130,6 +135,7 @@ export function useDeviceManagement() {
     devices,
     isScanning,
     isConnecting,
+    isBluetoothAvailable,
     scanForDevices,
     stopScan,
     connectDevice,

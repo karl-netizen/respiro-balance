@@ -20,6 +20,7 @@ const BiofeedbackPage: React.FC = () => {
     stopScan
   } = useBiofeedback();
 
+  // Add explicit Promise<void> return type
   const handleScanForDevices = async (deviceType?: string, options?: any): Promise<void> => {
     try {
       await scanForDevices(deviceType, options);
@@ -28,6 +29,7 @@ const BiofeedbackPage: React.FC = () => {
     }
   };
 
+  // Add explicit Promise<void> return type
   const handleConnectDevice = async (deviceId: string, callback?: () => void): Promise<void> => {
     try {
       await connectDevice(deviceId, { callback });
@@ -36,6 +38,7 @@ const BiofeedbackPage: React.FC = () => {
     }
   };
 
+  // Add explicit Promise<void> return type
   const handleDisconnectDevice = async (deviceId: string, callback?: () => void): Promise<void> => {
     try {
       await disconnectDevice(deviceId, { callback });
@@ -44,6 +47,7 @@ const BiofeedbackPage: React.FC = () => {
     }
   };
   
+  // Add explicit Promise<void> return type
   const handleStopScan = async (deviceType?: string, callback?: () => void): Promise<void> => {
     try {
       if (stopScan) {

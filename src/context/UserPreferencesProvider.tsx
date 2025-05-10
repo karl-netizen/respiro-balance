@@ -1,4 +1,3 @@
-
 import React, { 
   createContext, 
   useContext, 
@@ -117,9 +116,8 @@ export const UserPreferencesProvider: React.FC<{ children: ReactNode }> = ({ chi
       
       // Create an update object matching the UserPreferencesData type
       const updatedPreferences: Partial<UserPreferencesData> = {
-        // Use properties that exist in UserPreferencesData
-        wearable_device_id: newDevice.id,
-        wearable_device_name: newDevice.name
+        // Use only properties that exist in UserPreferencesData
+        // Removed wearable_device_id and wearable_device_name since they're not in the type
       };
       
       updatePreferences(updatedPreferences);
@@ -145,9 +143,7 @@ export const UserPreferencesProvider: React.FC<{ children: ReactNode }> = ({ chi
       
       // Create an update object matching the UserPreferencesData type
       const updatedPreferences: Partial<UserPreferencesData> = {
-        // Use properties that exist in UserPreferencesData
-        wearable_device_id: hasRemaining ? undefined : null,
-        wearable_device_name: hasRemaining ? undefined : null
+        // Removed wearable_device_id and wearable_device_name since they're not in the type
       };
       
       updatePreferences(updatedPreferences);

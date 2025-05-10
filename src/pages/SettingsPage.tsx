@@ -15,6 +15,7 @@ const SettingsPage: React.FC = () => {
   
   // Fixed to use includes for subscription tier check
   const isPremiumOrEnterprise = ["premium", "enterprise"].includes(preferences.subscriptionTier);
+  const subscriptionTier = preferences.subscriptionTier || 'free';
 
   return (
     <>
@@ -50,7 +51,7 @@ const SettingsPage: React.FC = () => {
           <TabsContent value="subscription" className="space-y-4">
             <AccountSubscriptionSettings 
               isPremium={isPremiumOrEnterprise}
-              subscriptionTier={preferences.subscriptionTier || 'free'}
+              subscriptionTier={subscriptionTier}
             />
           </TabsContent>
         </Tabs>
