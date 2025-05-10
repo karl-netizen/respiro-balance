@@ -45,13 +45,17 @@ const Register: React.FC = () => {
     try {
       await signUp(data.email, data.password, { firstName: data.firstName });
       setSuccess(true);
+      
+      // Set a flag to indicate this is a new signup for onboarding trigger
+      sessionStorage.setItem('newSignUp', 'true');
+      
       toast("Account created successfully", {
         description: "Please check your email to verify your account"
       });
       
       // In development, auto-redirect after 3 seconds
       setTimeout(() => {
-        navigate('/login');
+        navigate('/onboarding');
       }, 3000);
     } catch (err: any) {
       setError(err.message || "Failed to create account");

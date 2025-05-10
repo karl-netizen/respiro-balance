@@ -64,6 +64,25 @@ const FinalStep = () => {
           <div>{preferences.preferredSessionDuration || 10} minutes</div>
         </div>
       </div>
+
+      {/* Display personalized recommendations */}
+      <div className="bg-primary/5 p-4 rounded-md text-left">
+        <h4 className="font-semibold mb-2">Your Personalized Recommendations</h4>
+        <div className="grid grid-cols-2 gap-y-2 text-sm">
+          <div className="font-medium">Recommended Session Duration:</div>
+          <div>{preferences.recommendedSessionDuration || preferences.preferredSessionDuration || 10} minutes</div>
+          
+          <div className="font-medium">Optimal Meditation Time:</div>
+          <div>{preferences.recommendedMeditationTime || "Based on your schedule"}</div>
+          
+          {preferences.recommendedTechniques && preferences.recommendedTechniques.length > 0 && (
+            <>
+              <div className="font-medium">Recommended Techniques:</div>
+              <div>{preferences.recommendedTechniques.map(t => t.charAt(0).toUpperCase() + t.slice(1)).join(', ')}</div>
+            </>
+          )}
+        </div>
+      </div>
       
       <p className="text-sm text-muted-foreground">
         You can update these preferences anytime in your profile settings.

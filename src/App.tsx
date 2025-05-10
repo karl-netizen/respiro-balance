@@ -23,6 +23,7 @@ import MeditationSessionView from './pages/MeditationSessionView';
 import MorningRitual from './pages/MorningRitual';
 import Account from './pages/Account';
 import FAQ from './pages/FAQ';
+import OnboardingPage from './pages/OnboardingPage';
 import NotFound from './pages/NotFound';
 
 function App() {
@@ -49,6 +50,7 @@ function App() {
                   <Route path="/morning-ritual" element={<MorningRitual />} />
                   <Route path="/account" element={<Account />} />
                   <Route path="/faq" element={<FAQ />} />
+                  <Route path="/onboarding" element={<OnboardingPage />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </FocusProvider>

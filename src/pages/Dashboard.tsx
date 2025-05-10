@@ -1,8 +1,11 @@
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
+import { useUserPreferences } from '@/context';
+import { useOnboardingTrigger } from '@/hooks/useOnboardingTrigger';
 
-import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { useAuth } from '@/hooks/useAuth';
 import { useSubscriptionContext } from '@/hooks/useSubscriptionContext';
 import { 
   DashboardWelcome, 
@@ -21,7 +24,37 @@ import { useMeditationSessions } from '@/hooks/useMeditationSessions';
 import { useTimeAwareness } from '@/hooks/useTimeAwareness';
 
 const Dashboard = () => {
-  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { user, isLoading } = useAuth();
+  const { preferences } = useUserPreferences();
+  
+  // Use the onboarding trigger hook
+  useOnboardingTrigger();
+  
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!isLoading && !user) {
+      navigate('/landing');
+    }
+  }, [user, isLoading, navigate]);
+
+  // Show loading state while checking auth
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p>Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // If not authenticated, don't render the dashboard
+  if (!user) {
+    return null;
+  }
+
   const { isPremium } = useSubscriptionContext();
   const { sessions } = useMeditationSessions();
   const [currentMood, setCurrentMood] = useState<string | null>(null);

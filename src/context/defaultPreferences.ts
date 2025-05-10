@@ -1,96 +1,71 @@
 
 import { UserPreferences } from './types';
-import { defaultBreakReminders } from '@/services/NotificationService';
 
 const defaultPreferences: UserPreferences = {
-  theme: 'light' as 'light' | 'dark' | 'system',
-  focusMode: false,
-  defaultMeditationDuration: 10,
-  preferredBreathingTechnique: 'box',
-  showBreathingGuide: true,
-  breathingSpeed: 'medium' as 'slow' | 'medium' | 'fast',
-  notificationsEnabled: true,
-  soundEnabled: true,
-  backgroundMusic: 'ambient' as 'nature' | 'ambient' | 'none',
-  focusTimerDuration: 25,
-  breakTimerDuration: 5,
-  weeklyMeditationGoal: 3,
-  autoPlayNextSession: false,
-  hasWearableDevice: false,
-  wearableDeviceType: '',
-  wearableDeviceId: '',
-  lastSyncDate: '',
-  connectedDevices: [],
-  metricsOfInterest: [
-    'heartRate',
-    'breathingRate',
-    'focusScore',
-    'stress'
-  ],
-  focusChallenges: [
-    'deepWork',
-    'pomodoro',
-    'socialMedia'
-  ],
-  workDays: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'], // Changed to string array
-  userRole: 'user' as 'user' | 'coach' | 'admin',
-  meditationGoals: [
-    'reduce stress',
-    'improve focus',
-    'better sleep'
-  ],
+  // User role and identification
+  userRole: 'client',
+  theme: 'system',
   
-  // Morning ritual related
-  morningRituals: [],
-  morningActivities: [],
-  morningEnergyLevel: 5,
-  morningDevices: 'phone_first',
-  weekdayWakeTime: '07:00',
-  weekendWakeTime: '08:00',
-  
-  // Onboarding related
-  hasCompletedOnboarding: false,
-  stressLevel: 'moderate',
-  energyPattern: 'morning',
+  // Work schedule
+  workDays: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
   workStartTime: '09:00',
   workEndTime: '17:00',
-  workEnvironment: 'hybrid',
+  workEnvironment: 'office',
+  
+  // Focus and productivity
+  stressLevel: 'moderate',
+  focusChallenges: [],
+  energyPattern: 'morning',
+  
+  // Daily routine
   lunchBreak: true,
   lunchTime: '12:00',
   morningExercise: false,
-  exerciseTime: '06:30',
-  bedTime: '22:30',
+  exerciseTime: '',
+  bedTime: '22:00',
+  
+  // Meditation preferences
   meditationExperience: 'beginner',
+  meditationGoals: [],
   preferredSessionDuration: 10,
-  timeChallenges: [],
-  usesTimeBlocking: 'sometimes',
-  workBoundaries: 'flexible',
-  timeManagementStyle: 'flexible',
+  defaultMeditationDuration: 10,
   
-  // Notifications
-  enableSessionReminders: true,
-  enableProgressUpdates: true,
-  enableRecommendations: true,
+  // App usage tracking
+  lastActive: new Date().toISOString(),
+  dailyUsageMinutes: 0,
+  weeklyUsageMinutes: 0,
   
-  // Work-Life Balance Break Reminders
-  breakReminders: defaultBreakReminders,
-  breakNotificationsEnabled: false,
+  // Features usage
+  hasExportedData: false,
+  hasSharedProgress: false,
+  hasCompletedOnboarding: false,
+  lastOnboardingCompleted: null,
+  lastOnboardingSkipped: null,
+  lastOnboardingStep: null,
+  hasViewedTutorial: false,
   
-  // Business
-  businessAttribution: '',
-  subscriptionTier: 'free',
+  // Biometric tracking
+  metricsOfInterest: [],
+  connectedDevices: [],
+  
+  // Morning ritual
+  morningActivities: [],
   
   // UI preferences
   darkMode: false,
   reducedMotion: false,
   highContrast: false,
-  reminders: true,
-  emailNotifications: true,
-  achievementNotifications: true,
-  showBiometrics: false,
-  enableBackgroundAudio: true,
-  highQualityAudio: false,
-  offlineAccess: false,
+  
+  // Time management
+  timeChallenges: [],
+  
+  // Personalization algorithm results
+  recommendedSessionDuration: undefined,
+  recommendedMeditationTime: undefined,
+  recommendedTechniques: undefined,
+  
+  // Subscription
+  subscriptionTier: 'free',
 };
 
 export default defaultPreferences;
