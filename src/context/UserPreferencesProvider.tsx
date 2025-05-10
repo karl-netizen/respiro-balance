@@ -1,4 +1,3 @@
-
 import React, { 
   createContext, 
   useContext, 
@@ -9,7 +8,8 @@ import React, {
 import { 
   UserPreferencesData, 
   BluetoothDevice,
-  UserProfile
+  UserProfile,
+  BluetoothDeviceInfo
 } from '@/types/supabase';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabase';
@@ -42,7 +42,7 @@ export const UserPreferencesProvider: React.FC<{ children: ReactNode }> = ({ chi
     bed_time: '22:00',
     has_completed_onboarding: false,
   });
-  const [connectedDevices, setConnectedDevices] = useState<BluetoothDevice[]>([]);
+  const [connectedDevices, setConnectedDevices] = useState<BluetoothDeviceInfo[]>([]);
   const [subscriptionTier, setSubscriptionTier] = useState<string>('free');
   const [hasWearableDevice, setHasWearableDevice] = useState<boolean>(false);
   const [role, setRole] = useState<string>('user');
@@ -106,16 +106,22 @@ export const UserPreferencesProvider: React.FC<{ children: ReactNode }> = ({ chi
   const connectBluetoothDevice = async (deviceType?: string, options?: any): Promise<boolean> => {
     try {
       // Simulate device connection
-      const newDevice: BluetoothDevice = {
+      const newDevice: BluetoothDeviceInfo = {
         id: 'wearable-001',
         name: 'MyWearable',
-        type: 'heart_rate_monitor',
-        connected: true,
       };
 
       setConnectedDevices([newDevice]);
       setHasWearableDevice(true);
-      updatePreferences({ hasWearableDevice: true });
+      
+      // Use custom properties for the update object to match UserPreferencesData
+      const updatedPreferences = {
+        wearable_device_connected: true,
+        wearable_device_id: newDevice.id,
+        wearable_device_name: newDevice.name
+      };
+      
+      updatePreferences(updatedPreferences);
       
       if (options?.callback && typeof options.callback === 'function') {
         options.callback(newDevice);
@@ -133,7 +139,15 @@ export const UserPreferencesProvider: React.FC<{ children: ReactNode }> = ({ chi
       // Simulate device disconnection
       setConnectedDevices(connectedDevices.filter(device => device.id !== deviceId));
       setHasWearableDevice(false);
-      updatePreferences({ hasWearableDevice: false });
+      
+      // Use custom properties for the update object to match UserPreferencesData
+      const updatedPreferences = {
+        wearable_device_connected: false,
+        wearable_device_id: null,
+        wearable_device_name: null
+      };
+      
+      updatePreferences(updatedPreferences);
       
       if (callback && typeof callback === 'function') {
         callback();
@@ -143,7 +157,7 @@ export const UserPreferencesProvider: React.FC<{ children: ReactNode }> = ({ chi
     }
   };
 
-  // Fix the isCoach function to return a boolean rather than a function
+  // Return boolean directly
   const isCoach = role === 'coach';
 
   const value = {
@@ -151,7 +165,7 @@ export const UserPreferencesProvider: React.FC<{ children: ReactNode }> = ({ chi
     updatePreferences,
     connectBluetoothDevice,
     disconnectBluetoothDevice,
-    isCoach,  // Return the boolean value directly
+    isCoach,
   };
 
   return (

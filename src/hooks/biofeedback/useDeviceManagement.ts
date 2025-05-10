@@ -16,7 +16,7 @@ export function useDeviceManagement() {
       // If in simulation mode, return mock devices
       if (options?.isSimulationMode) {
         await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate scan delay
-        const mockDevices = await DeviceService.scanForDevices(deviceType);
+        const mockDevices = await DeviceService.scanForDevices();
         setDevices(mockDevices);
         
         // Auto-connect if requested
@@ -28,7 +28,7 @@ export function useDeviceManagement() {
       }
       
       // Real scan implementation
-      const foundDevices = await DeviceService.scanForDevices(deviceType);
+      const foundDevices = await DeviceService.scanForDevices();
       setDevices(foundDevices);
       
       // Auto-connect if requested

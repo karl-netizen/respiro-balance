@@ -1,5 +1,5 @@
 
-import { UserPreferences, BluetoothDevice, DeviceType } from './types';
+import { UserPreferences, BluetoothDevice, DeviceType, BluetoothDeviceInfo } from './types';
 
 // Function to simulate connecting a Bluetooth device
 export const connectBluetoothDevice = async (): Promise<{
@@ -35,19 +35,11 @@ export const connectBluetoothDevice = async (): Promise<{
 export const disconnectDevice = (
   deviceId: string, 
   preferences: UserPreferences
-): DeviceType[] => {
-  // Since we're dealing with string types in connectedDevices,
-  // we need to handle them differently than BluetoothDevice objects
-  const deviceIndex = preferences.connectedDevices.findIndex(
-    (device) => typeof device === 'string' ? false : device === deviceId
+): BluetoothDeviceInfo[] => {
+  // Handle disconnecting a specific device by its ID
+  const updatedDevices = preferences.connectedDevices.filter(
+    device => device.id !== deviceId
   );
-  
-  if (deviceIndex === -1) {
-    return preferences.connectedDevices;
-  }
-  
-  const updatedDevices = [...preferences.connectedDevices];
-  updatedDevices.splice(deviceIndex, 1);
   
   return updatedDevices;
 };

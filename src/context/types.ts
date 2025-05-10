@@ -24,7 +24,7 @@ export interface MeditationGoal {
 export interface BluetoothDeviceInfo {
   id: string;
   name: string;
-  connected: boolean;
+  connected?: boolean;
   type?: string;
 }
 
@@ -121,7 +121,7 @@ export interface UserPreferences {
   
   // Biometric tracking
   metricsOfInterest: string[];
-  connectedDevices: DeviceType[];
+  connectedDevices: BluetoothDeviceInfo[];
   
   // Morning ritual
   morningActivities: string[];
@@ -168,7 +168,6 @@ export interface UserPreferencesContextType {
   updatePreferences: (preferences: Partial<UserPreferences>) => void;
   resetPreferences: () => void;
   isCoach: boolean;
-  connectBluetoothDevice: () => Promise<boolean>;
-  disconnectBluetoothDevice: (deviceId: string) => Promise<boolean>;
+  connectBluetoothDevice: (deviceType?: string, options?: any) => Promise<boolean>;
+  disconnectBluetoothDevice: (deviceId: string, callback?: () => void) => Promise<boolean>;
 }
-

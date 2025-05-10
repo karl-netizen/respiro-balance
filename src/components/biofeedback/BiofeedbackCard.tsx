@@ -63,8 +63,7 @@ const BiofeedbackCard = () => {
 
   const handleConnectDeviceById = async (deviceId: string, callback?: () => void): Promise<void> => {
     try {
-      await connectBluetoothDevice();
-      if (callback) callback();
+      await connectBluetoothDevice("heart_rate_monitor", { deviceId, callback });
     } catch (error) {
       console.error("Failed to connect device:", error);
     }
