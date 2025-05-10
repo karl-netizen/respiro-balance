@@ -1,240 +1,210 @@
-import { UserPreferences } from '@/context/types';
+/**
+ * TimeAwarenessService
+ * Provides time-based functionality to adapt the application to the user's local time,
+ * including time period detection, personalized greetings, and recommendations.
+ */
 
 export type TimePeriod = 'morning' | 'afternoon' | 'evening' | 'night';
-export type MoodCorrelation = Record<string, Record<TimePeriod, number>>;
+export type MoodRecord = { mood: string; timestamp: string; timePeriod: TimePeriod };
 
-interface TimeAwarenessData {
-  currentTimePeriod: TimePeriod;
-  lastChecked: string;
-  moodHistory: Array<{
-    mood: string;
-    timestamp: string;
-    timePeriod: TimePeriod;
-  }>;
+interface TimeBasedRecommendations {
+  meditation: {
+    title: string;
+    duration: number;
+  };
+  breathing: {
+    title: string;
+    duration: number;
+  };
+  activity: {
+    title: string;
+    duration: number;
+  };
 }
 
-/**
- * Service to handle time-based awareness and recommendations 
- */
+// Local storage keys
+const MOOD_RECORDS_KEY = 'respiro_mood_records';
+
 export class TimeAwarenessService {
   /**
-   * Get the current time period based on the hour
+   * Get the current time period based on local time
+   * - Morning: 5:00 AM - 11:59 AM
+   * - Afternoon: 12:00 PM - 5:59 PM
+   * - Evening: 6:00 PM - 9:59 PM
+   * - Night: 10:00 PM - 4:59 AM
    */
   static getCurrentTimePeriod(): TimePeriod {
-    const hour = new Date().getHours();
-    
-    if (hour >= 5 && hour < 12) {
+    const currentHour = new Date().getHours();
+
+    if (currentHour >= 5 && currentHour < 12) {
       return 'morning';
-    } else if (hour >= 12 && hour < 17) {
+    } else if (currentHour >= 12 && currentHour < 18) {
       return 'afternoon';
-    } else if (hour >= 17 && hour < 22) {
+    } else if (currentHour >= 18 && currentHour < 22) {
       return 'evening';
     } else {
       return 'night';
     }
   }
-  
+
   /**
-   * Initialize or get the time awareness data
-   */
-  static getTimeAwarenessData(): TimeAwarenessData {
-    const storedData = localStorage.getItem('timeAwarenessData');
-    const currentTimePeriod = this.getCurrentTimePeriod();
-    
-    if (storedData) {
-      try {
-        const parsedData = JSON.parse(storedData) as TimeAwarenessData;
-        // Update the time period if it changed
-        if (parsedData.currentTimePeriod !== currentTimePeriod) {
-          parsedData.currentTimePeriod = currentTimePeriod;
-          parsedData.lastChecked = new Date().toISOString();
-          this.saveTimeData(parsedData);
-        }
-        return parsedData;
-      } catch (e) {
-        console.error('Error parsing time awareness data:', e);
-      }
-    }
-    
-    // Initialize with default values
-    const defaultData: TimeAwarenessData = {
-      currentTimePeriod,
-      lastChecked: new Date().toISOString(),
-      moodHistory: []
-    };
-    
-    this.saveTimeData(defaultData);
-    return defaultData;
-  }
-  
-  /**
-   * Save time awareness data
-   */
-  static saveTimeData(data: TimeAwarenessData): void {
-    localStorage.setItem('timeAwarenessData', JSON.stringify(data));
-  }
-  
-  /**
-   * Record a mood with the current time period
-   */
-  static recordMood(mood: string): void {
-    const data = this.getTimeAwarenessData();
-    const timePeriod = this.getCurrentTimePeriod();
-    
-    data.moodHistory.push({
-      mood,
-      timestamp: new Date().toISOString(),
-      timePeriod
-    });
-    
-    // Keep the history reasonably sized (last 30 entries)
-    if (data.moodHistory.length > 30) {
-      data.moodHistory = data.moodHistory.slice(-30);
-    }
-    
-    this.saveTimeData(data);
-  }
-  
-  /**
-   * Get mood correlations by time period
-   */
-  static getMoodCorrelations(): MoodCorrelation {
-    const data = this.getTimeAwarenessData();
-    const correlation: MoodCorrelation = {};
-    
-    // Count occurrences of each mood by time period
-    data.moodHistory.forEach(entry => {
-      if (!correlation[entry.mood]) {
-        correlation[entry.mood] = {
-          morning: 0,
-          afternoon: 0,
-          evening: 0,
-          night: 0
-        };
-      }
-      correlation[entry.mood][entry.timePeriod]++;
-    });
-    
-    return correlation;
-  }
-  
-  /**
-   * Get the most frequent mood for the current time period
-   */
-  static getMostFrequentMoodForCurrentTimePeriod(): string | null {
-    const timePeriod = this.getCurrentTimePeriod();
-    const correlations = this.getMoodCorrelations();
-    
-    let maxCount = 0;
-    let mostFrequentMood: string | null = null;
-    
-    Object.entries(correlations).forEach(([mood, counts]) => {
-      if (counts[timePeriod] > maxCount) {
-        maxCount = counts[timePeriod];
-        mostFrequentMood = mood;
-      }
-    });
-    
-    return mostFrequentMood;
-  }
-  
-  /**
-   * Get personalized recommendations based on time of day and user preferences
-   */
-  static getTimeBasedRecommendations(preferences: UserPreferences) {
-    const timePeriod = this.getCurrentTimePeriod();
-    const recentMood = this.getMostFrequentMoodForCurrentTimePeriod();
-    
-    // Different recommendations based on time period
-    switch (timePeriod) {
-      case 'morning':
-        return {
-          meditation: {
-            title: "Morning Clarity",
-            description: "Start your day with a clear mind",
-            duration: 10,
-            type: "guided"
-          },
-          breathing: {
-            title: "Morning Energizer",
-            description: "Breathwork to wake up naturally",
-            technique: "energizing",
-            duration: 5
-          },
-          activity: recentMood === "tired" ? "stretching" : "planning"
-        };
-        
-      case 'afternoon':
-        return {
-          meditation: {
-            title: "Midday Reset",
-            description: "Refresh your mind for the afternoon",
-            duration: 7,
-            type: "focus"
-          },
-          breathing: {
-            title: "Stress Relief",
-            description: "Quick breathing exercise to reduce tension",
-            technique: "box",
-            duration: 3
-          },
-          activity: recentMood === "stressed" ? "short_walk" : "hydration"
-        };
-        
-      case 'evening':
-        return {
-          meditation: {
-            title: "Evening Wind Down",
-            description: "Transition from work to relaxation",
-            duration: 15,
-            type: "relaxation"
-          },
-          breathing: {
-            title: "Calm Breath",
-            description: "Slow breathing to reduce evening anxiety",
-            technique: "478",
-            duration: 5
-          },
-          activity: recentMood === "anxious" ? "journaling" : "reading"
-        };
-        
-      case 'night':
-        return {
-          meditation: {
-            title: "Sleep Preparation",
-            description: "Gentle meditation to prepare for sleep",
-            duration: 20,
-            type: "sleep"
-          },
-          breathing: {
-            title: "Deep Relaxation",
-            description: "Prepare your nervous system for sleep",
-            technique: "coherent",
-            duration: 7
-          },
-          activity: "screen_free_time"
-        };
-    }
-  }
-  
-  /**
-   * Get a greeting message based on current time period
+   * Get a greeting based on the current time of day
    */
   static getTimeBasedGreeting(userName: string = ""): string {
     const timePeriod = this.getCurrentTimePeriod();
-    const name = userName ? `, ${userName}` : "";
+    const nameGreeting = userName ? `, ${userName}` : '';
     
     switch (timePeriod) {
       case 'morning':
-        return `Good morning${name}`;
+        return `Good morning${nameGreeting}`;
       case 'afternoon':
-        return `Good afternoon${name}`;
+        return `Good afternoon${nameGreeting}`;
       case 'evening':
-        return `Good evening${name}`;
+        return `Good evening${nameGreeting}`;
       case 'night':
-        return `Good night${name}`;
+        return `Good night${nameGreeting}`;
       default:
-        return `Hello${name}`;
+        return `Hello${nameGreeting}`;
     }
+  }
+
+  /**
+   * Record a user's mood with the current timestamp and time period
+   */
+  static recordMood(mood: string): void {
+    try {
+      const existingRecordsJson = localStorage.getItem(MOOD_RECORDS_KEY);
+      const existingRecords: MoodRecord[] = existingRecordsJson 
+        ? JSON.parse(existingRecordsJson) 
+        : [];
+
+      // Add new mood record with current timestamp and time period
+      const newRecord: MoodRecord = {
+        mood,
+        timestamp: new Date().toISOString(),
+        timePeriod: this.getCurrentTimePeriod()
+      };
+
+      // Keep only the most recent 50 records to prevent storage bloat
+      const updatedRecords = [newRecord, ...existingRecords].slice(0, 50);
+      localStorage.setItem(MOOD_RECORDS_KEY, JSON.stringify(updatedRecords));
+    } catch (error) {
+      console.error('Error recording mood:', error);
+    }
+  }
+
+  /**
+   * Get the user's most frequently recorded mood for the current time period
+   */
+  static getMostFrequentMoodForCurrentTimePeriod(): string | null {
+    try {
+      const currentTimePeriod = this.getCurrentTimePeriod();
+      const existingRecordsJson = localStorage.getItem(MOOD_RECORDS_KEY);
+      
+      if (!existingRecordsJson) return null;
+      
+      const existingRecords: MoodRecord[] = JSON.parse(existingRecordsJson);
+      
+      // Filter records for the current time period
+      const timeFilteredRecords = existingRecords.filter(
+        record => record.timePeriod === currentTimePeriod
+      );
+      
+      if (timeFilteredRecords.length === 0) return null;
+      
+      // Count occurrences of each mood
+      const moodCounts: Record<string, number> = {};
+      timeFilteredRecords.forEach(record => {
+        moodCounts[record.mood] = (moodCounts[record.mood] || 0) + 1;
+      });
+      
+      // Find the mood with the highest occurrence
+      let maxMood = null;
+      let maxCount = 0;
+      
+      Object.entries(moodCounts).forEach(([mood, count]) => {
+        if (count > maxCount) {
+          maxMood = mood;
+          maxCount = count;
+        }
+      });
+      
+      return maxMood;
+    } catch (error) {
+      console.error('Error getting most frequent mood:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Generate time-based recommendations based on current time period and user preferences
+   */
+  static getTimeBasedRecommendations(preferences: any = {}): TimeBasedRecommendations {
+    const timePeriod = this.getCurrentTimePeriod();
+    const preferredDuration = preferences.preferredSessionDuration || 10;
+    
+    // Base recommendations by time period
+    const recommendations: TimeBasedRecommendations = {
+      meditation: { title: "", duration: preferredDuration },
+      breathing: { title: "", duration: Math.max(3, Math.floor(preferredDuration / 3)) },
+      activity: { title: "", duration: preferredDuration }
+    };
+    
+    // Adjust recommendations based on time period
+    switch (timePeriod) {
+      case 'morning':
+        recommendations.meditation.title = "Morning Clarity";
+        recommendations.breathing.title = "Energizing Breath";
+        recommendations.activity.title = "Mindful Stretching";
+        break;
+        
+      case 'afternoon':
+        recommendations.meditation.title = "Midday Reset";
+        recommendations.breathing.title = "Stress Relief Breathing";
+        recommendations.activity.title = "Quick Focus Session";
+        break;
+        
+      case 'evening':
+        recommendations.meditation.title = "Evening Wind Down";
+        recommendations.breathing.title = "Relaxing Breath";
+        recommendations.activity.title = "Gentle Reflection";
+        break;
+        
+      case 'night':
+        recommendations.meditation.title = "Sleep Preparation";
+        recommendations.breathing.title = "4-7-8 Sleep Breath";
+        recommendations.activity.title = "Bedtime Relaxation";
+        break;
+    }
+    
+    // Customize by experience level
+    if (preferences.meditationExperience === 'beginner') {
+      recommendations.meditation.duration = Math.min(preferredDuration, 5);
+      recommendations.breathing.duration = 3;
+    } else if (preferences.meditationExperience === 'advanced') {
+      recommendations.meditation.duration = Math.max(preferredDuration, 15);
+    }
+    
+    // Customize by top mood issues if available
+    if (preferences.focusChallenges?.includes('stress')) {
+      recommendations.breathing.title = "Stress Reduction Breath";
+    }
+    
+    if (preferences.focusChallenges?.includes('sleep')) {
+      recommendations.meditation.title = "Better Sleep Meditation";
+    }
+    
+    // Add personalization based on most frequent mood at this time period
+    const frequentMood = this.getMostFrequentMoodForCurrentTimePeriod();
+    if (frequentMood === 'anxious') {
+      recommendations.breathing.title = "Anxiety Calming Breath";
+    } else if (frequentMood === 'tired') {
+      recommendations.breathing.title = "Energizing Breath";
+      recommendations.meditation.title = "Revitalizing Meditation";
+    } else if (frequentMood === 'calm') {
+      recommendations.meditation.title = "Deepen Your Calm";
+    }
+    
+    return recommendations;
   }
 }
