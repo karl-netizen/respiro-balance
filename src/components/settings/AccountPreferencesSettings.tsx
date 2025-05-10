@@ -1,4 +1,44 @@
 
+import React from 'react';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { useUserPreferences } from "@/context";
+import { Theme, MeditationExperience } from "@/context/types";
+
+const AccountPreferencesSettings = () => {
+  const { preferences, updatePreferences } = useUserPreferences();
+  
+  const handleThemeChange = (value: Theme) => {
+    updatePreferences({ theme: value });
+  };
+  
+  const handleExperienceChange = (value: MeditationExperience) => {
+    updatePreferences({ meditationExperience: value });
+  };
+  
+  const handleSessionDurationChange = (value: string) => {
+    updatePreferences({ defaultMeditationDuration: parseInt(value, 10) });
+  };
+  
+  const toggleDarkMode = (checked: boolean) => {
+    updatePreferences({ darkMode: checked });
+  };
+  
+  const toggleReducedMotion = (checked: boolean) => {
+    updatePreferences({ reducedMotion: checked });
+  };
+  
+  const toggleHighContrast = (checked: boolean) => {
+    updatePreferences({ highContrast: checked });
+  };
+  
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
           <CardTitle>Preferences</CardTitle>
           <CardDescription>
             Customize your app experience
