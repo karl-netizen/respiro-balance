@@ -31,15 +31,21 @@ export const connectBluetoothDevice = async (): Promise<{
   }
 };
 
+// Helper to ensure device is in the correct format
+export const normalizeDeviceId = (device: string | BluetoothDeviceInfo): string => {
+  return typeof device === "string" ? device : device.id;
+};
+
 // Function to handle disconnecting a device
 export const disconnectDevice = (
   deviceId: string, 
   preferences: UserPreferences
 ): BluetoothDeviceInfo[] => {
   // Handle disconnecting a specific device by its ID
-  const updatedDevices = preferences.connectedDevices.filter(
-    device => device.id !== deviceId
-  );
+  const updatedDevices = preferences.connectedDevices.filter(device => {
+    const id = typeof device === "string" ? device : device.id;
+    return id !== deviceId;
+  });
   
   return updatedDevices;
 };

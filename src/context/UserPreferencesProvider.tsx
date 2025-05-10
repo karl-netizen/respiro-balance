@@ -1,3 +1,4 @@
+
 import React, { 
   createContext, 
   useContext, 
@@ -6,13 +7,12 @@ import React, {
   ReactNode 
 } from 'react';
 import { 
-  UserPreferencesData, 
-  BluetoothDevice,
-  UserProfile,
-  BluetoothDeviceInfo
+  UserPreferencesData,
+  BluetoothDevice
 } from '@/types/supabase';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabase';
+import { BluetoothDeviceInfo } from './types';
 
 interface UserPreferencesContextType {
   preferences: UserPreferencesData;
@@ -109,13 +109,14 @@ export const UserPreferencesProvider: React.FC<{ children: ReactNode }> = ({ chi
       const newDevice: BluetoothDeviceInfo = {
         id: 'wearable-001',
         name: 'MyWearable',
+        type: deviceType || 'heart_rate_monitor'
       };
 
-      setConnectedDevices([newDevice]);
+      setConnectedDevices([...connectedDevices, newDevice]);
       setHasWearableDevice(true);
       
-      // Use custom properties for the update object to match UserPreferencesData
-      const updatedPreferences = {
+      // Create an update object matching the UserPreferencesData type
+      const updatedPreferences: Partial<UserPreferencesData> = {
         wearable_device_connected: true,
         wearable_device_id: newDevice.id,
         wearable_device_name: newDevice.name
@@ -138,13 +139,15 @@ export const UserPreferencesProvider: React.FC<{ children: ReactNode }> = ({ chi
     try {
       // Simulate device disconnection
       setConnectedDevices(connectedDevices.filter(device => device.id !== deviceId));
-      setHasWearableDevice(false);
       
-      // Use custom properties for the update object to match UserPreferencesData
-      const updatedPreferences = {
-        wearable_device_connected: false,
-        wearable_device_id: null,
-        wearable_device_name: null
+      const hasRemaining = connectedDevices.length > 1;
+      setHasWearableDevice(hasRemaining);
+      
+      // Create an update object matching the UserPreferencesData type
+      const updatedPreferences: Partial<UserPreferencesData> = {
+        wearable_device_connected: hasRemaining,
+        wearable_device_id: hasRemaining ? null : undefined,
+        wearable_device_name: hasRemaining ? null : undefined
       };
       
       updatePreferences(updatedPreferences);

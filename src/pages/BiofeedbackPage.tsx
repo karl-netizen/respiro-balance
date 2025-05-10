@@ -30,7 +30,9 @@ const BiofeedbackPage: React.FC = () => {
 
   const handleConnectDevice = async (deviceId: string, callback?: () => void): Promise<void> => {
     try {
-      await connectDevice(deviceId, { callback });
+      // Ensure deviceId is valid
+      const id = typeof deviceId === "string" ? deviceId : deviceId.id;
+      await connectDevice(id, { callback });
     } catch (error) {
       console.error('Error connecting device:', error);
     }
@@ -38,7 +40,9 @@ const BiofeedbackPage: React.FC = () => {
 
   const handleDisconnectDevice = async (deviceId: string, callback?: () => void): Promise<void> => {
     try {
-      await disconnectDevice(deviceId, { callback });
+      // Ensure deviceId is valid
+      const id = typeof deviceId === "string" ? deviceId : deviceId.id;
+      await disconnectDevice(id, { callback });
     } catch (error) {
       console.error('Error disconnecting device:', error);
     }

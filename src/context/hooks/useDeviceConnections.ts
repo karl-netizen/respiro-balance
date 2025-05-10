@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
-import { UserPreferences, BluetoothDevice, DeviceType } from '../types';
-import { connectBluetoothDevice, disconnectDevice } from '../bluetoothUtils';
+import { UserPreferences, BluetoothDevice, DeviceType, BluetoothDeviceInfo } from '../types';
+import { connectBluetoothDevice, disconnectDevice, normalizeDeviceId } from '../bluetoothUtils';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { toast } from 'sonner';
 
@@ -15,14 +15,23 @@ export const useDeviceConnections = (
       const result = await connectBluetoothDevice();
       
       if (result.success && result.device) {
+        // Create a device info object from the device
+        const deviceInfo: BluetoothDeviceInfo = {
+          id: result.device.id,
+          name: result.device.name,
+          type: result.device.type,
+          connected: result.device.connected
+        };
+        
         // Add the device to the list of connected devices
+        const updatedDevices = [...(preferences.connectedDevices || []), deviceInfo];
+        
         const updatedPreferences = {
           hasWearableDevice: true,
           wearableDeviceType: "Respiro HR Monitor",
           wearableDeviceId: result.device.id,
           lastSyncDate: new Date().toISOString(),
-          // Cast to ensure type compatibility with UserPreferences
-          connectedDevices: [...(preferences.connectedDevices || []), result.device.type as DeviceType]
+          connectedDevices: updatedDevices
         };
         
         updatePreferences(updatedPreferences);
@@ -63,8 +72,7 @@ export const useDeviceConnections = (
       const updatedDevices = disconnectDevice(deviceId, preferences);
       
       const updatedPreferences = {
-        // Cast to ensure type compatibility with UserPreferences
-        connectedDevices: updatedDevices as DeviceType[],
+        connectedDevices: updatedDevices,
         hasWearableDevice: updatedDevices.length > 0
       };
       

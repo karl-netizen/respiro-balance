@@ -117,7 +117,7 @@ const BiofeedbackCard = () => {
               )}
             </div>
           ) : isConnecting ? (
-            <DeviceSearching />
+            <DeviceSearching onStopScan={() => setIsConnecting(false)} />
           ) : (
             <NoDevicesView 
               onScanForDevices={handleScanForDevices}
@@ -136,7 +136,7 @@ const BiofeedbackCard = () => {
                 } else {
                   if (mockDevices.length > 0) {
                     mockDevices.forEach(device => 
-                      disconnectBluetoothDevice(device.id)
+                      disconnectBluetoothDevice(typeof device === "string" ? device : device.id)
                     );
                   }
                 }

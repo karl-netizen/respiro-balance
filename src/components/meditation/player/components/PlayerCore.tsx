@@ -3,30 +3,70 @@ import React, { useState, useEffect } from 'react';
 import { Pause, Play, SkipBack, SkipForward } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ProgressDisplay from './ProgressDisplay';
+import { MeditationSession } from '@/types/meditation';
 
-interface PlayerCoreProps {
-  isPlaying: boolean;
-  currentTime: number;
-  duration: number;
-  onPlay: () => void;
-  onPause: () => void;
-  onSeekBackward: () => void;
-  onSeekForward: () => void;
-  formatTime: (timeInSeconds: number) => string;
+export interface PlayerCoreProps {
+  session?: MeditationSession;
+  isPlaying?: boolean;
+  currentTime?: number;
+  duration?: number;
+  onPlay?: () => void;
+  onPause?: () => void;
+  onSeekBackward?: () => void;
+  onSeekForward?: () => void;
+  formatTime?: (timeInSeconds: number) => string;
+  onComplete?: () => void;
+  onStart?: () => void;
+  onPlayStateChange?: (isPlaying: boolean) => void;
+  biometricData?: {
+    focusScore?: number;
+    calmScore?: number;
+  };
 }
 
 export const PlayerCore: React.FC<PlayerCoreProps> = ({
-  isPlaying,
-  currentTime,
-  duration,
-  onPlay,
-  onPause,
-  onSeekBackward,
-  onSeekForward,
-  formatTime,
+  session,
+  isPlaying = false,
+  currentTime = 0,
+  duration = 0,
+  onPlay = () => {},
+  onPause = () => {},
+  onSeekBackward = () => {},
+  onSeekForward = () => {},
+  formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = Math.floor(seconds % 60);
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  },
+  onPlayStateChange,
+  onStart,
+  onComplete,
+  biometricData
 }) => {
   // Calculate progress as a value between 0-1
   const progress = duration > 0 ? currentTime / duration : 0;
+  
+  // Handle play/pause with the onPlayStateChange callback
+  const handlePlayPause = () => {
+    if (isPlaying) {
+      onPause();
+    } else {
+      onPlay();
+      if (!currentTime && onStart) {
+        onStart();
+      }
+    }
+    if (onPlayStateChange) {
+      onPlayStateChange(!isPlaying);
+    }
+  };
+
+  // Check if session is complete
+  useEffect(() => {
+    if (currentTime >= duration && duration > 0 && onComplete) {
+      onComplete();
+    }
+  }, [currentTime, duration, onComplete]);
 
   return (
     <div className="space-y-4 w-full">
@@ -53,7 +93,7 @@ export const PlayerCore: React.FC<PlayerCoreProps> = ({
           variant="default" 
           size="icon"
           className="h-12 w-12 rounded-full"
-          onClick={isPlaying ? onPause : onPlay}
+          onClick={handlePlayPause}
           aria-label={isPlaying ? "Pause" : "Play"}
         >
           {isPlaying ? (

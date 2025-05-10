@@ -47,8 +47,16 @@ const DeviceSection: React.FC<DeviceSectionProps> = ({
           <ConnectedDevicesList
             devices={devices}
             onScanForDevices={() => onScanForDevices("heart_rate_monitor")}
-            onConnectDevice={onConnectDevice}
-            onDisconnectDevice={onDisconnectDevice}
+            onConnectDevice={(deviceId, callback) => {
+              // Ensure deviceId is valid
+              const id = typeof deviceId === "string" ? deviceId : deviceId.id;
+              onConnectDevice(id, callback);
+            }}
+            onDisconnectDevice={(deviceId, callback) => {
+              // Ensure deviceId is valid
+              const id = typeof deviceId === "string" ? deviceId : deviceId.id;
+              onDisconnectDevice(id, callback);
+            }}
             disabled={isScanning || isConnecting}
           />
         )}

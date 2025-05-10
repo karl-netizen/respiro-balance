@@ -35,34 +35,42 @@ export const ConnectedDevicesList: React.FC<ConnectedDevicesListProps> = ({
   return (
     <div>
       <div className="space-y-4 mb-6">
-        {devices.map(device => (
-          <div 
-            key={device.id}
-            className="flex items-center justify-between p-4 bg-card rounded-lg shadow-sm"
-          >
-            <div>
-              <h4 className="font-medium">{device.name || 'Unknown Device'}</h4>
-              <p className="text-sm text-muted-foreground">
-                {device.type || 'Generic Device'} • 
-                {device.connected ? 
-                  <span className="text-green-500"> Connected</span> : 
-                  <span className="text-muted-foreground"> Disconnected</span>
-                }
-              </p>
-            </div>
-            <Button
-              variant={device.connected ? "destructive" : "default"}
-              size="sm"
-              onClick={() => device.connected ? 
-                onDisconnectDevice(device.id, () => console.log('Device disconnected:', device.id)) : 
-                onConnectDevice(device.id, () => console.log('Device connected:', device.id))
-              }
-              disabled={disabled}
+        {devices.map(device => {
+          // Ensure we have a valid device ID
+          const deviceId = typeof device === "string" ? device : device.id;
+          const deviceName = typeof device === "string" ? device : (device.name || 'Unknown Device');
+          const deviceType = typeof device === "string" ? device : (device.type || 'Generic Device');
+          const isConnected = typeof device === "string" ? false : (device.connected || false);
+
+          return (
+            <div 
+              key={deviceId}
+              className="flex items-center justify-between p-4 bg-card rounded-lg shadow-sm"
             >
-              {device.connected ? 'Disconnect' : 'Connect'}
-            </Button>
-          </div>
-        ))}
+              <div>
+                <h4 className="font-medium">{deviceName}</h4>
+                <p className="text-sm text-muted-foreground">
+                  {deviceType} • 
+                  {isConnected ? 
+                    <span className="text-green-500"> Connected</span> : 
+                    <span className="text-muted-foreground"> Disconnected</span>
+                  }
+                </p>
+              </div>
+              <Button
+                variant={isConnected ? "destructive" : "default"}
+                size="sm"
+                onClick={() => isConnected ? 
+                  onDisconnectDevice(deviceId, () => console.log('Device disconnected:', deviceId)) : 
+                  onConnectDevice(deviceId, () => console.log('Device connected:', deviceId))
+                }
+                disabled={disabled}
+              >
+                {isConnected ? 'Disconnect' : 'Connect'}
+              </Button>
+            </div>
+          );
+        })}
       </div>
       <div className="text-center">
         <Button 
