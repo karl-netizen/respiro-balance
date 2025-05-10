@@ -1,192 +1,62 @@
-import React from 'react';
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import { useUserPreferences } from "@/context";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Separator } from "@/components/ui/separator";
-import BiofeedbackCard from "@/components/biofeedback/BiofeedbackCard";
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
 
-const SettingsPage = () => {
-  const { preferences, updatePreferences } = useUserPreferences();
+import React from 'react';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+import AccountGeneralSettings from '@/components/settings/AccountGeneralSettings';
+import AccountNotificationSettings from '@/components/settings/AccountNotificationSettings';
+import AccountPreferencesSettings from '@/components/settings/AccountPreferencesSettings';
+import AccountSecuritySettings from '@/components/settings/AccountSecuritySettings';
+import AccountSubscriptionSettings from '@/components/settings/AccountSubscriptionSettings';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useUserPreferences } from '@/context';
+
+const SettingsPage: React.FC = () => {
+  const { preferences } = useUserPreferences();
   
-  const handleToggleSetting = (key: string, value: boolean) => {
-    updatePreferences({ [key]: value });
-    toast.success("Setting updated", {
-      description: `${key} is now ${value ? "enabled" : "disabled"}`
-    });
-  };
-  
-  const isPremiumUser = preferences.subscriptionTier === "premium" || preferences.subscriptionTier === "enterprise";
-  
+  // Fixed to use includes for subscription tier check
+  const isPremiumOrEnterprise = ["premium", "enterprise"].includes(preferences.subscriptionTier);
+
   return (
-    <div className="min-h-screen flex flex-col">
+    <>
       <Header />
-      
-      <main className="flex-grow py-16 px-4">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl font-bold mb-8">Settings</h1>
+      <main className="container mx-auto py-8 px-4 max-w-4xl">
+        <h1 className="text-3xl font-semibold mb-6">Account Settings</h1>
+        
+        <Tabs defaultValue="general" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-5">
+            <TabsTrigger value="general">General</TabsTrigger>
+            <TabsTrigger value="preferences">Preferences</TabsTrigger>
+            <TabsTrigger value="notifications">Notifications</TabsTrigger>
+            <TabsTrigger value="security">Security</TabsTrigger>
+            <TabsTrigger value="subscription">Subscription</TabsTrigger>
+          </TabsList>
           
-          <Tabs defaultValue="general" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 mb-8">
-              <TabsTrigger value="general">General</TabsTrigger>
-              <TabsTrigger value="notifications">Notifications</TabsTrigger>
-              <TabsTrigger value="devices">Connected Devices</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="general">
-              <Card>
-                <CardHeader>
-                  <CardTitle>General Settings</CardTitle>
-                  <CardDescription>
-                    Manage your application preferences
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <Label htmlFor="darkMode" className="font-medium">Dark Mode</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Switch between light and dark theme
-                      </p>
-                    </div>
-                    <Switch 
-                      id="darkMode" 
-                      checked={preferences.darkMode || false}
-                      onCheckedChange={(checked) => handleToggleSetting('darkMode', checked)}
-                    />
-                  </div>
-                  
-                  <Separator />
-                  
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <Label htmlFor="autoPlayNextSession" className="font-medium">Auto-play Next Session</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Automatically start the next meditation session
-                      </p>
-                    </div>
-                    <Switch 
-                      id="autoPlayNextSession" 
-                      checked={preferences.autoPlayNextSession}
-                      onCheckedChange={(checked) => handleToggleSetting('autoPlayNextSession', checked)}
-                    />
-                  </div>
-                  
-                  <Separator />
-                  
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <Label htmlFor="showBiometrics" className="font-medium">Show Biometric Data</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Display biometric information during meditation
-                      </p>
-                    </div>
-                    <Switch 
-                      id="showBiometrics" 
-                      checked={preferences.showBiometrics || false}
-                      onCheckedChange={(checked) => handleToggleSetting('showBiometrics', checked)}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            
-            <TabsContent value="notifications">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Notification Settings</CardTitle>
-                  <CardDescription>
-                    Manage how and when you receive notifications
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <Label htmlFor="reminders" className="font-medium">Meditation Reminders</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Receive daily reminders for your practice
-                      </p>
-                    </div>
-                    <Switch 
-                      id="reminders" 
-                      checked={preferences.reminders || false}
-                      onCheckedChange={(checked) => handleToggleSetting('reminders', checked)}
-                    />
-                  </div>
-                  
-                  <Separator />
-                  
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <Label htmlFor="emailNotifications" className="font-medium">Email Notifications</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Receive important updates via email
-                      </p>
-                    </div>
-                    <Switch 
-                      id="emailNotifications" 
-                      checked={preferences.emailNotifications || false}
-                      onCheckedChange={(checked) => handleToggleSetting('emailNotifications', checked)}
-                    />
-                  </div>
-                  
-                  <Separator />
-                  
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <Label htmlFor="achievementNotifications" className="font-medium">Achievement Notifications</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Get notified when you reach new milestones
-                      </p>
-                    </div>
-                    <Switch 
-                      id="achievementNotifications" 
-                      checked={preferences.achievementNotifications || false}
-                      onCheckedChange={(checked) => handleToggleSetting('achievementNotifications', checked)}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            
-            <TabsContent value="devices">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Connected Devices</CardTitle>
-                  <CardDescription>
-                    Manage your wearable and biometric devices
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {preferences.hasWearableDevice ? (
-                    <BiofeedbackCard />
-                  ) : (
-                    <div className="text-center py-4">
-                      <p className="text-muted-foreground mb-4">No devices connected. Connect a device to track your biofeedback data.</p>
-                    </div>
-                  )}
-                  
-                  <div className="mt-6">
-                    <Button
-                      onClick={() => handleToggleSetting('hasWearableDevice', !preferences.hasWearableDevice)}
-                    >
-                      {preferences.hasWearableDevice ? "Disconnect Devices" : "Connect a Device"}
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
-        </div>
+          <TabsContent value="general" className="space-y-4">
+            <AccountGeneralSettings />
+          </TabsContent>
+          
+          <TabsContent value="preferences" className="space-y-4">
+            <AccountPreferencesSettings />
+          </TabsContent>
+          
+          <TabsContent value="notifications" className="space-y-4">
+            <AccountNotificationSettings />
+          </TabsContent>
+          
+          <TabsContent value="security" className="space-y-4">
+            <AccountSecuritySettings />
+          </TabsContent>
+          
+          <TabsContent value="subscription" className="space-y-4">
+            <AccountSubscriptionSettings 
+              isPremium={isPremiumOrEnterprise}
+              subscriptionTier={preferences.subscriptionTier || 'free'}
+            />
+          </TabsContent>
+        </Tabs>
       </main>
-      
       <Footer />
-    </div>
+    </>
   );
 };
 

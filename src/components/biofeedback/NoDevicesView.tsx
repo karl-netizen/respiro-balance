@@ -3,7 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 
 export interface NoDevicesViewProps {
-  onScanForDevices: () => Promise<void>;
+  onScanForDevices: (deviceType?: string, options?: any) => Promise<void>;
   disabled: boolean;
 }
 
@@ -34,7 +34,7 @@ export const NoDevicesView: React.FC<NoDevicesViewProps> = ({
         Connect a compatible biofeedback device to monitor your physiological responses during meditation.
       </p>
       <Button 
-        onClick={onScanForDevices} 
+        onClick={() => onScanForDevices("heart_rate_monitor", { autoConnect: true })}
         disabled={disabled}
       >
         {disabled ? 'Scanning...' : 'Scan for Devices'}

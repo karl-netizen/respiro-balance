@@ -13,6 +13,7 @@ export const useBiofeedback = (): BiofeedbackHookReturn => {
     isScanning, 
     isConnecting, 
     scanForDevices: scanDevices, 
+    stopScan: stopDeviceScan,
     connectDevice: connectDeviceToSystem,
     disconnectDevice: disconnectDeviceFromSystem
   } = useDeviceManagement();
@@ -51,13 +52,18 @@ export const useBiofeedback = (): BiofeedbackHookReturn => {
   }, []);
 
   // Scan for available Bluetooth devices (wrapper)
-  const scanForDevices = async (): Promise<boolean> => {
-    return scanDevices(isSimulating);
+  const scanForDevices = async (deviceType?: string, options?: any): Promise<boolean> => {
+    return scanDevices(deviceType, { ...options, isSimulationMode: isSimulating });
+  };
+
+  // Stop ongoing scan
+  const stopScan = async (deviceType?: string, callback?: () => void): Promise<void> => {
+    return stopDeviceScan(deviceType, callback);
   };
 
   // Connect to a specific device (wrapper)
-  const connectDevice = async (deviceId: string): Promise<boolean> => {
-    const success = await connectDeviceToSystem(deviceId);
+  const connectDevice = async (deviceId: string, options?: any): Promise<boolean> => {
+    const success = await connectDeviceToSystem(deviceId, options);
     if (success) {
       // If this is the first connected device, start reading data
       startDataReading(deviceId);
@@ -66,8 +72,8 @@ export const useBiofeedback = (): BiofeedbackHookReturn => {
   };
 
   // Disconnect from a device (wrapper)
-  const disconnectDevice = async (deviceId: string): Promise<boolean> => {
-    return disconnectDeviceFromSystem(deviceId);
+  const disconnectDevice = async (deviceId: string, options?: any): Promise<boolean> => {
+    return disconnectDeviceFromSystem(deviceId, options);
   };
 
   // Get the appropriate heart rate value (from device or simulation)
@@ -95,6 +101,7 @@ export const useBiofeedback = (): BiofeedbackHookReturn => {
     connectDevice,
     disconnectDevice,
     scanForDevices,
+    stopScan,
     isSimulating
   };
 };

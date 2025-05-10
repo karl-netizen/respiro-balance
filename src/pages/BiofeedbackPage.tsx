@@ -16,30 +16,41 @@ const BiofeedbackPage: React.FC = () => {
     connectDevice,
     disconnectDevice,
     scanForDevices,
-    isSimulating = false
+    isSimulating = false,
+    stopScan
   } = useBiofeedback();
 
-  const handleScanForDevices = async (): Promise<void> => {
+  const handleScanForDevices = async (deviceType?: string, options?: any): Promise<void> => {
     try {
-      await scanForDevices();
+      await scanForDevices(deviceType, options);
     } catch (error) {
       console.error('Error scanning for devices:', error);
     }
   };
 
-  const handleConnectDevice = async (deviceId: string): Promise<void> => {
+  const handleConnectDevice = async (deviceId: string, callback?: () => void): Promise<void> => {
     try {
-      await connectDevice(deviceId);
+      await connectDevice(deviceId, { callback });
     } catch (error) {
       console.error('Error connecting device:', error);
     }
   };
 
-  const handleDisconnectDevice = async (deviceId: string): Promise<void> => {
+  const handleDisconnectDevice = async (deviceId: string, callback?: () => void): Promise<void> => {
     try {
-      await disconnectDevice(deviceId);
+      await disconnectDevice(deviceId, { callback });
     } catch (error) {
       console.error('Error disconnecting device:', error);
+    }
+  };
+  
+  const handleStopScan = async (deviceType?: string, callback?: () => void): Promise<void> => {
+    try {
+      if (stopScan) {
+        await stopScan(deviceType, callback);
+      }
+    } catch (error) {
+      console.error('Error stopping scan:', error);
     }
   };
   
@@ -58,6 +69,7 @@ const BiofeedbackPage: React.FC = () => {
           onConnectDevice={handleConnectDevice}
           onDisconnectDevice={handleDisconnectDevice}
           isSimulating={isSimulating}
+          onStopScan={handleStopScan}
         />
       </main>
       <Footer />

@@ -9,32 +9,58 @@ export function useDeviceManagement() {
   const [isConnecting, setIsConnecting] = useState(false);
   
   // Scan for available Bluetooth devices
-  const scanForDevices = async (isSimulationMode: boolean): Promise<boolean> => {
+  const scanForDevices = async (deviceType?: string, options?: any): Promise<boolean> => {
     try {
       setIsScanning(true);
       
       // If in simulation mode, return mock devices
-      if (isSimulationMode) {
+      if (options?.isSimulationMode) {
         await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate scan delay
-        const mockDevices = await DeviceService.scanForDevices();
+        const mockDevices = await DeviceService.scanForDevices(deviceType);
         setDevices(mockDevices);
+        
+        // Auto-connect if requested
+        if (options?.autoConnect && mockDevices.length > 0) {
+          await connectDevice(mockDevices[0].id, options);
+        }
+        
         return true;
       }
       
       // Real scan implementation
-      const foundDevices = await DeviceService.scanForDevices();
+      const foundDevices = await DeviceService.scanForDevices(deviceType);
       setDevices(foundDevices);
+      
+      // Auto-connect if requested
+      if (options?.autoConnect && foundDevices.length > 0) {
+        await connectDevice(foundDevices[0].id, options);
+      }
+      
       return true;
     } catch (error) {
       console.error('Failed to scan for biofeedback devices:', error);
       return false;
     } finally {
       setIsScanning(false);
+      
+      // Run callback if provided
+      if (options?.callback && typeof options.callback === 'function') {
+        options.callback(devices);
+      }
+    }
+  };
+
+  // Stop ongoing scan
+  const stopScan = async (deviceType?: string, callback?: () => void): Promise<void> => {
+    setIsScanning(false);
+    
+    if (callback && typeof callback === 'function') {
+      callback();
     }
   };
 
   // Connect to a specific device
-  const connectDevice = async (deviceId: string): Promise<boolean> => {
+  const connectDevice = async (deviceId: string, options?: any): Promise<boolean> => {
     try {
       setIsConnecting(true);
       
@@ -45,6 +71,11 @@ export function useDeviceManagement() {
         setDevices(prev => 
           prev.map(d => d.id === deviceId ? { ...d, connected: true } : d)
         );
+        
+        // Run callback if provided
+        if (options?.callback && typeof options.callback === 'function') {
+          options.callback(device);
+        }
         
         return true;
       }
@@ -59,7 +90,7 @@ export function useDeviceManagement() {
   };
 
   // Disconnect from a device
-  const disconnectDevice = async (deviceId: string): Promise<boolean> => {
+  const disconnectDevice = async (deviceId: string, options?: any): Promise<boolean> => {
     try {
       const success = await DeviceService.disconnectFromDevice(deviceId);
       
@@ -68,6 +99,11 @@ export function useDeviceManagement() {
         setDevices(prev => 
           prev.map(d => d.id === deviceId ? { ...d, connected: false } : d)
         );
+        
+        // Run callback if provided
+        if (options?.callback && typeof options.callback === 'function') {
+          options.callback();
+        }
         
         return true;
       }
@@ -95,6 +131,7 @@ export function useDeviceManagement() {
     isScanning,
     isConnecting,
     scanForDevices,
+    stopScan,
     connectDevice,
     disconnectDevice
   };

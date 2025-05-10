@@ -1,53 +1,38 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Bookmark, Share2, Heart } from 'lucide-react';
 
-interface PausedActionsProps {
-  onFavorite?: () => void;
-  onShare?: () => void;
-  onSaveProgress?: () => void;
-  isFavorited?: boolean;
+export interface PausedActionsProps {
+  show: boolean;
+  onResume: () => void;
+  onEndSession: () => void;
 }
 
-const PausedActions: React.FC<PausedActionsProps> = ({
-  onFavorite,
-  onShare,
-  onSaveProgress,
-  isFavorited = false
+export const PausedActions: React.FC<PausedActionsProps> = ({
+  show,
+  onResume,
+  onEndSession
 }) => {
+  if (!show) return null;
+  
   return (
-    <div className="flex items-center justify-center gap-4 my-4">
-      {onFavorite && (
+    <div className="absolute inset-0 bg-black/40 backdrop-blur-sm flex flex-col items-center justify-center space-y-4 z-10">
+      <h3 className="text-white text-xl font-medium">Session Paused</h3>
+      <div className="flex space-x-4">
         <Button 
-          variant="outline" 
-          size="icon"
-          onClick={onFavorite}
-          className={isFavorited ? "bg-rose-50 border-rose-200" : ""}
+          onClick={onResume}
+          className="bg-white text-gray-900 hover:bg-gray-200"
         >
-          <Heart className={`h-4 w-4 ${isFavorited ? "fill-rose-500 text-rose-500" : ""}`} />
+          Resume
         </Button>
-      )}
-      
-      {onShare && (
         <Button 
-          variant="outline" 
-          size="icon"
-          onClick={onShare}
+          variant="outline"
+          onClick={onEndSession}
+          className="border-white text-white hover:bg-white/20"
         >
-          <Share2 className="h-4 w-4" />
+          End Session
         </Button>
-      )}
-      
-      {onSaveProgress && (
-        <Button 
-          variant="outline" 
-          size="icon"
-          onClick={onSaveProgress}
-        >
-          <Bookmark className="h-4 w-4" />
-        </Button>
-      )}
+      </div>
     </div>
   );
 };

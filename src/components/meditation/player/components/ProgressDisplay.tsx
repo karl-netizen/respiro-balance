@@ -1,36 +1,30 @@
 
 import React from 'react';
-import { Progress } from '@/components/ui/progress';
-import { formatTime } from '@/lib/utils';
 
-interface ProgressDisplayProps {
+export interface ProgressDisplayProps {
   currentTime: number;
   duration: number;
-  isPlaying: boolean;
+  progress: number;
+  formatTime: (timeInSeconds: number) => string;
 }
 
-const ProgressDisplay: React.FC<ProgressDisplayProps> = ({
+export const ProgressDisplay: React.FC<ProgressDisplayProps> = ({
   currentTime,
   duration,
-  isPlaying
+  progress,
+  formatTime
 }) => {
-  // Calculate progress as a percentage (0-100)
-  const progressPercentage = duration > 0 
-    ? Math.min((currentTime / duration) * 100, 100) 
-    : 0;
-
   return (
-    <div className="w-full space-y-2">
-      <Progress value={progressPercentage} className="h-2" />
-      
-      <div className="flex justify-between text-xs text-muted-foreground">
+    <div className="space-y-1">
+      <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+        <div 
+          className="h-full bg-primary rounded-full transition-all"
+          style={{ width: `${progress * 100}%` }} 
+        />
+      </div>
+      <div className="flex justify-between text-xs text-gray-500">
         <span>{formatTime(currentTime)}</span>
-        <span>
-          {isPlaying ? 
-            <span className="text-primary">● Playing</span> : 
-            <span>Paused</span>}
-        </span>
-        <span>-{formatTime(Math.max(0, duration - currentTime))}</span>
+        <span>{formatTime(duration)}</span>
       </div>
     </div>
   );

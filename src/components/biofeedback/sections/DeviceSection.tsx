@@ -12,10 +12,11 @@ interface DeviceSectionProps {
   devices: BluetoothDevice[];
   isScanning: boolean;
   isConnecting: boolean;
-  onScanForDevices: () => Promise<void>;
-  onConnectDevice: (deviceId: string) => Promise<void>;
-  onDisconnectDevice: (deviceId: string) => Promise<void>;
+  onScanForDevices: (deviceType?: string, options?: any) => Promise<void>;
+  onConnectDevice: (deviceId: string, callback?: () => void) => Promise<void>;
+  onDisconnectDevice: (deviceId: string, callback?: () => void) => Promise<void>;
   isSimulating: boolean;
+  onStopScan?: (deviceType?: string, callback?: () => void) => Promise<void>;
 }
 
 const DeviceSection: React.FC<DeviceSectionProps> = ({
@@ -25,7 +26,8 @@ const DeviceSection: React.FC<DeviceSectionProps> = ({
   onScanForDevices,
   onConnectDevice,
   onDisconnectDevice,
-  isSimulating
+  isSimulating,
+  onStopScan
 }) => {
   return (
     <div className="space-y-6">
@@ -35,16 +37,16 @@ const DeviceSection: React.FC<DeviceSectionProps> = ({
         icon={<Settings className="h-5 w-5" />}
       >
         {isScanning ? (
-          <DeviceSearching />
+          <DeviceSearching onStopScan={onStopScan} />
         ) : devices.length === 0 ? (
           <NoDevicesView
-            onScanForDevices={onScanForDevices}
+            onScanForDevices={() => onScanForDevices("heart_rate_monitor")}
             disabled={isScanning || isConnecting}
           />
         ) : (
           <ConnectedDevicesList
             devices={devices}
-            onScanForDevices={onScanForDevices}
+            onScanForDevices={() => onScanForDevices("heart_rate_monitor")}
             onConnectDevice={onConnectDevice}
             onDisconnectDevice={onDisconnectDevice}
             disabled={isScanning || isConnecting}

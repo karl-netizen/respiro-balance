@@ -1,19 +1,13 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-
-export interface BluetoothDeviceInfo {
-  id: string;
-  name: string;
-  connected: boolean;
-  type?: string;
-}
+import { BluetoothDevice } from '@/types/supabase';
 
 export interface ConnectedDevicesListProps {
-  devices: BluetoothDeviceInfo[];
-  onScanForDevices: () => Promise<void>;
-  onConnectDevice: (deviceId: string) => Promise<void>;
-  onDisconnectDevice: (deviceId: string) => Promise<void>;
+  devices: BluetoothDevice[];
+  onScanForDevices: (deviceType?: string, options?: any) => Promise<void>;
+  onConnectDevice: (deviceId: string, callback?: () => void) => Promise<void>;
+  onDisconnectDevice: (deviceId: string, callback?: () => void) => Promise<void>;
   disabled: boolean;
 }
 
@@ -29,7 +23,7 @@ export const ConnectedDevicesList: React.FC<ConnectedDevicesListProps> = ({
       <div className="text-center py-8">
         <p className="text-muted-foreground mb-4">No devices found</p>
         <Button 
-          onClick={onScanForDevices} 
+          onClick={() => onScanForDevices()}
           disabled={disabled}
         >
           Scan Again
@@ -60,8 +54,8 @@ export const ConnectedDevicesList: React.FC<ConnectedDevicesListProps> = ({
               variant={device.connected ? "destructive" : "default"}
               size="sm"
               onClick={() => device.connected ? 
-                onDisconnectDevice(device.id) : 
-                onConnectDevice(device.id)
+                onDisconnectDevice(device.id, () => console.log('Device disconnected:', device.id)) : 
+                onConnectDevice(device.id, () => console.log('Device connected:', device.id))
               }
               disabled={disabled}
             >
@@ -73,7 +67,7 @@ export const ConnectedDevicesList: React.FC<ConnectedDevicesListProps> = ({
       <div className="text-center">
         <Button 
           variant="outline" 
-          onClick={onScanForDevices}
+          onClick={() => onScanForDevices("heart_rate_monitor", { autoConnect: true })}
           disabled={disabled}
         >
           {disabled ? 'Scanning...' : 'Scan for More Devices'}

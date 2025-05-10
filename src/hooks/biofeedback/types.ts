@@ -8,9 +8,10 @@ export interface BiofeedbackHookReturn {
   heartRate: number;
   stress: number;
   restingHeartRate: number;
-  connectDevice: (deviceId: string) => Promise<boolean>;
-  disconnectDevice: (deviceId: string) => Promise<boolean>;
-  scanForDevices: () => Promise<boolean>;
+  connectDevice: (deviceId: string, options?: any) => Promise<boolean>;
+  disconnectDevice: (deviceId: string, options?: any) => Promise<boolean>;
+  scanForDevices: (deviceType?: string, options?: any) => Promise<boolean>;
+  stopScan?: (deviceType?: string, callback?: () => void) => Promise<void>;
   isSimulating: boolean;
 }
 

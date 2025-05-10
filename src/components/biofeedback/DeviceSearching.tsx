@@ -1,14 +1,25 @@
 
-const DeviceSearching = () => {
+import React from 'react';
+import { Button } from '@/components/ui/button';
+import { Loader2 } from 'lucide-react';
+
+interface DeviceSearchingProps {
+  onStopScan?: (deviceType?: string, callback?: () => void) => Promise<void>;
+}
+
+export const DeviceSearching: React.FC<DeviceSearchingProps> = ({ onStopScan }) => {
   return (
-    <div className="text-center py-4">
-      <div className="flex justify-center mb-4">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
-      </div>
-      <p className="text-sm mb-2">Searching for devices...</p>
-      <p className="text-xs text-muted-foreground">
-        Make sure your device is nearby and Bluetooth is enabled
+    <div className="py-8 text-center">
+      <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
+      <p className="text-lg font-medium mb-3">Scanning for devices...</p>
+      <p className="text-sm text-muted-foreground mb-6">
+        Make sure your device is in pairing mode and nearby
       </p>
+      {onStopScan && (
+        <Button variant="outline" onClick={() => onStopScan()}>
+          Cancel Scan
+        </Button>
+      )}
     </div>
   );
 };

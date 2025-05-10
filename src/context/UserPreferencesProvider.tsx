@@ -1,3 +1,4 @@
+
 import React, { 
   createContext, 
   useContext, 
@@ -16,8 +17,8 @@ import { supabase } from '@/lib/supabase';
 interface UserPreferencesContextType {
   preferences: UserPreferencesData;
   updatePreferences: (updates: Partial<UserPreferencesData>) => void;
-  connectBluetoothDevice: () => Promise<boolean>;
-  disconnectBluetoothDevice: (deviceId: string) => Promise<void>;
+  connectBluetoothDevice: (deviceType?: string, options?: any) => Promise<boolean>;
+  disconnectBluetoothDevice: (deviceId: string, callback?: () => void) => Promise<void>;
   isCoach: boolean;
 }
 
@@ -102,7 +103,7 @@ export const UserPreferencesProvider: React.FC<{ children: ReactNode }> = ({ chi
     }
   };
 
-  const connectBluetoothDevice = async (): Promise<boolean> => {
+  const connectBluetoothDevice = async (deviceType?: string, options?: any): Promise<boolean> => {
     try {
       // Simulate device connection
       const newDevice: BluetoothDevice = {
@@ -114,7 +115,12 @@ export const UserPreferencesProvider: React.FC<{ children: ReactNode }> = ({ chi
 
       setConnectedDevices([newDevice]);
       setHasWearableDevice(true);
-      updatePreferences({ has_wearable_device: true });
+      updatePreferences({ hasWearableDevice: true });
+      
+      if (options?.callback && typeof options.callback === 'function') {
+        options.callback(newDevice);
+      }
+      
       return true;
     } catch (error) {
       console.error('Bluetooth connection failed:', error);
@@ -122,12 +128,16 @@ export const UserPreferencesProvider: React.FC<{ children: ReactNode }> = ({ chi
     }
   };
 
-  const disconnectBluetoothDevice = async (deviceId: string): Promise<void> => {
+  const disconnectBluetoothDevice = async (deviceId: string, callback?: () => void): Promise<void> => {
     try {
       // Simulate device disconnection
       setConnectedDevices(connectedDevices.filter(device => device.id !== deviceId));
       setHasWearableDevice(false);
-      updatePreferences({ has_wearable_device: false });
+      updatePreferences({ hasWearableDevice: false });
+      
+      if (callback && typeof callback === 'function') {
+        callback();
+      }
     } catch (error) {
       console.error('Bluetooth disconnection failed:', error);
     }

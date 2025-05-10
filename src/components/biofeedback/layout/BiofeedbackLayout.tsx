@@ -11,10 +11,11 @@ interface BiofeedbackLayoutProps {
   heartRate: number;
   stress: number;
   restingHeartRate: number;
-  onScanForDevices: () => Promise<void>;
-  onConnectDevice: (deviceId: string) => Promise<void>;
-  onDisconnectDevice: (deviceId: string) => Promise<void>;
+  onScanForDevices: (deviceType?: string, options?: any) => Promise<void>;
+  onConnectDevice: (deviceId: string, callback?: () => void) => Promise<void>;
+  onDisconnectDevice: (deviceId: string, callback?: () => void) => Promise<void>;
   isSimulating: boolean;
+  onStopScan?: (deviceType?: string, callback?: () => void) => Promise<void>;
 }
 
 const BiofeedbackLayout: React.FC<BiofeedbackLayoutProps> = ({
@@ -27,7 +28,8 @@ const BiofeedbackLayout: React.FC<BiofeedbackLayoutProps> = ({
   onScanForDevices,
   onConnectDevice,
   onDisconnectDevice,
-  isSimulating
+  isSimulating,
+  onStopScan
 }) => {
   return (
     <div className="max-w-5xl mx-auto">
@@ -47,6 +49,7 @@ const BiofeedbackLayout: React.FC<BiofeedbackLayoutProps> = ({
             onConnectDevice={onConnectDevice}
             onDisconnectDevice={onDisconnectDevice}
             isSimulating={isSimulating}
+            onStopScan={onStopScan}
           />
         </div>
         
