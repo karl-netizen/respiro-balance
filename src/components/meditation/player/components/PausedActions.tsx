@@ -1,33 +1,53 @@
 
 import React from 'react';
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
+import { Bookmark, Share2, Heart } from 'lucide-react';
 
 interface PausedActionsProps {
-  onResume: () => void;
-  onEndSession: () => void;
-  show: boolean;
+  onFavorite?: () => void;
+  onShare?: () => void;
+  onSaveProgress?: () => void;
+  isFavorited?: boolean;
 }
 
-const PausedActions: React.FC<PausedActionsProps> = ({ onResume, onEndSession, show }) => {
-  if (!show) return null;
-  
+const PausedActions: React.FC<PausedActionsProps> = ({
+  onFavorite,
+  onShare,
+  onSaveProgress,
+  isFavorited = false
+}) => {
   return (
-    <div className="text-center mt-3 p-4 bg-respiro-dark rounded-md border-4 border-white shadow-lg flex justify-center space-x-4">
-      <Button 
-        variant="outline" 
-        onClick={onResume} 
-        className="bg-white text-respiro-dark font-bold text-lg hover:bg-gray-200 hover:text-respiro-darker border-4 border-white"
-      >
-        Resume
-      </Button>
+    <div className="flex items-center justify-center gap-4 my-4">
+      {onFavorite && (
+        <Button 
+          variant="outline" 
+          size="icon"
+          onClick={onFavorite}
+          className={isFavorited ? "bg-rose-50 border-rose-200" : ""}
+        >
+          <Heart className={`h-4 w-4 ${isFavorited ? "fill-rose-500 text-rose-500" : ""}`} />
+        </Button>
+      )}
       
-      <Button 
-        variant="outline" 
-        onClick={onEndSession} 
-        className="bg-white text-respiro-dark font-bold text-lg hover:bg-gray-200 hover:text-respiro-darker border-4 border-white"
-      >
-        End Session
-      </Button>
+      {onShare && (
+        <Button 
+          variant="outline" 
+          size="icon"
+          onClick={onShare}
+        >
+          <Share2 className="h-4 w-4" />
+        </Button>
+      )}
+      
+      {onSaveProgress && (
+        <Button 
+          variant="outline" 
+          size="icon"
+          onClick={onSaveProgress}
+        >
+          <Bookmark className="h-4 w-4" />
+        </Button>
+      )}
     </div>
   );
 };

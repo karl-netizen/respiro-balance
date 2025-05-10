@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { UserPreferences, BluetoothDevice } from '../types';
+import { UserPreferences, BluetoothDevice, DeviceType } from '../types';
 import { connectBluetoothDevice, disconnectDevice } from '../bluetoothUtils';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { toast } from 'sonner';
@@ -21,7 +21,8 @@ export const useDeviceConnections = (
           wearableDeviceType: "Respiro HR Monitor",
           wearableDeviceId: result.device.id,
           lastSyncDate: new Date().toISOString(),
-          connectedDevices: [...preferences.connectedDevices, result.device]
+          // Cast to ensure type compatibility with UserPreferences
+          connectedDevices: [...(preferences.connectedDevices || []), result.device.type as DeviceType]
         };
         
         updatePreferences(updatedPreferences);
@@ -57,30 +58,38 @@ export const useDeviceConnections = (
     }
   };
   
-  const handleDisconnectBluetoothDevice = (deviceId: string) => {
-    const updatedDevices = disconnectDevice(deviceId, preferences);
-    
-    const updatedPreferences = {
-      connectedDevices: updatedDevices,
-      hasWearableDevice: updatedDevices.length > 0
-    };
-    
-    updatePreferences(updatedPreferences);
-    
-    // If user is authenticated and Supabase configured, also update device in devices table
-    if (isSupabaseConfigured() && userId) {
-      try {
-        supabase
-          .from('user_devices')
-          .update({
-            connected: false,
-            disconnected_at: new Date().toISOString()
-          })
-          .eq('user_id', userId)
-          .eq('device_id', deviceId);
-      } catch (deviceError) {
-        console.error("Failed to update device connection status:", deviceError);
+  const handleDisconnectBluetoothDevice = async (deviceId: string): Promise<boolean> => {
+    try {
+      const updatedDevices = disconnectDevice(deviceId, preferences);
+      
+      const updatedPreferences = {
+        // Cast to ensure type compatibility with UserPreferences
+        connectedDevices: updatedDevices as DeviceType[],
+        hasWearableDevice: updatedDevices.length > 0
+      };
+      
+      updatePreferences(updatedPreferences);
+      
+      // If user is authenticated and Supabase configured, also update device in devices table
+      if (isSupabaseConfigured() && userId) {
+        try {
+          await supabase
+            .from('user_devices')
+            .update({
+              connected: false,
+              disconnected_at: new Date().toISOString()
+            })
+            .eq('user_id', userId)
+            .eq('device_id', deviceId);
+        } catch (deviceError) {
+          console.error("Failed to update device connection status:", deviceError);
+        }
       }
+      
+      return true;
+    } catch (error) {
+      console.error("Error disconnecting device:", error);
+      return false;
     }
   };
 

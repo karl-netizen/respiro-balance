@@ -13,7 +13,12 @@ const SessionValidator: React.FC<SessionValidatorProps> = ({ session, children }
     ...session,
     // Use default values for critical properties if they're missing
     image_url: session.image_url || '/images/meditations/default-meditation.jpg',
-    icon: session.icon || '🧘'
+    icon: session.icon || '🧘',
+    title: session.title || 'Untitled Session',
+    duration_minutes: session.duration_minutes || 10,
+    category: session.category || 'Meditation',
+    audio_url: session.audio_url || '/audio/default-meditation.mp3',
+    favorite: session.favorite || false
   };
 
   return <>{children(validatedSession)}</>;

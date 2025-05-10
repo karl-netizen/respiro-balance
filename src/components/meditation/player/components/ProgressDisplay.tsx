@@ -1,47 +1,36 @@
 
 import React from 'react';
+import { Progress } from '@/components/ui/progress';
 import { formatTime } from '@/lib/utils';
 
 interface ProgressDisplayProps {
   currentTime: number;
   duration: number;
-  formatTime?: (seconds: number) => string;
-  progress?: number;
-  className?: string;
+  isPlaying: boolean;
 }
 
-/**
- * Displays the meditation progress with a custom progress bar and time indicators
- * Uses a simple div-based progress implementation to avoid component type issues
- */
 const ProgressDisplay: React.FC<ProgressDisplayProps> = ({
   currentTime,
   duration,
-  formatTime: formatTimeProp,
-  progress: progressProp,
-  className = '',
+  isPlaying
 }) => {
-  // Use provided progress value or calculate it
-  const progressPercentage = progressProp !== undefined 
-    ? progressProp 
-    : (duration > 0 ? (currentTime / duration) * 100 : 0);
-  
-  // Use provided formatter or default one
-  const timeFormatter = formatTimeProp || formatTime;
-  
+  // Calculate progress as a percentage (0-100)
+  const progressPercentage = duration > 0 
+    ? Math.min((currentTime / duration) * 100, 100) 
+    : 0;
+
   return (
-    <div className={`space-y-2 bg-respiro-dark p-5 rounded-md border-4 border-white shadow-lg ${className}`}>
-      <div className="flex justify-between text-md font-bold">
-        <span className="text-white">{timeFormatter(currentTime)}</span>
-        <span className="text-white">{timeFormatter(duration)}</span>
-      </div>
+    <div className="w-full space-y-2">
+      <Progress value={progressPercentage} className="h-2" />
       
-      {/* Custom progress bar implementation */}
-      <div className="relative h-4 w-full overflow-hidden rounded-full bg-respiro-darker border-2 border-white">
-        <div
-          className="absolute left-0 top-0 h-full bg-white transition-all duration-300 ease-in-out"
-          style={{ width: `${progressPercentage}%` }}
-        />
+      <div className="flex justify-between text-xs text-muted-foreground">
+        <span>{formatTime(currentTime)}</span>
+        <span>
+          {isPlaying ? 
+            <span className="text-primary">● Playing</span> : 
+            <span>Paused</span>}
+        </span>
+        <span>-{formatTime(Math.max(0, duration - currentTime))}</span>
       </div>
     </div>
   );

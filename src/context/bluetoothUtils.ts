@@ -1,6 +1,5 @@
 
-import { BluetoothDevice } from '@/types/supabase';
-import { UserPreferences } from './types';
+import { UserPreferences, BluetoothDevice, DeviceType } from './types';
 
 // Function to simulate connecting a Bluetooth device
 export const connectBluetoothDevice = async (): Promise<{
@@ -16,7 +15,7 @@ export const connectBluetoothDevice = async (): Promise<{
     const mockDevice: BluetoothDevice = {
       id: Math.random().toString(36).substring(2, 10),
       name: "Respiro HR Monitor",
-      type: "heart_rate",
+      type: "heart_rate_monitor",
       connected: true
     };
     
@@ -36,10 +35,19 @@ export const connectBluetoothDevice = async (): Promise<{
 export const disconnectDevice = (
   deviceId: string, 
   preferences: UserPreferences
-): BluetoothDevice[] => {
-  const updatedDevices = preferences.connectedDevices.filter(
-    device => device.id !== deviceId
+): DeviceType[] => {
+  // Since we're dealing with string types in connectedDevices,
+  // we need to handle them differently than BluetoothDevice objects
+  const deviceIndex = preferences.connectedDevices.findIndex(
+    (device) => typeof device === 'string' ? false : device === deviceId
   );
+  
+  if (deviceIndex === -1) {
+    return preferences.connectedDevices;
+  }
+  
+  const updatedDevices = [...preferences.connectedDevices];
+  updatedDevices.splice(deviceIndex, 1);
   
   return updatedDevices;
 };

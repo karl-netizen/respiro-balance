@@ -1,8 +1,7 @@
 
 import React from 'react';
 import { MeditationSession } from '@/types/meditation';
-import SessionValidator from './player/components/SessionValidator';
-import PlayerCore from './player/components/PlayerCore';
+import { SessionValidator, PlayerCore } from './player/components';
 
 interface MeditationSessionPlayerProps {
   session: MeditationSession;
