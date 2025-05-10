@@ -22,6 +22,8 @@ import Meditate from './pages/Meditate';
 import MeditationSessionView from './pages/MeditationSessionView';
 import MorningRitual from './pages/MorningRitual';
 import Account from './pages/Account';
+import FAQ from './pages/FAQ';
+import NotFound from './pages/NotFound';
 
 function App() {
   return (
@@ -46,6 +48,8 @@ function App() {
                   <Route path="/meditate/session/:sessionId" element={<MeditationSessionView />} />
                   <Route path="/morning-ritual" element={<MorningRitual />} />
                   <Route path="/account" element={<Account />} />
+                  <Route path="/faq" element={<FAQ />} />
+                  <Route path="*" element={<NotFound />} />
                 </Routes>
               </FocusProvider>
             </SubscriptionProvider>
