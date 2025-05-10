@@ -15,11 +15,12 @@ const OnboardingWizard = () => {
     currentStep,
     handleNext,
     handleBack,
-    skipOnboarding
+    skipOnboarding,
+    totalSteps
   } = useOnboardingWizard();
   
-  // Set the total number of steps
-  const totalSteps = onboardingSteps.length;
+  // Get the current step component
+  const CurrentStepComponent = onboardingSteps[currentStep].component;
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -45,8 +46,8 @@ const OnboardingWizard = () => {
           </div>
 
           {/* Step content */}
-          <div className="py-4 flex-grow overflow-hidden min-h-0">
-            {onboardingSteps[currentStep].component}
+          <div className="py-4 flex-grow overflow-auto min-h-0">
+            {CurrentStepComponent}
           </div>
 
           {/* Actions */}

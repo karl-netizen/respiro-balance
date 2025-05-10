@@ -1,42 +1,43 @@
 
 import React from "react";
-import { useUserPreferences } from "@/context";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useUserPreferences } from "@/context";
 
 const StressFocusStep = () => {
   const { preferences, updatePreferences } = useUserPreferences();
-
+  
   const handleStressLevelChange = (value: string) => {
     updatePreferences({ stressLevel: value as any });
   };
-
+  
   const handleFocusChallengeChange = (value: string, checked: boolean) => {
     // Ensure focusChallenges is an array before using it
-    let updatedChallenges = [...(preferences.focusChallenges || [])];
+    const focusChallenges = Array.isArray(preferences.focusChallenges) ? 
+      preferences.focusChallenges : [];
     
+    let updatedChallenges;
     if (checked) {
-      updatedChallenges.push(value);
+      updatedChallenges = [...focusChallenges, value];
     } else {
-      updatedChallenges = updatedChallenges.filter(challenge => challenge !== value);
+      updatedChallenges = focusChallenges.filter(challenge => challenge !== value);
     }
     
     updatePreferences({ focusChallenges: updatedChallenges });
   };
 
-  const handleEnergyPatternChange = (value: string) => {
-    updatePreferences({ energyPattern: value });
-  };
-
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-sm font-medium mb-3">What's your typical stress level during work days?</h3>
+        <h3 className="text-lg font-medium mb-2">Stress Level</h3>
+        <p className="text-sm text-muted-foreground mb-3">
+          How would you describe your typical daily stress level?
+        </p>
         <RadioGroup 
-          value={preferences.stressLevel} 
-          onValueChange={handleStressLevelChange}
-          className="flex flex-col space-y-2"
+          value={preferences.stressLevel || "moderate"} 
+          onValueChange={handleStressLevelChange} 
+          className="space-y-2"
         >
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="low" id="stress-low" />
@@ -44,85 +45,74 @@ const StressFocusStep = () => {
           </div>
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="moderate" id="stress-moderate" />
-            <Label htmlFor="stress-moderate">Moderate - I feel stressed sometimes</Label>
+            <Label htmlFor="stress-moderate">Moderate - I sometimes feel stressed</Label>
           </div>
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="high" id="stress-high" />
             <Label htmlFor="stress-high">High - I often feel stressed</Label>
           </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="very_high" id="stress-very-high" />
+            <Label htmlFor="stress-very-high">Very High - I feel stressed almost always</Label>
+          </div>
         </RadioGroup>
       </div>
 
       <div>
-        <h3 className="text-sm font-medium mb-3">What focus challenges do you experience? (Select all that apply)</h3>
+        <h3 className="text-lg font-medium mb-2">Focus Challenges</h3>
+        <p className="text-sm text-muted-foreground mb-3">
+          What challenges your ability to focus during work? Select all that apply.
+        </p>
         <div className="space-y-2">
           <div className="flex items-center space-x-2">
             <Checkbox 
-              id="challenge-distractions" 
-              checked={preferences.focusChallenges?.includes("distractions") || false}
-              onCheckedChange={(checked) => handleFocusChallengeChange("distractions", !!checked)}
+              id="focus-digital-distractions" 
+              checked={preferences.focusChallenges?.includes("digital_distractions")}
+              onCheckedChange={(checked) => handleFocusChallengeChange("digital_distractions", !!checked)}
             />
-            <label htmlFor="challenge-distractions" className="text-sm">
-              Frequent distractions (notifications, noise, etc.)
-            </label>
+            <Label htmlFor="focus-digital-distractions">Digital distractions (social media, email)</Label>
           </div>
           <div className="flex items-center space-x-2">
             <Checkbox 
-              id="challenge-afternoon_slump" 
-              checked={preferences.focusChallenges?.includes("afternoon_slump") || false}
-              onCheckedChange={(checked) => handleFocusChallengeChange("afternoon_slump", !!checked)}
+              id="focus-noise" 
+              checked={preferences.focusChallenges?.includes("noise")}
+              onCheckedChange={(checked) => handleFocusChallengeChange("noise", !!checked)}
             />
-            <label htmlFor="challenge-afternoon_slump" className="text-sm">
-              Afternoon energy slump
-            </label>
+            <Label htmlFor="focus-noise">Noise and environment distractions</Label>
           </div>
           <div className="flex items-center space-x-2">
             <Checkbox 
-              id="challenge-multitasking" 
-              checked={preferences.focusChallenges?.includes("multitasking") || false}
-              onCheckedChange={(checked) => handleFocusChallengeChange("multitasking", !!checked)}
+              id="focus-interruptions" 
+              checked={preferences.focusChallenges?.includes("interruptions")}
+              onCheckedChange={(checked) => handleFocusChallengeChange("interruptions", !!checked)}
             />
-            <label htmlFor="challenge-multitasking" className="text-sm">
-              Difficulty focusing on one task (multitasking)
-            </label>
+            <Label htmlFor="focus-interruptions">Coworker interruptions</Label>
           </div>
           <div className="flex items-center space-x-2">
             <Checkbox 
-              id="challenge-mind_wandering" 
-              checked={preferences.focusChallenges?.includes("mind_wandering") || false}
-              onCheckedChange={(checked) => handleFocusChallengeChange("mind_wandering", !!checked)}
+              id="focus-fatigue" 
+              checked={preferences.focusChallenges?.includes("fatigue")}
+              onCheckedChange={(checked) => handleFocusChallengeChange("fatigue", !!checked)}
             />
-            <label htmlFor="challenge-mind_wandering" className="text-sm">
-              Mind wandering/racing thoughts
-            </label>
+            <Label htmlFor="focus-fatigue">Mental fatigue or burnout</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Checkbox 
+              id="focus-stress" 
+              checked={preferences.focusChallenges?.includes("stress")}
+              onCheckedChange={(checked) => handleFocusChallengeChange("stress", !!checked)}
+            />
+            <Label htmlFor="focus-stress">Stress and anxiety</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Checkbox 
+              id="focus-sleep" 
+              checked={preferences.focusChallenges?.includes("sleep")}
+              onCheckedChange={(checked) => handleFocusChallengeChange("sleep", !!checked)}
+            />
+            <Label htmlFor="focus-sleep">Poor sleep quality</Label>
           </div>
         </div>
-      </div>
-
-      <div>
-        <h3 className="text-sm font-medium mb-3">When during the day is your energy typically lowest?</h3>
-        <RadioGroup 
-          value={preferences.energyPattern || "afternoon_dip"} 
-          onValueChange={handleEnergyPatternChange}
-          className="flex flex-col space-y-2"
-        >
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="morning_dip" id="energy-morning" />
-            <Label htmlFor="energy-morning">Morning (before 11am)</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="afternoon_dip" id="energy-afternoon" />
-            <Label htmlFor="energy-afternoon">Afternoon (1-4pm)</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="evening_dip" id="energy-evening" />
-            <Label htmlFor="energy-evening">Evening (after 5pm)</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="consistent" id="energy-consistent" />
-            <Label htmlFor="energy-consistent">My energy is fairly consistent</Label>
-          </div>
-        </RadioGroup>
       </div>
     </div>
   );

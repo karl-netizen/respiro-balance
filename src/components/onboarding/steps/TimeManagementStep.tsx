@@ -1,189 +1,103 @@
 
 import React from "react";
 import { useUserPreferences } from "@/context";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Clock, ListTodo, Bell, MessageSquare } from "lucide-react";
-import { TimeBlockingUsage, WorkBoundaries, TimeManagementStyle } from "@/context/types";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const TimeManagementStep = () => {
   const { preferences, updatePreferences } = useUserPreferences();
-  const isMobile = useIsMobile();
 
-  const handleTimeChallengeChange = (challenge: string, checked: boolean) => {
-    // Ensure timeChallenges exists in preferences
-    const currentChallenges = preferences.timeChallenges || [];
+  const handleStyleChange = (value: string) => {
+    updatePreferences({ timeManagementStyle: value as any });
+  };
+
+  const handleChallengeChange = (value: string, checked: boolean) => {
+    // Ensure timeChallenges is an array before using it
+    let updatedChallenges = [...(preferences.timeChallenges || [])];
     
-    let updatedChallenges;
     if (checked) {
-      updatedChallenges = [...currentChallenges, challenge];
+      updatedChallenges.push(value);
     } else {
-      updatedChallenges = currentChallenges.filter(item => item !== challenge);
+      updatedChallenges = updatedChallenges.filter(challenge => challenge !== value);
     }
     
     updatePreferences({ timeChallenges: updatedChallenges });
   };
 
-  const content = (
+  return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-sm font-medium mb-3 flex items-center">
-          <Clock className="w-4 h-4 mr-2 text-primary" />
-          What time management challenges do you face? (Select all that apply)
-        </h3>
-        <div className="space-y-2">
+        <h3 className="text-lg font-medium mb-3">How do you manage your time?</h3>
+        <RadioGroup 
+          value={preferences.timeManagementStyle || "flexible"} 
+          onValueChange={handleStyleChange}
+          className="flex flex-col space-y-2"
+        >
           <div className="flex items-center space-x-2">
-            <Checkbox 
-              id="challenge-prioritization" 
-              checked={preferences.timeChallenges?.includes("prioritization") || false}
-              onCheckedChange={(checked) => handleTimeChallengeChange("prioritization", !!checked)}
-            />
-            <label htmlFor="challenge-prioritization" className="text-sm">
-              Task prioritization difficulties
-            </label>
+            <RadioGroupItem value="pomodoro" id="style-pomodoro" />
+            <Label htmlFor="style-pomodoro">Pomodoro Technique - Work in focused intervals</Label>
           </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="timeblocking" id="style-timeblocking" />
+            <Label htmlFor="style-timeblocking">Time Blocking - Schedule specific tasks</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="deadline" id="style-deadline" />
+            <Label htmlFor="style-deadline">Deadline-driven - Work to meet specific deadlines</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="flexible" id="style-flexible" />
+            <Label htmlFor="style-flexible">Flexible - Adapt as needed throughout the day</Label>
+          </div>
+        </RadioGroup>
+      </div>
+
+      <div>
+        <h3 className="text-lg font-medium mb-3">What are your time management challenges?</h3>
+        <div className="space-y-2">
           <div className="flex items-center space-x-2">
             <Checkbox 
               id="challenge-procrastination" 
               checked={preferences.timeChallenges?.includes("procrastination") || false}
-              onCheckedChange={(checked) => handleTimeChallengeChange("procrastination", !!checked)}
+              onCheckedChange={(checked) => handleChallengeChange("procrastination", !!checked)}
             />
-            <label htmlFor="challenge-procrastination" className="text-sm">
-              Procrastination tendencies
-            </label>
+            <Label htmlFor="challenge-procrastination">Procrastination</Label>
           </div>
           <div className="flex items-center space-x-2">
             <Checkbox 
-              id="challenge-meetings" 
-              checked={preferences.timeChallenges?.includes("meetings_overload") || false}
-              onCheckedChange={(checked) => handleTimeChallengeChange("meetings_overload", !!checked)}
+              id="challenge-distraction" 
+              checked={preferences.timeChallenges?.includes("distraction") || false}
+              onCheckedChange={(checked) => handleChallengeChange("distraction", !!checked)}
             />
-            <label htmlFor="challenge-meetings" className="text-sm">
-              Meeting/calendar overload
-            </label>
+            <Label htmlFor="challenge-distraction">Getting distracted easily</Label>
           </div>
           <div className="flex items-center space-x-2">
             <Checkbox 
-              id="challenge-distractions" 
-              checked={preferences.timeChallenges?.includes("digital_distractions") || false}
-              onCheckedChange={(checked) => handleTimeChallengeChange("digital_distractions", !!checked)}
+              id="challenge-prioritization" 
+              checked={preferences.timeChallenges?.includes("prioritization") || false}
+              onCheckedChange={(checked) => handleChallengeChange("prioritization", !!checked)}
             />
-            <label htmlFor="challenge-distractions" className="text-sm">
-              Digital distractions
-            </label>
+            <Label htmlFor="challenge-prioritization">Difficulty prioritizing tasks</Label>
           </div>
           <div className="flex items-center space-x-2">
             <Checkbox 
-              id="challenge-saying-no" 
-              checked={preferences.timeChallenges?.includes("saying_no") || false}
-              onCheckedChange={(checked) => handleTimeChallengeChange("saying_no", !!checked)}
+              id="challenge-estimation" 
+              checked={preferences.timeChallenges?.includes("estimation") || false}
+              onCheckedChange={(checked) => handleChallengeChange("estimation", !!checked)}
             />
-            <label htmlFor="challenge-saying-no" className="text-sm">
-              Difficulty saying "no"
-            </label>
+            <Label htmlFor="challenge-estimation">Poor time estimation</Label>
           </div>
           <div className="flex items-center space-x-2">
             <Checkbox 
-              id="challenge-context-switching" 
-              checked={preferences.timeChallenges?.includes("context_switching") || false}
-              onCheckedChange={(checked) => handleTimeChallengeChange("context_switching", !!checked)}
+              id="challenge-boundaries" 
+              checked={preferences.timeChallenges?.includes("boundaries") || false}
+              onCheckedChange={(checked) => handleChallengeChange("boundaries", !!checked)}
             />
-            <label htmlFor="challenge-context-switching" className="text-sm">
-              Context switching struggles
-            </label>
+            <Label htmlFor="challenge-boundaries">Setting boundaries between work & personal life</Label>
           </div>
         </div>
       </div>
-
-      <div>
-        <h3 className="text-sm font-medium mb-3 flex items-center">
-          <ListTodo className="w-4 h-4 mr-2 text-primary" />
-          Do you currently use any time blocking method?
-        </h3>
-        <RadioGroup 
-          value={preferences.usesTimeBlocking || "no"} 
-          onValueChange={(value: TimeBlockingUsage) => updatePreferences({ usesTimeBlocking: value })}
-          className="flex flex-col space-y-2"
-        >
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="yes_regularly" id="timeblock-regular" />
-            <Label htmlFor="timeblock-regular">Yes, I regularly plan my day in time blocks</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="yes_occasionally" id="timeblock-occasionally" />
-            <Label htmlFor="timeblock-occasionally">Yes, but only occasionally</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="no" id="timeblock-no" />
-            <Label htmlFor="timeblock-no">No, I don't use time blocking</Label>
-          </div>
-        </RadioGroup>
-      </div>
-
-      <div>
-        <h3 className="text-sm font-medium mb-3 flex items-center">
-          <Bell className="w-4 h-4 mr-2 text-primary" />
-          Work boundaries (after hours)
-        </h3>
-        <RadioGroup 
-          value={preferences.workBoundaries || "sometimes"} 
-          onValueChange={(value: WorkBoundaries) => updatePreferences({ workBoundaries: value })}
-          className="flex flex-col space-y-2"
-        >
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="strict" id="boundaries-strict" />
-            <Label htmlFor="boundaries-strict">I have strict boundaries (no work after hours)</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="sometimes" id="boundaries-sometimes" />
-            <Label htmlFor="boundaries-sometimes">I sometimes check work after hours</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="blended" id="boundaries-blended" />
-            <Label htmlFor="boundaries-blended">My work and personal time are blended</Label>
-          </div>
-        </RadioGroup>
-      </div>
-
-      <div>
-        <h3 className="text-sm font-medium mb-3 flex items-center">
-          <MessageSquare className="w-4 h-4 mr-2 text-primary" />
-          Which time management approach appeals to you most?
-        </h3>
-        <RadioGroup 
-          value={preferences.timeManagementStyle || "flexible"} 
-          onValueChange={(value: TimeManagementStyle) => updatePreferences({ timeManagementStyle: value })}
-          className="flex flex-col space-y-2"
-        >
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="structured" id="time-structured" />
-            <Label htmlFor="time-structured">Structured (detailed schedules, clear routines)</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="flexible" id="time-flexible" />
-            <Label htmlFor="time-flexible">Flexible (general goals, adaptable approach)</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="minimalist" id="time-minimalist" />
-            <Label htmlFor="time-minimalist">Minimalist (focus on few important tasks only)</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="need_help" id="time-help" />
-            <Label htmlFor="time-help">I need help figuring out my approach</Label>
-          </div>
-        </RadioGroup>
-      </div>
-    </div>
-  );
-
-  return (
-    <div className="w-full h-full overflow-hidden">
-      <ScrollArea className="h-[60vh] pr-4">
-        {content}
-      </ScrollArea>
     </div>
   );
 };

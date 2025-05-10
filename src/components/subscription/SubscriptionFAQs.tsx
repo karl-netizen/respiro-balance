@@ -5,81 +5,67 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/components/ui/accordion';
-import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
+} from "@/components/ui/accordion";
 
-const SubscriptionFAQs = () => {
+const SubscriptionFAQs: React.FC = () => {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Frequently Asked Questions</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="item-1">
-            <AccordionTrigger>What's included in the Premium plan?</AccordionTrigger>
-            <AccordionContent>
-              The Premium plan includes unlimited meditation minutes, advanced meditation techniques,
-              full biometric integration, personalized recommendations, offline access to all content,
-              detailed progress tracking, and priority customer support.
-            </AccordionContent>
-          </AccordionItem>
-          
-          <AccordionItem value="item-2">
-            <AccordionTrigger>Can I cancel my subscription anytime?</AccordionTrigger>
-            <AccordionContent>
-              Yes, you can cancel your subscription at any time from your account settings.
-              You'll continue to have access to Premium features until the end of your current billing period.
-            </AccordionContent>
-          </AccordionItem>
-          
-          <AccordionItem value="item-3">
-            <AccordionTrigger>How does the monthly usage limit work for free users?</AccordionTrigger>
-            <AccordionContent>
-              Free users have a limit of 60 meditation minutes per month. This resets on the first day
-              of each month. Once you've used your allotted minutes, you'll need to upgrade to Premium
-              for unlimited access or wait until the next month.
-            </AccordionContent>
-          </AccordionItem>
-          
-          <AccordionItem value="item-4">
-            <AccordionTrigger>Is there a refund policy?</AccordionTrigger>
-            <AccordionContent>
-              If you're not satisfied with your Premium subscription, you can request a refund within
-              7 days of your initial purchase by contacting our support team. Refunds are not available
-              for partial months or for subscriptions that have been active for more than 7 days.
-            </AccordionContent>
-          </AccordionItem>
-          
-          <AccordionItem value="item-5">
-            <AccordionTrigger>How do I switch between monthly and annual billing?</AccordionTrigger>
-            <AccordionContent>
-              You can switch between monthly and annual billing in your account settings under the
-              Subscription tab. If you switch from monthly to annual, you'll be charged the annual
-              rate immediately, with credit for any remaining time on your monthly plan. If you switch
-              from annual to monthly, the change will take effect at the end of your current annual billing cycle.
-            </AccordionContent>
-          </AccordionItem>
-          
-          <AccordionItem value="item-6">
-            <AccordionTrigger>Can I use my subscription on multiple devices?</AccordionTrigger>
-            <AccordionContent>
-              Yes, your subscription is tied to your account, not your device. You can access your
-              Premium features on any device where you're logged into your Respiro Balance account.
-            </AccordionContent>
-          </AccordionItem>
-          
-          <AccordionItem value="item-7">
-            <AccordionTrigger>Do you offer team or family plans?</AccordionTrigger>
-            <AccordionContent>
-              Yes, we offer team plans for businesses and organizations. Please contact our sales team
-              for more information about team pricing and features. We're also working on family plans
-              which will be available soon.
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      </CardContent>
-    </Card>
+    <div>
+      <h2 className="text-2xl font-semibold mb-4">Frequently Asked Questions</h2>
+      <Accordion type="single" collapsible className="w-full">
+        <AccordionItem value="item-1">
+          <AccordionTrigger>What's included in the free plan?</AccordionTrigger>
+          <AccordionContent>
+            The free plan includes 60 minutes of guided meditation per month, basic breathing exercises,
+            simple tracking tools, and daily reminders. It's a great way to get started with mindfulness
+            and see how Respiro Balance can help improve your wellbeing.
+          </AccordionContent>
+        </AccordionItem>
+        
+        <AccordionItem value="item-2">
+          <AccordionTrigger>How does the 14-day free trial work?</AccordionTrigger>
+          <AccordionContent>
+            When you sign up for our Premium plan, you'll get full access to all features for 14 days 
+            completely free. You won't be charged until the trial period ends, and you can cancel anytime
+            before the trial ends without being charged.
+          </AccordionContent>
+        </AccordionItem>
+        
+        <AccordionItem value="item-3">
+          <AccordionTrigger>Can I cancel my subscription anytime?</AccordionTrigger>
+          <AccordionContent>
+            Yes! You can cancel your subscription at any time. If you cancel, you'll continue to have access
+            to Premium features until the end of your current billing period. After that, your account will
+            automatically revert to the free plan.
+          </AccordionContent>
+        </AccordionItem>
+        
+        <AccordionItem value="item-4">
+          <AccordionTrigger>What payment methods do you accept?</AccordionTrigger>
+          <AccordionContent>
+            We accept all major credit and debit cards, including Visa, Mastercard, American Express, 
+            and Discover. Payment processing is handled securely through Stripe.
+          </AccordionContent>
+        </AccordionItem>
+        
+        <AccordionItem value="item-5">
+          <AccordionTrigger>Is my payment information secure?</AccordionTrigger>
+          <AccordionContent>
+            Absolutely. We use Stripe, a PCI-compliant payment processor, for all transactions. 
+            Your payment details are encrypted and securely stored with Stripe - we never see or 
+            store your full credit card information on our servers.
+          </AccordionContent>
+        </AccordionItem>
+        
+        <AccordionItem value="item-6">
+          <AccordionTrigger>Do you offer refunds?</AccordionTrigger>
+          <AccordionContent>
+            If you're unsatisfied with your Premium subscription for any reason, please contact 
+            our support team within 7 days of your payment, and we'll be happy to issue a refund.
+            After this period, refunds are handled on a case-by-case basis.
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+    </div>
   );
 };
 

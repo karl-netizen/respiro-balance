@@ -3,12 +3,15 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUserPreferences } from "@/context";
 import { toast } from "sonner";
+import { onboardingSteps } from "../config/onboardingSteps";
 
 export const useOnboardingWizard = () => {
   const { preferences, updatePreferences } = useUserPreferences();
   const [open, setOpen] = useState(!preferences.hasCompletedOnboarding);
   const [currentStep, setCurrentStep] = useState(0);
   const navigate = useNavigate();
+  
+  const totalSteps = onboardingSteps.length;
 
   // Add effect to reinitialize preferences for onboarding if needed
   useEffect(() => {
@@ -72,9 +75,6 @@ export const useOnboardingWizard = () => {
     // Navigate to dashboard when onboarding is skipped
     navigate('/dashboard');
   };
-
-  // We'll define totalSteps in the component and pass it in
-  const totalSteps = 0; // This will be overridden by the component
 
   return {
     open,
