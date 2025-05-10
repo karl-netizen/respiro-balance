@@ -15,7 +15,7 @@ const SessionValidator: React.FC<SessionValidatorProps> = ({ session, children }
     image_url: session.image_url || '/images/meditations/default-meditation.jpg',
     icon: session.icon || '🧘',
     title: session.title || 'Untitled Session',
-    duration_minutes: session.duration_minutes || 10,
+    duration: session.duration || 600, // Default to 10 minutes in seconds
     category: session.category || 'Meditation',
     audio_url: session.audio_url || '/audio/default-meditation.mp3',
     favorite: session.favorite || false

@@ -1,11 +1,11 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { MeditationSession } from '@/types/meditation';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX } from 'lucide-react';
 import { formatTime } from '@/lib/utils';
 import ProgressDisplay from './ProgressDisplay';
-import SessionControls from './SessionControls';
-import PausedActions from './PausedActions';
-import { Card, CardContent } from '@/components/ui/card';
 
 interface PlayerCoreProps {
   session: MeditationSession;
@@ -18,192 +18,158 @@ interface PlayerCoreProps {
   };
 }
 
-const PlayerCore: React.FC<PlayerCoreProps> = ({
-  session,
-  onComplete,
+const PlayerCore: React.FC<PlayerCoreProps> = ({ 
+  session, 
+  onComplete, 
   onStart,
   onPlayStateChange,
-  biometricData
+  biometricData 
 }) => {
-  // Player state
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
-  const [isMuted, setIsMuted] = useState(false);
-  const [isFavorited, setIsFavorited] = useState(session.favorite || false);
-  
-  // Audio reference
+  const [duration, setDuration] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   
-  // Timer for tracking progress
-  const timerRef = useRef<number | null>(null);
-  
-  // Initialize audio when session changes
+  // Initialize audio when component mounts
   useEffect(() => {
-    if (session.audio_url) {
-      const audio = new Audio(session.audio_url);
-      audioRef.current = audio;
-      audio.loop = false;
+    if (!audioRef.current) {
+      audioRef.current = new Audio(session.audio_url);
       
-      audio.addEventListener('ended', handleComplete);
-      audio.addEventListener('timeupdate', handleTimeUpdate);
-      
-      return () => {
-        audio.removeEventListener('ended', handleComplete);
-        audio.removeEventListener('timeupdate', handleTimeUpdate);
-        audio.pause();
-        if (timerRef.current) {
-          clearInterval(timerRef.current);
+      // Set up event listeners
+      audioRef.current.addEventListener('loadedmetadata', () => {
+        if (audioRef.current) {
+          setDuration(audioRef.current.duration);
         }
-      };
+      });
+      
+      audioRef.current.addEventListener('timeupdate', () => {
+        if (audioRef.current) {
+          setCurrentTime(audioRef.current.currentTime);
+        }
+      });
+      
+      audioRef.current.addEventListener('ended', handleSessionComplete);
     }
-  }, [session]);
-  
-  // Handle time updates from audio element
-  const handleTimeUpdate = () => {
-    if (audioRef.current) {
-      setCurrentTime(audioRef.current.currentTime);
+    
+    // Update audio source if session changes
+    if (audioRef.current.src !== session.audio_url) {
+      audioRef.current.src = session.audio_url;
+      audioRef.current.load();
     }
-  };
-  
-  // Toggle play/pause
-  const handlePlayPause = () => {
-    if (audioRef.current) {
-      if (isPlaying) {
+    
+    return () => {
+      if (audioRef.current) {
         audioRef.current.pause();
-      } else {
-        audioRef.current.play();
-        if (currentTime === 0 && onStart) {
-          onStart();
-        }
+        audioRef.current.removeEventListener('loadedmetadata', () => {});
+        audioRef.current.removeEventListener('timeupdate', () => {});
+        audioRef.current.removeEventListener('ended', handleSessionComplete);
       }
-      
-      setIsPlaying(!isPlaying);
-      if (onPlayStateChange) {
-        onPlayStateChange(!isPlaying);
+    };
+  }, [session.audio_url]);
+  
+  const togglePlayPause = () => {
+    if (isPlaying) {
+      audioRef.current?.pause();
+    } else {
+      if (!currentTime && onStart) {
+        onStart();
       }
+      audioRef.current?.play();
+    }
+    
+    setIsPlaying(!isPlaying);
+    if (onPlayStateChange) {
+      onPlayStateChange(!isPlaying);
     }
   };
   
-  // Handle session completion
-  const handleComplete = () => {
+  const handleSessionComplete = () => {
     setIsPlaying(false);
     if (onComplete) {
       onComplete();
     }
-  };
-  
-  // Skip forward 30 seconds
-  const handleSkipForward = () => {
-    if (audioRef.current) {
-      const newTime = Math.min(audioRef.current.currentTime + 30, audioRef.current.duration);
-      audioRef.current.currentTime = newTime;
-      setCurrentTime(newTime);
+    if (onPlayStateChange) {
+      onPlayStateChange(false);
     }
   };
   
-  // Restart session
-  const handleRestart = () => {
+  const skipForward = () => {
     if (audioRef.current) {
-      audioRef.current.currentTime = 0;
-      setCurrentTime(0);
-      if (!isPlaying) {
-        handlePlayPause();
-      }
+      audioRef.current.currentTime = Math.min(audioRef.current.currentTime + 30, audioRef.current.duration);
     }
   };
   
-  // Toggle mute
-  const handleMuteToggle = () => {
+  const skipBackward = () => {
     if (audioRef.current) {
-      audioRef.current.muted = !isMuted;
-      setIsMuted(!isMuted);
+      audioRef.current.currentTime = Math.max(audioRef.current.currentTime - 10, 0);
     }
-  };
-  
-  // Toggle favorite status
-  const handleFavoriteToggle = () => {
-    setIsFavorited(!isFavorited);
-    // In a real app, you'd save this to the database
-  };
-  
-  // Share session
-  const handleShare = () => {
-    // Implementation would depend on your sharing mechanism
-    console.log('Share session:', session.id);
-  };
-  
-  // Save progress
-  const handleSaveProgress = () => {
-    // Implementation would depend on your progress tracking
-    console.log('Save progress at:', formatTime(currentTime));
   };
 
+  // Calculate progress percentage
+  const progressPercentage = duration ? (currentTime / duration) * 100 : 0;
+  
+  // Calculate session duration in minutes for display
+  const sessionDurationMinutes = Math.ceil(duration / 60);
+
+  // Format time remaining
+  const timeRemaining = formatTime(Math.max(0, duration - currentTime));
+
   return (
-    <Card className="w-full max-w-md mx-auto bg-background shadow-md">
-      <div 
-        className="w-full aspect-video bg-cover bg-center rounded-t-lg"
-        style={{ backgroundImage: `url(${session.image_url})` }}
-      >
-        <div className="w-full h-full bg-black/30 flex items-center justify-center">
-          <span className="text-4xl">{session.icon || '🧘'}</span>
-        </div>
-      </div>
-      
-      <CardContent className="p-6 space-y-4">
-        <div>
-          <h2 className="text-xl font-semibold mb-1">{session.title}</h2>
-          <p className="text-sm text-muted-foreground">
-            {session.duration_minutes} minutes • {session.category || 'Meditation'}
-          </p>
-        </div>
-        
-        {/* Progress bar and time display */}
-        <ProgressDisplay 
-          currentTime={currentTime}
-          duration={session.duration_minutes * 60}
-          isPlaying={isPlaying}
-        />
-        
-        {/* Playback controls */}
-        <SessionControls 
-          isPlaying={isPlaying}
-          isMuted={isMuted}
-          onPlayPause={handlePlayPause}
-          onRestart={handleRestart}
-          onSkipForward={handleSkipForward}
-          onMuteToggle={handleMuteToggle}
-        />
-        
-        {/* Only show actions when paused */}
-        {!isPlaying && (
-          <PausedActions 
-            onFavorite={handleFavoriteToggle}
-            onShare={handleShare}
-            onSaveProgress={handleSaveProgress}
-            isFavorited={isFavorited}
-          />
-        )}
-        
-        {/* Biometric data display if available */}
-        {biometricData && !isPlaying && (
-          <div className="bg-muted/50 p-3 rounded-md mt-4">
-            <h3 className="text-sm font-medium mb-2">Session Biometrics</h3>
-            <div className="grid grid-cols-2 gap-2">
+    <Card className="w-full">
+      <CardContent className="p-6">
+        <div className="flex flex-col space-y-6">
+          {/* Session info */}
+          <div className="flex items-center space-x-4">
+            <div className="bg-primary/10 p-3 rounded-full">
+              <span className="text-2xl">{session.icon}</span>
+            </div>
+            <div>
+              <h3 className="text-lg font-medium">{session.title}</h3>
+              <p className="text-sm text-muted-foreground">{sessionDurationMinutes} min · {session.category}</p>
+            </div>
+          </div>
+          
+          {/* Biometrics display (if available) */}
+          {biometricData && (
+            <div className="grid grid-cols-2 gap-4">
               {biometricData.focusScore !== undefined && (
-                <div>
-                  <span className="text-xs text-muted-foreground">Focus Score</span>
+                <div className="bg-secondary/10 p-3 rounded-md">
+                  <p className="text-xs text-muted-foreground">Focus</p>
                   <p className="text-lg font-medium">{biometricData.focusScore}%</p>
                 </div>
               )}
               {biometricData.calmScore !== undefined && (
-                <div>
-                  <span className="text-xs text-muted-foreground">Calm Score</span>
+                <div className="bg-secondary/10 p-3 rounded-md">
+                  <p className="text-xs text-muted-foreground">Calm</p>
                   <p className="text-lg font-medium">{biometricData.calmScore}%</p>
                 </div>
               )}
             </div>
+          )}
+          
+          {/* Progress bar */}
+          <ProgressDisplay 
+            currentTime={currentTime}
+            duration={duration}
+            isPlaying={isPlaying}
+          />
+          
+          {/* Player controls */}
+          <div className="flex items-center justify-between">
+            <Button variant="outline" size="icon" onClick={skipBackward}>
+              <SkipBack className="h-4 w-4" />
+            </Button>
+            <Button 
+              className="h-12 w-12 rounded-full" 
+              onClick={togglePlayPause}
+            >
+              {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5 ml-1" />}
+            </Button>
+            <Button variant="outline" size="icon" onClick={skipForward}>
+              <SkipForward className="h-4 w-4" />
+            </Button>
           </div>
-        )}
+        </div>
       </CardContent>
     </Card>
   );

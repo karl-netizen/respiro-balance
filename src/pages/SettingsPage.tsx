@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -22,7 +21,7 @@ const SettingsPage = () => {
     });
   };
   
-  const isTeamOrEnterprise = preferences.subscriptionTier === 'team' || preferences.subscriptionTier === 'enterprise';
+  const isPremiumUser = preferences.subscriptionTier === "premium" || preferences.subscriptionTier === "enterprise";
   
   return (
     <div className="min-h-screen flex flex-col">

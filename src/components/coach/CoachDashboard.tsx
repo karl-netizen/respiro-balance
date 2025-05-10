@@ -1,5 +1,4 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -34,7 +33,7 @@ const CoachDashboard = () => {
   };
 
   // If user is not a coach, show access denied
-  if (!isCoach()) {
+  if (!isCoach) {
     return (
       <div className="py-16 px-6">
         <div className="max-w-4xl mx-auto text-center">

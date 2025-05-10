@@ -18,7 +18,7 @@ const BiofeedbackCard = () => {
   const [showTeamFeatures, setShowTeamFeatures] = useState(false);
 
   const isTeamOrEnterprise = preferences.subscriptionTier === "team" || preferences.subscriptionTier === "enterprise";
-
+  
   const handleConnectDevice = async () => {
     if (preferences.hasWearableDevice) {
       // Show device management options
