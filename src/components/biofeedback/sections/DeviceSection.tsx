@@ -29,6 +29,20 @@ const DeviceSection: React.FC<DeviceSectionProps> = ({
   isSimulating,
   onStopScan
 }) => {
+  // Handle connect device with proper Promise returns
+  const handleConnectDevice = async (deviceId: string | BluetoothDevice, callback?: () => void) => {
+    // Ensure deviceId is valid
+    const id = typeof deviceId === "string" ? deviceId : deviceId.id;
+    return onConnectDevice(id, callback);
+  };
+
+  // Handle disconnect device with proper Promise returns
+  const handleDisconnectDevice = async (deviceId: string | BluetoothDevice, callback?: () => void) => {
+    // Ensure deviceId is valid
+    const id = typeof deviceId === "string" ? deviceId : deviceId.id;
+    return onDisconnectDevice(id, callback);
+  };
+
   return (
     <div className="space-y-6">
       <BiofeedbackCard
@@ -47,16 +61,8 @@ const DeviceSection: React.FC<DeviceSectionProps> = ({
           <ConnectedDevicesList
             devices={devices}
             onScanForDevices={() => onScanForDevices("heart_rate_monitor")}
-            onConnectDevice={(deviceId, callback) => {
-              // Ensure deviceId is valid
-              const id = typeof deviceId === "string" ? deviceId : deviceId.id;
-              onConnectDevice(id, callback);
-            }}
-            onDisconnectDevice={(deviceId, callback) => {
-              // Ensure deviceId is valid
-              const id = typeof deviceId === "string" ? deviceId : deviceId.id;
-              onDisconnectDevice(id, callback);
-            }}
+            onConnectDevice={handleConnectDevice}
+            onDisconnectDevice={handleDisconnectDevice}
             disabled={isScanning || isConnecting}
           />
         )}

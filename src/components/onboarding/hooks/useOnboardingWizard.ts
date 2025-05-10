@@ -5,6 +5,7 @@ import { useUserPreferences } from "@/context";
 import { toast } from "sonner";
 import { onboardingSteps } from "../config/onboardingSteps";
 import { useAuth } from "@/hooks/useAuth";
+import { UserPreferences } from "@/context/types";
 
 export const useOnboardingWizard = () => {
   const { preferences, updatePreferences } = useUserPreferences();
@@ -111,9 +112,13 @@ export const useOnboardingWizard = () => {
   };
 
   // Generate personalized settings based on user's onboarding responses
-  const generatePersonalizedSettings = (userPreferences) => {
+  const generatePersonalizedSettings = (userPreferences: any): Partial<UserPreferences> => {
     // This function analyzes user preferences and generates personalized recommendations
-    const personalizedSettings = {};
+    const personalizedSettings: Partial<UserPreferences> = {
+      recommendedSessionDuration: undefined,
+      recommendedMeditationTime: undefined,
+      recommendedTechniques: undefined
+    };
 
     // Recommend meditation duration based on experience level
     if (userPreferences.meditationExperience === 'beginner') {
@@ -135,12 +140,14 @@ export const useOnboardingWizard = () => {
     }
 
     // Recommend focus techniques based on reported challenges
+    personalizedSettings.recommendedTechniques = [];
+    
     if (userPreferences.focusChallenges && userPreferences.focusChallenges.length > 0) {
       if (userPreferences.focusChallenges.includes('distractions')) {
-        personalizedSettings.recommendedTechniques = [...(personalizedSettings.recommendedTechniques || []), 'mindfulness'];
+        personalizedSettings.recommendedTechniques.push('mindfulness');
       }
       if (userPreferences.focusChallenges.includes('procrastination')) {
-        personalizedSettings.recommendedTechniques = [...(personalizedSettings.recommendedTechniques || []), 'pomodoro'];
+        personalizedSettings.recommendedTechniques.push('pomodoro');
       }
     }
 

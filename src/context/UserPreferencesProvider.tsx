@@ -117,7 +117,7 @@ export const UserPreferencesProvider: React.FC<{ children: ReactNode }> = ({ chi
       
       // Create an update object matching the UserPreferencesData type
       const updatedPreferences: Partial<UserPreferencesData> = {
-        wearable_device_connected: true,
+        // Use properties that exist in UserPreferencesData
         wearable_device_id: newDevice.id,
         wearable_device_name: newDevice.name
       };
@@ -145,9 +145,9 @@ export const UserPreferencesProvider: React.FC<{ children: ReactNode }> = ({ chi
       
       // Create an update object matching the UserPreferencesData type
       const updatedPreferences: Partial<UserPreferencesData> = {
-        wearable_device_connected: hasRemaining,
-        wearable_device_id: hasRemaining ? null : undefined,
-        wearable_device_name: hasRemaining ? null : undefined
+        // Use properties that exist in UserPreferencesData
+        wearable_device_id: hasRemaining ? undefined : null,
+        wearable_device_name: hasRemaining ? undefined : null
       };
       
       updatePreferences(updatedPreferences);
