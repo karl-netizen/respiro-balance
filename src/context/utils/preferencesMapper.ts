@@ -66,8 +66,10 @@ export const mapDbToUiPreferences = (
     // Time management
     timeChallenges: [],
 
-    // Subscription
-    subscriptionTier: subscriptionTier || 'free',
+    // Subscription - ensure it's one of the allowed values
+    subscriptionTier: (subscriptionTier === 'premium' || subscriptionTier === 'team') 
+      ? subscriptionTier 
+      : 'free',
     
     // Wearable device information
     hasWearableDevice,

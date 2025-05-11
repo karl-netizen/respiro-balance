@@ -1,9 +1,6 @@
-
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import {
-  FocusProvider
-} from './context';
+import { FocusProvider } from './context/FocusProvider';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 import FocusModePage from './pages/FocusModePage';

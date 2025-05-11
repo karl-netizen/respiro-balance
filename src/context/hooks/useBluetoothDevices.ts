@@ -1,7 +1,14 @@
 
 import { useState } from 'react';
-import { BluetoothDeviceInfo, UserPreferencesData } from '@/types/supabase';
+import { UserPreferencesData } from '@/types/supabase';
 import { supabase } from '@/lib/supabase';
+
+export interface BluetoothDeviceInfo {
+  id: string;
+  name: string;
+  connected?: boolean;
+  type?: string;
+}
 
 export interface UseBluetoothDevicesProps {
   userId?: string;
