@@ -1,6 +1,4 @@
 import React, { 
-  createContext, 
-  useContext, 
   useState, 
   useEffect,
   ReactNode 
@@ -12,18 +10,13 @@ import {
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabase';
 import { BluetoothDeviceInfo } from './types';
+import { UserPreferencesContext } from './UserPreferencesContext';
 
-interface UserPreferencesContextType {
-  preferences: UserPreferencesData;
-  updatePreferences: (updates: Partial<UserPreferencesData>) => void;
-  connectBluetoothDevice: (deviceType?: string, options?: any) => Promise<boolean>;
-  disconnectBluetoothDevice: (deviceId: string, callback?: () => void) => Promise<void>;
-  isCoach: boolean;
+interface UserPreferencesProviderProps {
+  children: ReactNode;
 }
 
-const UserPreferencesContext = createContext<UserPreferencesContextType | undefined>(undefined);
-
-export const UserPreferencesProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const UserPreferencesProvider: React.FC<UserPreferencesProviderProps> = ({ children }) => {
   const { user } = useAuth();
   const [preferences, setPreferences] = useState<UserPreferencesData>({
     theme: 'light',
@@ -102,6 +95,30 @@ export const UserPreferencesProvider: React.FC<{ children: ReactNode }> = ({ chi
     }
   };
 
+  const resetPreferences = () => {
+    const defaultPrefs = {
+      theme: 'light',
+      preferred_session_duration: 10,
+      work_days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+      meditation_experience: 'beginner',
+      stress_level: 'moderate',
+      work_environment: 'office',
+      work_start_time: '09:00',
+      work_end_time: '17:00',
+      lunch_break: true,
+      lunch_time: '13:00',
+      morning_exercise: false,
+      exercise_time: '07:00',
+      bed_time: '22:00',
+      has_completed_onboarding: false,
+    };
+    
+    setPreferences(defaultPrefs);
+    if (user) {
+      updatePreferences(defaultPrefs);
+    }
+  };
+
   const connectBluetoothDevice = async (deviceType?: string, options?: any): Promise<boolean> => {
     try {
       // Simulate device connection
@@ -117,7 +134,6 @@ export const UserPreferencesProvider: React.FC<{ children: ReactNode }> = ({ chi
       // Create an update object matching the UserPreferencesData type
       const updatedPreferences: Partial<UserPreferencesData> = {
         // Use only properties that exist in UserPreferencesData
-        // Removed wearable_device_id and wearable_device_name since they're not in the type
       };
       
       updatePreferences(updatedPreferences);
@@ -133,7 +149,7 @@ export const UserPreferencesProvider: React.FC<{ children: ReactNode }> = ({ chi
     }
   };
 
-  const disconnectBluetoothDevice = async (deviceId: string, callback?: () => void): Promise<void> => {
+  const disconnectBluetoothDevice = async (deviceId: string, callback?: () => void): Promise<boolean> => {
     try {
       // Simulate device disconnection
       setConnectedDevices(connectedDevices.filter(device => device.id !== deviceId));
@@ -143,7 +159,7 @@ export const UserPreferencesProvider: React.FC<{ children: ReactNode }> = ({ chi
       
       // Create an update object matching the UserPreferencesData type
       const updatedPreferences: Partial<UserPreferencesData> = {
-        // Removed wearable_device_id and wearable_device_name since they're not in the type
+        // Properties would go here
       };
       
       updatePreferences(updatedPreferences);
@@ -151,8 +167,11 @@ export const UserPreferencesProvider: React.FC<{ children: ReactNode }> = ({ chi
       if (callback && typeof callback === 'function') {
         callback();
       }
+      
+      return true;
     } catch (error) {
       console.error('Bluetooth disconnection failed:', error);
+      return false;
     }
   };
 
@@ -160,8 +179,18 @@ export const UserPreferencesProvider: React.FC<{ children: ReactNode }> = ({ chi
   const isCoach = role === 'coach';
 
   const value = {
-    preferences,
+    preferences: {
+      ...preferences,
+      subscriptionTier,
+      hasWearableDevice,
+      // Add other properties from UserPreferences interface
+      userRole: role as any,
+      workDays: preferences.work_days?.map(day => day.toLowerCase()) as any,
+      darkMode: preferences.theme === 'dark',
+      preferredSessionDuration: preferences.preferred_session_duration,
+    },
     updatePreferences,
+    resetPreferences,
     connectBluetoothDevice,
     disconnectBluetoothDevice,
     isCoach,
@@ -172,14 +201,6 @@ export const UserPreferencesProvider: React.FC<{ children: ReactNode }> = ({ chi
       {children}
     </UserPreferencesContext.Provider>
   );
-};
-
-export const useUserPreferences = (): UserPreferencesContextType => {
-  const context = useContext(UserPreferencesContext);
-  if (!context) {
-    throw new Error('useUserPreferences must be used within a UserPreferencesProvider');
-  }
-  return context;
 };
 
 export default UserPreferencesContext;

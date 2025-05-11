@@ -1,6 +1,6 @@
 
 import { useContext } from 'react';
-import UserPreferencesContext from '../UserPreferencesContext';
+import { UserPreferencesContext } from '../UserPreferencesContext';
 import { UserPreferencesContextType } from '../types';
 
 export const useUserPreferences = (): UserPreferencesContextType => {
