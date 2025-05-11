@@ -1,11 +1,11 @@
 
 import React from 'react';
-import { RitualSuggestion } from './types';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { CirclePlus } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Clock, Plus } from 'lucide-react';
 import { useAddSuggestion } from './useAddSuggestion';
+import { RitualSuggestion } from './types';
 
 interface SuggestionCardProps {
   suggestion: RitualSuggestion;
@@ -13,45 +13,51 @@ interface SuggestionCardProps {
 
 const SuggestionCard: React.FC<SuggestionCardProps> = ({ suggestion }) => {
   const { addSuggestion, isAdding } = useAddSuggestion();
-  
+
+  const handleAddClick = async () => {
+    try {
+      await addSuggestion(suggestion);
+    } catch (error) {
+      // Error is already handled in useAddSuggestion
+      console.error('Error in handleAddClick:', error);
+    }
+  };
+
   return (
     <Card className="h-full flex flex-col">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-lg">{suggestion.title}</CardTitle>
-        <CardDescription>{suggestion.description}</CardDescription>
+      <CardHeader>
+        <CardTitle className="text-xl">{suggestion.title}</CardTitle>
+        <CardDescription>
+          {suggestion.description || 'No description provided'}
+        </CardDescription>
       </CardHeader>
-      <CardContent className="pb-2 flex-grow">
-        <div className="space-y-2">
-          <div className="flex flex-wrap gap-2">
-            {suggestion.tags?.map(tag => (
-              <Badge key={tag} variant="outline" className="text-xs">
-                {tag}
-              </Badge>
-            ))}
-          </div>
-          <div className="text-sm">
-            <p>
-              <span className="text-muted-foreground">Duration:</span>{' '}
-              {suggestion.duration} minutes
-            </p>
-            {suggestion.timeOfDay && (
-              <p>
-                <span className="text-muted-foreground">Best time:</span>{' '}
-                {suggestion.timeOfDay}
-              </p>
-            )}
-          </div>
+      <CardContent className="flex-grow">
+        <div className="flex items-center text-sm text-muted-foreground mb-3">
+          <Clock className="h-4 w-4 mr-1" />
+          <span>{suggestion.duration} min</span>
+          {suggestion.timeOfDay && (
+            <Badge variant="outline" className="ml-2">
+              {suggestion.timeOfDay}
+            </Badge>
+          )}
+        </div>
+        
+        <div className="flex flex-wrap gap-1 mt-2">
+          {suggestion.tags.map((tag) => (
+            <Badge key={tag} variant="secondary" className="text-xs">
+              {tag}
+            </Badge>
+          ))}
         </div>
       </CardContent>
       <CardFooter>
-        <Button
-          onClick={() => addSuggestion(suggestion)}
+        <Button 
+          onClick={handleAddClick}
           disabled={isAdding}
-          className="w-full"
-          variant="default"
+          className="w-full flex items-center justify-center gap-1"
         >
-          <CirclePlus className="h-4 w-4 mr-2" />
-          Add to My Rituals
+          <Plus className="h-4 w-4" />
+          <span>Add to Rituals</span>
         </Button>
       </CardFooter>
     </Card>

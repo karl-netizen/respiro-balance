@@ -21,7 +21,7 @@ export function useAddSuggestion() {
         description: ritual.description,
         timeOfDay: ritual.timeOfDay || 'Morning',
         duration: ritual.duration,
-        status: "planned",
+        status: "planned" as RitualStatus,
         recurrence: ritual.recurrence || 'daily',
         priority: ritual.priority || 'medium',
         streak: 0,
@@ -36,11 +36,13 @@ export function useAddSuggestion() {
         description: `"${ritual.title}" has been added to your morning rituals.`,
       });
       
+      return Promise.resolve();
     } catch (error) {
       console.error('Failed to add ritual:', error);
       toast.error('Failed to add ritual', {
         description: 'Something went wrong. Please try again.',
       });
+      return Promise.reject(error);
     } finally {
       setIsAdding(false);
     }

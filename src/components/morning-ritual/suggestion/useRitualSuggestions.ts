@@ -1,143 +1,110 @@
 
 import { useState, useEffect, useCallback } from 'react';
-import { RitualSuggestion } from './types';
-import { useUserPreferences } from '@/context';
+import { RitualSuggestion, RitualSuggestionsState } from './types';
 import { generateId } from '@/lib/utils';
 
+// Default suggestions as examples
+const defaultSuggestions: RitualSuggestion[] = [
+  {
+    id: '1',
+    title: 'Morning Meditation',
+    description: 'Start your day with a 10-minute meditation',
+    timeOfDay: 'Morning',
+    duration: 10,
+    tags: ['meditation', 'mindfulness'],
+    priority: 'high',
+    recurrence: 'daily',
+  },
+  {
+    id: '2',
+    title: 'Gratitude Journaling',
+    description: 'Write down 3 things you are grateful for',
+    timeOfDay: 'Morning',
+    duration: 5,
+    tags: ['journaling', 'gratitude'],
+    priority: 'medium',
+    recurrence: 'daily',
+  },
+  {
+    id: '3',
+    title: 'Stretch Routine',
+    description: 'A quick stretching session to wake up your body',
+    timeOfDay: 'Morning',
+    duration: 7,
+    tags: ['exercise', 'flexibility'],
+    priority: 'medium',
+    recurrence: 'daily',
+  },
+];
+
 export function useRitualSuggestions() {
-  const { preferences } = useUserPreferences();
-  const [suggestions, setSuggestions] = useState<RitualSuggestion[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+  // State for suggestions
+  const [state, setState] = useState<RitualSuggestionsState>({
+    suggestions: defaultSuggestions,
+    isLoading: false,
+    error: null,
+  });
 
-  const generateSuggestions = useCallback(() => {
-    // Generate suggestions based on user preferences
-    const baseActivities = [
-      'Meditation',
-      'Journaling',
-      'Reading',
-      'Exercise',
-      'Stretching',
-      'Planning',
-      'Gratitude practice'
-    ];
-    
-    // Personalize suggestions based on user preferences
-    const personalizedActivities = [];
-    
-    // Add stress reduction activities if user has high stress
-    if (preferences.stressLevel === 'high' || preferences.stressLevel === 'very_high') {
-      personalizedActivities.push(
-        'Deep breathing',
-        'Progressive muscle relaxation',
-        'Mindfulness meditation'
-      );
-    }
-    
-    // Add exercise activities if user likes morning exercise
-    if (preferences.morningExercise) {
-      personalizedActivities.push(
-        'Morning yoga',
-        'Quick HIIT workout',
-        'Light stretching routine'
-      );
-    }
-    
-    // Combine and deduplicate activities
-    const allActivities = [...new Set([...baseActivities, ...personalizedActivities])];
-    
-    // Generate structured suggestions
-    const newSuggestions: RitualSuggestion[] = allActivities.map(activity => {
-      const durationMap: Record<string, number> = {
-        'Meditation': 10,
-        'Journaling': 15,
-        'Reading': 20,
-        'Exercise': 30,
-        'Stretching': 10,
-        'Planning': 15,
-        'Gratitude practice': 5,
-        'Deep breathing': 5,
-        'Progressive muscle relaxation': 10,
-        'Mindfulness meditation': 15,
-        'Morning yoga': 20,
-        'Quick HIIT workout': 15,
-        'Light stretching routine': 10
-      };
-      
-      const descriptionMap: Record<string, string> = {
-        'Meditation': 'Start your day centered and focused',
-        'Journaling': 'Reflect on your thoughts and set intentions',
-        'Reading': 'Feed your mind with inspiring content',
-        'Exercise': 'Energize your body and mind',
-        'Stretching': 'Improve flexibility and wake up your body',
-        'Planning': 'Set goals and priorities for the day',
-        'Gratitude practice': 'Begin with thankfulness and positive energy',
-        'Deep breathing': 'Calm your nervous system before the day begins',
-        'Progressive muscle relaxation': 'Release tension and promote calm',
-        'Mindfulness meditation': 'Train your focus and reduce anxiety',
-        'Morning yoga': 'Connect body and mind with gentle movements',
-        'Quick HIIT workout': 'Boost metabolism and energy quickly',
-        'Light stretching routine': 'Wake up your body gently'
-      };
-      
-      const tagOptions = [
-        'wellness', 'productivity', 'mindfulness', 'health', 
-        'creativity', 'energy', 'focus', 'calm', 'growth'
-      ];
-      
-      // Generate 1-3 random tags
-      const numTags = 1 + Math.floor(Math.random() * 3);
-      const shuffledTags = [...tagOptions].sort(() => 0.5 - Math.random());
-      const tags = shuffledTags.slice(0, numTags);
-      
-      // Generate appropriate time of day
-      const timeOptions = [
-        'Early morning',
-        'Before breakfast',
-        'After waking up',
-        'First thing in the morning'
-      ];
-      const timeOfDay = timeOptions[Math.floor(Math.random() * timeOptions.length)];
-      
-      return {
-        id: generateId(),
-        title: activity,
-        description: descriptionMap[activity] || `Add ${activity.toLowerCase()} to your morning routine`,
-        timeOfDay,
-        duration: durationMap[activity] || 15,
-        tags,
-        priority: Math.random() > 0.7 ? 'high' : Math.random() > 0.4 ? 'medium' : 'low',
-        recurrence: Math.random() > 0.6 ? 'daily' : Math.random() > 0.3 ? 'weekdays' : 'custom'
-      };
-    });
-    
-    return newSuggestions;
-  }, [preferences]);
+  // Function to refresh suggestions
+  const refreshSuggestions = useCallback(async () => {
+    setState(prevState => ({ ...prevState, isLoading: true, error: null }));
 
-  const refreshSuggestions = useCallback(() => {
-    setIsLoading(true);
-    
     try {
-      // Simulate API call with setTimeout
-      setTimeout(() => {
-        const newSuggestions = generateSuggestions();
-        setSuggestions(newSuggestions);
-        setIsLoading(false);
-      }, 1000);
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Failed to generate suggestions'));
-      setIsLoading(false);
-    }
-  }, [generateSuggestions]);
+      // In a real app, you would fetch from an API
+      // For now, we'll simulate a delay and return random suggestions
+      await new Promise(resolve => setTimeout(resolve, 800));
 
+      const refreshedSuggestions: RitualSuggestion[] = [
+        ...defaultSuggestions.slice(0, 2),
+        {
+          id: generateId(),
+          title: 'Morning Walk',
+          description: 'A brisk 15-minute walk to start the day',
+          timeOfDay: 'Morning',
+          duration: 15,
+          tags: ['exercise', 'outdoors'],
+          priority: 'medium',
+          recurrence: 'daily',
+        },
+        {
+          id: generateId(),
+          title: 'Reading Session',
+          description: 'Read a few pages from a book',
+          timeOfDay: 'Morning',
+          duration: 10,
+          tags: ['learning', 'mindfulness'],
+          priority: 'low',
+          recurrence: 'daily',
+        },
+      ];
+
+      setState({
+        suggestions: refreshedSuggestions,
+        isLoading: false,
+        error: null,
+      });
+      
+      return Promise.resolve();
+    } catch (error) {
+      console.error('Error refreshing suggestions:', error);
+      setState(prevState => ({
+        ...prevState,
+        isLoading: false,
+        error: error instanceof Error ? error : new Error('Failed to refresh suggestions'),
+      }));
+      return Promise.reject(error);
+    }
+  }, []);
+
+  // Initial load of suggestions
   useEffect(() => {
-    refreshSuggestions();
+    // We already have default suggestions, so no need to load initially
   }, []);
 
   return {
-    suggestions,
+    suggestions: state.suggestions,
+    isLoading: state.isLoading,
+    error: state.error,
     refreshSuggestions,
-    isLoading,
-    error
   };
 }

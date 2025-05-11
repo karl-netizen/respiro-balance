@@ -1,10 +1,9 @@
 
 import React from 'react';
-import { useMorningRituals } from '@/hooks/useMorningRituals';
-import SuggestionCard from './suggestion/SuggestionCard';
-import { useRitualSuggestions } from './suggestion/useRitualSuggestions';
 import { Button } from '@/components/ui/button';
 import { CirclePlus, RefreshCw } from 'lucide-react';
+import { useRitualSuggestions } from './suggestion/useRitualSuggestions';
+import SuggestionCard from './suggestion/SuggestionCard';
 
 const SuggestionsSection: React.FC = () => {
   const { suggestions, refreshSuggestions, isLoading } = useRitualSuggestions();
