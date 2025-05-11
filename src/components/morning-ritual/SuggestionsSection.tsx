@@ -1,5 +1,4 @@
-
-import React from "react";
+import React, { useState, useEffect } from 'react';
 import { useUserPreferences } from "@/context";
 import { 
   Card, 
@@ -178,7 +177,7 @@ const SuggestionsSection = () => {
       status: "planned",
       streak: 0,
       tags: ritual.tags,
-      createdAt: new Date().toISOString()
+      created: new Date().toISOString() // Fixed the property name error
     };
     
     // Get current rituals or initialize empty array

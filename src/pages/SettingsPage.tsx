@@ -49,8 +49,8 @@ const SettingsPage: React.FC = () => {
           </TabsContent>
           
           <TabsContent value="subscription" className="space-y-4">
+            {/* Pass correct props to match the component's expected interface */}
             <AccountSubscriptionSettings 
-              isPremium={isPremiumOrEnterprise}
               subscriptionTier={subscriptionTier}
             />
           </TabsContent>
