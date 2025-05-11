@@ -19,6 +19,7 @@ import FAQ from './pages/FAQ';
 import OnboardingPage from './pages/OnboardingPage';
 import NotFound from './pages/NotFound';
 import ViewportToggle from './components/layout/ViewportToggle';
+import Index from './pages/Index';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         {/* Display Home at root path */}
         <Route path="/" element={<Home />} />
         <Route path="/landing" element={<LandingPage />} />
+        <Route path="/index" element={<Index />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/focus" element={<FocusModePage />} />
         <Route path="/progress" element={<Progress />} />
@@ -40,6 +42,7 @@ function App() {
         <Route path="/account" element={<Account />} />
         <Route path="/faq" element={<FAQ />} />
         <Route path="/onboarding" element={<OnboardingPage />} />
+        {/* Add a catch-all route that displays the NotFound component */}
         <Route path="*" element={<NotFound />} />
       </Routes>
       <ViewportToggle />

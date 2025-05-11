@@ -16,16 +16,24 @@ const PricingTiers = () => {
   const handleGetStarted = () => {
     setIsLoading(true);
     
-    if (user) {
-      navigate('/dashboard');
-    } else {
-      // Show toast and redirect to dashboard for demo purposes
-      toast.info("Demo Mode", {
-        description: "Bypassing login for demonstration"
-      });
-      setTimeout(() => {
+    try {
+      if (user) {
         navigate('/dashboard');
-      }, 500); // Small delay to show loading state
+      } else {
+        // Show toast and redirect to dashboard for demo purposes
+        toast.info("Demo Mode", {
+          description: "Bypassing login for demonstration"
+        });
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 500); // Small delay to show loading state
+      }
+    } catch (error) {
+      console.error("Navigation error:", error);
+      toast.error("Navigation failed. Please try again.");
+    } finally {
+      // If navigation doesn't happen within 2 seconds, reset loading state
+      setTimeout(() => setIsLoading(false), 2000);
     }
   };
   
