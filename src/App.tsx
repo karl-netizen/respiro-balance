@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { FocusProvider } from './context/FocusProvider';
@@ -17,13 +18,14 @@ import Account from './pages/Account';
 import FAQ from './pages/FAQ';
 import OnboardingPage from './pages/OnboardingPage';
 import NotFound from './pages/NotFound';
+import ViewportToggle from './components/layout/ViewportToggle';
 
 function App() {
   return (
     <FocusProvider>
       <Routes>
-        {/* Redirect root to landing page */}
-        <Route path="/" element={<Navigate replace to="/landing" />} />
+        {/* Display Home at root path */}
+        <Route path="/" element={<Home />} />
         <Route path="/landing" element={<LandingPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/focus" element={<FocusModePage />} />
@@ -40,6 +42,7 @@ function App() {
         <Route path="/onboarding" element={<OnboardingPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
+      <ViewportToggle />
     </FocusProvider>
   );
 }

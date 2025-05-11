@@ -6,7 +6,7 @@ import { AuthProvider } from './AuthProvider';
 import { NotificationsProvider } from './NotificationsProvider';
 import { SubscriptionProvider } from './SubscriptionProvider';
 import { FocusProvider } from './FocusProvider';
-import { ThemeProvider } from 'styled-components';
+import { ThemeProvider } from './ThemeProvider'; // Changed import from styled-components to local
 
 // Create the context with undefined initial value
 export const UserPreferencesContext = createContext<UserPreferencesContextType | undefined>(undefined);
@@ -31,7 +31,7 @@ export const AppProviders: React.FC<{ children: React.ReactNode }> = ({
   children 
 }) => {
   return (
-    <ThemeProvider defaultTheme="light">
+    <ThemeProvider>
       <AuthProvider>
         <UserPreferencesProvider>
           <NotificationsProvider>

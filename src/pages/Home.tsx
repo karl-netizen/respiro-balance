@@ -41,18 +41,18 @@ const Home = () => {
       <div className="flex flex-col sm:flex-row gap-4">
         <Button 
           size="lg" 
-          className="bg-respiro-dark text-white hover:bg-respiro-darker font-bold text-lg px-8 py-6 h-auto cursor-pointer border-2 border-respiro-dark shadow-md"
+          className="bg-primary text-white hover:bg-primary/80 font-bold text-lg px-8 py-6 h-auto cursor-pointer border-2 border-primary shadow-md"
           onClick={handleGetStarted}
         >
           Begin Your Journey
         </Button>
         
         <Button variant="outline" asChild size="lg" className="text-lg px-8 py-6 h-auto">
-          <Link to="/signup">Create Account</Link>
+          <Link to="/landing">Learn More</Link>
         </Button>
       </div>
     </div>
   );
-};
+}
 
 export default Home;

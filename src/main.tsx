@@ -10,7 +10,7 @@ import { UserPreferencesProvider } from './context/UserPreferencesProvider'
 import { NotificationsProvider } from './context/NotificationsProvider'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { SubscriptionProvider } from './context/SubscriptionProvider'
-import { ThemeProvider } from './context'
+import { ThemeProvider } from './context' // Fixed import from our context
 
 // Create a client
 const queryClient = new QueryClient();
