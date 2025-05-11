@@ -51,7 +51,7 @@ const BiofeedbackCard = () => {
     }
   };
 
-  // Fixed to return a Promise
+  // Fixed to return a Promise explicitly
   const handleScanForDevices = async (deviceType?: string, options?: any): Promise<void> => {
     setIsConnecting(true);
     try {
@@ -62,24 +62,26 @@ const BiofeedbackCard = () => {
     return Promise.resolve(); // Explicitly return a resolved Promise
   };
 
-  // Fixed to return a Promise
+  // Fixed to return a Promise explicitly
   const handleConnectDeviceById = async (deviceId: string, callback?: () => void): Promise<void> => {
     try {
       await connectBluetoothDevice("heart_rate_monitor", { deviceId, callback });
+      return Promise.resolve(); // Explicitly return a resolved Promise
     } catch (error) {
       console.error("Failed to connect device:", error);
+      return Promise.reject(error); // Return rejected promise on error
     }
-    return Promise.resolve(); // Explicitly return a resolved Promise
   };
 
-  // Fixed to return a Promise
+  // Fixed to return a Promise explicitly
   const handleDisconnectDeviceById = async (deviceId: string, callback?: () => void): Promise<void> => {
     try {
       await disconnectBluetoothDevice(deviceId, callback);
+      return Promise.resolve(); // Explicitly return a resolved Promise
     } catch (error) {
       console.error("Failed to disconnect device:", error);
+      return Promise.reject(error); // Return rejected promise on error
     }
-    return Promise.resolve(); // Explicitly return a resolved Promise
   };
 
   // Create mock devices for display
@@ -122,7 +124,10 @@ const BiofeedbackCard = () => {
               )}
             </div>
           ) : isConnecting ? (
-            <DeviceSearching onStopScan={() => setIsConnecting(false)} />
+            <DeviceSearching onStopScan={() => {
+              setIsConnecting(false);
+              return Promise.resolve(); // Return a Promise
+            }} />
           ) : (
             <NoDevicesView 
               onScanForDevices={handleScanForDevices}

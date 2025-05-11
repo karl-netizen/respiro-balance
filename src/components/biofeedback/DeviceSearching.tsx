@@ -16,7 +16,15 @@ export const DeviceSearching: React.FC<DeviceSearchingProps> = ({ onStopScan }) 
         Make sure your device is in pairing mode and nearby
       </p>
       {onStopScan && (
-        <Button variant="outline" onClick={() => onStopScan()}>
+        <Button 
+          variant="outline" 
+          onClick={() => {
+            if (onStopScan) {
+              return onStopScan();
+            }
+            return Promise.resolve();
+          }}
+        >
           Cancel Scan
         </Button>
       )}
