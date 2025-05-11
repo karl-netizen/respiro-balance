@@ -1,4 +1,3 @@
-
 import { Dispatch, SetStateAction } from 'react';
 
 export type Theme = 'light' | 'dark' | 'system';
@@ -44,11 +43,12 @@ export interface MorningRitual {
   status: RitualStatus;
   recurrence: RitualRecurrence;
   daysOfWeek?: WorkDay[];
-  priority: RitualPriority;
+  priority?: RitualPriority;
   streak: number;
   lastCompleted?: string;
   tags: string[];
   completionHistory?: CompletionRecord[];
+  createdAt?: string; // Add the createdAt property
 }
 
 export interface RitualReminder {
