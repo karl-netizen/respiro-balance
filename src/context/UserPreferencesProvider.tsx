@@ -1,3 +1,4 @@
+
 import React, { 
   useState, 
   useEffect,
@@ -11,6 +12,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabase';
 import { BluetoothDeviceInfo } from './types';
 import { UserPreferencesContext } from './UserPreferencesContext';
+import defaultPreferences from './defaultPreferences';
 
 interface UserPreferencesProviderProps {
   children: ReactNode;
@@ -202,5 +204,3 @@ export const UserPreferencesProvider: React.FC<UserPreferencesProviderProps> = (
     </UserPreferencesContext.Provider>
   );
 };
-
-export default UserPreferencesContext;
