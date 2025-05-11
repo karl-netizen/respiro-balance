@@ -41,7 +41,7 @@ const Home = () => {
       <div className="flex flex-col sm:flex-row gap-4">
         <Button 
           size="lg" 
-          className="bg-primary text-primary-foreground hover:bg-primary/90 font-bold text-lg px-8 py-6 h-auto cursor-pointer shadow-md"
+          className="bg-respiro-dark text-white hover:bg-respiro-darker font-bold text-lg px-8 py-6 h-auto cursor-pointer shadow-lg"
           onClick={handleGetStarted}
         >
           Begin Your Journey
@@ -51,7 +51,7 @@ const Home = () => {
           variant="outline" 
           asChild 
           size="lg" 
-          className="border-primary text-primary hover:bg-primary/10 hover:text-primary text-lg px-8 py-6 h-auto"
+          className="border-respiro-dark text-respiro-dark hover:bg-respiro-dark/10 hover:text-respiro-darker text-lg px-8 py-6 h-auto"
         >
           <Link to="/landing">Learn More</Link>
         </Button>

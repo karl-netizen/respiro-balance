@@ -1,8 +1,9 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Check } from 'lucide-react';
+import { Check, Loader2 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { PaymentButton } from '@/components/payment';
 import { toast } from 'sonner';
@@ -10,8 +11,11 @@ import { toast } from 'sonner';
 const PricingTiers = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
   
   const handleGetStarted = () => {
+    setIsLoading(true);
+    
     if (user) {
       navigate('/dashboard');
     } else {
@@ -19,7 +23,9 @@ const PricingTiers = () => {
       toast.info("Demo Mode", {
         description: "Bypassing login for demonstration"
       });
-      navigate('/dashboard');
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 500); // Small delay to show loading state
     }
   };
   
@@ -36,7 +42,7 @@ const PricingTiers = () => {
         
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {/* Free Tier */}
-          <Card className="flex flex-col border-border">
+          <Card className="flex flex-col border-border shadow-md hover:shadow-lg transition-all duration-200">
             <CardHeader>
               <CardTitle className="text-xl">Free</CardTitle>
               <div className="mt-4">
@@ -59,18 +65,26 @@ const PricingTiers = () => {
             <CardFooter>
               <Button 
                 variant="outline" 
-                className="w-full text-primary border-primary hover:bg-primary/10"
+                className="w-full text-respiro-dark border-respiro-dark hover:bg-respiro-dark/10 font-medium"
                 onClick={handleGetStarted}
+                disabled={isLoading}
               >
-                Start Free Plan
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <span>Starting...</span>
+                  </>
+                ) : (
+                  "Start Free Plan"
+                )}
               </Button>
             </CardFooter>
           </Card>
           
           {/* Premium Tier */}
-          <Card className="flex flex-col relative border-primary before:absolute before:inset-0 before:-z-10 before:rounded-lg before:bg-primary/5">
+          <Card className="flex flex-col relative border-respiro-dark before:absolute before:inset-0 before:-z-10 before:rounded-lg before:bg-respiro-dark/5 shadow-md hover:shadow-lg transition-all duration-200">
             <div className="absolute top-0 right-0 transform translate-x-1/4 -translate-y-1/3">
-              <div className="bg-primary text-white text-xs font-medium px-3 py-1 rounded-full">
+              <div className="bg-respiro-dark text-white text-xs font-medium px-3 py-1 rounded-full">
                 Most Popular
               </div>
             </div>
@@ -98,14 +112,14 @@ const PricingTiers = () => {
               </ul>
             </CardContent>
             <CardFooter>
-              <PaymentButton className="w-full">
+              <PaymentButton className="w-full bg-respiro-dark hover:bg-respiro-darker text-white font-medium">
                 Upgrade Now
               </PaymentButton>
             </CardFooter>
           </Card>
           
           {/* Team Tier */}
-          <Card className="flex flex-col border-border">
+          <Card className="flex flex-col border-border shadow-md hover:shadow-lg transition-all duration-200">
             <CardHeader>
               <CardTitle className="text-xl">Team</CardTitle>
               <div className="mt-4">
@@ -130,7 +144,7 @@ const PricingTiers = () => {
             <CardFooter>
               <Button 
                 variant="outline" 
-                className="w-full text-primary border-primary hover:bg-primary/10"
+                className="w-full text-respiro-dark border-respiro-dark hover:bg-respiro-dark/10 font-medium"
                 onClick={() => window.location.href = "mailto:sales@respirobalance.com?subject=Team Plan Inquiry"}
               >
                 Contact Sales
@@ -157,8 +171,8 @@ interface PricingFeatureProps {
 }
 
 const PricingFeature = ({ children, highlighted = false }: PricingFeatureProps) => (
-  <li className={`flex items-start ${highlighted ? 'text-primary font-medium' : ''}`}>
-    <Check className={`h-5 w-5 mr-2 mt-0.5 flex-shrink-0 ${highlighted ? 'text-primary' : 'text-green-500'}`} />
+  <li className={`flex items-start ${highlighted ? 'text-respiro-dark font-medium' : ''}`}>
+    <Check className={`h-5 w-5 mr-2 mt-0.5 flex-shrink-0 ${highlighted ? 'text-respiro-dark' : 'text-green-500'}`} />
     <span>{children}</span>
   </li>
 );
