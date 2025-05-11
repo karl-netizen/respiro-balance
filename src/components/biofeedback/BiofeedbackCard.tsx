@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -74,8 +73,10 @@ const BiofeedbackCard = () => {
   const handleDisconnectDeviceById = async (deviceId: string, callback?: () => void): Promise<void> => {
     try {
       await disconnectBluetoothDevice(deviceId, callback);
+      return Promise.resolve();
     } catch (error) {
       console.error("Failed to disconnect device:", error);
+      return Promise.resolve();
     }
   };
 

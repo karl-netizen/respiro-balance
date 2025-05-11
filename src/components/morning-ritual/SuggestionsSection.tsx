@@ -177,7 +177,7 @@ const SuggestionsSection = () => {
       status: "planned",
       streak: 0,
       tags: ritual.tags,
-      created: new Date().toISOString() // Fixed the property name error
+      createdAt: new Date().toISOString() // Use the correct property name 'createdAt' instead of 'created'
     };
     
     // Get current rituals or initialize empty array
