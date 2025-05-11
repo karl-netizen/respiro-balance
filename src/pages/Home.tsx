@@ -38,10 +38,10 @@ const Home = () => {
         Your personal assistant for meditation, mindfulness, and better wellbeing
       </p>
       
-      <div className="flex flex-col sm:flex-row gap-4">
+      <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
         <Button 
           size="lg" 
-          className="bg-respiro-dark text-white hover:bg-respiro-darker font-bold text-lg px-8 py-6 h-auto cursor-pointer shadow-lg"
+          className="bg-respiro-dark text-white hover:bg-respiro-darker font-bold text-lg px-8 py-6 h-auto cursor-pointer shadow-lg w-full"
           onClick={handleGetStarted}
         >
           Begin Your Journey
@@ -51,7 +51,7 @@ const Home = () => {
           variant="outline" 
           asChild 
           size="lg" 
-          className="border-respiro-dark text-respiro-dark hover:bg-respiro-dark/10 hover:text-respiro-darker text-lg px-8 py-6 h-auto"
+          className="border-2 border-respiro-dark text-respiro-dark bg-white hover:bg-respiro-dark/10 hover:text-respiro-darker text-lg px-8 py-6 h-auto w-full"
         >
           <Link to="/landing">Learn More</Link>
         </Button>

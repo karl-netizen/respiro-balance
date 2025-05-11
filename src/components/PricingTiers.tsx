@@ -65,7 +65,7 @@ const PricingTiers = () => {
             <CardFooter>
               <Button 
                 variant="outline" 
-                className="w-full text-respiro-dark border-respiro-dark hover:bg-respiro-dark/10 font-medium"
+                className="w-full text-white bg-respiro-dark border-respiro-dark hover:bg-respiro-darker font-medium"
                 onClick={handleGetStarted}
                 disabled={isLoading}
               >
@@ -144,7 +144,7 @@ const PricingTiers = () => {
             <CardFooter>
               <Button 
                 variant="outline" 
-                className="w-full text-respiro-dark border-respiro-dark hover:bg-respiro-dark/10 font-medium"
+                className="w-full text-white bg-respiro-dark border-respiro-dark hover:bg-respiro-darker font-medium"
                 onClick={() => window.location.href = "mailto:sales@respirobalance.com?subject=Team Plan Inquiry"}
               >
                 Contact Sales
