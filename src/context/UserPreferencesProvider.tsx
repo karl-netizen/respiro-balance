@@ -6,12 +6,12 @@ import React, {
 } from 'react';
 import { 
   UserPreferencesData,
-  BluetoothDevice
 } from '@/types/supabase';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabase';
-import { BluetoothDeviceInfo } from './types';
 import { UserPreferencesContext } from './UserPreferencesContext';
+import { useBluetoothDevices } from './hooks/useBluetoothDevices';
+import { mapDbToUiPreferences, mapUiToDbPreferences } from './utils/preferencesMapper';
 import defaultPreferences from './defaultPreferences';
 
 interface UserPreferencesProviderProps {
@@ -36,10 +36,22 @@ export const UserPreferencesProvider: React.FC<UserPreferencesProviderProps> = (
     bed_time: '22:00',
     has_completed_onboarding: false,
   });
-  const [connectedDevices, setConnectedDevices] = useState<BluetoothDeviceInfo[]>([]);
   const [subscriptionTier, setSubscriptionTier] = useState<string>('free');
-  const [hasWearableDevice, setHasWearableDevice] = useState<boolean>(false);
   const [role, setRole] = useState<string>('user');
+
+  // Use the extracted bluetooth device hook
+  const { 
+    hasWearableDevice, 
+    connectBluetoothDevice, 
+    disconnectBluetoothDevice 
+  } = useBluetoothDevices({
+    userId: user?.id,
+    updatePreferences: (updates) => {
+      if (user) {
+        updatePreferences(updates);
+      }
+    }
+  });
 
   useEffect(() => {
     const fetchPreferences = async () => {
@@ -121,96 +133,26 @@ export const UserPreferencesProvider: React.FC<UserPreferencesProviderProps> = (
     }
   };
 
-  const connectBluetoothDevice = async (deviceType?: string, options?: any): Promise<boolean> => {
-    try {
-      // Simulate device connection
-      const newDevice: BluetoothDeviceInfo = {
-        id: 'wearable-001',
-        name: 'MyWearable',
-        type: deviceType || 'heart_rate_monitor'
-      };
+  // Map database preferences to UI preferences
+  const uiPreferences = mapDbToUiPreferences(
+    preferences,
+    subscriptionTier,
+    hasWearableDevice,
+    role
+  );
 
-      setConnectedDevices([...connectedDevices, newDevice]);
-      setHasWearableDevice(true);
-      
-      // Create an update object matching the UserPreferencesData type
-      const updatedPreferences: Partial<UserPreferencesData> = {
-        // Use only properties that exist in UserPreferencesData
-      };
-      
-      updatePreferences(updatedPreferences);
-      
-      if (options?.callback && typeof options.callback === 'function') {
-        options.callback(newDevice);
-      }
-      
-      return true;
-    } catch (error) {
-      console.error('Bluetooth connection failed:', error);
-      return false;
-    }
-  };
-
-  const disconnectBluetoothDevice = async (deviceId: string, callback?: () => void): Promise<boolean> => {
-    try {
-      // Simulate device disconnection
-      setConnectedDevices(connectedDevices.filter(device => device.id !== deviceId));
-      
-      const hasRemaining = connectedDevices.length > 1;
-      setHasWearableDevice(hasRemaining);
-      
-      // Create an update object matching the UserPreferencesData type
-      const updatedPreferences: Partial<UserPreferencesData> = {
-        // Properties would go here
-      };
-      
-      updatePreferences(updatedPreferences);
-      
-      if (callback && typeof callback === 'function') {
-        callback();
-      }
-      
-      return true;
-    } catch (error) {
-      console.error('Bluetooth disconnection failed:', error);
-      return false;
-    }
+  // Handle UI preference updates by mapping back to DB format
+  const handleUpdatePreferences = (updates: Partial<typeof uiPreferences>) => {
+    const dbUpdates = mapUiToDbPreferences(updates);
+    updatePreferences(dbUpdates);
   };
 
   // Return boolean directly
   const isCoach = role === 'coach';
 
   const value = {
-    preferences: {
-      ...preferences,
-      subscriptionTier,
-      hasWearableDevice,
-      // Add other properties from UserPreferences interface
-      userRole: role as any,
-      workDays: preferences.work_days?.map(day => day.toLowerCase()) as any,
-      darkMode: preferences.theme === 'dark',
-      preferredSessionDuration: preferences.preferred_session_duration,
-      // Map the rest of the properties to match UserPreferences type
-      workStartTime: preferences.work_start_time,
-      workEndTime: preferences.work_end_time,
-      workEnvironment: preferences.work_environment,
-      stressLevel: preferences.stress_level,
-      meditationExperience: preferences.meditation_experience,
-      lunchBreak: preferences.lunch_break,
-      lunchTime: preferences.lunch_time,
-      morningExercise: preferences.morning_exercise,
-      exerciseTime: preferences.exercise_time,
-      bedTime: preferences.bed_time,
-      hasCompletedOnboarding: preferences.has_completed_onboarding,
-      // Set reasonable defaults for any other required properties
-      notifications: true,
-      notificationsSound: true,
-      notificationsVibration: true,
-      reducedMotion: false,
-      highContrast: false,
-      defaultMeditationDuration: preferences.preferred_session_duration || 10,
-    },
-    updatePreferences,
+    preferences: uiPreferences,
+    updatePreferences: handleUpdatePreferences,
     resetPreferences,
     connectBluetoothDevice,
     disconnectBluetoothDevice,
