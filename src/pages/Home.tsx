@@ -31,8 +31,8 @@ const Home = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-64px)] px-4 py-12 mt-8">
-      <h1 className="text-4xl font-bold text-center mb-6">Welcome to Respiro Balance</h1>
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-64px)] px-4 py-12 mt-8 bg-background">
+      <h1 className="text-4xl font-bold text-center mb-6 text-foreground">Welcome to Respiro Balance</h1>
       
       <p className="text-xl text-center text-muted-foreground mb-8 max-w-lg">
         Your personal assistant for meditation, mindfulness, and better wellbeing
@@ -41,13 +41,18 @@ const Home = () => {
       <div className="flex flex-col sm:flex-row gap-4">
         <Button 
           size="lg" 
-          className="bg-primary text-white hover:bg-primary/80 font-bold text-lg px-8 py-6 h-auto cursor-pointer border-2 border-primary shadow-md"
+          className="bg-primary text-primary-foreground hover:bg-primary/90 font-bold text-lg px-8 py-6 h-auto cursor-pointer shadow-md"
           onClick={handleGetStarted}
         >
           Begin Your Journey
         </Button>
         
-        <Button variant="outline" asChild size="lg" className="text-lg px-8 py-6 h-auto">
+        <Button 
+          variant="outline" 
+          asChild 
+          size="lg" 
+          className="border-primary text-primary hover:bg-primary/10 hover:text-primary text-lg px-8 py-6 h-auto"
+        >
           <Link to="/landing">Learn More</Link>
         </Button>
       </div>

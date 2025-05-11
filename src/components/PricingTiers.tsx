@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -6,6 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Check } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { PaymentButton } from '@/components/payment';
+import { toast } from 'sonner';
 
 const PricingTiers = () => {
   const navigate = useNavigate();
@@ -15,7 +15,11 @@ const PricingTiers = () => {
     if (user) {
       navigate('/dashboard');
     } else {
-      navigate('/register');
+      // Show toast and redirect to dashboard for demo purposes
+      toast.info("Demo Mode", {
+        description: "Bypassing login for demonstration"
+      });
+      navigate('/dashboard');
     }
   };
   
@@ -55,10 +59,10 @@ const PricingTiers = () => {
             <CardFooter>
               <Button 
                 variant="outline" 
-                className="w-full"
+                className="w-full text-primary border-primary hover:bg-primary/10"
                 onClick={handleGetStarted}
               >
-                Get Started
+                Start Free Plan
               </Button>
             </CardFooter>
           </Card>
@@ -126,7 +130,7 @@ const PricingTiers = () => {
             <CardFooter>
               <Button 
                 variant="outline" 
-                className="w-full"
+                className="w-full text-primary border-primary hover:bg-primary/10"
                 onClick={() => window.location.href = "mailto:sales@respirobalance.com?subject=Team Plan Inquiry"}
               >
                 Contact Sales
