@@ -29,14 +29,14 @@ const DeviceSection: React.FC<DeviceSectionProps> = ({
   isSimulating,
   onStopScan
 }) => {
-  // Handle connect device with proper Promise<void> return type
+  // Updated to properly return a Promise<void>
   const handleConnectDevice = async (deviceId: string | BluetoothDevice, callback?: () => void): Promise<void> => {
     // Ensure deviceId is valid
     const id = typeof deviceId === "string" ? deviceId : deviceId.id;
     return onConnectDevice(id, callback);
   };
 
-  // Handle disconnect device with proper Promise<void> return type
+  // Updated to properly return a Promise<void>
   const handleDisconnectDevice = async (deviceId: string | BluetoothDevice, callback?: () => void): Promise<void> => {
     // Ensure deviceId is valid
     const id = typeof deviceId === "string" ? deviceId : deviceId.id;

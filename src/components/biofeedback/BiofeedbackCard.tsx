@@ -51,7 +51,7 @@ const BiofeedbackCard = () => {
     }
   };
 
-  // Update return type to Promise<void> to match the interface
+  // Fixed to return a Promise
   const handleScanForDevices = async (deviceType?: string, options?: any): Promise<void> => {
     setIsConnecting(true);
     try {
@@ -59,28 +59,27 @@ const BiofeedbackCard = () => {
     } finally {
       setIsConnecting(false);
     }
+    return Promise.resolve(); // Explicitly return a resolved Promise
   };
 
-  // Update return type to Promise<void> to match the interface
+  // Fixed to return a Promise
   const handleConnectDeviceById = async (deviceId: string, callback?: () => void): Promise<void> => {
     try {
       await connectBluetoothDevice("heart_rate_monitor", { deviceId, callback });
-      return Promise.resolve();
     } catch (error) {
       console.error("Failed to connect device:", error);
-      return Promise.resolve();
     }
+    return Promise.resolve(); // Explicitly return a resolved Promise
   };
 
-  // Update return type to Promise<void> to match the interface
+  // Fixed to return a Promise
   const handleDisconnectDeviceById = async (deviceId: string, callback?: () => void): Promise<void> => {
     try {
       await disconnectBluetoothDevice(deviceId, callback);
-      return Promise.resolve();
     } catch (error) {
       console.error("Failed to disconnect device:", error);
-      return Promise.resolve();
     }
+    return Promise.resolve(); // Explicitly return a resolved Promise
   };
 
   // Create mock devices for display

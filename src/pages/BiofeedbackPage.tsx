@@ -20,41 +20,49 @@ const BiofeedbackPage: React.FC = () => {
     stopScan
   } = useBiofeedback();
 
-  // Add explicit Promise<void> return type
+  // Updated to return Promise<void> explicitly
   const handleScanForDevices = async (deviceType?: string, options?: any): Promise<void> => {
     try {
       await scanForDevices(deviceType, options);
+      return Promise.resolve();
     } catch (error) {
       console.error('Error scanning for devices:', error);
+      return Promise.reject(error);
     }
   };
 
-  // Add explicit Promise<void> return type
+  // Updated to return Promise<void> explicitly
   const handleConnectDevice = async (deviceId: string, callback?: () => void): Promise<void> => {
     try {
       await connectDevice(deviceId, { callback });
+      return Promise.resolve();
     } catch (error) {
       console.error('Error connecting device:', error);
+      return Promise.reject(error);
     }
   };
 
-  // Add explicit Promise<void> return type
+  // Updated to return Promise<void> explicitly
   const handleDisconnectDevice = async (deviceId: string, callback?: () => void): Promise<void> => {
     try {
       await disconnectDevice(deviceId, { callback });
+      return Promise.resolve();
     } catch (error) {
       console.error('Error disconnecting device:', error);
+      return Promise.reject(error);
     }
   };
   
-  // Add explicit Promise<void> return type
+  // Updated to return Promise<void> explicitly
   const handleStopScan = async (deviceType?: string, callback?: () => void): Promise<void> => {
     try {
       if (stopScan) {
         await stopScan(deviceType, callback);
       }
+      return Promise.resolve();
     } catch (error) {
       console.error('Error stopping scan:', error);
+      return Promise.reject(error);
     }
   };
   
