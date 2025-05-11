@@ -49,7 +49,6 @@ const SettingsPage: React.FC = () => {
           </TabsContent>
           
           <TabsContent value="subscription" className="space-y-4">
-            {/* Use spread operator to pass all props that the component might need */}
             <AccountSubscriptionSettings 
               subscriptionTier={subscriptionTier}
               isPremium={isPremiumOrEnterprise}

@@ -6,13 +6,22 @@ import { useSubscriptionContext } from '@/hooks/useSubscriptionContext';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Progress } from '@/components/ui/progress';
+import { SubscriptionTier } from '@/context/types';
 
-const AccountSubscriptionSettings = () => {
+interface AccountSubscriptionSettingsProps {
+  subscriptionTier?: SubscriptionTier | string;
+  isPremium?: boolean;
+}
+
+const AccountSubscriptionSettings: React.FC<AccountSubscriptionSettingsProps> = ({ subscriptionTier, isPremium }) => {
   const { 
     tierName, 
-    isPremium, 
     subscriptionData 
   } = useSubscriptionContext();
+  
+  // Use props if provided, otherwise use context values
+  const isUserPremium = isPremium !== undefined ? isPremium : false;
+  const userTierName = tierName || (subscriptionTier ? subscriptionTier.charAt(0).toUpperCase() + subscriptionTier.slice(1) : 'Free');
   
   const minutesUsed = subscriptionData?.meditation_minutes_used || 0;
   const minutesLimit = subscriptionData?.meditation_minutes_limit || 60;
@@ -31,20 +40,20 @@ const AccountSubscriptionSettings = () => {
           <div>
             <p className="font-medium">Current Plan</p>
             <p className="text-sm text-muted-foreground">
-              {isPremium
+              {isUserPremium
                 ? "Premium features activated"
                 : "Free tier with limited features"}
             </p>
           </div>
           <div className="text-right">
-            <p className="font-semibold">{tierName}</p>
-            {!isPremium && (
+            <p className="font-semibold">{userTierName}</p>
+            {!isUserPremium && (
               <p className="text-xs text-muted-foreground">Upgrade for more features</p>
             )}
           </div>
         </div>
         
-        {!isPremium && (
+        {!isUserPremium && (
           <div className="space-y-1.5">
             <div className="flex items-center justify-between text-sm">
               <span>Meditation Minutes Usage</span>
@@ -64,15 +73,15 @@ const AccountSubscriptionSettings = () => {
           <ul className="text-sm space-y-1">
             <li className="flex items-baseline">
               <div className="h-1.5 w-1.5 rounded-full bg-primary mr-2 mt-1.5"></div>
-              <span>{isPremium ? "Unlimited meditation minutes" : "Limited meditation minutes (60/month)"}</span>
+              <span>{isUserPremium ? "Unlimited meditation minutes" : "Limited meditation minutes (60/month)"}</span>
             </li>
             <li className="flex items-baseline">
               <div className="h-1.5 w-1.5 rounded-full bg-primary mr-2 mt-1.5"></div>
-              <span>{isPremium ? "Advanced meditation techniques" : "Basic meditation techniques"}</span>
+              <span>{isUserPremium ? "Advanced meditation techniques" : "Basic meditation techniques"}</span>
             </li>
             <li className="flex items-baseline">
               <div className="h-1.5 w-1.5 rounded-full bg-primary mr-2 mt-1.5"></div>
-              <span>{isPremium ? "Advanced biometric tracking" : "Basic progress tracking"}</span>
+              <span>{isUserPremium ? "Advanced biometric tracking" : "Basic progress tracking"}</span>
             </li>
           </ul>
         </div>
@@ -80,7 +89,7 @@ const AccountSubscriptionSettings = () => {
       <CardFooter>
         <Button asChild className="w-full">
           <Link to="/subscription">
-            {isPremium ? "Manage Subscription" : "Upgrade Plan"}
+            {isUserPremium ? "Manage Subscription" : "Upgrade Plan"}
             <ArrowRight className="ml-2 h-4 w-4" />
           </Link>
         </Button>
