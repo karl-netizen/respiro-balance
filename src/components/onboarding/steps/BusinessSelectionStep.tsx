@@ -1,37 +1,33 @@
+
 import React, { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useUserPreferences } from "@/context";
 import { toast } from "sonner";
 
+// Define the correct type that matches your preferences interface
 type AttributionSource = "KGP Coaching & Consulting" | "LearnRelaxation" | "Other" | null;
 
 const BusinessSelectionStep = () => {
   const { preferences, updatePreferences } = useUserPreferences();
-  // Local state to ensure UI updates immediately
-  const [selectedAttribution, setSelectedAttribution] = useState<AttributionSource>(
+  const [selectedValue, setSelectedValue] = useState<AttributionSource>(
     preferences.businessAttribution as AttributionSource || null
   );
 
-  // Force sync with preferences when component mounts
+  // Ensure state is properly synced with preferences
   useEffect(() => {
     if (preferences.businessAttribution) {
-      setSelectedAttribution(preferences.businessAttribution as AttributionSource);
+      setSelectedValue(preferences.businessAttribution as AttributionSource);
     }
   }, [preferences.businessAttribution]);
 
   // Handler for radio button changes
   const handleRadioChange = (value: string) => {
-    const attribution = value as AttributionSource;
-    // Update local state immediately for responsive UI
-    setSelectedAttribution(attribution);
-    
-    // Update global preferences
+    const typedValue = value as AttributionSource;
+    setSelectedValue(typedValue);
     updatePreferences({ 
-      businessAttribution: attribution
+      businessAttribution: typedValue
     });
-    
-    // Log and show feedback
     console.log("Selected attribution:", value);
     toast.success("Selection saved", {
       description: `You selected ${value}`,
@@ -49,84 +45,47 @@ const BusinessSelectionStep = () => {
       </div>
 
       <RadioGroup
-        value={selectedAttribution || ""}
+        value={selectedValue || ""}
         onValueChange={handleRadioChange}
         className="space-y-4"
       >
-        {/* KGP Option */}
-        <div className="relative flex items-center space-x-3 rounded-md border p-4 hover:bg-secondary/50 transition-colors dark:hover:bg-gray-700/50 dark:border-gray-600">
-          <RadioGroupItem 
-            value="KGP Coaching & Consulting" 
-            id="kgp" 
-            className="focus:ring-2 focus:ring-primary" 
-          />
-          <Label 
-            htmlFor="kgp" 
-            className="flex-1 cursor-pointer z-10"
-            onClick={() => handleRadioChange("KGP Coaching & Consulting")}
-          >
-            <div className="font-medium text-gray-900 dark:text-gray-100">KGP Coaching & Consulting</div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">Executive and professional coaching services</div>
-          </Label>
-          {/* Clickable overlay to ensure the entire card is clickable */}
+        {[
+          {
+            id: "kgp",
+            value: "KGP Coaching & Consulting",
+            title: "KGP Coaching & Consulting",
+            description: "Executive and professional coaching services"
+          },
+          {
+            id: "learnrelaxation",
+            value: "LearnRelaxation",
+            title: "LearnRelaxation",
+            description: "Specialized relaxation techniques and meditation content"
+          },
+          {
+            id: "other",
+            value: "Other",
+            title: "Other",
+            description: "I found Respiro Balance another way"
+          }
+        ].map((option) => (
           <div 
-            className="absolute inset-0 cursor-pointer z-0" 
-            onClick={() => handleRadioChange("KGP Coaching & Consulting")}
-            aria-hidden="true"
-          />
-        </div>
-        
-        {/* LearnRelaxation Option */}
-        <div className="relative flex items-center space-x-3 rounded-md border p-4 hover:bg-secondary/50 transition-colors dark:hover:bg-gray-700/50 dark:border-gray-600">
-          <RadioGroupItem 
-            value="LearnRelaxation" 
-            id="learnrelaxation" 
-            className="focus:ring-2 focus:ring-primary" 
-          />
-          <Label 
-            htmlFor="learnrelaxation" 
-            className="flex-1 cursor-pointer z-10"
-            onClick={() => handleRadioChange("LearnRelaxation")}
+            key={option.id} 
+            className="flex items-center space-x-3 rounded-md border p-4 hover:bg-secondary/50 transition-colors dark:hover:bg-gray-700/50 dark:border-gray-600"
+            onClick={() => handleRadioChange(option.value)}
           >
-            <div className="font-medium text-gray-900 dark:text-gray-100">LearnRelaxation</div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">Specialized relaxation techniques and meditation content</div>
-          </Label>
-          {/* Clickable overlay to ensure the entire card is clickable */}
-          <div 
-            className="absolute inset-0 cursor-pointer z-0" 
-            onClick={() => handleRadioChange("LearnRelaxation")}
-            aria-hidden="true"
-          />
-        </div>
-        
-        {/* Other Option */}
-        <div className="relative flex items-center space-x-3 rounded-md border p-4 hover:bg-secondary/50 transition-colors dark:hover:bg-gray-700/50 dark:border-gray-600">
-          <RadioGroupItem 
-            value="Other" 
-            id="other" 
-            className="focus:ring-2 focus:ring-primary" 
-          />
-          <Label 
-            htmlFor="other" 
-            className="flex-1 cursor-pointer z-10"
-            onClick={() => handleRadioChange("Other")}
-          >
-            <div className="font-medium text-gray-900 dark:text-gray-100">Other</div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">I found Respiro Balance another way</div>
-          </Label>
-          {/* Clickable overlay to ensure the entire card is clickable */}
-          <div 
-            className="absolute inset-0 cursor-pointer z-0" 
-            onClick={() => handleRadioChange("Other")}
-            aria-hidden="true"
-          />
-        </div>
+            <RadioGroupItem value={option.value} id={option.id} />
+            <Label htmlFor={option.id} className="flex-1 cursor-pointer">
+              <div className="font-medium text-gray-900 dark:text-gray-100">{option.title}</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">{option.description}</div>
+            </Label>
+          </div>
+        ))}
       </RadioGroup>
-
-      {/* Debug information - will only show in development */}
+      
       {process.env.NODE_ENV === 'development' && (
         <div className="mt-4 p-3 bg-gray-100 dark:bg-gray-800 rounded text-sm">
-          <p>Current selection: {selectedAttribution || 'None'}</p>
+          <p>Current selection: {selectedValue || 'None'}</p>
           <p>Preferences value: {preferences.businessAttribution || 'None'}</p>
         </div>
       )}
