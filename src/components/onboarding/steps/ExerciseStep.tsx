@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useUserPreferences } from "@/context";
 import { toast } from "sonner";
-import { Dumbbell } from "lucide-react";
+import { Dumbbell, ToggleLeft, ToggleRight } from "lucide-react";
 
 const ExerciseStep = () => {
   const { preferences, updatePreferences } = useUserPreferences();
@@ -45,22 +45,34 @@ const ExerciseStep = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="space-y-0.5">
-          <div className="flex items-center space-x-2">
-            <Dumbbell className="h-5 w-5 text-primary" />
-            <Label htmlFor="morning-exercise" className="text-base font-medium">Do you exercise in the morning?</Label>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            Morning exercise can boost energy and focus
-          </p>
+      <div className="flex flex-col space-y-4">
+        <div className="flex items-center space-x-2">
+          <Dumbbell className="h-5 w-5 text-primary" />
+          <Label htmlFor="morning-exercise" className="text-base font-medium">
+            Do you exercise in the morning?
+          </Label>
         </div>
-        <Switch
-          id="morning-exercise"
-          checked={morningExercise}
-          onCheckedChange={handleExerciseToggle}
-          className="data-[state=checked]:bg-green-500"
-        />
+        
+        <p className="text-sm text-muted-foreground">
+          Morning exercise can boost energy and focus
+        </p>
+        
+        <div className="flex items-center justify-between border p-3 rounded-lg bg-secondary/10">
+          <div className="flex items-center space-x-2">
+            {morningExercise ? 
+              <ToggleRight className="h-5 w-5 text-green-500" /> : 
+              <ToggleLeft className="h-5 w-5 text-gray-400" />
+            }
+            <span className="font-medium">{morningExercise ? "Yes" : "No"}</span>
+          </div>
+          
+          <Switch
+            id="morning-exercise"
+            checked={morningExercise}
+            onCheckedChange={handleExerciseToggle}
+            className="data-[state=checked]:bg-green-500"
+          />
+        </div>
       </div>
 
       {morningExercise && (
