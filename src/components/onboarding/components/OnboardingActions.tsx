@@ -28,7 +28,7 @@ const OnboardingActions = ({
             type="button" 
             variant="outline" 
             onClick={onBack}
-            className="font-medium text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+            className="font-medium text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             Back
           </Button>
@@ -40,7 +40,7 @@ const OnboardingActions = ({
             type="button" 
             variant="ghost" 
             onClick={onSkip}
-            className="font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+            className="font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             Skip
           </Button>
@@ -48,7 +48,7 @@ const OnboardingActions = ({
         <Button 
           type="button"
           onClick={onNext}
-          className="bg-respiro-dark hover:bg-respiro-darker text-white font-medium transition-colors focus:ring-2 focus:ring-offset-2 focus:ring-primary shadow-sm"
+          className="bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-sm"
         >
           {isLastStep ? "Complete" : "Continue"}
         </Button>
