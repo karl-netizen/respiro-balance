@@ -3,16 +3,15 @@ import React, { useRef, useState } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Download, Share2, Printer, FileText } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { useMeditationStats } from './useMeditationStats';
 import { useAuth } from "@/hooks/useAuth";
 import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
+import { jsPDF } from 'jspdf';
 
 const ShareableReport = () => {
   const { meditationStats } = useMeditationStats();
   const { user } = useAuth();
-  const { toast } = useToast();
   const [isGenerating, setIsGenerating] = useState(false);
   const reportRef = useRef<HTMLDivElement>(null);
   

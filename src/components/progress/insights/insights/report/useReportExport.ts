@@ -93,7 +93,9 @@ export const useReportExport = (meditationStats: MeditationStats) => {
       const link = document.createElement('a');
       link.download = `meditation_progress_${new Date().toISOString().split('T')[0]}.png`;
       link.href = imgData;
+      document.body.appendChild(link);
       link.click();
+      document.body.removeChild(link);
       
       toast.success("Image Downloaded Successfully");
     } catch (error) {
