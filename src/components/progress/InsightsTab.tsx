@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { useUserPreferences } from "@/context";
 import { useBiometricData } from "@/hooks/useBiometricData";
 import { useMeditationStats } from './useMeditationStats';
@@ -10,6 +11,7 @@ import {
   InsightsSection
 } from './insights';
 import ShareableReport from './ShareableReport';
+import { Activity, TrendingUp, Lightbulb } from "lucide-react";
 
 const InsightsTab: React.FC = () => {
   const { meditationStats } = useMeditationStats();
@@ -19,6 +21,14 @@ const InsightsTab: React.FC = () => {
   
   return (
     <div className="space-y-6">
+      <Card className="border-0 shadow-none bg-transparent">
+        <CardHeader className="px-0 pt-0">
+          <CardDescription>
+            Track your meditation progress, discover correlations with your wellbeing, and gain personalized insights to improve your practice.
+          </CardDescription>
+        </CardHeader>
+      </Card>
+      
       <Tabs 
         defaultValue="monthly" 
         value={activeSubTab} 
@@ -26,9 +36,18 @@ const InsightsTab: React.FC = () => {
         className="w-full"
       >
         <TabsList className="grid w-full grid-cols-3 mb-8">
-          <TabsTrigger value="monthly">Monthly Trends</TabsTrigger>
-          <TabsTrigger value="correlations">Correlations</TabsTrigger>
-          <TabsTrigger value="insights">Personalized Insights</TabsTrigger>
+          <TabsTrigger value="monthly" className="flex items-center gap-2">
+            <Activity className="h-4 w-4" />
+            <span className="hidden sm:inline">Monthly</span> Trends
+          </TabsTrigger>
+          <TabsTrigger value="correlations" className="flex items-center gap-2">
+            <TrendingUp className="h-4 w-4" />
+            Correlations
+          </TabsTrigger>
+          <TabsTrigger value="insights" className="flex items-center gap-2">
+            <Lightbulb className="h-4 w-4" />
+            <span className="hidden sm:inline">Personalized</span> Insights
+          </TabsTrigger>
         </TabsList>
         
         <TabsContent value="monthly" className="mt-0">

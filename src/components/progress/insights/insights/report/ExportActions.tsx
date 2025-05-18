@@ -2,6 +2,7 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Download, Share2, Printer, FileText } from "lucide-react";
+import { toast } from "sonner";
 
 interface ExportActionsProps {
   onExportPDF: () => Promise<void>;
@@ -16,44 +17,53 @@ const ExportActions: React.FC<ExportActionsProps> = ({
   onPrint,
   onShare
 }) => {
+  const handleAction = (action: () => Promise<void>, actionName: string) => {
+    toast.info(`Preparing ${actionName}...`);
+    action().catch(error => {
+      console.error(`Error with ${actionName}:`, error);
+      toast.error(`Failed to ${actionName.toLowerCase()}. Please try again.`);
+    });
+  };
+  
   return (
-    <div className="flex flex-wrap gap-2">
-      <Button 
-        variant="outline" 
-        size="sm" 
-        className="flex items-center gap-1"
-        onClick={onExportPDF}
-      >
-        <FileText className="h-4 w-4" />
-        PDF
-      </Button>
-      <Button 
-        variant="outline" 
-        size="sm" 
-        className="flex items-center gap-1"
-        onClick={onExportImage}
-      >
-        <Download className="h-4 w-4" />
-        Image
-      </Button>
-      <Button 
-        variant="outline" 
-        size="sm" 
-        className="flex items-center gap-1"
-        onClick={onPrint}
-      >
-        <Printer className="h-4 w-4" />
-        Print
-      </Button>
-      <Button 
-        variant="outline" 
-        size="sm" 
-        className="flex items-center gap-1"
-        onClick={onShare}
-      >
-        <Share2 className="h-4 w-4" />
-        Share
-      </Button>
+    <div className="space-y-4">
+      <p className="text-sm text-muted-foreground">
+        Export your meditation progress report in various formats:
+      </p>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <Button 
+          variant="outline" 
+          className="flex flex-col items-center justify-center h-24 gap-2 hover:bg-primary/5"
+          onClick={() => handleAction(onExportPDF, "PDF Export")}
+        >
+          <FileText className="h-8 w-8 text-primary/80" />
+          <span className="text-xs font-medium">PDF</span>
+        </Button>
+        <Button 
+          variant="outline"
+          className="flex flex-col items-center justify-center h-24 gap-2 hover:bg-primary/5"
+          onClick={() => handleAction(onExportImage, "Image Export")}
+        >
+          <Download className="h-8 w-8 text-primary/80" />
+          <span className="text-xs font-medium">Image</span>
+        </Button>
+        <Button 
+          variant="outline"
+          className="flex flex-col items-center justify-center h-24 gap-2 hover:bg-primary/5"
+          onClick={() => handleAction(onPrint, "Print")}
+        >
+          <Printer className="h-8 w-8 text-primary/80" />
+          <span className="text-xs font-medium">Print</span>
+        </Button>
+        <Button 
+          variant="outline"
+          className="flex flex-col items-center justify-center h-24 gap-2 hover:bg-primary/5"
+          onClick={() => handleAction(onShare, "Share")}
+        >
+          <Share2 className="h-8 w-8 text-primary/80" />
+          <span className="text-xs font-medium">Share</span>
+        </Button>
+      </div>
     </div>
   );
 };
