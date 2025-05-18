@@ -11,7 +11,7 @@ const MeditationExperienceStep = () => {
   const { preferences, updatePreferences } = useUserPreferences();
 
   const handleExperienceChange = (value: string) => {
-    updatePreferences({ meditationExperience: value as any });
+    updatePreferences({ meditationExperience: value });
     toast.success("Meditation experience updated", {
       description: `Your experience level has been set to ${value}`,
       duration: 1500
@@ -52,7 +52,7 @@ const MeditationExperienceStep = () => {
       <div>
         <h3 className="text-sm font-medium mb-3">What's your level of meditation experience?</h3>
         <RadioGroup 
-          value={preferences.meditationExperience} 
+          value={preferences.meditationExperience || ''} 
           onValueChange={handleExperienceChange}
           className="flex flex-col space-y-2"
         >
@@ -81,7 +81,7 @@ const MeditationExperienceStep = () => {
           <div className="flex items-center space-x-2">
             <Checkbox 
               id="goal-stress_reduction" 
-              checked={preferences.meditationGoals.includes("stress_reduction")}
+              checked={preferences.meditationGoals?.includes("stress_reduction") || false}
               onCheckedChange={(checked) => handleGoalChange("stress_reduction", !!checked)}
             />
             <label htmlFor="goal-stress_reduction" className="text-sm">
@@ -91,7 +91,7 @@ const MeditationExperienceStep = () => {
           <div className="flex items-center space-x-2">
             <Checkbox 
               id="goal-better_focus" 
-              checked={preferences.meditationGoals.includes("better_focus")}
+              checked={preferences.meditationGoals?.includes("better_focus") || false}
               onCheckedChange={(checked) => handleGoalChange("better_focus", !!checked)}
             />
             <label htmlFor="goal-better_focus" className="text-sm">
@@ -101,7 +101,7 @@ const MeditationExperienceStep = () => {
           <div className="flex items-center space-x-2">
             <Checkbox 
               id="goal-better_sleep" 
-              checked={preferences.meditationGoals.includes("better_sleep")}
+              checked={preferences.meditationGoals?.includes("better_sleep") || false}
               onCheckedChange={(checked) => handleGoalChange("better_sleep", !!checked)}
             />
             <label htmlFor="goal-better_sleep" className="text-sm">
@@ -111,7 +111,7 @@ const MeditationExperienceStep = () => {
           <div className="flex items-center space-x-2">
             <Checkbox 
               id="goal-mindfulness" 
-              checked={preferences.meditationGoals.includes("mindfulness")}
+              checked={preferences.meditationGoals?.includes("mindfulness") || false}
               onCheckedChange={(checked) => handleGoalChange("mindfulness", !!checked)}
             />
             <label htmlFor="goal-mindfulness" className="text-sm">
@@ -123,19 +123,19 @@ const MeditationExperienceStep = () => {
 
       <div>
         <h3 className="text-sm font-medium mb-2">
-          Preferred session duration: {preferences.preferredSessionDuration} minutes
+          Preferred session duration: {preferences.preferredSessionDuration || 10} minutes
         </h3>
         
-        {/* Enhanced session duration visualization with contrast styling like energy level */}
+        {/* Enhanced session duration visualization with contrast styling */}
         <div className="relative mb-6 mt-4">
           <div className="h-2 w-full rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
             <div 
-              className={`h-full ${getDurationColor(preferences.preferredSessionDuration)} transition-all duration-200`} 
-              style={{ width: `${(preferences.preferredSessionDuration / 30) * 100}%` }}
+              className={`h-full ${getDurationColor(preferences.preferredSessionDuration || 10)} transition-all duration-200`} 
+              style={{ width: `${((preferences.preferredSessionDuration || 10) / 30) * 100}%` }}
             ></div>
           </div>
           <Slider
-            value={[preferences.preferredSessionDuration]}
+            value={[preferences.preferredSessionDuration || 10]}
             onValueChange={handleDurationChange}
             min={3}
             max={30}
