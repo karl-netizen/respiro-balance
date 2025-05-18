@@ -17,17 +17,12 @@ const PricingTiers = () => {
     setIsLoading(true);
     
     try {
-      // For free plan, redirect to onboarding or dashboard based on auth status
-      if (user) {
-        navigate('/dashboard');
-      } else {
-        // For demo purposes, redirect to onboarding without requiring login
-        navigate('/onboarding');
-      }
-      
       toast.success("Free plan selected!", {
         description: "Welcome to Respiro Balance"
       });
+      
+      // For free plan, always redirect to onboarding first
+      navigate('/onboarding');
     } catch (error) {
       console.error("Navigation error:", error);
       toast.error("Navigation failed. Please try again.");

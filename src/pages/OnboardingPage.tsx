@@ -11,21 +11,8 @@ const OnboardingPage = () => {
   const { preferences } = useUserPreferences();
   const { user, isLoading } = useAuth();
   
-  // Redirect if not authenticated or if onboarding is completed without resume intent
-  useEffect(() => {
-    if (!isLoading) {
-      // If not authenticated, redirect to login
-      if (!user) {
-        navigate('/landing');
-        return;
-      }
-      
-      // If user has completed onboarding and there's no resume intent, redirect to dashboard
-      if (preferences.hasCompletedOnboarding && !window.location.search.includes('resume=true')) {
-        navigate('/dashboard');
-      }
-    }
-  }, [user, preferences.hasCompletedOnboarding, navigate, isLoading]);
+  // Allow onboarding to proceed for any user (logged in or not)
+  // This is important for our demo flow where users can try before registering
   
   // Show loading state while checking authentication
   if (isLoading) {
@@ -39,9 +26,13 @@ const OnboardingPage = () => {
     );
   }
   
-  // Show nothing if user should be redirected
-  if (!user || (preferences.hasCompletedOnboarding && !window.location.search.includes('resume=true'))) {
-    return null;
+  // If user has completed onboarding and there's no resume intent, redirect to dashboard
+  if (preferences.hasCompletedOnboarding && !window.location.search.includes('resume=true')) {
+    // Only redirect authenticated users to dashboard
+    if (user) {
+      navigate('/dashboard');
+      return null;
+    }
   }
   
   return (
