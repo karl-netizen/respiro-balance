@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useUserPreferences } from "@/context";
 import { toast } from "sonner";
-import { Coffee, ToggleLeft, ToggleRight } from "lucide-react";
+import { Clock, Coffee, ToggleLeft, ToggleRight } from "lucide-react";
 
 const LunchBreakStep = () => {
   const { preferences, updatePreferences } = useUserPreferences();
@@ -57,6 +57,7 @@ const LunchBreakStep = () => {
           Regular breaks help maintain productivity and wellbeing
         </p>
         
+        {/* Toggle selection with clear Yes/No indicators */}
         <div className="flex items-center justify-between bg-white dark:bg-gray-800 border p-4 rounded-lg shadow-sm">
           <div className="flex items-center space-x-3">
             {takesLunchBreak ? (
@@ -82,17 +83,24 @@ const LunchBreakStep = () => {
         </div>
       </div>
 
+      {/* Time selection section - only shown when lunch break is enabled */}
       {takesLunchBreak && (
         <div className="space-y-2 p-4 border rounded-md bg-white dark:bg-gray-800 shadow-sm">
-          <Label htmlFor="lunchTime" className="font-medium">What time do you usually have lunch?</Label>
-          <Input
-            id="lunchTime"
-            type="time"
-            value={lunchTime}
-            onChange={handleLunchTimeChange}
-            className="focus:ring-2 focus:ring-blue-500"
-          />
-          <p className="text-xs text-muted-foreground mt-1">Selected time: {lunchTime}</p>
+          <div className="flex items-center space-x-2 mb-2">
+            <Clock className="h-5 w-5 text-primary" />
+            <Label htmlFor="lunchTime" className="font-medium">What time do you usually have lunch?</Label>
+          </div>
+          
+          <div className="flex flex-col space-y-2">
+            <Input
+              id="lunchTime"
+              type="time"
+              value={lunchTime}
+              onChange={handleLunchTimeChange}
+              className="focus:ring-2 focus:ring-blue-500 text-lg"
+            />
+            <p className="text-sm text-muted-foreground">Selected time: <span className="font-medium">{lunchTime}</span></p>
+          </div>
         </div>
       )}
       

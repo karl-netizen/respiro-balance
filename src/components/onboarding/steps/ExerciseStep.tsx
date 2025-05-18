@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useUserPreferences } from "@/context";
 import { toast } from "sonner";
-import { Dumbbell, ToggleLeft, ToggleRight } from "lucide-react";
+import { Clock, Dumbbell, ToggleLeft, ToggleRight } from "lucide-react";
 
 const ExerciseStep = () => {
   const { preferences, updatePreferences } = useUserPreferences();
@@ -57,6 +57,7 @@ const ExerciseStep = () => {
           Morning exercise can boost energy and focus
         </p>
         
+        {/* Toggle selection with clear Yes/No indicators */}
         <div className="flex items-center justify-between bg-white dark:bg-gray-800 border p-4 rounded-lg shadow-sm">
           <div className="flex items-center space-x-3">
             {morningExercise ? (
@@ -82,17 +83,24 @@ const ExerciseStep = () => {
         </div>
       </div>
 
+      {/* Time selection section - only shown when morning exercise is enabled */}
       {morningExercise && (
         <div className="space-y-2 p-4 border rounded-md bg-white dark:bg-gray-800 shadow-sm">
-          <Label htmlFor="exerciseTime" className="font-medium">What time do you usually exercise?</Label>
-          <Input
-            id="exerciseTime"
-            type="time"
-            value={exerciseTime}
-            onChange={handleExerciseTimeChange}
-            className="focus:ring-2 focus:ring-blue-500"
-          />
-          <p className="text-xs text-muted-foreground mt-1">Selected time: {exerciseTime}</p>
+          <div className="flex items-center space-x-2 mb-2">
+            <Clock className="h-5 w-5 text-primary" />
+            <Label htmlFor="exerciseTime" className="font-medium">What time do you usually exercise?</Label>
+          </div>
+          
+          <div className="flex flex-col space-y-2">
+            <Input
+              id="exerciseTime"
+              type="time"
+              value={exerciseTime}
+              onChange={handleExerciseTimeChange}
+              className="focus:ring-2 focus:ring-blue-500 text-lg"
+            />
+            <p className="text-sm text-muted-foreground">Selected time: <span className="font-medium">{exerciseTime}</span></p>
+          </div>
         </div>
       )}
       
