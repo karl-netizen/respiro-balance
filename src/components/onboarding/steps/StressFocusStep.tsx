@@ -6,24 +6,29 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useUserPreferences } from "@/context";
 import { toast } from "sonner";
 
+// Define the allowed stress level values as a type
+type StressLevelType = "low" | "moderate" | "high" | "very_high";
+
 const StressFocusStep = () => {
   const { preferences, updatePreferences } = useUserPreferences();
   
   // Local state for immediate UI feedback
-  const [stressLevel, setStressLevel] = useState(preferences.stressLevel || "moderate");
+  const [stressLevel, setStressLevel] = useState<StressLevelType>(
+    (preferences.stressLevel as StressLevelType) || "moderate"
+  );
   const [focusChallenges, setFocusChallenges] = useState<string[]>(
     Array.isArray(preferences.focusChallenges) ? preferences.focusChallenges : []
   );
   
   // Sync local state with preferences when they change
   useEffect(() => {
-    setStressLevel(preferences.stressLevel || "moderate");
+    setStressLevel((preferences.stressLevel as StressLevelType) || "moderate");
     setFocusChallenges(
       Array.isArray(preferences.focusChallenges) ? preferences.focusChallenges : []
     );
   }, [preferences.stressLevel, preferences.focusChallenges]);
 
-  const handleStressLevelChange = (value: string) => {
+  const handleStressLevelChange = (value: StressLevelType) => {
     setStressLevel(value);
     updatePreferences({ stressLevel: value as any });
     
@@ -61,7 +66,7 @@ const StressFocusStep = () => {
         </p>
         <RadioGroup 
           value={stressLevel} 
-          onValueChange={handleStressLevelChange} 
+          onValueChange={(value) => handleStressLevelChange(value as StressLevelType)} 
           className="space-y-2"
         >
           <div className="flex items-center space-x-2 p-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md cursor-pointer"
