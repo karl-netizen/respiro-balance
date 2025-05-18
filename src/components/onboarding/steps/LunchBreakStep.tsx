@@ -1,11 +1,46 @@
-import React from "react";
+
+import React, { useState, useEffect } from "react";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useUserPreferences } from "@/context";
+import { toast } from "sonner";
 
 const LunchBreakStep = () => {
   const { preferences, updatePreferences } = useUserPreferences();
+  
+  // Local state for immediate UI feedback
+  const [takesLunchBreak, setTakesLunchBreak] = useState(preferences.lunchBreak || false);
+  const [lunchTime, setLunchTime] = useState(preferences.lunchTime || "12:00");
+  
+  // Sync local state with preferences when they change
+  useEffect(() => {
+    setTakesLunchBreak(preferences.lunchBreak || false);
+    if (preferences.lunchTime) {
+      setLunchTime(preferences.lunchTime);
+    }
+  }, [preferences.lunchBreak, preferences.lunchTime]);
+
+  const handleLunchBreakChange = (checked: boolean) => {
+    setTakesLunchBreak(checked);
+    updatePreferences({ lunchBreak: checked });
+    
+    toast.success(checked ? "Lunch break enabled" : "Lunch break disabled", {
+      description: checked ? "Don't forget to add your lunch time" : "Your preferences have been updated",
+      duration: 1500
+    });
+  };
+
+  const handleLunchTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newTime = e.target.value;
+    setLunchTime(newTime);
+    updatePreferences({ lunchTime: newTime });
+    
+    toast.success("Lunch time updated", {
+      description: `Lunch time set to ${newTime}`,
+      duration: 1500
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -18,20 +53,28 @@ const LunchBreakStep = () => {
         </div>
         <Switch
           id="lunch-break"
-          checked={preferences.lunchBreak}
-          onCheckedChange={(checked) => updatePreferences({ lunchBreak: checked })}
+          checked={takesLunchBreak}
+          onCheckedChange={handleLunchBreakChange}
         />
       </div>
 
-      {preferences.lunchBreak && (
+      {takesLunchBreak && (
         <div className="space-y-2">
           <Label htmlFor="lunchTime">What time do you usually have lunch?</Label>
           <Input
             id="lunchTime"
             type="time"
-            value={preferences.lunchTime}
-            onChange={(e) => updatePreferences({ lunchTime: e.target.value })}
+            value={lunchTime}
+            onChange={handleLunchTimeChange}
+            className="focus:ring-2 focus:ring-blue-500"
           />
+        </div>
+      )}
+      
+      {process.env.NODE_ENV === 'development' && (
+        <div className="mt-4 p-3 bg-gray-100 dark:bg-gray-800 rounded text-sm">
+          <p>Lunch break: {takesLunchBreak ? 'Yes' : 'No'}</p>
+          <p>Lunch time: {lunchTime}</p>
         </div>
       )}
     </div>
