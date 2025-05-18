@@ -8,21 +8,36 @@ import { toast } from "sonner";
 const SleepStep = () => {
   const { preferences, updatePreferences } = useUserPreferences();
   const [bedTime, setBedTime] = useState(preferences.bedTime || "22:00");
+  const [wakeTime, setWakeTime] = useState(preferences.wakeTime || "07:00");
 
   // Sync with preferences when they change
   useEffect(() => {
     if (preferences.bedTime) {
       setBedTime(preferences.bedTime);
     }
-  }, [preferences.bedTime]);
+    if (preferences.wakeTime) {
+      setWakeTime(preferences.wakeTime);
+    }
+  }, [preferences.bedTime, preferences.wakeTime]);
 
-  const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleBedTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newTime = e.target.value;
     setBedTime(newTime);
     updatePreferences({ bedTime: newTime });
     
     toast.success("Bedtime updated", {
       description: `Your bedtime has been set to ${formatTimeForDisplay(newTime)}`,
+      duration: 1500
+    });
+  };
+  
+  const handleWakeTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newTime = e.target.value;
+    setWakeTime(newTime);
+    updatePreferences({ wakeTime: newTime });
+    
+    toast.success("Wake time updated", {
+      description: `Your wake time has been set to ${formatTimeForDisplay(newTime)}`,
       duration: 1500
     });
   };
@@ -56,7 +71,7 @@ const SleepStep = () => {
           id="bedTime"
           type="time"
           value={bedTime}
-          onChange={handleTimeChange}
+          onChange={handleBedTimeChange}
           className="cursor-pointer"
         />
         
@@ -72,14 +87,14 @@ const SleepStep = () => {
         <Input
           id="wakeTime"
           type="time"
-          value={preferences.wakeTime || "07:00"}
-          onChange={(e) => updatePreferences({ wakeTime: e.target.value })}
+          value={wakeTime}
+          onChange={handleWakeTimeChange}
           className="cursor-pointer"
         />
         
-        {preferences.wakeTime && (
+        {wakeTime && (
           <p className="text-sm text-muted-foreground mt-2">
-            Your selected wake time: <span className="font-medium">{formatTimeForDisplay(preferences.wakeTime || "07:00")}</span>
+            Your selected wake time: <span className="font-medium">{formatTimeForDisplay(wakeTime)}</span>
           </p>
         )}
       </div>
@@ -87,7 +102,7 @@ const SleepStep = () => {
       {process.env.NODE_ENV === 'development' && (
         <div className="mt-6 p-3 bg-gray-100 dark:bg-gray-800 rounded text-sm">
           <p>Bed Time: {bedTime}</p>
-          <p>Wake Time: {preferences.wakeTime || "Not set"}</p>
+          <p>Wake Time: {wakeTime}</p>
         </div>
       )}
     </div>
