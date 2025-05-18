@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useOnboardingWizard } from "./hooks/useOnboardingWizard";
 import OnboardingProgress from "./components/OnboardingProgress";
@@ -31,7 +31,9 @@ const OnboardingWizard = () => {
           display: 'flex', 
           flexDirection: 'column',
         }}
+        aria-describedby="onboarding-description"
       >
+        <DialogTitle className="sr-only">Onboarding</DialogTitle>
         <div className="flex flex-col h-full">
           {/* Progress tracking */}
           <OnboardingProgress 
@@ -44,7 +46,7 @@ const OnboardingWizard = () => {
             <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
               {onboardingSteps[currentStep].title}
             </h2>
-            <p className="text-muted-foreground mt-1 text-gray-600 dark:text-gray-300">
+            <p id="onboarding-description" className="text-muted-foreground mt-1 text-gray-600 dark:text-gray-300">
               {onboardingSteps[currentStep].description}
             </p>
           </div>

@@ -21,14 +21,14 @@ const OnboardingActions = ({
   const isLastStep = currentStep === totalSteps - 1;
 
   return (
-    <div className="flex justify-between pt-4 border-t border-border">
+    <div className="flex justify-between pt-4 border-t border-border dark:border-gray-600">
       <div>
         {!isFirstStep && (
           <Button 
             type="button" 
             variant="outline" 
             onClick={onBack}
-            className="text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600"
+            className="text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
           >
             Back
           </Button>
@@ -40,7 +40,7 @@ const OnboardingActions = ({
             type="button" 
             variant="ghost" 
             onClick={onSkip}
-            className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+            className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
           >
             Skip
           </Button>
