@@ -5,12 +5,17 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
+import { toast } from "sonner";
 
 const MeditationExperienceStep = () => {
   const { preferences, updatePreferences } = useUserPreferences();
 
   const handleExperienceChange = (value: string) => {
     updatePreferences({ meditationExperience: value as any });
+    toast.success("Meditation experience updated", {
+      description: `Your experience level has been set to ${value}`,
+      duration: 1500
+    });
   };
 
   const handleGoalChange = (value: string, checked: boolean) => {
@@ -26,7 +31,20 @@ const MeditationExperienceStep = () => {
   };
 
   const handleDurationChange = (value: number[]) => {
-    updatePreferences({ preferredSessionDuration: value[0] });
+    const duration = value[0];
+    updatePreferences({ preferredSessionDuration: duration });
+    
+    toast.success("Session duration updated", {
+      description: `Your preferred session duration has been set to ${duration} minutes`,
+      duration: 1500
+    });
+  };
+
+  // Get color based on duration value
+  const getDurationColor = (level: number) => {
+    if (level <= 10) return "bg-blue-500"; // Short sessions
+    if (level <= 20) return "bg-purple-500"; // Medium sessions
+    return "bg-indigo-500"; // Long sessions
   };
 
   return (
@@ -104,21 +122,31 @@ const MeditationExperienceStep = () => {
       </div>
 
       <div>
-        <h3 className="text-sm font-medium mb-3">
+        <h3 className="text-sm font-medium mb-2">
           Preferred session duration: {preferences.preferredSessionDuration} minutes
         </h3>
-        <Slider
-          value={[preferences.preferredSessionDuration]}
-          onValueChange={handleDurationChange}
-          min={3}
-          max={30}
-          step={1}
-          className="my-4"
-        />
+        
+        {/* Enhanced session duration visualization with contrast styling like energy level */}
+        <div className="relative mb-6 mt-4">
+          <div className="h-2 w-full rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+            <div 
+              className={`h-full ${getDurationColor(preferences.preferredSessionDuration)} transition-all duration-200`} 
+              style={{ width: `${(preferences.preferredSessionDuration / 30) * 100}%` }}
+            ></div>
+          </div>
+          <Slider
+            value={[preferences.preferredSessionDuration]}
+            onValueChange={handleDurationChange}
+            min={3}
+            max={30}
+            step={1}
+            className="my-2"
+          />
+        </div>
         <div className="flex justify-between text-xs text-muted-foreground">
-          <span>3 min</span>
-          <span>15 min</span>
-          <span>30 min</span>
+          <span className="text-blue-500 font-medium">Short (3-10min)</span>
+          <span className="text-purple-500 font-medium">Medium (10-20min)</span>
+          <span className="text-indigo-500 font-medium">Long (20-30min)</span>
         </div>
       </div>
     </div>
