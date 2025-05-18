@@ -15,6 +15,26 @@ import { ThemeProvider } from './context' // Fixed import from our context
 // Create a client
 const queryClient = new QueryClient();
 
+// Apply high contrast mode based on HTML attribute
+const applyHighContrastMode = (highContrast: boolean) => {
+  if (highContrast) {
+    document.documentElement.classList.add('high-contrast');
+  } else {
+    document.documentElement.classList.remove('high-contrast');
+  }
+};
+
+// Get high contrast preference from local storage
+const storedPreferences = localStorage.getItem('user-preferences');
+if (storedPreferences) {
+  try {
+    const preferences = JSON.parse(storedPreferences);
+    applyHighContrastMode(preferences.highContrast);
+  } catch (e) {
+    console.error('Error parsing preferences:', e);
+  }
+}
+
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>

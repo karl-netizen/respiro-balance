@@ -23,11 +23,16 @@
 }
 
 .text-respiro-light {
-  color: #CBD5E0;
+  color: #E0F2F1;
 }
 
 .border-respiro-light {
   border-color: #CBD5E0;
+}
+
+/* Dark mode text improvements */
+.dark .text-respiro-light {
+  color: #E0F2F1; /* Lighter color for better contrast in dark mode */
 }
 
 /* Add these rules for meditation images */
@@ -39,4 +44,30 @@
   background-color: rgba(0, 0, 0, 0.2);
   background-position: center;
   background-size: cover;
+}
+
+/* Improved contrast for dark backgrounds */
+.dark .bg-gray-800 {
+  background-color: #1a202c;
+}
+
+.dark .bg-gray-900 {
+  background-color: #121826;
+}
+
+.dark .text-gray-200 {
+  color: #edf2f7;
+}
+
+.dark .text-gray-300 {
+  color: #e2e8f0;
+}
+
+/* High contrast mode - activated by user preference */
+.high-contrast .text-muted-foreground {
+  color: #e2e8f0 !important; /* Higher contrast for muted text */
+}
+
+.high-contrast.dark .text-muted-foreground {
+  color: #ffffff !important; /* Even higher contrast for dark mode */
 }

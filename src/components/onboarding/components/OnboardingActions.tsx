@@ -10,27 +10,49 @@ interface OnboardingActionsProps {
   onSkip: () => void;
 }
 
-const OnboardingActions: React.FC<OnboardingActionsProps> = ({
+const OnboardingActions = ({
   currentStep,
   totalSteps,
   onNext,
   onBack,
-  onSkip
-}) => {
+  onSkip,
+}: OnboardingActionsProps) => {
+  const isFirstStep = currentStep === 0;
+  const isLastStep = currentStep === totalSteps - 1;
+
   return (
-    <div className="flex justify-between pt-4 border-t mt-2 bg-background">
-      {currentStep > 0 ? (
-        <Button variant="outline" onClick={onBack}>
-          Back
+    <div className="flex justify-between pt-4 border-t border-border">
+      <div>
+        {!isFirstStep && (
+          <Button 
+            type="button" 
+            variant="outline" 
+            onClick={onBack}
+            className="text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600"
+          >
+            Back
+          </Button>
+        )}
+      </div>
+      <div className="space-x-2">
+        {!isLastStep && (
+          <Button 
+            type="button" 
+            variant="ghost" 
+            onClick={onSkip}
+            className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+          >
+            Skip
+          </Button>
+        )}
+        <Button 
+          type="button"
+          onClick={onNext}
+          className="bg-respiro-dark hover:bg-respiro-darker text-white"
+        >
+          {isLastStep ? "Complete" : "Continue"}
         </Button>
-      ) : (
-        <Button variant="ghost" onClick={onSkip}>
-          Skip for now
-        </Button>
-      )}
-      <Button onClick={onNext}>
-        {currentStep < totalSteps - 1 ? "Continue" : "Complete"}
-      </Button>
+      </div>
     </div>
   );
 };

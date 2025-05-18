@@ -33,11 +33,11 @@ const PricingTiers = () => {
   };
   
   return (
-    <section id="pricing" className="py-16 px-6">
+    <section id="pricing" className="py-16 px-6 bg-white dark:bg-gray-900">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Simple, Transparent Pricing</h2>
-          <p className="text-foreground/70 max-w-2xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900 dark:text-gray-100">Simple, Transparent Pricing</h2>
+          <p className="text-foreground/70 max-w-2xl mx-auto text-gray-700 dark:text-gray-300">
             Choose the plan that fits your needs. All plans include access to our 
             mobile app and web platform.
           </p>
@@ -45,14 +45,14 @@ const PricingTiers = () => {
         
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {/* Free Tier */}
-          <Card className="flex flex-col border-border shadow-md hover:shadow-lg transition-all duration-200">
+          <Card className="flex flex-col border-border shadow-md hover:shadow-lg transition-all duration-200 bg-white dark:bg-gray-800">
             <CardHeader>
-              <CardTitle className="text-xl">Free</CardTitle>
+              <CardTitle className="text-xl text-gray-900 dark:text-white">Free</CardTitle>
               <div className="mt-4">
-                <span className="text-3xl font-bold">$0</span>
-                <span className="text-muted-foreground ml-2">/month</span>
+                <span className="text-3xl font-bold text-gray-900 dark:text-white">$0</span>
+                <span className="text-muted-foreground ml-2 dark:text-gray-300">/month</span>
               </div>
-              <CardDescription className="mt-2">
+              <CardDescription className="mt-2 text-gray-600 dark:text-gray-300">
                 Get started with basic meditation and mindfulness
               </CardDescription>
             </CardHeader>
@@ -85,19 +85,19 @@ const PricingTiers = () => {
           </Card>
           
           {/* Premium Tier */}
-          <Card className="flex flex-col relative border-respiro-dark before:absolute before:inset-0 before:-z-10 before:rounded-lg before:bg-respiro-dark/5 shadow-md hover:shadow-lg transition-all duration-200">
+          <Card className="flex flex-col relative border-respiro-dark before:absolute before:inset-0 before:-z-10 before:rounded-lg before:bg-respiro-dark/5 shadow-md hover:shadow-lg transition-all duration-200 bg-white dark:bg-gray-800">
             <div className="absolute top-0 right-0 transform translate-x-1/4 -translate-y-1/3">
               <div className="bg-respiro-dark text-white text-xs font-medium px-3 py-1 rounded-full">
                 Most Popular
               </div>
             </div>
             <CardHeader>
-              <CardTitle className="text-xl">Premium</CardTitle>
+              <CardTitle className="text-xl text-gray-900 dark:text-white">Premium</CardTitle>
               <div className="mt-4">
-                <span className="text-3xl font-bold">$9</span>
-                <span className="text-muted-foreground ml-2">/month</span>
+                <span className="text-3xl font-bold text-gray-900 dark:text-white">$9</span>
+                <span className="text-muted-foreground ml-2 dark:text-gray-300">/month</span>
               </div>
-              <CardDescription className="mt-2">
+              <CardDescription className="mt-2 text-gray-600 dark:text-gray-300">
                 Unlock the full potential of your mindfulness journey
               </CardDescription>
             </CardHeader>
@@ -125,14 +125,14 @@ const PricingTiers = () => {
           </Card>
           
           {/* Team Tier */}
-          <Card className="flex flex-col border-border shadow-md hover:shadow-lg transition-all duration-200">
+          <Card className="flex flex-col border-border shadow-md hover:shadow-lg transition-all duration-200 bg-white dark:bg-gray-800">
             <CardHeader>
-              <CardTitle className="text-xl">Team</CardTitle>
+              <CardTitle className="text-xl text-gray-900 dark:text-white">Team</CardTitle>
               <div className="mt-4">
-                <span className="text-3xl font-bold">$49</span>
-                <span className="text-muted-foreground ml-2">/month</span>
+                <span className="text-3xl font-bold text-gray-900 dark:text-white">$49</span>
+                <span className="text-muted-foreground ml-2 dark:text-gray-300">/month</span>
               </div>
-              <CardDescription className="mt-2">
+              <CardDescription className="mt-2 text-gray-600 dark:text-gray-300">
                 Perfect for small teams and organizations
               </CardDescription>
             </CardHeader>
@@ -167,7 +167,7 @@ const PricingTiers = () => {
         </div>
         
         <div className="mt-16 text-center">
-          <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-sm text-muted-foreground max-w-2xl mx-auto text-gray-700 dark:text-gray-300">
             All plans include access to our mobile app and web platform. Premium plan
             can be canceled at any time. For enterprise solutions or custom
             pricing, please contact our sales team.
@@ -184,8 +184,8 @@ interface PricingFeatureProps {
 }
 
 const PricingFeature = ({ children, highlighted = false }: PricingFeatureProps) => (
-  <li className={`flex items-start ${highlighted ? 'text-respiro-dark font-medium' : ''}`}>
-    <Check className={`h-5 w-5 mr-2 mt-0.5 flex-shrink-0 ${highlighted ? 'text-respiro-dark' : 'text-green-500'}`} />
+  <li className={`flex items-start ${highlighted ? 'text-respiro-dark font-medium dark:text-respiro-light' : 'text-gray-700 dark:text-gray-300'}`}>
+    <Check className={`h-5 w-5 mr-2 mt-0.5 flex-shrink-0 ${highlighted ? 'text-respiro-dark dark:text-respiro-light' : 'text-green-500'}`} />
     <span>{children}</span>
   </li>
 );

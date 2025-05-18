@@ -6,25 +6,20 @@ interface OnboardingProgressProps {
   totalSteps: number;
 }
 
-const OnboardingProgress: React.FC<OnboardingProgressProps> = ({ currentStep, totalSteps }) => {
+const OnboardingProgress = ({ currentStep, totalSteps }: OnboardingProgressProps) => {
+  const progress = ((currentStep + 1) / totalSteps) * 100;
+
   return (
-    <div className="text-center">
-      <div className="flex items-center justify-center mb-3">
-        <div className="h-1 bg-secondary flex-1 rounded-full overflow-hidden">
-          <div 
-            className="h-full bg-primary"
-            style={{ width: `${((currentStep + 1) / totalSteps) * 100}%` }} 
-          />
-        </div>
-        <span className="mx-2 text-sm text-muted-foreground">
-          Step {currentStep + 1} of {totalSteps}
-        </span>
+    <div className="mb-6">
+      <div className="flex justify-between items-center mb-1 text-sm">
+        <span className="text-gray-700 dark:text-gray-300">Step {currentStep + 1} of {totalSteps}</span>
+        <span className="font-medium text-respiro-dark">{Math.round(progress)}%</span>
       </div>
-      
-      <div className="bg-primary/10 inline-flex p-2 rounded-full mb-4">
-        <div className="bg-primary text-white h-8 w-8 rounded-full flex items-center justify-center text-sm font-medium">
-          {currentStep + 1}
-        </div>
+      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+        <div
+          className="bg-respiro-dark h-2 rounded-full transition-all duration-300 ease-in-out"
+          style={{ width: `${progress}%` }}
+        ></div>
       </div>
     </div>
   );
