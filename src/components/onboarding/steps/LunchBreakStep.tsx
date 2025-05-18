@@ -57,13 +57,19 @@ const LunchBreakStep = () => {
           Regular breaks help maintain productivity and wellbeing
         </p>
         
-        <div className="flex items-center justify-between border p-3 rounded-lg bg-secondary/10">
-          <div className="flex items-center space-x-2">
-            {takesLunchBreak ? 
-              <ToggleRight className="h-5 w-5 text-green-500" /> : 
-              <ToggleLeft className="h-5 w-5 text-gray-400" />
-            }
-            <span className="font-medium">{takesLunchBreak ? "Yes" : "No"}</span>
+        <div className="flex items-center justify-between bg-white dark:bg-gray-800 border p-4 rounded-lg shadow-sm">
+          <div className="flex items-center space-x-3">
+            {takesLunchBreak ? (
+              <>
+                <ToggleRight className="h-6 w-6 text-green-500" />
+                <span className="font-medium text-green-600 dark:text-green-400">Yes</span>
+              </>
+            ) : (
+              <>
+                <ToggleLeft className="h-6 w-6 text-gray-500" />
+                <span className="font-medium text-gray-700 dark:text-gray-300">No</span>
+              </>
+            )}
           </div>
           
           <Switch
@@ -71,12 +77,13 @@ const LunchBreakStep = () => {
             checked={takesLunchBreak}
             onCheckedChange={handleLunchBreakChange}
             className="data-[state=checked]:bg-green-500"
+            aria-label={takesLunchBreak ? "Disable lunch break" : "Enable lunch break"}
           />
         </div>
       </div>
 
       {takesLunchBreak && (
-        <div className="space-y-2 p-4 border rounded-md bg-secondary/20 dark:bg-gray-800/50">
+        <div className="space-y-2 p-4 border rounded-md bg-white dark:bg-gray-800 shadow-sm">
           <Label htmlFor="lunchTime" className="font-medium">What time do you usually have lunch?</Label>
           <Input
             id="lunchTime"
@@ -85,6 +92,7 @@ const LunchBreakStep = () => {
             onChange={handleLunchTimeChange}
             className="focus:ring-2 focus:ring-blue-500"
           />
+          <p className="text-xs text-muted-foreground mt-1">Selected time: {lunchTime}</p>
         </div>
       )}
       
