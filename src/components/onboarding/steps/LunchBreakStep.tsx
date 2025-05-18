@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect } from "react";
-import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useUserPreferences } from "@/context";
@@ -109,7 +108,7 @@ const LunchBreakStep = () => {
       {process.env.NODE_ENV === 'development' && (
         <div className="mt-4 p-3 bg-gray-100 dark:bg-gray-800 rounded text-sm">
           <p>Lunch break: {takesLunchBreak ? 'Yes' : 'No'}</p>
-          <p>Lunch time: {lunchTime}</p>
+          <p>Lunch time: {takesLunchBreak ? lunchTime : 'Not set'}</p>
         </div>
       )}
     </div>

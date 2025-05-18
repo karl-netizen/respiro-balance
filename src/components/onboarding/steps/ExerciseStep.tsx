@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect } from "react";
-import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useUserPreferences } from "@/context";
@@ -109,7 +108,7 @@ const ExerciseStep = () => {
       {process.env.NODE_ENV === 'development' && (
         <div className="mt-4 p-3 bg-gray-100 dark:bg-gray-800 rounded text-sm">
           <p>Morning exercise: {morningExercise ? 'Yes' : 'No'}</p>
-          <p>Exercise time: {exerciseTime}</p>
+          <p>Exercise time: {morningExercise ? exerciseTime : 'Not set'}</p>
         </div>
       )}
     </div>
