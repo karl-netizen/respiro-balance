@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useUserPreferences } from "@/context";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
@@ -7,11 +7,33 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
 import { toast } from "sonner";
 
+// Define the correct type that matches your preferences interface
+type MeditationExperienceType = "none" | "beginner" | "intermediate" | "advanced";
+
 const MeditationExperienceStep = () => {
   const { preferences, updatePreferences } = useUserPreferences();
+  const [selectedExperience, setSelectedExperience] = useState<MeditationExperienceType>(
+    (preferences.meditationExperience as MeditationExperienceType) || "none"
+  );
+  const [sessionDuration, setSessionDuration] = useState<number>(preferences.preferredSessionDuration || 10);
+
+  // Ensure state is properly synced with preferences
+  useEffect(() => {
+    if (preferences.meditationExperience) {
+      setSelectedExperience(preferences.meditationExperience as MeditationExperienceType);
+    }
+    if (preferences.preferredSessionDuration) {
+      setSessionDuration(preferences.preferredSessionDuration);
+    }
+  }, [preferences.meditationExperience, preferences.preferredSessionDuration]);
 
   const handleExperienceChange = (value: string) => {
-    updatePreferences({ meditationExperience: value });
+    // Convert the string value to the specific MeditationExperience type
+    const typedValue = value as MeditationExperienceType;
+    setSelectedExperience(typedValue);
+    updatePreferences({ 
+      meditationExperience: typedValue
+    });
     toast.success("Meditation experience updated", {
       description: `Your experience level has been set to ${value}`,
       duration: 1500
@@ -19,7 +41,7 @@ const MeditationExperienceStep = () => {
   };
 
   const handleGoalChange = (value: string, checked: boolean) => {
-    let updatedGoals = [...preferences.meditationGoals];
+    let updatedGoals = [...(preferences.meditationGoals || [])];
     
     if (checked) {
       updatedGoals.push(value);
@@ -32,6 +54,7 @@ const MeditationExperienceStep = () => {
 
   const handleDurationChange = (value: number[]) => {
     const duration = value[0];
+    setSessionDuration(duration);
     updatePreferences({ preferredSessionDuration: duration });
     
     toast.success("Session duration updated", {
@@ -52,7 +75,7 @@ const MeditationExperienceStep = () => {
       <div>
         <h3 className="text-sm font-medium mb-3">What's your level of meditation experience?</h3>
         <RadioGroup 
-          value={preferences.meditationExperience || ''} 
+          value={selectedExperience} 
           onValueChange={handleExperienceChange}
           className="flex flex-col space-y-2"
         >
@@ -123,19 +146,19 @@ const MeditationExperienceStep = () => {
 
       <div>
         <h3 className="text-sm font-medium mb-2">
-          Preferred session duration: {preferences.preferredSessionDuration || 10} minutes
+          Preferred session duration: {sessionDuration} minutes
         </h3>
         
         {/* Enhanced session duration visualization with contrast styling */}
         <div className="relative mb-6 mt-4">
           <div className="h-2 w-full rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
             <div 
-              className={`h-full ${getDurationColor(preferences.preferredSessionDuration || 10)} transition-all duration-200`} 
-              style={{ width: `${((preferences.preferredSessionDuration || 10) / 30) * 100}%` }}
+              className={`h-full ${getDurationColor(sessionDuration)} transition-all duration-200`} 
+              style={{ width: `${(sessionDuration / 30) * 100}%` }}
             ></div>
           </div>
           <Slider
-            value={[preferences.preferredSessionDuration || 10]}
+            value={[sessionDuration]}
             onValueChange={handleDurationChange}
             min={3}
             max={30}
