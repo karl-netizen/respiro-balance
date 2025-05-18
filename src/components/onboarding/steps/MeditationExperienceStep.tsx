@@ -16,6 +16,7 @@ const MeditationExperienceStep = () => {
     (preferences.meditationExperience as MeditationExperienceType) || "none"
   );
   const [sessionDuration, setSessionDuration] = useState<number>(preferences.preferredSessionDuration || 10);
+  const [selectedGoals, setSelectedGoals] = useState<string[]>(preferences.meditationGoals || []);
 
   // Ensure state is properly synced with preferences
   useEffect(() => {
@@ -25,7 +26,10 @@ const MeditationExperienceStep = () => {
     if (preferences.preferredSessionDuration) {
       setSessionDuration(preferences.preferredSessionDuration);
     }
-  }, [preferences.meditationExperience, preferences.preferredSessionDuration]);
+    if (preferences.meditationGoals) {
+      setSelectedGoals(preferences.meditationGoals);
+    }
+  }, [preferences.meditationExperience, preferences.preferredSessionDuration, preferences.meditationGoals]);
 
   const handleExperienceChange = (value: string) => {
     // Convert the string value to the specific MeditationExperience type
@@ -41,7 +45,7 @@ const MeditationExperienceStep = () => {
   };
 
   const handleGoalChange = (value: string, checked: boolean) => {
-    let updatedGoals = [...(preferences.meditationGoals || [])];
+    let updatedGoals = [...selectedGoals];
     
     if (checked) {
       updatedGoals.push(value);
@@ -49,7 +53,13 @@ const MeditationExperienceStep = () => {
       updatedGoals = updatedGoals.filter(goal => goal !== value);
     }
     
+    setSelectedGoals(updatedGoals);
     updatePreferences({ meditationGoals: updatedGoals });
+    
+    toast.success(checked ? "Goal added" : "Goal removed", {
+      description: checked ? `Added "${value}" to your goals` : `Removed "${value}" from your goals`,
+      duration: 1500
+    });
   };
 
   const handleDurationChange = (value: number[]) => {
@@ -104,40 +114,40 @@ const MeditationExperienceStep = () => {
           <div className="flex items-center space-x-2">
             <Checkbox 
               id="goal-stress_reduction" 
-              checked={preferences.meditationGoals?.includes("stress_reduction") || false}
+              checked={selectedGoals.includes("stress_reduction")}
               onCheckedChange={(checked) => handleGoalChange("stress_reduction", !!checked)}
             />
-            <label htmlFor="goal-stress_reduction" className="text-sm">
+            <label htmlFor="goal-stress_reduction" className="text-sm cursor-pointer">
               Reduce stress and anxiety
             </label>
           </div>
           <div className="flex items-center space-x-2">
             <Checkbox 
               id="goal-better_focus" 
-              checked={preferences.meditationGoals?.includes("better_focus") || false}
+              checked={selectedGoals.includes("better_focus")}
               onCheckedChange={(checked) => handleGoalChange("better_focus", !!checked)}
             />
-            <label htmlFor="goal-better_focus" className="text-sm">
+            <label htmlFor="goal-better_focus" className="text-sm cursor-pointer">
               Improve focus and concentration
             </label>
           </div>
           <div className="flex items-center space-x-2">
             <Checkbox 
               id="goal-better_sleep" 
-              checked={preferences.meditationGoals?.includes("better_sleep") || false}
+              checked={selectedGoals.includes("better_sleep")}
               onCheckedChange={(checked) => handleGoalChange("better_sleep", !!checked)}
             />
-            <label htmlFor="goal-better_sleep" className="text-sm">
+            <label htmlFor="goal-better_sleep" className="text-sm cursor-pointer">
               Better sleep quality
             </label>
           </div>
           <div className="flex items-center space-x-2">
             <Checkbox 
               id="goal-mindfulness" 
-              checked={preferences.meditationGoals?.includes("mindfulness") || false}
+              checked={selectedGoals.includes("mindfulness")}
               onCheckedChange={(checked) => handleGoalChange("mindfulness", !!checked)}
             />
-            <label htmlFor="goal-mindfulness" className="text-sm">
+            <label htmlFor="goal-mindfulness" className="text-sm cursor-pointer">
               Greater mindfulness in daily life
             </label>
           </div>
