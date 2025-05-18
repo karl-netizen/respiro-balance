@@ -151,7 +151,7 @@ export const useReportExport = (meditationStats: MeditationStats) => {
   };
   
   // Function to share the report
-  const shareReport = () => {
+  const shareReport = async () => {
     // Check if the Web Share API is available
     if (navigator.share) {
       toast.info("Sharing your progress report...");
@@ -163,12 +163,13 @@ export const useReportExport = (meditationStats: MeditationStats) => {
         url: window.location.href,
       };
       
-      navigator.share(shareData)
-        .then(() => toast.success("Shared successfully"))
-        .catch((error) => {
-          console.error("Error sharing:", error);
-          toast.error("Could not share report. Please try again.");
-        });
+      try {
+        await navigator.share(shareData);
+        toast.success("Shared successfully");
+      } catch (error) {
+        console.error("Error sharing:", error);
+        toast.error("Could not share report. Please try again.");
+      }
     } else {
       // Fallback for browsers that don't support the Web Share API
       toast.info("Copying share link to clipboard...");
@@ -176,9 +177,12 @@ export const useReportExport = (meditationStats: MeditationStats) => {
       // In a real app, you'd generate a shareable URL
       const dummyShareableLink = window.location.href;
       
-      navigator.clipboard.writeText(dummyShareableLink)
-        .then(() => toast.success("Link copied to clipboard"))
-        .catch(() => toast.error("Could not copy to clipboard"));
+      try {
+        await navigator.clipboard.writeText(dummyShareableLink);
+        toast.success("Link copied to clipboard");
+      } catch (error) {
+        toast.error("Could not copy to clipboard");
+      }
     }
   };
   
