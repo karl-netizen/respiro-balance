@@ -283,6 +283,50 @@ export type Database = {
           },
         ]
       }
+      subscription_history: {
+        Row: {
+          changed_at: string | null
+          id: string
+          metadata: Json | null
+          new_status: string | null
+          new_tier: string | null
+          previous_status: string | null
+          previous_tier: string | null
+          reason: string | null
+          user_id: string | null
+        }
+        Insert: {
+          changed_at?: string | null
+          id?: string
+          metadata?: Json | null
+          new_status?: string | null
+          new_tier?: string | null
+          previous_status?: string | null
+          previous_tier?: string | null
+          reason?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          changed_at?: string | null
+          id?: string
+          metadata?: Json | null
+          new_status?: string | null
+          new_tier?: string | null
+          previous_status?: string | null
+          previous_tier?: string | null
+          reason?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscription_history_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_achievements: {
         Row: {
           achievement_key: string
@@ -448,6 +492,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      has_exceeded_free_limits: {
+        Args: { user_id_param: string }
+        Returns: boolean
+      }
+      has_premium_access: {
+        Args: { user_id_param: string }
+        Returns: boolean
+      }
       increment_meditation_usage: {
         Args: { user_id_param: string; minutes_used: number }
         Returns: undefined

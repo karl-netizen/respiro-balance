@@ -1,12 +1,7 @@
 
-// Follow this setup guide to integrate the Deno runtime and Stripe in your Supabase project:
-// https://supabase.com/docs/guides/functions/integrations/stripe
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1'
 import Stripe from 'https://esm.sh/stripe@12.13.0?dts'
-
-// This is the Stripe webhook handler for subscription events
 
 const handler = async (req: Request) => {
   try {
@@ -74,6 +69,22 @@ const handler = async (req: Request) => {
           })
           .eq('id', userId)
         
+        // Add an entry to subscription history
+        await supabaseAdmin
+          .from('subscription_history')
+          .insert({
+            user_id: userId,
+            previous_tier: 'free',
+            new_tier: tier,
+            previous_status: 'inactive',
+            new_status: subscription.status,
+            reason: 'new_subscription',
+            metadata: {
+              checkout_session_id: checkoutSession.id,
+              subscription_id: subscriptionId
+            }
+          })
+        
         break
       }
       
@@ -86,7 +97,7 @@ const handler = async (req: Request) => {
         // Find user with this customer ID
         const { data: user } = await supabaseAdmin
           .from('user_profiles')
-          .select('id')
+          .select('id, subscription_tier')
           .eq('subscription_id', customerId)
           .single()
         
@@ -112,7 +123,7 @@ const handler = async (req: Request) => {
         // Find user with this customer ID
         const { data: user } = await supabaseAdmin
           .from('user_profiles')
-          .select('id')
+          .select('id, subscription_tier')
           .eq('subscription_id', customerId)
           .single()
         
@@ -127,6 +138,21 @@ const handler = async (req: Request) => {
               meditation_minutes_limit: 60
             })
             .eq('id', user.id)
+          
+          // Add an entry to subscription history
+          await supabaseAdmin
+            .from('subscription_history')
+            .insert({
+              user_id: user.id,
+              previous_tier: user.subscription_tier,
+              new_tier: 'free',
+              previous_status: 'active',
+              new_status: 'canceled',
+              reason: 'subscription_canceled',
+              metadata: {
+                subscription_id: subscription.id
+              }
+            })
         }
         
         break

@@ -4,6 +4,7 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from './useAuth';
 import { UserProfile } from '@/types/supabase';
 import { toast } from 'sonner';
+import { redirectToStripePayment, openStripeManagementPortal, checkSubscriptionStatus } from '@/lib/stripePayment';
 
 export type SubscriptionTier = 'free' | 'premium' | 'team' | 'enterprise';
 
@@ -27,6 +28,19 @@ export function useSubscription() {
     }
 
     return data;
+  };
+
+  // Check subscription status with Stripe
+  const verifySubscriptionWithStripe = async (): Promise<void> => {
+    if (!user) return;
+    
+    try {
+      await checkSubscriptionStatus();
+      // Invalidate the query to refresh data after checking with Stripe
+      queryClient.invalidateQueries({ queryKey: ['subscription', user.id] });
+    } catch (error) {
+      console.error('Error verifying subscription with Stripe:', error);
+    }
   };
 
   // Check if user has an active premium subscription
@@ -69,43 +83,36 @@ export function useSubscription() {
   };
 
   // Redirect to checkout for upgrading to premium
-  const startPremiumCheckout = async (): Promise<string> => {
-    if (!user) throw new Error('User not authenticated');
+  const startPremiumCheckout = async (): Promise<void> => {
+    if (!user) {
+      toast.error('Authentication required', {
+        description: 'Please sign in to upgrade your subscription'
+      });
+      return;
+    }
 
     try {
-      const { data, error } = await supabase.functions.invoke('create-checkout-session', {
-        body: {
-          userId: user.id,
-          tier: 'premium'
-        },
-      });
-
-      if (error) throw error;
-      return data.url;
+      await redirectToStripePayment('premium');
     } catch (error) {
       console.error('Error creating checkout session:', error);
       toast.error('Could not start checkout process. Please try again.');
-      throw error;
     }
   };
 
   // Manage subscription (customer portal)
-  const manageSubscription = async (): Promise<string> => {
-    if (!user) throw new Error('User not authenticated');
+  const manageSubscription = async (): Promise<void> => {
+    if (!user) {
+      toast.error('Authentication required', {
+        description: 'Please sign in to manage your subscription'
+      });
+      return;
+    }
 
     try {
-      const { data, error } = await supabase.functions.invoke('create-portal-session', {
-        body: {
-          userId: user.id,
-        },
-      });
-
-      if (error) throw error;
-      return data.url;
+      await openStripeManagementPortal();
     } catch (error) {
       console.error('Error creating portal session:', error);
       toast.error('Could not open subscription management. Please try again.');
-      throw error;
     }
   };
 
@@ -115,6 +122,14 @@ export function useSubscription() {
     queryFn: fetchSubscription,
     enabled: !!user,
     staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+
+  // Mutation for verifying subscription with Stripe
+  const verifySubscriptionMutation = useMutation({
+    mutationFn: verifySubscriptionWithStripe,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['subscription', user?.id] });
+    },
   });
 
   const updateUsageMutation = useMutation({
@@ -132,5 +147,7 @@ export function useSubscription() {
     startPremiumCheckout,
     manageSubscription,
     updateUsage: updateUsageMutation.mutate,
+    verifySubscription: verifySubscriptionMutation.mutate,
+    refetchSubscription: subscriptionQuery.refetch,
   };
 }

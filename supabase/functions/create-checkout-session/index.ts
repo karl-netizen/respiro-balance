@@ -1,7 +1,4 @@
 
-// Follow this setup guide to integrate the Deno runtime and Stripe in your Supabase project:
-// https://supabase.com/docs/guides/functions/integrations/stripe
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1'
 import Stripe from 'https://esm.sh/stripe@12.13.0?dts'
@@ -18,50 +15,70 @@ const handler = async (req: Request) => {
   }
 
   try {
-    // Create Supabase client
+    const { userId, tier } = await req.json()
+    
+    // Create Supabase admin client
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
-
-    // Get request data
-    const { userId, tier = 'premium' } = await req.json()
-
+    
     // Get user details
     const { data: user, error: userError } = await supabaseAdmin
       .from('user_profiles')
       .select('email')
       .eq('id', userId)
       .single()
-
+    
     if (userError || !user) {
       return new Response(
         JSON.stringify({ error: 'User not found' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
-
+    
     // Initialize Stripe
     const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') ?? '', {
       apiVersion: '2023-10-16',
     })
-
-    // Set price ID based on tier
-    let priceId = ''
-    switch (tier) {
-      case 'premium':
-        priceId = Deno.env.get('STRIPE_PREMIUM_PRICE_ID') ?? ''
-        break
-      case 'team':
-        priceId = Deno.env.get('STRIPE_TEAM_PRICE_ID') ?? ''
-        break
-      default:
-        priceId = Deno.env.get('STRIPE_PREMIUM_PRICE_ID') ?? ''
+    
+    // Check if user already has a Stripe customer ID
+    const { data: customers } = await stripe.customers.list({
+      email: user.email,
+      limit: 1,
+    })
+    
+    let customerId: string
+    if (customers && customers.data.length > 0) {
+      customerId = customers.data[0].id
+    } else {
+      // Create a new customer
+      const customer = await stripe.customers.create({
+        email: user.email,
+        metadata: {
+          userId,
+        },
+      })
+      customerId = customer.id
     }
-
-    // Create Stripe checkout session
+    
+    // Determine price ID based on tier
+    let priceId: string
+    if (tier === 'premium') {
+      priceId = Deno.env.get('STRIPE_PREMIUM_PRICE_ID') ?? 'price_1NVnftLzO76QiexqU8H6gezL' // Default to a test price if not set
+    } else if (tier === 'team') {
+      priceId = Deno.env.get('STRIPE_TEAM_PRICE_ID') ?? 'price_1NVngGLzO76QiexqKxD9LOxU' // Default to a test price if not set
+    } else {
+      return new Response(
+        JSON.stringify({ error: 'Invalid subscription tier' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+    
+    // Create a Checkout session
     const session = await stripe.checkout.sessions.create({
-      customer_email: user.email,
+      customer: customerId,
+      payment_method_types: ['card'],
       line_items: [
         {
           price: priceId,
@@ -69,18 +86,17 @@ const handler = async (req: Request) => {
         },
       ],
       mode: 'subscription',
-      success_url: `${Deno.env.get('SITE_URL')}/dashboard?subscription=success`,
-      cancel_url: `${Deno.env.get('SITE_URL')}/subscription?subscription=canceled`,
+      success_url: `${req.headers.get('origin')}/dashboard?subscription=success`,
+      cancel_url: `${req.headers.get('origin')}/subscription?canceled=true`,
       metadata: {
-        userId: userId,
-        tier: tier,
+        userId,
+        tier,
       },
     })
 
-    // Return checkout URL
     return new Response(
       JSON.stringify({ url: session.url }),
-      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (error) {
     console.error('Error creating checkout session:', error)
