@@ -17,6 +17,7 @@ import MorningRitual from './pages/MorningRitual';
 import Account from './pages/Account';
 import FAQ from './pages/FAQ';
 import OnboardingPage from './pages/OnboardingPage';
+import SubscriptionPage from './pages/SubscriptionPage';
 import NotFound from './pages/NotFound';
 import ViewportToggle from './components/layout/ViewportToggle';
 import Index from './pages/Index';
@@ -42,6 +43,7 @@ function App() {
         <Route path="/account" element={<Account />} />
         <Route path="/faq" element={<FAQ />} />
         <Route path="/onboarding" element={<OnboardingPage />} />
+        <Route path="/subscription" element={<SubscriptionPage />} />
         {/* Add a catch-all route that displays the NotFound component */}
         <Route path="*" element={<NotFound />} />
       </Routes>

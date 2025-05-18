@@ -17,7 +17,7 @@ const LandingPage = () => {
     if (user) {
       navigate('/dashboard');
     } else {
-      navigate('/login');
+      navigate('/onboarding');
     }
   };
   

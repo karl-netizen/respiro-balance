@@ -17,23 +17,23 @@ const PricingTiers = () => {
     setIsLoading(true);
     
     try {
+      // For free plan, redirect to onboarding or dashboard based on auth status
       if (user) {
         navigate('/dashboard');
       } else {
-        // Show toast and redirect to dashboard for demo purposes
-        toast.info("Demo Mode", {
-          description: "Bypassing login for demonstration"
-        });
-        setTimeout(() => {
-          navigate('/dashboard');
-        }, 500); // Small delay to show loading state
+        // For demo purposes, redirect to onboarding without requiring login
+        navigate('/onboarding');
       }
+      
+      toast.success("Free plan selected!", {
+        description: "Welcome to Respiro Balance"
+      });
     } catch (error) {
       console.error("Navigation error:", error);
       toast.error("Navigation failed. Please try again.");
     } finally {
-      // If navigation doesn't happen within 2 seconds, reset loading state
-      setTimeout(() => setIsLoading(false), 2000);
+      // Reset loading state
+      setTimeout(() => setIsLoading(false), 500);
     }
   };
   
@@ -120,7 +120,10 @@ const PricingTiers = () => {
               </ul>
             </CardContent>
             <CardFooter>
-              <PaymentButton className="w-full bg-respiro-dark hover:bg-respiro-darker text-white font-medium">
+              <PaymentButton 
+                className="w-full bg-respiro-dark hover:bg-respiro-darker text-white font-medium"
+                openInNewTab={false}
+              >
                 Upgrade Now
               </PaymentButton>
             </CardFooter>
@@ -153,7 +156,14 @@ const PricingTiers = () => {
               <Button 
                 variant="outline" 
                 className="w-full text-white bg-respiro-dark border-respiro-dark hover:bg-respiro-darker font-medium"
-                onClick={() => window.location.href = "mailto:sales@respirobalance.com?subject=Team Plan Inquiry"}
+                onClick={() => {
+                  toast.info("Contact Sales", {
+                    description: "For team plans, please contact our sales team."
+                  });
+                  
+                  // Email client will open in new tab
+                  window.open("mailto:sales@respirobalance.com?subject=Team Plan Inquiry", "_blank");
+                }}
               >
                 Contact Sales
               </Button>
