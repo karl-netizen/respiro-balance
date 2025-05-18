@@ -7,7 +7,7 @@ interface OnboardingActionsProps {
   totalSteps: number;
   onNext: () => void;
   onBack: () => void;
-  onSkip: () => void;
+  onSkip: () => void;  // We'll keep this in the interface to avoid changing all implementations
 }
 
 const OnboardingActions = ({
@@ -15,7 +15,7 @@ const OnboardingActions = ({
   totalSteps,
   onNext,
   onBack,
-  onSkip,
+  onSkip,  // Kept for interface compatibility but not used
 }: OnboardingActionsProps) => {
   const isFirstStep = currentStep === 0;
   const isLastStep = currentStep === totalSteps - 1;
@@ -34,17 +34,7 @@ const OnboardingActions = ({
           </Button>
         )}
       </div>
-      <div className="space-x-2">
-        {!isLastStep && (
-          <Button 
-            type="button" 
-            variant="ghost" 
-            onClick={onSkip}
-            className="font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          >
-            Skip
-          </Button>
-        )}
+      <div>
         <Button 
           type="button"
           onClick={onNext}
