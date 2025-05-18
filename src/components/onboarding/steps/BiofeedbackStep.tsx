@@ -1,25 +1,59 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useUserPreferences } from "@/context";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 const BiofeedbackStep = () => {
   const { preferences, updatePreferences } = useUserPreferences();
+  
+  // Create local state to track UI selections
+  const [hasWearableDevice, setHasWearableDevice] = useState<boolean>(preferences.hasWearableDevice || false);
+  const [wearableDeviceType, setWearableDeviceType] = useState<string>(preferences.wearableDeviceType || "");
+  const [metricsOfInterest, setMetricsOfInterest] = useState<string[]>(preferences.metricsOfInterest || []);
+  
+  // Sync local state with preferences when they change
+  useEffect(() => {
+    if (preferences.hasWearableDevice !== undefined) {
+      setHasWearableDevice(preferences.hasWearableDevice);
+    }
+    if (preferences.wearableDeviceType) {
+      setWearableDeviceType(preferences.wearableDeviceType);
+    }
+    if (preferences.metricsOfInterest) {
+      setMetricsOfInterest(preferences.metricsOfInterest);
+    }
+  }, [preferences.hasWearableDevice, preferences.wearableDeviceType, preferences.metricsOfInterest]);
 
   const handleWearableChange = (value: string) => {
-    updatePreferences({ hasWearableDevice: value === "yes" });
+    const hasDevice = value === "yes";
+    setHasWearableDevice(hasDevice);
+    updatePreferences({ hasWearableDevice: hasDevice });
+    
+    toast.success("Preference updated", {
+      description: hasDevice ? "Wearable device preference set to yes" : "Wearable device preference set to no",
+      duration: 1500
+    });
   };
 
   const handleWearableTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    updatePreferences({ wearableDeviceType: e.target.value });
+    const deviceType = e.target.value;
+    setWearableDeviceType(deviceType);
+    updatePreferences({ wearableDeviceType: deviceType });
+    
+    if (deviceType.trim()) {
+      toast.success("Device type updated", {
+        description: `Your wearable type has been set to ${deviceType}`,
+        duration: 1500
+      });
+    }
   };
 
   const handleMetricChange = (value: string, checked: boolean) => {
-    // Ensure metricsOfInterest is an array before using it
-    let updatedMetrics = [...(preferences.metricsOfInterest || [])];
+    let updatedMetrics = [...metricsOfInterest];
     
     if (checked) {
       updatedMetrics.push(value);
@@ -27,7 +61,13 @@ const BiofeedbackStep = () => {
       updatedMetrics = updatedMetrics.filter(metric => metric !== value);
     }
     
+    setMetricsOfInterest(updatedMetrics);
     updatePreferences({ metricsOfInterest: updatedMetrics });
+    
+    toast.success(checked ? "Metric added" : "Metric removed", {
+      description: checked ? `Added "${value}" to your metrics` : `Removed "${value}" from your metrics`,
+      duration: 1500
+    });
   };
 
   return (
@@ -35,7 +75,7 @@ const BiofeedbackStep = () => {
       <div>
         <h3 className="text-sm font-medium mb-3">Do you use a wearable device (e.g., smartwatch, fitness tracker)?</h3>
         <RadioGroup 
-          value={preferences.hasWearableDevice ? "yes" : "no"} 
+          value={hasWearableDevice ? "yes" : "no"} 
           onValueChange={handleWearableChange}
           className="flex flex-col space-y-2"
         >
@@ -50,11 +90,11 @@ const BiofeedbackStep = () => {
         </RadioGroup>
       </div>
 
-      {preferences.hasWearableDevice && (
+      {hasWearableDevice && (
         <div>
           <h3 className="text-sm font-medium mb-3">What type/brand of wearable do you use?</h3>
           <Input
-            value={preferences.wearableDeviceType || ""}
+            value={wearableDeviceType}
             onChange={handleWearableTypeChange}
             placeholder="e.g., Apple Watch, Fitbit, Garmin, etc."
           />
@@ -67,60 +107,60 @@ const BiofeedbackStep = () => {
           <div className="flex items-center space-x-2">
             <Checkbox 
               id="metric-stress" 
-              checked={preferences.metricsOfInterest?.includes("stress") || false}
+              checked={metricsOfInterest.includes("stress")}
               onCheckedChange={(checked) => handleMetricChange("stress", !!checked)}
             />
-            <label htmlFor="metric-stress" className="text-sm">
+            <label htmlFor="metric-stress" className="text-sm cursor-pointer">
               Stress levels
             </label>
           </div>
           <div className="flex items-center space-x-2">
             <Checkbox 
               id="metric-focus" 
-              checked={preferences.metricsOfInterest?.includes("focus") || false}
+              checked={metricsOfInterest.includes("focus")}
               onCheckedChange={(checked) => handleMetricChange("focus", !!checked)}
             />
-            <label htmlFor="metric-focus" className="text-sm">
+            <label htmlFor="metric-focus" className="text-sm cursor-pointer">
               Focus quality
             </label>
           </div>
           <div className="flex items-center space-x-2">
             <Checkbox 
               id="metric-mood" 
-              checked={preferences.metricsOfInterest?.includes("mood") || false}
+              checked={metricsOfInterest.includes("mood")}
               onCheckedChange={(checked) => handleMetricChange("mood", !!checked)}
             />
-            <label htmlFor="metric-mood" className="text-sm">
+            <label htmlFor="metric-mood" className="text-sm cursor-pointer">
               Mood patterns
             </label>
           </div>
           <div className="flex items-center space-x-2">
             <Checkbox 
               id="metric-sleep" 
-              checked={preferences.metricsOfInterest?.includes("sleep") || false}
+              checked={metricsOfInterest.includes("sleep")}
               onCheckedChange={(checked) => handleMetricChange("sleep", !!checked)}
             />
-            <label htmlFor="metric-sleep" className="text-sm">
+            <label htmlFor="metric-sleep" className="text-sm cursor-pointer">
               Sleep quality
             </label>
           </div>
           <div className="flex items-center space-x-2">
             <Checkbox 
               id="metric-breathing" 
-              checked={preferences.metricsOfInterest?.includes("breathing") || false}
+              checked={metricsOfInterest.includes("breathing")}
               onCheckedChange={(checked) => handleMetricChange("breathing", !!checked)}
             />
-            <label htmlFor="metric-breathing" className="text-sm">
+            <label htmlFor="metric-breathing" className="text-sm cursor-pointer">
               Breathing exercises
             </label>
           </div>
           <div className="flex items-center space-x-2">
             <Checkbox 
               id="metric-session_consistency" 
-              checked={preferences.metricsOfInterest?.includes("session_consistency") || false}
+              checked={metricsOfInterest.includes("session_consistency")}
               onCheckedChange={(checked) => handleMetricChange("session_consistency", !!checked)}
             />
-            <label htmlFor="metric-session_consistency" className="text-sm">
+            <label htmlFor="metric-session_consistency" className="text-sm cursor-pointer">
               Session consistency
             </label>
           </div>
