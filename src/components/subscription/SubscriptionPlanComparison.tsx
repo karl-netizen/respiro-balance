@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { SubscriptionCard } from './SubscriptionCard';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -38,7 +39,11 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
       // Otherwise use our function which will redirect to checkout
       if (tier === 'premium') {
         const checkoutUrl = await startPremiumCheckout();
-        window.location.href = checkoutUrl;
+        if (checkoutUrl) {
+          window.location.href = checkoutUrl;
+        } else {
+          throw new Error("Failed to get checkout URL");
+        }
       }
     } catch (error) {
       toast.error("Checkout failed", {
@@ -51,7 +56,11 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
   const handleManageSubscription = async () => {
     try {
       const portalUrl = await manageSubscription();
-      window.location.href = portalUrl;
+      if (portalUrl) {
+        window.location.href = portalUrl;
+      } else {
+        throw new Error("Failed to get portal URL");
+      }
     } catch (error) {
       toast.error("Failed to open subscription management", {
         description: "There was an error accessing your subscription. Please try again."

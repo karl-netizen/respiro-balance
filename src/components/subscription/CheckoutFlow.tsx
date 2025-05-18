@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -29,7 +28,11 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ onCancel, onComplete }) => 
     try {
       // Redirect to Stripe checkout
       const checkoutUrl = await startPremiumCheckout();
-      window.location.href = checkoutUrl;
+      if (checkoutUrl) {
+        window.location.href = checkoutUrl;
+      } else {
+        throw new Error("Failed to get checkout URL");
+      }
     } catch (error) {
       console.error("Checkout error:", error);
       setIsProcessing(false);
