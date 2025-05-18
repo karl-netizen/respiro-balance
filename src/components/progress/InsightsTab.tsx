@@ -1,6 +1,6 @@
 
-import React from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import React, { useState } from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/card";
 import { useUserPreferences } from "@/context";
 import { useBiometricData } from "@/hooks/useBiometricData";
 import { useMeditationStats } from './useMeditationStats';
@@ -9,15 +9,22 @@ import {
   CorrelationsSection,
   InsightsSection
 } from './insights';
+import ShareableReport from './ShareableReport';
 
 const InsightsTab: React.FC = () => {
   const { meditationStats } = useMeditationStats();
   const { preferences } = useUserPreferences();
   const { biometricData } = useBiometricData();
+  const [activeSubTab, setActiveSubTab] = useState<string>("monthly");
   
   return (
     <div className="space-y-6">
-      <Tabs defaultValue="monthly" className="w-full">
+      <Tabs 
+        defaultValue="monthly" 
+        value={activeSubTab} 
+        onValueChange={setActiveSubTab} 
+        className="w-full"
+      >
         <TabsList className="grid w-full grid-cols-3 mb-8">
           <TabsTrigger value="monthly">Monthly Trends</TabsTrigger>
           <TabsTrigger value="correlations">Correlations</TabsTrigger>
@@ -33,7 +40,10 @@ const InsightsTab: React.FC = () => {
         </TabsContent>
         
         <TabsContent value="insights" className="mt-0">
-          <InsightsSection preferences={preferences} />
+          <div className="space-y-6">
+            <InsightsSection preferences={preferences} />
+            <ShareableReport />
+          </div>
         </TabsContent>
       </Tabs>
     </div>

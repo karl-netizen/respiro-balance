@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { MeditationStats } from '@/components/progress/types/meditationStats';
-import { Brain, Activity, TrendingUp, Moon, Sun, Clock } from "lucide-react";
+import { format } from 'date-fns';
 
 interface ReportContentProps {
   meditationStats: MeditationStats;
@@ -9,147 +9,88 @@ interface ReportContentProps {
 }
 
 const ReportContent: React.FC<ReportContentProps> = ({ meditationStats, userName }) => {
-  const today = new Date().toLocaleDateString();
-  
-  // Helper function to get personalized insights
-  const getPersonalizedInsights = () => {
-    const insights = [];
-    
-    // Best time insight
-    insights.push({
-      title: "Best Time to Meditate",
-      description: "Based on your patterns, your optimal meditation time is in the morning (7-8am).",
-      icon: <Brain className="h-5 w-5 text-primary" />,
-      category: "Timing"
-    });
-    
-    // Consistency insight
-    if (meditationStats.weeklyCompleted > 0) {
-      const consistencyRate = (meditationStats.weeklyCompleted / meditationStats.weeklyGoal) * 100;
-      
-      if (consistencyRate < 50) {
-        insights.push({
-          title: "Consistency Opportunity",
-          description: `You're currently at ${Math.round(consistencyRate)}% of your weekly goal. Small increases can lead to bigger benefits.`,
-          icon: <Clock className="h-5 w-5 text-primary" />,
-          category: "Consistency"
-        });
-      } else {
-        insights.push({
-          title: "Consistency Champion",
-          description: `Great job maintaining ${Math.round(consistencyRate)}% of your weekly meditation goal!`,
-          icon: <Activity className="h-5 w-5 text-primary" />,
-          category: "Consistency"
-        });
-      }
-    }
-    
-    // Focus improvement insight
-    insights.push({
-      title: "Focus Improvement",
-      description: "Your sessions longer than 15 minutes correlate with better focus scores.",
-      icon: <TrendingUp className="h-5 w-5 text-primary" />,
-      category: "Focus"
-    });
-    
-    return insights;
-  };
-  
-  const personalizedInsights = getPersonalizedInsights();
+  const today = format(new Date(), 'MMMM d, yyyy');
   
   return (
-    <div className="p-6 bg-white rounded-lg shadow-sm" style={{ width: '800px', minHeight: '600px' }}>
-      <div className="flex justify-between items-center mb-6 border-b pb-4">
-        <h1 className="text-2xl font-bold text-primary">Meditation Progress Report</h1>
-        <div className="text-sm text-muted-foreground">Generated on: {today}</div>
+    <div className="p-8 max-w-4xl mx-auto">
+      <div className="text-center mb-6">
+        <h1 className="text-3xl font-bold">Meditation Progress Report</h1>
+        <p className="text-muted-foreground">{userName} | {today}</p>
       </div>
       
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold mb-2">User: {userName}</h2>
-        <p className="text-muted-foreground">Summary of your meditation journey</p>
-      </div>
-      
-      <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="bg-secondary/30 p-4 rounded-md">
-          <h3 className="font-medium text-sm text-muted-foreground">Total Sessions</h3>
-          <p className="text-2xl font-bold">{meditationStats.totalSessions}</p>
-        </div>
-        <div className="bg-secondary/30 p-4 rounded-md">
-          <h3 className="font-medium text-sm text-muted-foreground">Total Minutes</h3>
-          <p className="text-2xl font-bold">{meditationStats.totalMinutes}</p>
-        </div>
-        <div className="bg-secondary/30 p-4 rounded-md">
-          <h3 className="font-medium text-sm text-muted-foreground">Current Streak</h3>
-          <p className="text-2xl font-bold">{meditationStats.streak} days</p>
-        </div>
-      </div>
-      
-      <div className="mb-6">
-        <h3 className="text-lg font-semibold mb-3">Your Meditation Patterns</h3>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-secondary/20 p-4 rounded-md">
-            <h4 className="font-medium text-sm mb-2">Weekly Goal Progress</h4>
-            <div className="flex items-end gap-2">
-              <div className="text-2xl font-bold">{meditationStats.weeklyCompleted}/{meditationStats.weeklyGoal}</div>
-              <div className="text-sm text-muted-foreground">sessions completed</div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div className="border rounded-lg p-6">
+          <h3 className="text-xl font-semibold mb-4">Summary Statistics</h3>
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <span>Total Sessions:</span>
+              <span className="font-medium">{meditationStats.totalSessions}</span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+            <div className="flex justify-between">
+              <span>Total Minutes:</span>
+              <span className="font-medium">{meditationStats.totalMinutes}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Current Streak:</span>
+              <span className="font-medium">{meditationStats.streak} days</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Longest Streak:</span>
+              <span className="font-medium">{meditationStats.longestStreak} days</span>
+            </div>
+          </div>
+        </div>
+        
+        <div className="border rounded-lg p-6">
+          <h3 className="text-xl font-semibold mb-4">Weekly Progress</h3>
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <span>Sessions This Week:</span>
+              <span className="font-medium">{meditationStats.sessionsThisWeek}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Weekly Goal:</span>
+              <span className="font-medium">{meditationStats.weeklyGoal} sessions</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Completion Rate:</span>
+              <span className="font-medium">{meditationStats.completionRate}%</span>
+            </div>
+          </div>
+          
+          <div className="mt-4 pt-4 border-t">
+            <div className="w-full bg-gray-200 rounded-full h-2.5">
               <div 
                 className="bg-primary h-2.5 rounded-full" 
-                style={{ width: `${(meditationStats.weeklyCompleted / meditationStats.weeklyGoal) * 100}%` }}
+                style={{ width: `${Math.min(100, (meditationStats.sessionsThisWeek / meditationStats.weeklyGoal) * 100)}%` }}
               ></div>
             </div>
-          </div>
-          <div className="bg-secondary/20 p-4 rounded-md">
-            <h4 className="font-medium text-sm mb-2">Consistency Score</h4>
-            <div className="text-2xl font-bold">{Math.round((meditationStats.streak / 7) * 100)}%</div>
-            <p className="text-xs text-muted-foreground mt-1">Based on your current streak</p>
-          </div>
-        </div>
-      </div>
-      
-      <div className="mb-6">
-        <h3 className="text-lg font-semibold mb-3">Personalized Insights</h3>
-        <div className="space-y-3">
-          {personalizedInsights.map((insight, i) => (
-            <div key={i} className="flex items-start p-3 bg-secondary/20 rounded-md">
-              <div className="mr-3 p-2 bg-primary/10 rounded-full shrink-0">
-                {insight.icon}
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h4 className="font-medium">{insight.title}</h4>
-                  <span className="text-xs bg-primary/10 px-2 py-0.5 rounded-full">
-                    {insight.category}
-                  </span>
-                </div>
-                <p className="text-sm text-muted-foreground">{insight.description}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-      
-      <div className="mb-6">
-        <h3 className="text-lg font-semibold mb-3">Focus & Stress Correlation</h3>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-secondary/30 p-4 rounded-md">
-            <h4 className="font-medium text-sm mb-1">Focus Score with Meditation</h4>
-            <p className="text-2xl font-bold">{meditationStats.focusCorrelation.withMeditation}%</p>
-            <p className="text-xs text-muted-foreground mt-1">vs. {meditationStats.focusCorrelation.withoutMeditation}% without meditation</p>
-          </div>
-          <div className="bg-secondary/30 p-4 rounded-md">
-            <h4 className="font-medium text-sm mb-1">Stress Level Reduction</h4>
-            <p className="text-2xl font-bold">
-              {meditationStats.moodCorrelation.withMeditation - meditationStats.moodCorrelation.withoutMeditation}%
+            <p className="text-sm text-center mt-2">
+              {meditationStats.sessionsThisWeek} of {meditationStats.weeklyGoal} sessions completed
             </p>
-            <p className="text-xs text-muted-foreground mt-1">Average improvement after sessions</p>
           </div>
         </div>
       </div>
       
-      <div className="text-center text-sm text-muted-foreground mt-8 pt-4 border-t">
-        <p>Generated by MindfulMe Meditation App</p>
+      {meditationStats.achievements && meditationStats.achievements.length > 0 && (
+        <div className="border rounded-lg p-6 mb-8">
+          <h3 className="text-xl font-semibold mb-4">Recent Achievements</h3>
+          <ul className="list-disc pl-6 space-y-2">
+            {meditationStats.achievements
+              .filter(achievement => achievement.unlocked)
+              .slice(0, 5)
+              .map((achievement, index) => (
+                <li key={index} className="text-base">
+                  {achievement.name} - {achievement.description}
+                </li>
+              ))}
+          </ul>
+        </div>
+      )}
+      
+      <div className="text-center text-sm text-muted-foreground mt-12">
+        <p>Generated by Respiro Meditation App</p>
+        <p>{format(new Date(), 'MMMM d, yyyy h:mm a')}</p>
       </div>
     </div>
   );
