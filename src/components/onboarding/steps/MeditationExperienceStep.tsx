@@ -8,12 +8,12 @@ import { Slider } from "@/components/ui/slider";
 import { toast } from "sonner";
 
 // Define the correct type that matches your preferences interface
-type MeditationExperienceType = "none" | "beginner" | "intermediate" | "advanced";
+type MeditationExperienceType = "beginner" | "intermediate" | "advanced";
 
 const MeditationExperienceStep = () => {
   const { preferences, updatePreferences } = useUserPreferences();
   const [selectedExperience, setSelectedExperience] = useState<MeditationExperienceType>(
-    (preferences.meditationExperience as MeditationExperienceType) || "none"
+    (preferences.meditationExperience as MeditationExperienceType) || "beginner"
   );
   const [sessionDuration, setSessionDuration] = useState<number>(preferences.preferredSessionDuration || 10);
   const [selectedGoals, setSelectedGoals] = useState<string[]>(preferences.meditationGoals || []);
@@ -89,10 +89,6 @@ const MeditationExperienceStep = () => {
           onValueChange={handleExperienceChange}
           className="flex flex-col space-y-2"
         >
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="none" id="exp-none" />
-            <Label htmlFor="exp-none">None - I've never meditated before</Label>
-          </div>
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="beginner" id="exp-beginner" />
             <Label htmlFor="exp-beginner">Beginner - I've tried it a few times</Label>

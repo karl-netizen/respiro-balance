@@ -9,6 +9,8 @@ import { toast } from "sonner";
 const NotificationPreferencesStep = () => {
   const { preferences, updatePreferences } = useUserPreferences();
   
+  console.log("NotificationPreferencesStep - Current preferences:", preferences);
+  
   // Local state for notification toggles
   const [sessionReminders, setSessionReminders] = useState<boolean>(
     preferences.enableSessionReminders || false
@@ -25,6 +27,7 @@ const NotificationPreferencesStep = () => {
   
   // Sync local state with preferences when they change
   useEffect(() => {
+    console.log("NotificationPreferencesStep - useEffect triggered with preferences:", preferences);
     setSessionReminders(preferences.enableSessionReminders || false);
     setProgressUpdates(preferences.enableProgressUpdates || false);
     setAchievementNotifications(preferences.enableProgressUpdates || false);
@@ -37,6 +40,7 @@ const NotificationPreferencesStep = () => {
 
   // Handlers for toggle changes
   const handleSessionRemindersChange = (checked: boolean) => {
+    console.log("Session reminders changed to:", checked);
     setSessionReminders(checked);
     updatePreferences({ enableSessionReminders: checked });
     
@@ -49,6 +53,7 @@ const NotificationPreferencesStep = () => {
   };
 
   const handleProgressUpdatesChange = (checked: boolean) => {
+    console.log("Progress updates changed to:", checked);
     setProgressUpdates(checked);
     updatePreferences({ enableProgressUpdates: checked });
     
@@ -61,6 +66,7 @@ const NotificationPreferencesStep = () => {
   };
 
   const handleAchievementNotificationsChange = (checked: boolean) => {
+    console.log("Achievement notifications changed to:", checked);
     setAchievementNotifications(checked);
     updatePreferences({ enableProgressUpdates: checked }); // Use the same preference for now
     
@@ -73,6 +79,7 @@ const NotificationPreferencesStep = () => {
   };
 
   const handleRecommendationsChange = (checked: boolean) => {
+    console.log("Recommendations changed to:", checked);
     setRecommendations(checked);
     updatePreferences({ enableRecommendations: checked });
     
@@ -83,6 +90,13 @@ const NotificationPreferencesStep = () => {
       duration: 1500
     });
   };
+
+  console.log("NotificationPreferencesStep - Local state:", {
+    sessionReminders,
+    progressUpdates,
+    achievementNotifications,
+    recommendations
+  });
 
   return (
     <div className="space-y-6">
