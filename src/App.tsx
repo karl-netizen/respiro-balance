@@ -1,6 +1,7 @@
+
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 import { AuthProvider } from './hooks/useAuth';
 import Dashboard from './pages/Dashboard';
@@ -9,9 +10,9 @@ import Register from './pages/Register';
 import Settings from './pages/Settings';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
-import MeditationPage from './pages/MeditationPage';
-import BreathingExercisesPage from './pages/BreathingExercisesPage';
-import UserPreferencesProvider from './context/UserPreferencesContext';
+import MeditationPage from './pages/Meditate';
+import BreathingExercisesPage from './pages/BreathingExercise';
+import { UserPreferencesProvider } from './context/UserPreferencesProvider';
 import SettingsPage from './pages/SettingsPage';
 import SubscriptionPage from './pages/SubscriptionPage';
 import { SubscriptionProvider } from '@/components/subscription/SubscriptionProvider';

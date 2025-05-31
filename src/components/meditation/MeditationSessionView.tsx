@@ -1,236 +1,228 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Clock, CalendarDays, Heart, Activity, Flame } from 'lucide-react';
-import { format, formatDuration, intervalToDuration } from 'date-fns';
-import { supabase } from '@/lib/supabase';
-import { MeditationSession, SessionBiometrics } from '@/types/supabase';
-import { SubscriptionGate } from '@/components/subscription/SubscriptionGate';
-import { ExportButton } from '@/components/subscription/ExportButton';
 
-interface MeditationSessionViewProps {
-  // Add any necessary props here
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { ArrowLeft, Play, Pause, RotateCcw, Heart, Clock, Star } from 'lucide-react';
+import { Progress } from '@/components/ui/progress';
+import { SubscriptionGate } from '@/components/subscription/SubscriptionGate';
+import { useSubscription } from '@/components/subscription/SubscriptionProvider';
+
+export interface MeditationSessionViewProps {
+  sessionId?: string;
+  onComplete?: (session: any, feedback?: { rating: number; notes?: string; }) => void;
 }
 
-const MeditationSessionView: React.FC<MeditationSessionViewProps> = () => {
-  const { id } = useParams<{ id: string }>();
-  const [session, setSession] = useState<MeditationSession | null>(null);
-  const [biometrics, setBiometrics] = useState<SessionBiometrics | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+const MeditationSessionView: React.FC<MeditationSessionViewProps> = ({ 
+  sessionId: propSessionId,
+  onComplete 
+}) => {
+  const { sessionId: urlSessionId } = useParams<{ sessionId: string }>();
+  const navigate = useNavigate();
+  const { isPremium } = useSubscription();
+  
+  const sessionId = propSessionId || urlSessionId;
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [rating, setRating] = useState(0);
 
-  useEffect(() => {
-    const fetchSession = async () => {
-      setIsLoading(true);
-      setError(null);
+  // Mock session data - in real implementation, fetch from database
+  const session = {
+    id: sessionId || '1',
+    title: 'Morning Mindfulness',
+    description: 'Start your day with peaceful awareness and gentle breathing',
+    duration: 10,
+    difficulty: 'Beginner',
+    category: 'Mindfulness',
+    instructor: 'Sarah Chen',
+    isPremium: false,
+    imageUrl: '/placeholder.svg'
+  };
 
-      try {
-        if (!id) {
-          throw new Error('Session ID is missing.');
-        }
+  const progress = session.duration > 0 ? (currentTime / (session.duration * 60)) * 100 : 0;
 
-        const { data: sessionData, error: sessionError } = await supabase
-          .from('meditation_sessions')
-          .select('*')
-          .eq('id', id)
-          .single();
+  const handlePlayPause = () => {
+    setIsPlaying(!isPlaying);
+  };
 
-        if (sessionError) {
-          throw new Error(`Error fetching session: ${sessionError.message}`);
-        }
+  const handleRestart = () => {
+    setCurrentTime(0);
+    setIsPlaying(false);
+  };
 
-        if (!sessionData) {
-          throw new Error('Session not found.');
-        }
-
-        setSession(sessionData);
-
-        // Fetch biometrics data if IDs are available
-        if (sessionData.biometric_before && sessionData.biometric_after) {
-          const { data: biometricsData, error: biometricsError } = await supabase
-            .from('biometric_data')
-            .select('*')
-            .in('id', [sessionData.biometric_before, sessionData.biometric_after]);
-
-          if (biometricsError) {
-            console.error('Error fetching biometrics:', biometricsError);
-          } else {
-            // Process and set biometrics data
-            const before = biometricsData?.find(b => b.id === sessionData.biometric_before);
-            const after = biometricsData?.find(b => b.id === sessionData.biometric_after);
-
-            setBiometrics({
-              heart_rate_before: before?.heart_rate,
-              heart_rate_after: after?.heart_rate,
-              hrv_before: before?.hrv,
-              hrv_after: after?.hrv,
-              stress_level_before: before?.stress_score,
-              stress_level_after: after?.stress_score,
-            });
-          }
-        }
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setIsLoading(false);
-      }
+  const handleComplete = () => {
+    const completedSession = {
+      ...session,
+      completed: true,
+      completedAt: new Date().toISOString()
     };
+    
+    const feedback = rating > 0 ? { rating } : undefined;
+    onComplete?.(completedSession, feedback);
+    navigate('/dashboard');
+  };
 
-    fetchSession();
-  }, [id]);
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
 
-  if (isLoading) {
-    return <div>Loading session details...</div>;
+  // Simulate timer when playing
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isPlaying && currentTime < session.duration * 60) {
+      interval = setInterval(() => {
+        setCurrentTime(prev => prev + 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [isPlaying, currentTime, session.duration]);
+
+  if (session.isPremium && !isPremium) {
+    return (
+      <div className="container max-w-4xl mx-auto p-6">
+        <SubscriptionGate feature="Premium Meditation Sessions" showPreview>
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center gap-4">
+                  <img 
+                    src={session.imageUrl} 
+                    alt={session.title}
+                    className="w-16 h-16 rounded-lg object-cover"
+                  />
+                  <div className="flex-1">
+                    <CardTitle className="text-2xl">{session.title}</CardTitle>
+                    <p className="text-muted-foreground mt-1">{session.description}</p>
+                  </div>
+                </div>
+              </CardHeader>
+            </Card>
+          </div>
+        </SubscriptionGate>
+      </div>
+    );
   }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
-  if (!session) {
-    return <div>Session not found.</div>;
-  }
-
-  const duration = intervalToDuration({
-    start: new Date(session.started_at),
-    end: new Date(session.completed_at || Date.now()),
-  });
-
-  const formattedDuration = formatDuration(duration, {
-    format: ['minutes', 'seconds'],
-  });
 
   return (
-    <div className="container mx-auto p-4 max-w-4xl">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <CalendarDays className="h-5 w-5 text-muted-foreground mr-2" />
-            {session.title || 'Meditation Session'}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="space-y-1">
-              <p className="text-sm font-medium">Date</p>
-              <p className="text-muted-foreground">
-                {format(new Date(session.started_at), 'MMM dd, yyyy')}
-              </p>
-            </div>
-            <div className="space-y-1">
-              <p className="text-sm font-medium">Duration</p>
-              <p className="text-muted-foreground">
-                <Clock className="inline-block h-4 w-4 mr-1 align-middle" />
-                {formattedDuration}
-              </p>
-            </div>
-            <div className="space-y-1">
-              <p className="text-sm font-medium">Type</p>
-              <Badge variant="secondary">{session.session_type}</Badge>
-            </div>
-          </div>
+    <div className="container max-w-4xl mx-auto p-6">
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex items-center gap-4">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => navigate('/meditation')}
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Library
+          </Button>
+        </div>
 
-          <div className="space-y-2">
-            <h3 className="text-sm font-medium">Session Details</h3>
-            <p className="text-muted-foreground">{session.description}</p>
-          </div>
-
-          {biometrics && (
-            <div className="grid grid-cols-2 gap-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-sm font-medium">
-                    <Heart className="h-4 w-4 mr-2 align-middle" />
-                    Heart Rate
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-1">
-                  <p className="text-muted-foreground text-sm">
-                    Before: {biometrics.heart_rate_before || 'N/A'} bpm
-                  </p>
-                  <p className="text-muted-foreground text-sm">
-                    After: {biometrics.heart_rate_after || 'N/A'} bpm
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-sm font-medium">
-                    <Activity className="h-4 w-4 mr-2 align-middle" />
-                    HRV (Heart Rate Variability)
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-1">
-                  <p className="text-muted-foreground text-sm">
-                    Before: {biometrics.hrv_before || 'N/A'} ms
-                  </p>
-                  <p className="text-muted-foreground text-sm">
-                    After: {biometrics.hrv_after || 'N/A'} ms
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-sm font-medium">
-                    <Flame className="h-4 w-4 mr-2 align-middle" />
-                    Stress Level
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-1">
-                  <p className="text-muted-foreground text-sm">
-                    Before: {biometrics.stress_level_before || 'N/A'}
-                  </p>
-                  <p className="text-muted-foreground text-sm">
-                    After: {biometrics.stress_level_after || 'N/A'}
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-      
-      {/* Add premium features section */}
-      <div className="mt-8 space-y-6">
-        <SubscriptionGate feature="Advanced Session Analytics" showPreview={true}>
-          <Card>
-            <CardHeader>
-              <CardTitle>Advanced Analytics</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <p className="text-sm font-medium">Heart Rate Variability</p>
-                  <div className="h-20 bg-gradient-to-r from-green-100 to-blue-100 rounded flex items-center justify-center">
-                    <span className="text-2xl font-bold text-green-600">Good</span>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <p className="text-sm font-medium">Stress Reduction</p>
-                  <div className="h-20 bg-gradient-to-r from-blue-100 to-purple-100 rounded flex items-center justify-center">
-                    <span className="text-2xl font-bold text-blue-600">-23%</span>
-                  </div>
+        {/* Session Info */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-4">
+              <img 
+                src={session.imageUrl} 
+                alt={session.title}
+                className="w-16 h-16 rounded-lg object-cover"
+              />
+              <div className="flex-1">
+                <CardTitle className="text-2xl">{session.title}</CardTitle>
+                <p className="text-muted-foreground mt-1">{session.description}</p>
+                <div className="flex items-center gap-4 mt-3">
+                  <Badge variant="secondary">
+                    <Clock className="h-3 w-3 mr-1" />
+                    {session.duration} min
+                  </Badge>
+                  <Badge variant="outline">{session.difficulty}</Badge>
+                  <Badge variant="outline">{session.category}</Badge>
+                  <span className="text-sm text-muted-foreground">
+                    by {session.instructor}
+                  </span>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        </SubscriptionGate>
+            </div>
+          </CardHeader>
+        </Card>
 
-        <div className="flex gap-2">
-          <ExportButton 
-            data={{ session: session, biometrics: biometrics }}
-            filename={`meditation-session-${session?.id}`}
-            type="pdf"
-          />
-          <ExportButton 
-            data={{ session: session, biometrics: biometrics }}
-            filename={`meditation-session-${session?.id}`}
-            type="csv"
-          />
-        </div>
+        {/* Player */}
+        <Card>
+          <CardContent className="p-8">
+            <div className="text-center space-y-6">
+              {/* Progress */}
+              <div className="space-y-2">
+                <Progress value={progress} className="h-2" />
+                <div className="flex justify-between text-sm text-muted-foreground">
+                  <span>{formatTime(currentTime)}</span>
+                  <span>{formatTime(session.duration * 60)}</span>
+                </div>
+              </div>
+
+              {/* Controls */}
+              <div className="flex items-center justify-center gap-4">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={handleRestart}
+                  disabled={currentTime === 0}
+                >
+                  <RotateCcw className="h-5 w-5" />
+                </Button>
+                
+                <Button
+                  size="lg"
+                  onClick={handlePlayPause}
+                  className="h-16 w-16 rounded-full"
+                >
+                  {isPlaying ? (
+                    <Pause className="h-8 w-8" />
+                  ) : (
+                    <Play className="h-8 w-8 ml-1" />
+                  )}
+                </Button>
+                
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={handleComplete}
+                  disabled={currentTime < session.duration * 60}
+                >
+                  Complete
+                </Button>
+              </div>
+
+              {/* Rating */}
+              {currentTime >= session.duration * 60 && (
+                <div className="space-y-4 pt-6 border-t">
+                  <h3 className="text-lg font-medium">How was your session?</h3>
+                  <div className="flex items-center justify-center gap-2">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <Button
+                        key={star}
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setRating(star)}
+                        className="p-1"
+                      >
+                        <Star 
+                          className={`h-6 w-6 ${
+                            star <= rating 
+                              ? 'fill-yellow-400 text-yellow-400' 
+                              : 'text-gray-300'
+                          }`} 
+                        />
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
