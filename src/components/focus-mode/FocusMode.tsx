@@ -8,6 +8,8 @@ import { ProductivityHeatmap } from './analytics/ProductivityHeatmap';
 import { TrendAnalysis } from './analytics/TrendAnalysis';
 import { InsightsGenerator, generateProductivityInsights } from './analytics/InsightsGenerator';
 import { FocusScoreCalculator } from './analytics/FocusScoreCalculator';
+import { CalendarIntegration } from './calendar/CalendarIntegration';
+import { FocusScheduler } from './calendar/FocusScheduler';
 
 export const FocusMode: React.FC = () => {
   const { user } = useAuth();
@@ -369,7 +371,7 @@ export const FocusMode: React.FC = () => {
         endTime,
         duration: durationMinutes,
         taskCompleted: true, // You might want to ask the user
-        focus_score: focusScore
+        focusScore: focusScore
       };
       
       // Save to database - make sure field names match your schema
@@ -467,13 +469,14 @@ export const FocusMode: React.FC = () => {
         </div>
       </div>
 
-      {/* New Analytics Tabs */}
+      {/* Analytics Tabs */}
       <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
           <TabsTrigger value="trends">Trends</TabsTrigger>
           <TabsTrigger value="insights">Insights</TabsTrigger>
+          <TabsTrigger value="calendar">Calendar</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
@@ -545,6 +548,13 @@ export const FocusMode: React.FC = () => {
               // Handle insight actions
             }}
           />
+        </TabsContent>
+
+        <TabsContent value="calendar" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <CalendarIntegration />
+            <FocusScheduler />
+          </div>
         </TabsContent>
       </Tabs>
     </div>
