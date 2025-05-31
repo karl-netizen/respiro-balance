@@ -1,54 +1,49 @@
-
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { FocusProvider } from './context/FocusProvider';
-import Home from './pages/Home';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { Toaster } from 'sonner';
+import { AuthProvider } from './hooks/useAuth';
 import Dashboard from './pages/Dashboard';
-import FocusModePage from './pages/FocusModePage';
-import Progress from './pages/Progress';
-import BiofeedbackPage from './pages/BiofeedbackPage';
-import WorkLifeBalance from './pages/WorkLifeBalance';
-import BreakSettingsPage from './pages/BreakSettingsPage';
-import Breathe from './pages/Breathe';
-import LandingPage from './pages/LandingPage';
-import Meditate from './pages/Meditate';
-import MeditationSessionView from './pages/MeditationSessionView';
-import MorningRitual from './pages/MorningRitual';
-import Account from './pages/Account';
-import FAQ from './pages/FAQ';
-import OnboardingPage from './pages/OnboardingPage';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Settings from './pages/Settings';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
+import MeditationPage from './pages/MeditationPage';
+import BreathingExercisesPage from './pages/BreathingExercisesPage';
+import UserPreferencesProvider from './context/UserPreferencesContext';
+import SettingsPage from './pages/SettingsPage';
 import SubscriptionPage from './pages/SubscriptionPage';
-import NotFound from './pages/NotFound';
-import ViewportToggle from './components/layout/ViewportToggle';
-import Index from './pages/Index';
+import { SubscriptionProvider } from '@/components/subscription/SubscriptionProvider';
+
+const queryClient = new QueryClient();
 
 function App() {
   return (
-    <FocusProvider>
-      <Routes>
-        {/* Display Home at root path */}
-        <Route path="/" element={<Home />} />
-        <Route path="/landing" element={<LandingPage />} />
-        <Route path="/index" element={<Index />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/focus" element={<FocusModePage />} />
-        <Route path="/progress" element={<Progress />} />
-        <Route path="/biofeedback" element={<BiofeedbackPage />} />
-        <Route path="/work-life-balance" element={<WorkLifeBalance />} />
-        <Route path="/work-life-balance/break-settings" element={<BreakSettingsPage />} />
-        <Route path="/breathe" element={<Breathe />} />
-        <Route path="/meditate" element={<Meditate />} />
-        <Route path="/meditate/session/:sessionId" element={<MeditationSessionView />} />
-        <Route path="/morning-ritual" element={<MorningRitual />} />
-        <Route path="/account" element={<Account />} />
-        <Route path="/faq" element={<FAQ />} />
-        <Route path="/onboarding" element={<OnboardingPage />} />
-        <Route path="/subscription" element={<SubscriptionPage />} />
-        {/* Add a catch-all route that displays the NotFound component */}
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-      <ViewportToggle />
-    </FocusProvider>
+    <QueryClientProvider client={queryClient}>
+      <Router>
+        <AuthProvider>
+          <SubscriptionProvider>
+            <UserPreferencesProvider>
+              <Toaster />
+              <Routes>
+                <Route path="/" element={<Login />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password/:token" element={<ResetPassword />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/settingspage" element={<SettingsPage />} />
+                <Route path="/subscription" element={<SubscriptionPage />} />
+                <Route path="/meditation" element={<MeditationPage />} />
+                <Route path="/breathing" element={<BreathingExercisesPage />} />
+              </Routes>
+            </UserPreferencesProvider>
+          </SubscriptionProvider>
+        </AuthProvider>
+      </Router>
+    </QueryClientProvider>
   );
 }
 

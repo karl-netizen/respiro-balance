@@ -1,156 +1,128 @@
 
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1'
-import Stripe from 'https://esm.sh/stripe@12.13.0?dts'
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1';
+import Stripe from 'https://esm.sh/stripe@12.13.0?dts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+};
 
-const handler = async (req: Request) => {
-  // Handle CORS preflight requests
+const logStep = (step: string, details?: any) => {
+  const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
+  console.log(`[CHECK-SUBSCRIPTION] ${step}${detailsStr}`);
+};
+
+serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response(null, { headers: corsHeaders });
   }
+
+  const supabaseClient = createClient(
+    Deno.env.get('SUPABASE_URL') ?? '',
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+    { auth: { persistSession: false } }
+  );
 
   try {
-    const { userId } = await req.json()
-    
-    // Create Supabase admin client
-    const supabaseAdmin = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
-    
-    // Get user details
-    const { data: user, error: userError } = await supabaseAdmin
-      .from('user_profiles')
-      .select('email, subscription_id')
-      .eq('id', userId)
-      .single()
-    
-    if (userError || !user) {
-      return new Response(
-        JSON.stringify({ error: 'User not found' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
-    }
-    
-    // Initialize Stripe
-    const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') ?? '', {
-      apiVersion: '2023-10-16',
-    })
-    
-    // Check if user has a subscription
-    if (!user.subscription_id) {
-      return new Response(
-        JSON.stringify({ 
-          subscribed: false,
-          tier: 'free',
-          status: 'inactive',
-          period_end: null
-        }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
-    }
-    
-    // Get customer data from Stripe
-    const customer = await stripe.customers.retrieve(user.subscription_id)
-    if (customer.deleted) {
-      // Update user profile to remove subscription
-      await supabaseAdmin
-        .from('user_profiles')
-        .update({
-          subscription_tier: 'free',
-          subscription_status: 'canceled',
-          subscription_period_end: null,
-          meditation_minutes_limit: 60
-        })
-        .eq('id', userId)
+    logStep('Function started');
 
-      return new Response(
-        JSON.stringify({ 
-          subscribed: false,
-          tier: 'free',
-          status: 'canceled',
-          period_end: null
-        }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
-    }
+    const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
+    if (!stripeKey) throw new Error('STRIPE_SECRET_KEY is not set');
+    logStep('Stripe key verified');
+
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) throw new Error('No authorization header provided');
+    logStep('Authorization header found');
+
+    const token = authHeader.replace('Bearer ', '');
+    logStep('Authenticating user with token');
     
-    // Get customer's subscriptions
+    const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
+    if (userError) throw new Error(`Authentication error: ${userError.message}`);
+    const user = userData.user;
+    if (!user?.email) throw new Error('User not authenticated or email not available');
+    logStep('User authenticated', { userId: user.id, email: user.email });
+
+    const stripe = new Stripe(stripeKey, { apiVersion: '2023-10-16' });
+    const customers = await stripe.customers.list({ email: user.email, limit: 1 });
+    
+    if (customers.data.length === 0) {
+      logStep('No customer found, updating unsubscribed state');
+      await supabaseClient.from('subscribers').upsert({
+        email: user.email,
+        user_id: user.id,
+        stripe_customer_id: null,
+        subscribed: false,
+        subscription_tier: 'free',
+        subscription_end: null,
+        updated_at: new Date().toISOString(),
+      }, { onConflict: 'email' });
+      return new Response(JSON.stringify({ subscribed: false, subscription_tier: 'free' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200,
+      });
+    }
+
+    const customerId = customers.data[0].id;
+    logStep('Found Stripe customer', { customerId });
+
     const subscriptions = await stripe.subscriptions.list({
-      customer: user.subscription_id,
+      customer: customerId,
       status: 'active',
       limit: 1,
-    })
-    
-    if (subscriptions.data.length === 0) {
-      // No active subscriptions found
-      await supabaseAdmin
-        .from('user_profiles')
-        .update({
-          subscription_tier: 'free',
-          subscription_status: 'inactive',
-          subscription_period_end: null,
-          meditation_minutes_limit: 60
-        })
-        .eq('id', userId)
+    });
+    const hasActiveSub = subscriptions.data.length > 0;
+    let subscriptionTier = 'free';
+    let subscriptionEnd = null;
 
-      return new Response(
-        JSON.stringify({ 
-          subscribed: false,
-          tier: 'free',
-          status: 'inactive',
-          period_end: null
-        }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
+    if (hasActiveSub) {
+      const subscription = subscriptions.data[0];
+      subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
+      logStep('Active subscription found', { subscriptionId: subscription.id, endDate: subscriptionEnd });
+      
+      const priceId = subscription.items.data[0].price.id;
+      const price = await stripe.prices.retrieve(priceId);
+      const amount = price.unit_amount || 0;
+      if (amount <= 999) {
+        subscriptionTier = 'premium';
+      } else if (amount <= 1999) {
+        subscriptionTier = 'premium';
+      } else {
+        subscriptionTier = 'team';
+      }
+      logStep('Determined subscription tier', { priceId, amount, subscriptionTier });
+    } else {
+      logStep('No active subscription found');
     }
-    
-    // Active subscription found
-    const subscription = subscriptions.data[0]
-    const periodEnd = new Date(subscription.current_period_end * 1000).toISOString()
-    
-    // Determine tier based on price
-    const priceId = subscription.items.data[0].price.id
-    const price = await stripe.prices.retrieve(priceId)
-    
-    let tier = 'premium'
-    // Assuming team tier is more expensive
-    if (price.unit_amount && price.unit_amount >= 4900) {
-      tier = 'team'
-    }
-    
-    // Update user profile with latest subscription info
-    await supabaseAdmin
-      .from('user_profiles')
-      .update({
-        subscription_tier: tier,
-        subscription_status: subscription.status,
-        subscription_period_end: periodEnd,
-        meditation_minutes_limit: 999999 // Unlimited for paid tiers
-      })
-      .eq('id', userId)
 
-    return new Response(
-      JSON.stringify({ 
-        subscribed: true,
-        tier,
-        status: subscription.status,
-        period_end: periodEnd
-      }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    )
+    await supabaseClient.from('subscribers').upsert({
+      email: user.email,
+      user_id: user.id,
+      stripe_customer_id: customerId,
+      subscribed: hasActiveSub,
+      subscription_tier: subscriptionTier,
+      subscription_end: subscriptionEnd,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'email' });
+
+    logStep('Updated database with subscription info', { subscribed: hasActiveSub, subscriptionTier });
+    return new Response(JSON.stringify({
+      subscribed: hasActiveSub,
+      subscription_tier: subscriptionTier,
+      subscription_end: subscriptionEnd,
+      status: hasActiveSub ? 'active' : 'inactive',
+      customer_id: customerId
+    }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 200,
+    });
   } catch (error) {
-    console.error('Error checking subscription status:', error)
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    )
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    logStep('ERROR in check-subscription', { message: errorMessage });
+    return new Response(JSON.stringify({ error: errorMessage }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 500,
+    });
   }
-}
-
-serve(handler)
+});

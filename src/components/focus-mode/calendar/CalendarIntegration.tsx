@@ -6,7 +6,6 @@ import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, Clock, Users, Settings, ExternalLink, AlertCircle } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/integrations/supabase/client';
 
 interface CalendarConnection {
   id: string;
@@ -31,13 +30,6 @@ export const CalendarIntegration: React.FC = () => {
 
   const loadCalendarConnections = async () => {
     try {
-      const { data, error } = await supabase
-        .from('calendar_connections')
-        .select('*')
-        .eq('user_id', user?.id);
-
-      if (error) throw error;
-
       // Mock data for demo since we don't have real calendar connections yet
       setConnections([
         {
@@ -56,10 +48,9 @@ export const CalendarIntegration: React.FC = () => {
   const handleGoogleConnect = async () => {
     setIsConnecting(true);
     try {
-      // This would initiate Google OAuth flow
+      // Mock successful connection for demo
       console.log('Initiating Google Calendar connection...');
       
-      // Mock successful connection for demo
       setTimeout(() => {
         setConnections(prev => prev.map(conn => 
           conn.provider === 'google' 

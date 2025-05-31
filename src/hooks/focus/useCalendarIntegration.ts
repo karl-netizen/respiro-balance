@@ -1,7 +1,6 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/integrations/supabase/client';
 
 interface CalendarEvent {
   id: string;
@@ -34,13 +33,16 @@ export const useCalendarIntegration = () => {
 
   const loadConnections = async () => {
     try {
-      const { data, error } = await supabase
-        .from('calendar_connections')
-        .select('*')
-        .eq('user_id', user?.id);
-
-      if (error) throw error;
-      setConnections(data || []);
+      // Mock connections for demo
+      const mockConnections: CalendarConnection[] = [
+        {
+          id: '1',
+          provider: 'google',
+          connected: false,
+          lastSync: new Date().toISOString()
+        }
+      ];
+      setConnections(mockConnections);
     } catch (error) {
       console.error('Error loading calendar connections:', error);
     }
@@ -77,10 +79,9 @@ export const useCalendarIntegration = () => {
 
   const connectCalendar = async (provider: 'google' | 'outlook') => {
     try {
-      // This would initiate OAuth flow
+      // Mock successful connection
       console.log(`Connecting to ${provider} calendar...`);
       
-      // Mock successful connection
       const newConnection: CalendarConnection = {
         id: Date.now().toString(),
         provider,
@@ -88,7 +89,9 @@ export const useCalendarIntegration = () => {
         lastSync: new Date().toISOString()
       };
 
-      setConnections(prev => [...prev, newConnection]);
+      setConnections(prev => prev.map(conn => 
+        conn.provider === provider ? newConnection : conn
+      ));
       return true;
     } catch (error) {
       console.error(`Error connecting to ${provider}:`, error);
@@ -98,12 +101,11 @@ export const useCalendarIntegration = () => {
 
   const disconnectCalendar = async (connectionId: string) => {
     try {
-      await supabase
-        .from('calendar_connections')
-        .delete()
-        .eq('id', connectionId);
-
-      setConnections(prev => prev.filter(conn => conn.id !== connectionId));
+      setConnections(prev => prev.map(conn => 
+        conn.id === connectionId 
+          ? { ...conn, connected: false, lastSync: new Date().toISOString() }
+          : conn
+      ));
     } catch (error) {
       console.error('Error disconnecting calendar:', error);
     }
@@ -115,7 +117,7 @@ export const useCalendarIntegration = () => {
     duration: number
   ) => {
     try {
-      // This would create a calendar event
+      // Mock scheduling focus session
       console.log('Scheduling focus session:', { title, startTime, duration });
       
       const endTime = new Date(startTime.getTime() + duration * 60 * 1000);

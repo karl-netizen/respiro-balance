@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -9,6 +8,7 @@ import AccountSecuritySettings from '@/components/settings/AccountSecuritySettin
 import AccountSubscriptionSettings from '@/components/settings/AccountSubscriptionSettings';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useUserPreferences } from '@/context';
+import { SubscriptionStatus } from '@/components/subscription/SubscriptionStatus';
 
 const SettingsPage: React.FC = () => {
   const { preferences } = useUserPreferences();
@@ -49,6 +49,7 @@ const SettingsPage: React.FC = () => {
           </TabsContent>
           
           <TabsContent value="subscription" className="space-y-4">
+            <SubscriptionStatus />
             <AccountSubscriptionSettings 
               subscriptionTier={subscriptionTier}
               isPremium={isPremiumOrEnterprise}
