@@ -18,6 +18,7 @@ import SubscriptionPage from './pages/SubscriptionPage';
 import { SubscriptionProvider } from '@/components/subscription/SubscriptionProvider';
 import FocusModePage from './pages/FocusModePage';
 import MeditateAdvanced from './pages/MeditateAdvanced';
+import SocialPage from './pages/SocialPage';
 
 const queryClient = new QueryClient();
 
@@ -43,6 +44,7 @@ function App() {
                 <Route path="/meditation/advanced" element={<MeditateAdvanced />} />
                 <Route path="/breathing" element={<BreathingExercisesPage />} />
                 <Route path="/focus" element={<FocusModePage />} />
+                <Route path="/social" element={<SocialPage />} />
               </Routes>
             </UserPreferencesProvider>
           </SubscriptionProvider>

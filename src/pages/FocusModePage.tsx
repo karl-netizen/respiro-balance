@@ -10,8 +10,8 @@ import { TrendAnalysis } from '@/components/focus-mode/analytics/TrendAnalysis';
 import { InsightsGenerator } from '@/components/focus-mode/analytics/InsightsGenerator';
 import { CalendarIntegration } from '@/components/focus-mode/calendar/CalendarIntegration';
 import { FocusScheduler } from '@/components/focus-mode/calendar/FocusScheduler';
-import FocusTimer from '@/components/focus-mode/FocusTimer';
-import FocusHistory from '@/components/focus-mode/FocusHistory';
+import { FocusTimer } from '@/components/focus-mode/FocusTimer';
+import { FocusHistory } from '@/components/focus-mode/FocusHistory';
 
 const FocusModePage = () => {
   const [activeTab, setActiveTab] = useState('timer');

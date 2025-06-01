@@ -1,3 +1,4 @@
+
 import { supabase, handleSupabaseError } from '@/lib/supabase';
 import { toast } from 'sonner';
 import { NavigateFunction } from 'react-router-dom';
@@ -44,7 +45,10 @@ export const signInWithEmail = async (
     navigate('/dashboard');
   } catch (error: any) {
     console.error("Sign in error:", error);
-    handleSupabaseError(error, "Sign in failed");
+    const errorInfo = handleSupabaseError(error);
+    toast.error("Sign in failed", {
+      description: errorInfo.message
+    });
     throw error;
   }
 };
@@ -143,7 +147,10 @@ export const signUpWithEmail = async (
     });
   } catch (error: any) {
     console.error("Sign up error:", error);
-    handleSupabaseError(error, "Sign up failed");
+    const errorInfo = handleSupabaseError(error);
+    toast.error("Sign up failed", {
+      description: errorInfo.message
+    });
     throw error;
   } finally {
     setLoading(false);
@@ -174,7 +181,10 @@ export const signOutUser = async (
     });
   } catch (error: any) {
     console.error("Error signing out:", error);
-    handleSupabaseError(error, "Error signing out");
+    const errorInfo = handleSupabaseError(error);
+    toast.error("Error signing out", {
+      description: errorInfo.message
+    });
   } finally {
     setLoading(false);
   }
@@ -210,7 +220,10 @@ export const requestPasswordReset = async (
     });
   } catch (error: any) {
     console.error("Failed to send reset email:", error);
-    handleSupabaseError(error, "Failed to send reset email");
+    const errorInfo = handleSupabaseError(error);
+    toast.error("Failed to send reset email", {
+      description: errorInfo.message
+    });
     throw error;
   } finally {
     setLoading(false);
@@ -248,7 +261,10 @@ export const updateUserPassword = async (
     navigate('/login');
   } catch (error: any) {
     console.error("Password reset failed:", error);
-    handleSupabaseError(error, "Password reset failed");
+    const errorInfo = handleSupabaseError(error);
+    toast.error("Password reset failed", {
+      description: errorInfo.message
+    });
     throw error;
   } finally {
     setLoading(false);
