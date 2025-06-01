@@ -1,88 +1,24 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, Clock, Users, Settings, ExternalLink, AlertCircle } from 'lucide-react';
-import { useAuth } from '@/hooks/useAuth';
-
-interface CalendarConnection {
-  id: string;
-  provider: 'google' | 'outlook' | 'apple';
-  email: string;
-  connected: boolean;
-  lastSync: string;
-}
+import { Calendar, Clock, ExternalLink, Plus } from 'lucide-react';
+import { useCalendarIntegration } from '@/hooks/focus/useCalendarIntegration';
 
 export const CalendarIntegration: React.FC = () => {
-  const { user } = useAuth();
-  const [connections, setConnections] = useState<CalendarConnection[]>([]);
-  const [isConnecting, setIsConnecting] = useState(false);
-  const [autoSchedule, setAutoSchedule] = useState(false);
-  const [focusBlocking, setFocusBlocking] = useState(true);
+  const { 
+    connections, 
+    upcomingEvents, 
+    isLoading,
+    connectCalendar,
+    disconnectCalendar
+  } = useCalendarIntegration();
 
-  useEffect(() => {
-    if (user) {
-      loadCalendarConnections();
-    }
-  }, [user]);
-
-  const loadCalendarConnections = async () => {
-    try {
-      // Mock data for demo since we don't have real calendar connections yet
-      setConnections([
-        {
-          id: '1',
-          provider: 'google',
-          email: user?.email || 'user@example.com',
-          connected: false,
-          lastSync: new Date().toISOString()
-        }
-      ]);
-    } catch (error) {
-      console.error('Error loading calendar connections:', error);
-    }
-  };
-
-  const handleGoogleConnect = async () => {
-    setIsConnecting(true);
-    try {
-      // Mock successful connection for demo
-      console.log('Initiating Google Calendar connection...');
-      
-      setTimeout(() => {
-        setConnections(prev => prev.map(conn => 
-          conn.provider === 'google' 
-            ? { ...conn, connected: true, lastSync: new Date().toISOString() }
-            : conn
-        ));
-        setIsConnecting(false);
-      }, 2000);
-    } catch (error) {
-      console.error('Error connecting to Google Calendar:', error);
-      setIsConnecting(false);
-    }
-  };
-
-  const handleDisconnect = async (connectionId: string) => {
-    try {
-      setConnections(prev => prev.map(conn => 
-        conn.id === connectionId 
-          ? { ...conn, connected: false }
-          : conn
-      ));
-    } catch (error) {
-      console.error('Error disconnecting calendar:', error);
-    }
-  };
-
-  const getProviderIcon = (provider: string) => {
-    switch (provider) {
-      case 'google': return '📅';
-      case 'outlook': return '📧';
-      case 'apple': return '🍎';
-      default: return '📅';
+  const handleConnect = async (provider: 'google' | 'outlook') => {
+    const success = await connectCalendar(provider);
+    if (success) {
+      console.log(`Successfully connected to ${provider}`);
     }
   };
 
@@ -96,115 +32,111 @@ export const CalendarIntegration: React.FC = () => {
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Connection Status */}
-        <div className="space-y-4">
-          <h3 className="text-sm font-medium">Connected Calendars</h3>
-          {connections.map((connection) => (
+        <div className="space-y-3">
+          <h4 className="text-sm font-medium">Connected Calendars</h4>
+          {connections.map(connection => (
             <div key={connection.id} className="flex items-center justify-between p-3 border rounded-lg">
               <div className="flex items-center gap-3">
-                <span className="text-lg">{getProviderIcon(connection.provider)}</span>
+                <div className="w-8 h-8 bg-muted rounded flex items-center justify-center">
+                  <Calendar className="h-4 w-4" />
+                </div>
                 <div>
                   <p className="font-medium capitalize">{connection.provider} Calendar</p>
-                  <p className="text-sm text-muted-foreground">{connection.email}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {connection.connected ? 'Connected' : 'Not connected'}
+                  </p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
+                <Badge variant={connection.connected ? "default" : "outline"}>
+                  {connection.connected ? 'Connected' : 'Disconnected'}
+                </Badge>
                 {connection.connected ? (
-                  <>
-                    <Badge variant="default" className="bg-green-100 text-green-800">
-                      Connected
-                    </Badge>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => handleDisconnect(connection.id)}
-                    >
-                      Disconnect
-                    </Button>
-                  </>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => disconnectCalendar(connection.id)}
+                  >
+                    Disconnect
+                  </Button>
                 ) : (
                   <Button 
-                    onClick={handleGoogleConnect}
-                    disabled={isConnecting}
                     size="sm"
+                    onClick={() => handleConnect(connection.provider as 'google' | 'outlook')}
                   >
-                    {isConnecting ? 'Connecting...' : 'Connect'}
+                    Connect
                   </Button>
                 )}
               </div>
             </div>
           ))}
-        </div>
-
-        {/* Integration Settings */}
-        <div className="space-y-4">
-          <h3 className="text-sm font-medium">Integration Settings</h3>
           
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="space-y-1">
-                <p className="text-sm font-medium">Auto-schedule focus sessions</p>
-                <p className="text-xs text-muted-foreground">
-                  Automatically create focus blocks in your calendar
-                </p>
+          {connections.length === 0 && (
+            <div className="text-center py-4">
+              <p className="text-muted-foreground mb-4">No calendar connections</p>
+              <div className="space-x-2">
+                <Button onClick={() => handleConnect('google')}>
+                  Connect Google Calendar
+                </Button>
+                <Button variant="outline" onClick={() => handleConnect('outlook')}>
+                  Connect Outlook
+                </Button>
               </div>
-              <Switch 
-                checked={autoSchedule}
-                onCheckedChange={setAutoSchedule}
-              />
             </div>
-
-            <div className="flex items-center justify-between">
-              <div className="space-y-1">
-                <p className="text-sm font-medium">Focus time blocking</p>
-                <p className="text-xs text-muted-foreground">
-                  Prevent meetings during scheduled focus time
-                </p>
-              </div>
-              <Switch 
-                checked={focusBlocking}
-                onCheckedChange={setFocusBlocking}
-              />
-            </div>
-          </div>
+          )}
         </div>
 
-        {/* Features Overview */}
+        {/* Upcoming Events */}
         <div className="space-y-3">
-          <h3 className="text-sm font-medium">Available Features</h3>
-          <div className="grid grid-cols-1 gap-2">
-            <div className="flex items-center gap-2 text-sm">
-              <Clock className="h-4 w-4 text-green-500" />
-              <span>Meeting preparation focus sessions</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <Users className="h-4 w-4 text-green-500" />
-              <span>Buffer time around meetings</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <Calendar className="h-4 w-4 text-green-500" />
-              <span>Smart focus scheduling</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <Settings className="h-4 w-4 text-green-500" />
-              <span>Context-aware sessions</span>
-            </div>
+          <div className="flex items-center justify-between">
+            <h4 className="text-sm font-medium">Upcoming Events</h4>
+            <Button variant="ghost" size="sm">
+              <ExternalLink className="h-4 w-4" />
+            </Button>
           </div>
+          
+          {isLoading ? (
+            <div className="space-y-2">
+              {Array(3).fill(0).map((_, i) => (
+                <div key={i} className="animate-pulse">
+                  <div className="h-12 bg-muted rounded"></div>
+                </div>
+              ))}
+            </div>
+          ) : upcomingEvents.length > 0 ? (
+            <div className="space-y-2">
+              {upcomingEvents.slice(0, 3).map(event => (
+                <div key={event.id} className="p-3 border rounded-lg">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium">{event.title}</p>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <Clock className="h-3 w-3" />
+                        <span>
+                          {new Date(event.start).toLocaleTimeString('en-US', { 
+                            hour: 'numeric', 
+                            minute: '2-digit' 
+                          })}
+                        </span>
+                        {event.location && (
+                          <span>• {event.location}</span>
+                        )}
+                      </div>
+                    </div>
+                    <Button variant="ghost" size="sm">
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-4 text-muted-foreground">
+              <Calendar className="h-8 w-8 mx-auto mb-2 text-muted-foreground/50" />
+              <p>No upcoming events</p>
+            </div>
+          )}
         </div>
-
-        {/* Connection Help */}
-        {!connections.some(c => c.connected) && (
-          <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-            <div className="flex items-start gap-2">
-              <AlertCircle className="h-4 w-4 text-blue-600 mt-0.5" />
-              <div className="text-sm">
-                <p className="font-medium text-blue-900">Connect your calendar</p>
-                <p className="text-blue-700">
-                  Link your calendar to automatically schedule focus sessions and avoid conflicts.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
       </CardContent>
     </Card>
   );

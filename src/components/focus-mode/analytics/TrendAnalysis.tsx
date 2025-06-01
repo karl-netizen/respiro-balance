@@ -1,10 +1,10 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 import { TrendingUp } from 'lucide-react';
 
-interface TrendData {
+interface TrendDataPoint {
   date: string;
   focusScore: number;
   sessions: number;
@@ -13,144 +13,117 @@ interface TrendData {
 }
 
 interface TrendAnalysisProps {
-  data: TrendData[];
+  data: TrendDataPoint[];
   timeframe: 'week' | 'month' | 'quarter';
 }
 
 export const TrendAnalysis: React.FC<TrendAnalysisProps> = ({ data, timeframe }) => {
-  const formatXAxisLabel = (dateStr: string) => {
+  const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
     if (timeframe === 'week') {
       return date.toLocaleDateString('en-US', { weekday: 'short' });
-    } else if (timeframe === 'month') {
-      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    } else {
-      return date.toLocaleDateString('en-US', { month: 'short' });
     }
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
-
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-background border rounded-lg p-3 shadow-lg">
-          <p className="font-medium">{new Date(label).toLocaleDateString()}</p>
-          {payload.map((entry: any, index: number) => (
-            <p key={index} className="text-sm" style={{ color: entry.color }}>
-              {entry.name}: {entry.value}
-              {entry.dataKey === 'focusScore' && '/100'}
-            </p>
-          ))}
-        </div>
-      );
-    }
-    return null;
-  };
-
-  // Calculate trend indicators
-  const latestScore = data[data.length - 1]?.focusScore || 0;
-  const previousScore = data[data.length - 8]?.focusScore || 0; // Compare to a week ago
-  const trend = latestScore - previousScore;
 
   return (
-    <div className="space-y-6">
-      {/* Trend Overview */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-primary" />
-            Productivity Trends
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-                <XAxis 
-                  dataKey="date" 
-                  tickFormatter={formatXAxisLabel}
-                  fontSize={12}
-                />
-                <YAxis fontSize={12} />
-                <Tooltip content={<CustomTooltip />} />
-                <Area
-                  type="monotone"
-                  dataKey="focusScore"
-                  stroke="#8884d8"
-                  fill="#8884d8"
-                  fillOpacity={0.2}
-                  strokeWidth={2}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Detailed Metrics */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Detailed Metrics</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-                <XAxis 
-                  dataKey="date" 
-                  tickFormatter={formatXAxisLabel}
-                  fontSize={12}
-                />
-                <YAxis fontSize={12} />
-                <Tooltip content={<CustomTooltip />} />
-                <Line
-                  type="monotone"
-                  dataKey="sessions"
-                  stroke="#82ca9d"
-                  strokeWidth={2}
-                  dot={{ r: 3 }}
-                  name="Sessions"
-                />
-                <Line
-                  type="monotone"
-                  dataKey="distractions"
-                  stroke="#ffc658"
-                  strokeWidth={2}
-                  dot={{ r: 3 }}
-                  name="Distractions"
-                />
-                <Line
-                  type="monotone"
-                  dataKey="productivity"
-                  stroke="#ff7300"
-                  strokeWidth={2}
-                  dot={{ r: 3 }}
-                  name="Productivity"
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Trend Summary */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-muted-foreground">Focus Score Trend</p>
-              <p className="text-2xl font-bold">
-                {trend > 0 ? '+' : ''}{trend.toFixed(1)}
-              </p>
-            </div>
-            <div className={`text-right ${trend > 0 ? 'text-green-600' : trend < 0 ? 'text-red-600' : 'text-gray-600'}`}>
-              <TrendingUp className={`h-6 w-6 ${trend < 0 ? 'rotate-180' : ''}`} />
-              <p className="text-xs">vs previous period</p>
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <TrendingUp className="h-5 w-5 text-primary" />
+          Trend Analysis
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-6">
+          {/* Focus Score Trend */}
+          <div>
+            <h4 className="text-sm font-medium mb-3">Focus Score Trend</h4>
+            <div className="h-[200px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={data}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis 
+                    dataKey="date" 
+                    tickFormatter={formatDate}
+                    fontSize={12}
+                  />
+                  <YAxis domain={[0, 100]} fontSize={12} />
+                  <Tooltip 
+                    labelFormatter={(label) => formatDate(label)}
+                    formatter={(value: any, name: string) => [
+                      `${value}${name === 'focusScore' ? '/100' : ''}`,
+                      name === 'focusScore' ? 'Focus Score' : name
+                    ]}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="focusScore"
+                    stroke="#8884d8"
+                    fill="#8884d8"
+                    fillOpacity={0.3}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
             </div>
           </div>
-        </CardContent>
-      </Card>
-    </div>
+
+          {/* Sessions vs Distractions */}
+          <div>
+            <h4 className="text-sm font-medium mb-3">Sessions vs Distractions</h4>
+            <div className="h-[200px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={data}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis 
+                    dataKey="date" 
+                    tickFormatter={formatDate}
+                    fontSize={12}
+                  />
+                  <YAxis fontSize={12} />
+                  <Tooltip labelFormatter={(label) => formatDate(label)} />
+                  <Line 
+                    type="monotone" 
+                    dataKey="sessions" 
+                    stroke="#82ca9d" 
+                    strokeWidth={2}
+                    name="Sessions"
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="distractions" 
+                    stroke="#ff7c7c" 
+                    strokeWidth={2}
+                    name="Distractions"
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Summary Stats */}
+          <div className="grid grid-cols-3 gap-4 pt-4 border-t">
+            <div className="text-center">
+              <div className="text-lg font-semibold">
+                {Math.round(data.reduce((sum, item) => sum + item.focusScore, 0) / data.length)}
+              </div>
+              <div className="text-xs text-muted-foreground">Avg Focus Score</div>
+            </div>
+            <div className="text-center">
+              <div className="text-lg font-semibold">
+                {data.reduce((sum, item) => sum + item.sessions, 0)}
+              </div>
+              <div className="text-xs text-muted-foreground">Total Sessions</div>
+            </div>
+            <div className="text-center">
+              <div className="text-lg font-semibold">
+                {data.reduce((sum, item) => sum + item.distractions, 0)}
+              </div>
+              <div className="text-xs text-muted-foreground">Total Distractions</div>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 };

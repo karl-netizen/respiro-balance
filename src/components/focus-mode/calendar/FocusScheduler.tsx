@@ -1,240 +1,200 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { CalendarDays, Clock, Plus, Target, AlertTriangle } from 'lucide-react';
-import { format, addDays, startOfWeek } from 'date-fns';
-
-interface ScheduledSession {
-  id: string;
-  title: string;
-  date: string;
-  startTime: string;
-  duration: number;
-  type: 'focus' | 'prep' | 'break';
-  status: 'scheduled' | 'completed' | 'missed';
-  calendarEventId?: string;
-}
-
-interface TimeSlot {
-  time: string;
-  available: boolean;
-  conflictReason?: string;
-}
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
+import { CalendarIcon, Clock, Target } from 'lucide-react';
+import { format } from 'date-fns';
+import { useCalendarIntegration } from '@/hooks/focus/useCalendarIntegration';
 
 export const FocusScheduler: React.FC = () => {
-  const [scheduledSessions, setScheduledSessions] = useState<ScheduledSession[]>([]);
-  const [availableSlots, setAvailableSlots] = useState<TimeSlot[]>([]);
-  const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
-  const [selectedDuration, setSelectedDuration] = useState('25');
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const [selectedTime, setSelectedTime] = useState('09:00');
+  const [duration, setDuration] = useState('25');
+  const [title, setTitle] = useState('Focus Session');
+  
+  const { scheduleFocusSession, findAvailableSlots } = useCalendarIntegration();
 
-  useEffect(() => {
-    loadScheduledSessions();
-    loadAvailableSlots();
-  }, [selectedDate]);
+  const handleSchedule = async () => {
+    if (!selectedDate) return;
 
-  const loadScheduledSessions = () => {
-    // Mock data for demo
-    const mockSessions: ScheduledSession[] = [
-      {
-        id: '1',
-        title: 'Deep Work Session',
-        date: format(new Date(), 'yyyy-MM-dd'),
-        startTime: '09:00',
-        duration: 25,
-        type: 'focus',
-        status: 'scheduled'
-      },
-      {
-        id: '2',
-        title: 'Meeting Preparation',
-        date: format(new Date(), 'yyyy-MM-dd'),
-        startTime: '14:00',
-        duration: 15,
-        type: 'prep',
-        status: 'completed'
-      },
-      {
-        id: '3',
-        title: 'Project Focus',
-        date: format(addDays(new Date(), 1), 'yyyy-MM-dd'),
-        startTime: '10:30',
-        duration: 50,
-        type: 'focus',
-        status: 'scheduled'
-      }
-    ];
-    setScheduledSessions(mockSessions);
-  };
+    const [hours, minutes] = selectedTime.split(':').map(Number);
+    const sessionDateTime = new Date(selectedDate);
+    sessionDateTime.setHours(hours, minutes, 0, 0);
 
-  const loadAvailableSlots = () => {
-    // Mock available time slots
-    const slots: TimeSlot[] = [
-      { time: '08:00', available: true },
-      { time: '09:00', available: false, conflictReason: 'Scheduled focus session' },
-      { time: '10:00', available: true },
-      { time: '11:00', available: false, conflictReason: 'Team meeting' },
-      { time: '13:00', available: true },
-      { time: '14:00', available: false, conflictReason: 'Meeting prep' },
-      { time: '15:00', available: true },
-      { time: '16:00', available: true }
-    ];
-    setAvailableSlots(slots);
-  };
-
-  const handleScheduleSession = (timeSlot: string) => {
-    const newSession: ScheduledSession = {
-      id: Date.now().toString(),
-      title: `Focus Session`,
-      date: selectedDate,
-      startTime: timeSlot,
-      duration: parseInt(selectedDuration),
-      type: 'focus',
-      status: 'scheduled'
-    };
-
-    setScheduledSessions(prev => [...prev, newSession]);
-    setAvailableSlots(prev => prev.map(slot => 
-      slot.time === timeSlot 
-        ? { ...slot, available: false, conflictReason: 'Scheduled focus session' }
-        : slot
-    ));
-  };
-
-  const getSessionTypeIcon = (type: string) => {
-    switch (type) {
-      case 'focus': return <Target className="h-4 w-4" />;
-      case 'prep': return <Clock className="h-4 w-4" />;
-      case 'break': return <CalendarDays className="h-4 w-4" />;
-      default: return <Target className="h-4 w-4" />;
+    const sessionId = await scheduleFocusSession(title, sessionDateTime, parseInt(duration));
+    
+    if (sessionId) {
+      console.log('Focus session scheduled successfully');
+      // Reset form
+      setTitle('Focus Session');
+      setSelectedTime('09:00');
+      setDuration('25');
     }
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'completed': return 'bg-green-100 text-green-800';
-      case 'missed': return 'bg-red-100 text-red-800';
-      case 'scheduled': return 'bg-blue-100 text-blue-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const todaysSessions = scheduledSessions.filter(session => session.date === selectedDate);
+  const availableSlots = selectedDate ? findAvailableSlots(selectedDate, parseInt(duration)) : [];
 
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <CalendarDays className="h-5 w-5 text-primary" />
-          Focus Scheduler
+          <Target className="h-5 w-5 text-primary" />
+          Schedule Focus Session
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Date and Duration Selection */}
+      <CardContent className="space-y-4">
+        {/* Session Title */}
+        <div className="space-y-2">
+          <Label htmlFor="title">Session Title</Label>
+          <Input
+            id="title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Focus Session"
+          />
+        </div>
+
+        {/* Date Selection */}
+        <div className="space-y-2">
+          <Label>Date</Label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  "w-full justify-start text-left font-normal",
+                  !selectedDate && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {selectedDate ? format(selectedDate, "PPP") : <span>Pick a date</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={setSelectedDate}
+                initialFocus
+                className="pointer-events-auto"
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
+
+        {/* Time Selection */}
         <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="text-sm font-medium mb-2 block">Date</label>
-            <input
-              type="date"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-              className="w-full px-3 py-2 border rounded-md"
-            />
+          <div className="space-y-2">
+            <Label htmlFor="time">Time</Label>
+            <Select value={selectedTime} onValueChange={setSelectedTime}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {Array.from({ length: 24 }, (_, i) => {
+                  const hour = i.toString().padStart(2, '0');
+                  return (
+                    <SelectItem key={`${hour}:00`} value={`${hour}:00`}>
+                      {hour}:00
+                    </SelectItem>
+                  );
+                })}
+              </SelectContent>
+            </Select>
           </div>
-          <div>
-            <label className="text-sm font-medium mb-2 block">Duration</label>
-            <Select value={selectedDuration} onValueChange={setSelectedDuration}>
+
+          <div className="space-y-2">
+            <Label htmlFor="duration">Duration (min)</Label>
+            <Select value={duration} onValueChange={setDuration}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="15">15 minutes</SelectItem>
                 <SelectItem value="25">25 minutes</SelectItem>
-                <SelectItem value="50">50 minutes</SelectItem>
-                <SelectItem value="90">90 minutes</SelectItem>
+                <SelectItem value="30">30 minutes</SelectItem>
+                <SelectItem value="45">45 minutes</SelectItem>
+                <SelectItem value="60">1 hour</SelectItem>
+                <SelectItem value="90">1.5 hours</SelectItem>
+                <SelectItem value="120">2 hours</SelectItem>
               </SelectContent>
             </Select>
           </div>
         </div>
 
-        {/* Available Time Slots */}
-        <div className="space-y-3">
-          <h3 className="text-sm font-medium">Available Time Slots</h3>
-          <div className="grid grid-cols-2 gap-2">
-            {availableSlots.map((slot) => (
-              <div key={slot.time} className="relative">
+        {/* Available Slots */}
+        {selectedDate && availableSlots.length > 0 && (
+          <div className="space-y-2">
+            <Label>Suggested Times</Label>
+            <div className="grid grid-cols-3 gap-2">
+              {availableSlots.slice(0, 6).map((slot, index) => (
                 <Button
-                  variant={slot.available ? "outline" : "secondary"}
-                  disabled={!slot.available}
-                  onClick={() => slot.available && handleScheduleSession(slot.time)}
-                  className="w-full justify-start"
+                  key={index}
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    const timeStr = `${slot.getHours().toString().padStart(2, '0')}:${slot.getMinutes().toString().padStart(2, '0')}`;
+                    setSelectedTime(timeStr);
+                  }}
+                  className="text-xs"
                 >
-                  <Clock className="h-4 w-4 mr-2" />
-                  {slot.time}
-                  {slot.available && <Plus className="h-4 w-4 ml-auto" />}
+                  <Clock className="h-3 w-3 mr-1" />
+                  {slot.toLocaleTimeString('en-US', { 
+                    hour: 'numeric', 
+                    minute: '2-digit',
+                    hour12: true 
+                  })}
                 </Button>
-                {!slot.available && slot.conflictReason && (
-                  <div className="absolute top-full left-0 right-0 mt-1 p-1 bg-gray-800 text-white text-xs rounded z-10 opacity-0 group-hover:opacity-100 transition-opacity">
-                    {slot.conflictReason}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Scheduled Sessions */}
-        <div className="space-y-3">
-          <h3 className="text-sm font-medium">Scheduled Sessions</h3>
-          {todaysSessions.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No sessions scheduled for this date.</p>
-          ) : (
-            <div className="space-y-2">
-              {todaysSessions.map((session) => (
-                <div key={session.id} className="flex items-center justify-between p-3 border rounded-lg">
-                  <div className="flex items-center gap-3">
-                    {getSessionTypeIcon(session.type)}
-                    <div>
-                      <p className="font-medium">{session.title}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {session.startTime} • {session.duration} min
-                      </p>
-                    </div>
-                  </div>
-                  <Badge className={getStatusColor(session.status)}>
-                    {session.status}
-                  </Badge>
-                </div>
               ))}
             </div>
-          )}
-        </div>
-
-        {/* Smart Suggestions */}
-        <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
-          <div className="flex items-start gap-2">
-            <AlertTriangle className="h-4 w-4 text-amber-600 mt-0.5" />
-            <div className="text-sm">
-              <p className="font-medium text-amber-900">Smart Scheduling Tip</p>
-              <p className="text-amber-700">
-                Based on your patterns, 9-11 AM is your most productive time. Consider scheduling important focus sessions then.
-              </p>
-            </div>
           </div>
-        </div>
+        )}
+
+        {/* Schedule Button */}
+        <Button 
+          onClick={handleSchedule} 
+          className="w-full"
+          disabled={!selectedDate}
+        >
+          Schedule Focus Session
+        </Button>
 
         {/* Quick Actions */}
-        <div className="flex gap-2">
-          <Button variant="outline" className="flex-1">
-            <CalendarDays className="h-4 w-4 mr-2" />
-            View Week
-          </Button>
-          <Button variant="outline" className="flex-1">
-            <Target className="h-4 w-4 mr-2" />
-            Auto Schedule
-          </Button>
+        <div className="space-y-2">
+          <Label>Quick Schedule</Label>
+          <div className="grid grid-cols-2 gap-2">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => {
+                const now = new Date();
+                now.setMinutes(now.getMinutes() + 5);
+                setSelectedDate(now);
+                setSelectedTime(`${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`);
+              }}
+            >
+              In 5 minutes
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => {
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                tomorrow.setHours(9, 0, 0, 0);
+                setSelectedDate(tomorrow);
+                setSelectedTime('09:00');
+              }}
+            >
+              Tomorrow 9 AM
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>

@@ -1,208 +1,159 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Lightbulb, TrendingUp, Target, AlertTriangle, Clock, Zap } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Lightbulb, TrendingUp, AlertTriangle, CheckCircle } from 'lucide-react';
 
-interface Insight {
-  id: string;
-  type: 'achievement' | 'improvement' | 'warning' | 'tip';
+interface ProductivityInsight {
+  type: 'positive' | 'warning' | 'suggestion';
   title: string;
   description: string;
-  actionable: boolean;
   action?: string;
-  metric?: {
-    current: number;
-    target: number;
-    unit: string;
-  };
 }
 
 interface InsightsGeneratorProps {
-  insights: Insight[];
-  onActionClick?: (insight: Insight) => void;
+  insights: ProductivityInsight[];
+  onActionClick?: (insight: ProductivityInsight) => void;
 }
 
 export const InsightsGenerator: React.FC<InsightsGeneratorProps> = ({ 
   insights, 
   onActionClick 
 }) => {
-  const getInsightIcon = (type: Insight['type']) => {
+  const getInsightIcon = (type: string) => {
     switch (type) {
-      case 'achievement':
-        return <TrendingUp className="h-4 w-4" />;
-      case 'improvement':
-        return <Target className="h-4 w-4" />;
+      case 'positive':
+        return <CheckCircle className="h-4 w-4 text-green-500" />;
       case 'warning':
-        return <AlertTriangle className="h-4 w-4" />;
-      case 'tip':
-        return <Lightbulb className="h-4 w-4" />;
+        return <AlertTriangle className="h-4 w-4 text-yellow-500" />;
+      case 'suggestion':
+        return <Lightbulb className="h-4 w-4 text-blue-500" />;
       default:
-        return <Zap className="h-4 w-4" />;
+        return <TrendingUp className="h-4 w-4 text-primary" />;
     }
   };
 
-  const getInsightColor = (type: Insight['type']) => {
+  const getInsightVariant = (type: string) => {
     switch (type) {
-      case 'achievement':
-        return 'bg-green-100 text-green-800 border-green-200';
-      case 'improvement':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'positive':
+        return 'default';
       case 'warning':
-        return 'bg-amber-100 text-amber-800 border-amber-200';
-      case 'tip':
-        return 'bg-purple-100 text-purple-800 border-purple-200';
+        return 'destructive';
+      case 'suggestion':
+        return 'secondary';
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'outline';
     }
   };
-
-  if (insights.length === 0) {
-    return (
-      <Card>
-        <CardContent className="p-6 text-center">
-          <Clock className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-          <p className="text-muted-foreground">
-            Complete more focus sessions to unlock personalized insights
-          </p>
-        </CardContent>
-      </Card>
-    );
-  }
 
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Lightbulb className="h-5 w-5 text-primary" />
-          AI-Powered Insights
+          Productivity Insights
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          {insights.map((insight) => (
-            <div 
-              key={insight.id}
-              className={`p-4 rounded-lg border ${getInsightColor(insight.type)}`}
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex items-start gap-3 flex-1">
+        {insights.length === 0 ? (
+          <div className="text-center py-8 text-muted-foreground">
+            <Lightbulb className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
+            <p>Complete more focus sessions to get personalized insights</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {insights.map((insight, index) => (
+              <div 
+                key={index}
+                className="border rounded-lg p-4 space-y-3"
+              >
+                <div className="flex items-start gap-3">
                   <div className="mt-0.5">
                     {getInsightIcon(insight.type)}
                   </div>
-                  <div className="flex-1">
-                    <h4 className="font-medium mb-1">{insight.title}</h4>
-                    <p className="text-sm opacity-90 mb-3">{insight.description}</p>
-                    
-                    {insight.metric && (
-                      <div className="flex items-center gap-2 mb-3">
-                        <Badge variant="outline" className="text-xs">
-                          Current: {insight.metric.current}{insight.metric.unit}
-                        </Badge>
-                        <Badge variant="outline" className="text-xs">
-                          Target: {insight.metric.target}{insight.metric.unit}
-                        </Badge>
-                      </div>
-                    )}
-                    
-                    {insight.actionable && insight.action && (
-                      <Button
+                  <div className="flex-1 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <h4 className="font-medium">{insight.title}</h4>
+                      <Badge variant={getInsightVariant(insight.type) as any}>
+                        {insight.type}
+                      </Badge>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      {insight.description}
+                    </p>
+                    {insight.action && onActionClick && (
+                      <Button 
+                        variant="outline" 
                         size="sm"
-                        variant="outline"
-                        onClick={() => onActionClick?.(insight)}
-                        className="text-xs"
+                        onClick={() => onActionClick(insight)}
                       >
                         {insight.action}
                       </Button>
                     )}
                   </div>
                 </div>
-                
-                <Badge 
-                  variant="outline" 
-                  className="ml-2 capitalize text-xs"
-                >
-                  {insight.type}
-                </Badge>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </CardContent>
     </Card>
   );
 };
 
-// Helper function to generate insights based on user data
 export const generateProductivityInsights = (
   sessions: any[], 
-  metrics: any
-): Insight[] => {
-  const insights: Insight[] = [];
+  metrics: { currentFocusScore: number; avgDistractions: number; completionRate: number }
+): ProductivityInsight[] => {
+  const insights: ProductivityInsight[] = [];
 
-  // Achievement insights
+  // High focus score
   if (metrics.currentFocusScore >= 85) {
     insights.push({
-      id: 'high-focus-score',
-      type: 'achievement',
-      title: 'Excellent Focus Performance!',
-      description: 'Your focus score is in the top 10%. Keep up the great work!',
-      actionable: false
+      type: 'positive',
+      title: 'Excellent Focus Performance',
+      description: `Your focus score of ${metrics.currentFocusScore} is outstanding! You're maintaining excellent concentration.`
     });
   }
 
-  // Improvement suggestions
-  if (metrics.avgDistractions > 3) {
+  // Low completion rate
+  if (metrics.completionRate < 70) {
     insights.push({
-      id: 'reduce-distractions',
-      type: 'improvement',
-      title: 'Reduce Distractions',
-      description: 'You average more than 3 distractions per session. Try using focus modes or a quieter environment.',
-      actionable: true,
-      action: 'Set Focus Mode',
-      metric: {
-        current: metrics.avgDistractions,
-        target: 2,
-        unit: ' distractions/session'
-      }
-    });
-  }
-
-  // Warning insights
-  if (metrics.completionRate < 60) {
-    insights.push({
-      id: 'low-completion',
       type: 'warning',
       title: 'Low Session Completion Rate',
-      description: 'You complete less than 60% of your focus sessions. Consider shorter initial sessions.',
-      actionable: true,
-      action: 'Adjust Session Length',
-      metric: {
-        current: metrics.completionRate,
-        target: 80,
-        unit: '%'
-      }
+      description: `Only ${Math.round(metrics.completionRate)}% of your sessions are completed. Try shorter intervals to build momentum.`,
+      action: 'Adjust Timer Settings'
     });
   }
 
-  // Tips
-  if (sessions.length > 5) {
-    const morningSessionsCount = sessions.filter(s => {
-      const hour = new Date(s.start_time).getHours();
-      return hour >= 6 && hour <= 10;
-    }).length;
+  // High distractions
+  if (metrics.avgDistractions > 3) {
+    insights.push({
+      type: 'suggestion',
+      title: 'Reduce Distractions',
+      description: `You average ${metrics.avgDistractions} distractions per session. Consider using focus mode or finding a quieter environment.`,
+      action: 'Enable Focus Mode'
+    });
+  }
 
-    if (morningSessionsCount > sessions.length * 0.6) {
-      insights.push({
-        id: 'morning-focused',
-        type: 'tip',
-        title: 'You\'re a Morning Person!',
-        description: 'Most of your productive sessions happen in the morning. Schedule important work during these hours.',
-        actionable: true,
-        action: 'Schedule Morning Blocks'
-      });
-    }
+  // Consistent sessions
+  if (sessions.length >= 5) {
+    insights.push({
+      type: 'positive',
+      title: 'Great Consistency',
+      description: `You've completed ${sessions.length} sessions recently. Consistency is key to building focus habits.`
+    });
+  }
+
+  // Suggestion for improvement
+  if (metrics.currentFocusScore < 70) {
+    insights.push({
+      type: 'suggestion',
+      title: 'Improve Focus Techniques',
+      description: 'Try the Pomodoro Technique: 25 minutes of focused work followed by a 5-minute break.',
+      action: 'Learn More'
+    });
   }
 
   return insights;
