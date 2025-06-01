@@ -1,8 +1,9 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { MeditationSessionView } from '@/components/meditation';
+import MeditationSessionView from '@/components/meditation/MeditationSessionView';
 import { useSubscriptionContext } from '@/hooks/useSubscriptionContext';
 import { MeditationSession as MeditationSessionType } from '@/types/meditation';
 
@@ -137,9 +138,8 @@ const MeditationSession = () => {
       </div>
       
       <MeditationSessionView 
-        session={session} 
+        sessionId={session.id}
         onComplete={handleComplete} 
-        isPremium={isPremium}
       />
     </div>
   );
