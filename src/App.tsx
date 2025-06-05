@@ -25,6 +25,8 @@ import Index from './pages/Index';
 const queryClient = new QueryClient();
 
 function App() {
+  console.log('App component rendering...');
+  
   return (
     <QueryClientProvider client={queryClient}>
       <Router>

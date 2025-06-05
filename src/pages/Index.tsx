@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 
 const Index = () => {
+  console.log('Index page rendering...');
+  
   const navigate = useNavigate();
   const { user } = useAuth();
   const [isHovered, setIsHovered] = useState(false);
