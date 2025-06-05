@@ -20,6 +20,7 @@ import FocusModePage from './pages/FocusModePage';
 import MeditateAdvanced from './pages/MeditateAdvanced';
 import SocialPage from './pages/SocialPage';
 import MeditationAudioManagement from './pages/MeditationAudioManagement';
+import Index from './pages/Index';
 
 const queryClient = new QueryClient();
 
@@ -32,7 +33,7 @@ function App() {
             <UserPreferencesProvider>
               <Toaster />
               <Routes>
-                <Route path="/" element={<Login />} />
+                <Route path="/" element={<Index />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
