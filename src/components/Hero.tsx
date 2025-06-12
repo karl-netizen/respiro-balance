@@ -43,21 +43,20 @@ const Hero = () => {
             </div>
             
             <h1 className="text-3xl md:text-4xl lg:text-6xl font-bold tracking-tight text-respiro-text">
-              <span className="block">Find Harmony in</span>
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-respiro-dark to-respiro">Your Daily Life</span>
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-respiro-dark to-respiro">Breathe. Reflect. Recalibrate.</span>
             </h1>
             
             <p className="text-base md:text-lg text-foreground/80 max-w-xl">
-              Respiro Balance helps you cultivate mindfulness and reduce stress through breathing-centered meditation experiences tailored to restore balance to your work and life.
+              Your wellness companion in a fast-paced world. Respiro Balance helps busy professionals reconnect with calm and clarity through guided wellness journeys and mindful routines.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-3 pt-2 md:pt-4">
               <Button 
                 size={isMobile ? "default" : "lg"}
-                className="bg-primary text-white hover:bg-respiro-dark button-transition"
+                className="bg-primary text-white hover:bg-respiro-dark transition-all duration-300 rounded-2xl px-8 py-3 text-base font-medium shadow-lg hover:shadow-xl hover:shadow-primary/25 transform hover:scale-105 hover:glow-effect"
                 onClick={handleGetStarted}
               >
-                Begin Your Journey
+                Start Your Balance Journey
               </Button>
               <Button 
                 size={isMobile ? "default" : "lg"}

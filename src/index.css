@@ -71,3 +71,8 @@
 .high-contrast.dark .text-muted-foreground {
   color: #ffffff !important; /* Even higher contrast for dark mode */
 }
+
+/* Enhanced CTA button glow effect */
+.hover\:glow-effect:hover {
+  box-shadow: 0 0 20px rgba(77, 182, 172, 0.4);
+}
