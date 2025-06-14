@@ -11,21 +11,12 @@ import EnhancedSessionCompletionDialog from '@/components/meditation/completion/
 import { useMeditationSessions } from '@/hooks/useMeditationSessions';
 import { useMeditationFavorites } from '@/hooks/useMeditationFavorites';
 import { useMeditationResume } from '@/hooks/useMeditationResume';
-import { MeditationSession } from '@/types/meditation';
+import { MeditationSession, FilterState } from '@/types/meditation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Clock, Play, Heart, Users, Award } from 'lucide-react';
-
-export interface FilterState {
-  categories: string[];
-  durations: string[];
-  levels: string[];
-  instructors: string[];
-  tags: string[];
-  searchTerm: string;
-}
 
 const EnhancedMeditationPage = () => {
   const navigate = useNavigate();
@@ -51,10 +42,6 @@ const EnhancedMeditationPage = () => {
   const [selectedSession, setSelectedSession] = useState<MeditationSession | null>(null);
   const [showCompletionDialog, setShowCompletionDialog] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [sessionFeedback, setSessionFeedback] = useState<{
-    rating: number;
-    comments: string;
-  } | null>(null);
 
   // Get incomplete sessions for resume functionality
   const incompleteSessions = useMemo(() => {
