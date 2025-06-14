@@ -117,11 +117,7 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
           },
           {
             label: "Focus Mode",
-            href: "/work-life-balance#focus",
-          },
-          {
-            label: "Biofeedback",
-            href: "/work-life-balance#biofeedback",
+            href: "/focus",
           }
         ]}
         toggleMainMenu={toggleMenu}

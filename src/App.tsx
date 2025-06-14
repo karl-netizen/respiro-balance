@@ -27,6 +27,8 @@ import AppSettings from './pages/AppSettings';
 import Index from './pages/Index';
 import LandingPage from './pages/LandingPage';
 import EnhancedMeditationPage from './pages/EnhancedMeditationPage';
+import Progress from './pages/Progress';
+import WorkLifeBalance from './pages/WorkLifeBalance';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -62,14 +64,18 @@ function App() {
                   <Route path="/account" element={<AccountPage />} />
                   <Route path="/app-settings" element={<AppSettings />} />
                   <Route path="/subscription" element={<SubscriptionPage />} />
+                  <Route path="/meditate" element={<MeditationPage />} />
                   <Route path="/meditation" element={<MeditationPage />} />
                   <Route path="/meditation/enhanced" element={<EnhancedMeditationPage />} />
                   <Route path="/meditation/advanced" element={<MeditateAdvanced />} />
                   <Route path="/meditation/audio-management" element={<MeditationAudioManagement />} />
+                  <Route path="/breathe" element={<BreathingExercisesPage />} />
                   <Route path="/breathing" element={<BreathingExercisesPage />} />
+                  <Route path="/work-life-balance" element={<WorkLifeBalance />} />
                   <Route path="/focus" element={<FocusModePage />} />
                   <Route path="/social" element={<SocialPage />} />
                   <Route path="/morning-ritual" element={<MorningRitual />} />
+                  <Route path="/progress" element={<Progress />} />
                 </Routes>
               </NotificationsProvider>
             </UserPreferencesProvider>
