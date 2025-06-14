@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Brain, TrendingUp, Clock, Zap, Heart, Users } from 'lucide-react';
-import { contextAnalysisEngine, ContextualRecommendation } from '@/services/ContextAnalysisEngine';
+import { contextAnalysisEngine, ContextualRecommendation } from '@/services/context-analysis/ContextAnalysisEngine';
 import { crossModuleNavigation } from '@/services/CrossModuleNavigationService';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserPreferences } from '@/context';
