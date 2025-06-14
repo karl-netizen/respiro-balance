@@ -14,16 +14,14 @@ import NoDevicesView from "./NoDevicesView";
 import TeamFeatures from "./TeamFeatures";
 
 const BiofeedbackCard = () => {
-  const { preferences, updatePreferences } = useUserPreferences();
+  const { preferences, updatePreferences, connectBluetoothDevice, disconnectBluetoothDevice } = useUserPreferences();
   const [isConnecting, setIsConnecting] = useState(false);
   const [showTeamFeatures, setShowTeamFeatures] = useState(false);
 
-  // Fixed to use includes for subscription tier check
   const isTeamOrEnterprise = ["team", "enterprise", "premium"].includes(preferences.subscriptionTier || 'free');
   
   const handleConnectDevice = async () => {
     if (preferences.hasWearableDevice) {
-      // Show device management options
       setShowTeamFeatures(!showTeamFeatures);
       return;
     }
@@ -31,8 +29,16 @@ const BiofeedbackCard = () => {
     setIsConnecting(true);
     
     try {
-      // Fixed to not pass arguments to connectBluetoothDevice when none expected
-      const success = await connectBluetoothDevice();
+      // Mock device for connection
+      const mockDevice = {
+        id: 'mock-device-001',
+        name: 'Respiro HR Monitor',
+        type: 'heart_rate_monitor' as const,
+        rssi: -45,
+        services: ['heart_rate']
+      };
+      
+      const success = await connectBluetoothDevice(mockDevice);
       
       if (success) {
         toast.success("Device connected successfully", {
@@ -52,41 +58,41 @@ const BiofeedbackCard = () => {
     }
   };
 
-  // Fixed to return a Promise explicitly
   const handleScanForDevices = async (deviceType?: string, options?: any): Promise<void> => {
     setIsConnecting(true);
     try {
-      // Fixed to not pass parameters to connectBluetoothDevice
-      await connectBluetoothDevice();
+      // Mock scanning process
+      await new Promise(resolve => setTimeout(resolve, 2000));
     } finally {
       setIsConnecting(false);
     }
-    return Promise.resolve();
   };
 
-  // Fixed to return a Promise explicitly
   const handleConnectDeviceById = async (deviceId: string, callback?: () => void): Promise<void> => {
     try {
-      // Fixed to not pass parameters to connectBluetoothDevice
-      await connectBluetoothDevice();
+      const mockDevice = {
+        id: deviceId,
+        name: 'Mock Device',
+        type: 'heart_rate_monitor' as const,
+        rssi: -45,
+        services: ['heart_rate']
+      };
+      
+      await connectBluetoothDevice(mockDevice);
       if (callback) callback();
-      return Promise.resolve();
     } catch (error) {
       console.error("Failed to connect device:", error);
-      return Promise.reject(error);
+      throw error;
     }
   };
 
-  // Fixed to return a Promise explicitly
   const handleDisconnectDeviceById = async (deviceId: string, callback?: () => void): Promise<void> => {
     try {
-      // Fixed to not pass parameters to disconnectBluetoothDevice
       await disconnectBluetoothDevice(deviceId);
       if (callback) callback();
-      return Promise.resolve();
     } catch (error) {
       console.error("Failed to disconnect device:", error);
-      return Promise.reject(error);
+      throw error;
     }
   };
 
@@ -99,9 +105,6 @@ const BiofeedbackCard = () => {
       connected: true
     }
   ] : [];
-
-  // Fixed - get functions from useUserPreferences
-  const { connectBluetoothDevice, disconnectBluetoothDevice } = useUserPreferences();
 
   return (
     <Card className="bg-white/80 backdrop-blur-sm hover:shadow-lg transition-all duration-300">
@@ -151,7 +154,14 @@ const BiofeedbackCard = () => {
               onCheckedChange={(checked) => {
                 updatePreferences({ hasWearableDevice: checked });
                 if (checked) {
-                  connectBluetoothDevice();
+                  const mockDevice = {
+                    id: 'mock-device-001',
+                    name: 'Respiro HR Monitor',
+                    type: 'heart_rate_monitor' as const,
+                    rssi: -45,
+                    services: ['heart_rate']
+                  };
+                  connectBluetoothDevice(mockDevice);
                 } else {
                   if (mockDevices.length > 0) {
                     mockDevices.forEach(device => 

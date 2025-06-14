@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,14 +10,26 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { X } from 'lucide-react';
-import { RitualFormData } from './types';
+import { RitualFormValues, RitualReminder } from './types';
 import RitualReminderSetting from './RitualReminderSetting';
 
 interface RitualFormContentProps {
-  form: UseFormReturn<RitualFormData>;
+  form: UseFormReturn<RitualFormValues>;
+  onSubmit: (values: RitualFormValues) => void;
+  availableTags: string[];
+  selectedTags: string[];
+  onTagToggle: (tag: string) => void;
+  submitted: boolean;
 }
 
-const RitualFormContent: React.FC<RitualFormContentProps> = ({ form }) => {
+const RitualFormContent: React.FC<RitualFormContentProps> = ({ 
+  form, 
+  onSubmit,
+  availableTags,
+  selectedTags,
+  onTagToggle,
+  submitted
+}) => {
   const { watch, setValue } = form;
   const tags = watch('tags') || [];
   const daysOfWeek = watch('daysOfWeek') || [];
@@ -40,8 +53,40 @@ const RitualFormContent: React.FC<RitualFormContentProps> = ({ form }) => {
     }
   };
 
+  const handleAddReminder = () => {
+    const newReminder: RitualReminder = {
+      enabled: true,
+      time: 15,
+      message: 'Time for your morning ritual!'
+    };
+    setValue('reminders', [...reminders, newReminder]);
+  };
+
+  const handleUpdateReminder = (index: number, updatedReminder: RitualReminder) => {
+    const updatedReminders = [...reminders];
+    updatedReminders[index] = updatedReminder;
+    setValue('reminders', updatedReminders);
+  };
+
+  const handleRemoveReminder = (index: number) => {
+    setValue('reminders', reminders.filter((_, i) => i !== index));
+  };
+
+  if (submitted) {
+    return (
+      <div className="text-center py-8">
+        <div className="text-green-600 text-lg font-semibold mb-2">
+          ✅ Ritual Created Successfully!
+        </div>
+        <p className="text-muted-foreground">
+          Your morning ritual has been saved and is ready to help you start your day mindfully.
+        </p>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-6">
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
       {/* Basic Information */}
       <Card>
         <CardHeader>
@@ -109,7 +154,12 @@ const RitualFormContent: React.FC<RitualFormContentProps> = ({ form }) => {
               <FormItem>
                 <FormLabel>Duration (minutes)</FormLabel>
                 <FormControl>
-                  <Input type="number" placeholder="Enter duration" {...field} />
+                  <Input 
+                    type="number" 
+                    placeholder="Enter duration" 
+                    {...field}
+                    onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -141,42 +191,51 @@ const RitualFormContent: React.FC<RitualFormContentProps> = ({ form }) => {
           />
 
           {form.getValues('recurrence') === 'custom' && (
-            <div className="flex items-center space-x-2">
-              <FormLabel>Days of Week:</FormLabel>
-              {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map(day => (
-                <FormField
-                  key={day}
-                  control={form.control}
-                  name="daysOfWeek"
-                  render={() => (
-                    <FormItem className="space-y-0">
-                      <FormControl>
-                        <Checkbox
-                          checked={daysOfWeek.includes(day)}
-                          onCheckedChange={(checked) => handleDayToggle(day, checked)}
-                        />
-                      </FormControl>
-                      <FormLabel className="cursor-pointer capitalize">{day}</FormLabel>
-                    </FormItem>
-                  )}
-                />
-              ))}
+            <div className="space-y-2">
+              <FormLabel>Days of Week</FormLabel>
+              <div className="flex flex-wrap gap-2">
+                {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map(day => (
+                  <div key={day} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`day-${day}`}
+                      checked={daysOfWeek.includes(day)}
+                      onCheckedChange={(checked) => handleDayToggle(day, !!checked)}
+                    />
+                    <label
+                      htmlFor={`day-${day}`}
+                      className="text-sm capitalize cursor-pointer"
+                    >
+                      {day.substring(0, 3)}
+                    </label>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 
-          {/* Fixed reminder settings - removed form prop */}
+          {/* Reminder Settings */}
           <div className="space-y-4">
-            <h4 className="font-medium">Reminder Settings</h4>
+            <div className="flex items-center justify-between">
+              <h4 className="font-medium">Reminder Settings</h4>
+              <Button type="button" variant="outline" size="sm" onClick={handleAddReminder}>
+                Add Reminder
+              </Button>
+            </div>
             {reminders.map((reminder, index) => (
-              <RitualReminderSetting
-                key={index}
-                reminder={reminder}
-                onUpdate={(updatedReminder) => {
-                  const updatedReminders = [...reminders];
-                  updatedReminders[index] = updatedReminder;
-                  setValue('reminders', updatedReminders);
-                }}
-              />
+              <div key={index} className="border p-4 rounded-lg space-y-2">
+                <RitualReminderSetting
+                  reminder={reminder}
+                  onUpdate={(updatedReminder) => handleUpdateReminder(index, updatedReminder)}
+                />
+                <Button 
+                  type="button" 
+                  variant="destructive" 
+                  size="sm" 
+                  onClick={() => handleRemoveReminder(index)}
+                >
+                  Remove
+                </Button>
+              </div>
             ))}
           </div>
         </CardContent>
@@ -213,34 +272,60 @@ const RitualFormContent: React.FC<RitualFormContentProps> = ({ form }) => {
 
           <div>
             <FormLabel>Tags</FormLabel>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 mt-2">
               <Input
                 type="text"
                 placeholder="Add a tag..."
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
-                    handleAddTag(e.target.value);
-                    e.target.value = '';
+                    e.preventDefault();
+                    const target = e.target as HTMLInputElement;
+                    handleAddTag(target.value);
+                    target.value = '';
                   }
                 }}
               />
-              <Button type="button" size="sm" onClick={() => {
-                const newTag = prompt('Enter a new tag:');
-                if (newTag) {
-                  handleAddTag(newTag);
-                }
-              }}>
+              <Button 
+                type="button" 
+                size="sm" 
+                onClick={() => {
+                  const newTag = prompt('Enter a new tag:');
+                  if (newTag) {
+                    handleAddTag(newTag);
+                  }
+                }}
+              >
                 Add Tag
               </Button>
             </div>
+            
+            {/* Available tags */}
+            <div className="mt-4">
+              <p className="text-sm text-muted-foreground mb-2">Popular tags:</p>
+              <div className="flex flex-wrap gap-2">
+                {availableTags.map(tag => (
+                  <Badge 
+                    key={tag} 
+                    variant={selectedTags.includes(tag) ? "default" : "outline"}
+                    className="cursor-pointer"
+                    onClick={() => onTagToggle(tag)}
+                  >
+                    {tag}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+            
+            {/* Selected tags */}
             <div className="flex flex-wrap mt-2">
               {tags.map(tag => (
-                <Badge key={tag} className="mr-2 mt-1 rounded-full px-2 py-1" >
+                <Badge key={tag} className="mr-2 mt-1 rounded-full px-2 py-1">
                   {tag}
                   <Button
+                    type="button"
                     variant="ghost"
-                    size="icon"
-                    className="ml-2 -mr-1 h-4 w-4"
+                    size="sm"
+                    className="ml-2 -mr-1 h-4 w-4 p-0"
                     onClick={() => handleRemoveTag(tag)}
                   >
                     <X className="h-3 w-3" />
@@ -251,7 +336,11 @@ const RitualFormContent: React.FC<RitualFormContentProps> = ({ form }) => {
           </div>
         </CardContent>
       </Card>
-    </div>
+
+      <Button type="submit" className="w-full">
+        Create Morning Ritual
+      </Button>
+    </form>
   );
 };
 

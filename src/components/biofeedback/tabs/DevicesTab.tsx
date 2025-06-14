@@ -16,6 +16,21 @@ const DevicesTab: React.FC = () => {
     isSimulating 
   } = useBiofeedback();
 
+  // Wrapper functions to match expected signatures
+  const handleScanForDevices = async (deviceType?: string, options?: any): Promise<void> => {
+    await scanForDevices(deviceType, options);
+  };
+
+  const handleConnectDevice = async (deviceId: string, callback?: () => void): Promise<void> => {
+    await connectDevice(deviceId);
+    if (callback) callback();
+  };
+
+  const handleDisconnectDevice = async (deviceId: string, callback?: () => void): Promise<void> => {
+    await disconnectDevice(deviceId);
+    if (callback) callback();
+  };
+
   return (
     <div className="space-y-6">
       <Card>
@@ -27,9 +42,9 @@ const DevicesTab: React.FC = () => {
             devices={devices}
             isScanning={isScanning}
             isConnecting={isConnecting}
-            onScanForDevices={scanForDevices}
-            onConnectDevice={connectDevice}
-            onDisconnectDevice={disconnectDevice}
+            onScanForDevices={handleScanForDevices}
+            onConnectDevice={handleConnectDevice}
+            onDisconnectDevice={handleDisconnectDevice}
             isSimulating={isSimulating}
             onStopScan={stopScan}
           />
