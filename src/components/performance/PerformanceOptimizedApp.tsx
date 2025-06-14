@@ -14,7 +14,7 @@ interface ErrorBoundaryState {
 }
 
 class SimpleErrorBoundary extends React.Component<
-  { children: ReactNode; fallback: (error: Error, resetError: () => void) => ReactNode },
+  { children: ReactNode; fallback: React.ComponentType<{ error: Error; resetErrorBoundary: () => void }> },
   ErrorBoundaryState
 > {
   constructor(props: any) {
@@ -36,7 +36,8 @@ class SimpleErrorBoundary extends React.Component<
 
   render() {
     if (this.state.hasError && this.state.error) {
-      return this.props.fallback(this.state.error, this.resetError);
+      const FallbackComponent = this.props.fallback;
+      return <FallbackComponent error={this.state.error} resetErrorBoundary={this.resetError} />;
     }
 
     return this.props.children;

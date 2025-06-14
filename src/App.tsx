@@ -3,7 +3,7 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
-import { AuthProvider } from './providers/AuthProvider';
+import { AuthProvider } from './context/AuthProvider';
 import { UserPreferencesProvider } from './context/UserPreferencesProvider';
 import { SubscriptionProvider } from './context/SubscriptionProvider';
 import { NotificationsProvider } from './context/NotificationsProvider';
@@ -24,10 +24,18 @@ import MeditationAudioManagement from './pages/MeditationAudioManagement';
 import MorningRitual from './pages/MorningRitual';
 import Index from './pages/Index';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 function App() {
   console.log('App component rendering...');
+  console.log('React version check:', !!React);
   
   return (
     <QueryClientProvider client={queryClient}>
