@@ -13,6 +13,7 @@ export interface BiometricData {
   breathRate?: number;  // For backward compatibility
   stress_score?: number;
   stress_level?: number;
+  stress?: number;  // Add missing stress property
   focus_score?: number;
   calm_score?: number;
   coherence?: number;

@@ -14,14 +14,14 @@ export const useMorningRitual = () => {
     (preferences.morningDevices as MorningDevicesType) || "phone_delayed"
   );
   const [morningEnergyLevel, setMorningEnergyLevel] = useState<number>(
-    preferences.morningEnergyLevel || 5
+    typeof preferences.morningEnergyLevel === 'number' ? preferences.morningEnergyLevel : 5
   );
 
   // Sync local state with preferences when they change
   useEffect(() => {
     setMorningActivities(Array.isArray(preferences.morningActivities) ? preferences.morningActivities : []);
     setMorningDevices((preferences.morningDevices as MorningDevicesType) || "phone_delayed");
-    setMorningEnergyLevel(preferences.morningEnergyLevel || 5);
+    setMorningEnergyLevel(typeof preferences.morningEnergyLevel === 'number' ? preferences.morningEnergyLevel : 5);
   }, [preferences.morningActivities, preferences.morningDevices, preferences.morningEnergyLevel]);
 
   const handleActivityChange = (value: string, checked: boolean) => {

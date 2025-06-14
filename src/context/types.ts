@@ -8,17 +8,44 @@ export { BluetoothDeviceInfo, BluetoothDevice, DeviceType } from '@/types/blueto
 export type MorningRitual = MorningRitualType;
 export type RitualPriority = 'low' | 'medium' | 'high';
 export type RitualRecurrence = 'daily' | 'weekdays' | 'weekends' | 'custom';
-export type RitualStatus = 'planned' | 'in_progress' | 'completed' | 'skipped';
+export type RitualStatus = 'planned' | 'in_progress' | 'completed' | 'skipped' | 'missed';
 
 export interface RitualReminder {
   enabled: boolean;
-  time?: number;
+  time: number;
   message?: string;
+}
+
+// Missing types that were causing errors
+export interface Notification {
+  id: string;
+  type: 'info' | 'success' | 'warning' | 'error';
+  title: string;
+  message: string;
+  timestamp: Date;
+  read: boolean;
+}
+
+export interface CompletionEntry {
+  id: string;
+  date: string;
+  completed: boolean;
+  duration?: number;
+}
+
+export interface SessionFlow {
+  id: string;
+  currentStep: number;
+  totalSteps: number;
+  estimatedDuration: number;
+  status: 'not_started' | 'in_progress' | 'completed' | 'paused';
 }
 
 export type WorkDay = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
 export type StressLevelType = 'low' | 'moderate' | 'high';
 export type Theme = 'light' | 'dark' | 'system';
+export type MeasurementSystem = 'metric' | 'imperial';
+export type TimeManagementStyle = 'pomodoro' | 'timeblocking' | 'deadline' | 'flexible';
 
 export interface NotificationSettings {
   sessionReminders: boolean;
@@ -48,7 +75,7 @@ export interface UserPreferences {
   // Location and internationalization
   country?: string;
   timezone?: string;
-  measurementSystem?: 'metric' | 'imperial';
+  measurementSystem?: MeasurementSystem;
   location?: UserLocation;
   
   // Wellness preferences
@@ -60,7 +87,7 @@ export interface UserPreferences {
   workEnvironment: 'office' | 'home' | 'hybrid';
   preferredSessionDuration: number;
   preferred_session_duration?: number;
-  morningEnergyLevel?: string;
+  morningEnergyLevel?: number;
   
   // App preferences
   hasCompletedOnboarding: boolean;
@@ -136,6 +163,19 @@ export interface UserPreferences {
   
   // Cross-module progress
   cross_module_progress?: any;
+
+  // Missing properties that were causing build errors
+  wearableDeviceType?: string;
+  attributionSource?: string;
+  enableSessionReminders?: boolean;
+  enableProgressUpdates?: boolean;
+  enableRecommendations?: boolean;
+  timeManagementStyle?: TimeManagementStyle;
+  breakReminders?: any;
+  breakNotificationsEnabled?: boolean;
+  morningDevices?: string;
+  focusTimerDuration?: number;
+  breakTimerDuration?: number;
 }
 
 export interface UserPreferencesContextType {

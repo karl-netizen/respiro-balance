@@ -25,10 +25,22 @@ const COUNTRIES = [
   // Add more countries as needed
 ];
 
-const TIMEZONES = Intl.supportedValuesOf('timeZone').map(tz => ({
-  value: tz,
-  label: tz.replace(/_/g, ' ')
-}));
+// Fallback timezone list for browser compatibility
+const TIMEZONES = [
+  { value: 'America/New_York', label: 'America/New York' },
+  { value: 'America/Los_Angeles', label: 'America/Los Angeles' },
+  { value: 'America/Chicago', label: 'America/Chicago' },
+  { value: 'America/Denver', label: 'America/Denver' },
+  { value: 'America/Toronto', label: 'America/Toronto' },
+  { value: 'Europe/London', label: 'Europe/London' },
+  { value: 'Europe/Paris', label: 'Europe/Paris' },
+  { value: 'Europe/Berlin', label: 'Europe/Berlin' },
+  { value: 'Asia/Tokyo', label: 'Asia/Tokyo' },
+  { value: 'Asia/Shanghai', label: 'Asia/Shanghai' },
+  { value: 'Asia/Kolkata', label: 'Asia/Kolkata' },
+  { value: 'Australia/Sydney', label: 'Australia/Sydney' },
+  { value: 'Pacific/Auckland', label: 'Pacific/Auckland' }
+];
 
 const ProfileManagement = () => {
   const { user, updateProfile, loading } = useAuth();
