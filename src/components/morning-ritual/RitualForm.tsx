@@ -11,16 +11,13 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useRitualForm } from "./hooks/useRitualForm";
 import RitualFormContent from "./RitualFormContent";
-import { RITUAL_TAGS } from "./constants";
 
 const RitualForm = () => {
   const isMobile = useIsMobile();
   const { 
     form, 
-    selectedTags, 
     submitted, 
     setSubmitted, 
-    toggleTag, 
     onSubmit 
   } = useRitualForm();
   
@@ -39,9 +36,7 @@ const RitualForm = () => {
     <RitualFormContent
       form={form}
       onSubmit={onSubmit}
-      availableTags={RITUAL_TAGS}
-      selectedTags={selectedTags}
-      onTagToggle={toggleTag}
+      isSubmitting={false}
       submitted={submitted}
     />
   );

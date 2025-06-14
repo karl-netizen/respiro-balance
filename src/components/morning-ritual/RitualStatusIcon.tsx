@@ -1,7 +1,7 @@
 
-import React from "react";
-import { RitualStatus } from "@/context/types";
-import { CheckCircle2, XCircle, CircleDashed, Clock } from "lucide-react";
+import React from 'react';
+import { CheckCircle, Clock, AlertCircle, Play, X } from 'lucide-react';
+import { RitualStatus } from '@/context/types';
 
 interface RitualStatusIconProps {
   status: RitualStatus;
@@ -10,14 +10,16 @@ interface RitualStatusIconProps {
 
 const RitualStatusIcon: React.FC<RitualStatusIconProps> = ({ status, className = "h-5 w-5" }) => {
   switch (status) {
-    case "completed":
-      return <CheckCircle2 className={`${className} text-green-500`} />;
-    case "in_progress":
-      return <CircleDashed className={`${className} text-amber-500`} />;
-    case "missed":
-      return <XCircle className={`${className} text-red-500`} />;
+    case 'completed':
+      return <CheckCircle className={`${className} text-green-500`} />;
+    case 'in_progress':
+      return <Play className={`${className} text-blue-500`} />;
+    case 'skipped':
+      return <X className={`${className} text-gray-500`} />;
+    case 'missed':
+      return <AlertCircle className={`${className} text-red-500`} />;
     default:
-      return <Clock className={`${className} text-slate-400`} />;
+      return <Clock className={`${className} text-orange-500`} />;
   }
 };
 

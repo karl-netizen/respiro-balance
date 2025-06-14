@@ -42,7 +42,7 @@ const MorningRitual = () => {
       updatedRituals.forEach(ritual => {
         const originalRitual = rituals.find(r => r.id === ritual.id);
         
-        if (originalRitual && ritual.streak > (originalRitual.streak || 0)) {
+        if (originalRitual && ritual.streak && ritual.streak > (originalRitual.streak || 0)) {
           addStreakAchievementNotification(ritual);
         }
       });
@@ -57,7 +57,7 @@ const MorningRitual = () => {
   // Analyze schedule when rituals change
   useEffect(() => {
     if (rituals.length > 0) {
-      analyzeSchedule();
+      analyzeSchedule(rituals);
     }
   }, [rituals, analyzeSchedule]);
 
@@ -74,6 +74,21 @@ const MorningRitual = () => {
     optimizeSchedule();
   };
 
+  // Enhanced schedule optimization with feasibility score
+  const enhancedScheduleOptimization = {
+    ...scheduleOptimization,
+    feasibilityScore: Math.max(0, 100 - (scheduleOptimization.conflicts.length * 10))
+  };
+
+  // Transform conflicts to expected format
+  const transformedConflicts = {
+    conflicts: scheduleOptimization.conflicts.map((conflict, index) => ({
+      type: 'timing',
+      ritual1: `Ritual ${index + 1}`,
+      suggestion: conflict
+    }))
+  };
+
   return (
     <>
       <MorningRitualHeader />
@@ -83,11 +98,11 @@ const MorningRitual = () => {
           <QuickStats 
             rituals={rituals}
             completedToday={completedToday}
-            scheduleOptimization={scheduleOptimization}
+            scheduleOptimization={enhancedScheduleOptimization}
           />
 
           <ScheduleOptimizationCard 
-            scheduleOptimization={scheduleOptimization}
+            scheduleOptimization={transformedConflicts}
             onOptimize={handleOptimizeSchedule}
           />
 
@@ -103,7 +118,7 @@ const MorningRitual = () => {
               removeDependency={removeDependency}
               addWeatherAlternative={addWeatherAlternative}
               removeWeatherAlternative={removeWeatherAlternative}
-              updateWeatherAlternative={updateWeatherAlternative}
+              updateWeatherAlternative={(alt: any) => updateWeatherAlternative(alt.id, alt)}
             />
           </MorningRitualTabs>
         </div>

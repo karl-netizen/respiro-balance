@@ -1,114 +1,41 @@
 
-import { useState } from "react";
-import { MorningRitual, RitualRecurrence, WorkDay } from "@/context/types";
-import { useToast } from "@/hooks/use-toast";
-import { RITUAL_TAGS } from "../constants";
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { MorningRitual, WorkDay } from '@/context/types';
+import { ritualFormSchema, RitualFormValues } from '../types';
 
-export interface UseRitualEditFormProps {
-  ritual: MorningRitual;
-  onSave: (updatedRitual: MorningRitual) => void;
-  onOpenChange: (open: boolean) => void;
-}
+export const useRitualEditForm = (ritual: MorningRitual) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-export const useRitualEditForm = ({ ritual, onSave, onOpenChange }: UseRitualEditFormProps) => {
-  const { toast } = useToast();
-  const [title, setTitle] = useState(ritual.title);
-  const [description, setDescription] = useState(ritual.description || "");
-  const [timeOfDay, setTimeOfDay] = useState(ritual.timeOfDay);
-  const [duration, setDuration] = useState(ritual.duration);
-  const [recurrence, setRecurrence] = useState<RitualRecurrence>(ritual.recurrence);
-  const [daysOfWeek, setDaysOfWeek] = useState<WorkDay[]>(ritual.daysOfWeek || []);
-  const [selectedTags, setSelectedTags] = useState<string[]>(ritual.tags || []);
-  
-  // Toggle a tag selection
-  const toggleTag = (tag: string) => {
-    setSelectedTags(prev => 
-      prev.includes(tag) 
-        ? prev.filter(t => t !== tag) 
-        : [...prev, tag]
-    );
-  };
-  
-  // Handle day selection for custom recurrence
-  const toggleDay = (day: WorkDay) => {
-    setDaysOfWeek(prev => 
-      prev.includes(day)
-        ? prev.filter(d => d !== day)
-        : [...prev, day]
-    );
-  };
-  
-  // Handle form submission
-  const handleSave = () => {
-    // Validate required fields
-    if (!title.trim()) {
-      toast({
-        title: "Error",
-        description: "Title is required",
-        variant: "destructive",
-      });
-      return;
+  const form = useForm<RitualFormValues>({
+    resolver: zodResolver(ritualFormSchema),
+    defaultValues: {
+      title: ritual.title,
+      description: ritual.description || '',
+      timeOfDay: ritual.timeOfDay,
+      duration: ritual.duration,
+      priority: ritual.priority,
+      recurrence: ritual.recurrence,
+      tags: ritual.tags || [],
+      daysOfWeek: ritual.daysOfWeek.map(day => day.toLowerCase()) as WorkDay[],
+      reminders: ritual.reminders || []
     }
-    
-    if (!timeOfDay) {
-      toast({
-        title: "Error",
-        description: "Time of day is required",
-        variant: "destructive",
-      });
-      return;
+  });
+
+  const handleSubmit = async (data: RitualFormValues) => {
+    setIsSubmitting(true);
+    try {
+      // Handle form submission
+      console.log('Updating ritual:', data);
+    } finally {
+      setIsSubmitting(false);
     }
-    
-    if (duration < 1) {
-      toast({
-        title: "Error",
-        description: "Duration must be at least 1 minute",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    // Create updated ritual object
-    const updatedRitual: MorningRitual = {
-      ...ritual,
-      title,
-      description: description || undefined,
-      timeOfDay,
-      duration,
-      recurrence,
-      daysOfWeek: recurrence === "custom" ? daysOfWeek : undefined,
-      tags: selectedTags,
-    };
-    
-    // Save changes
-    onSave(updatedRitual);
-    
-    // Close dialog
-    onOpenChange(false);
-    
-    // Show success message
-    toast({
-      title: "Ritual updated",
-      description: "Your morning ritual has been updated successfully",
-    });
   };
 
   return {
-    title,
-    setTitle,
-    description,
-    setDescription,
-    timeOfDay,
-    setTimeOfDay,
-    duration,
-    setDuration,
-    recurrence,
-    setRecurrence,
-    daysOfWeek,
-    selectedTags,
-    availableTags: RITUAL_TAGS,
-    toggleTag,
-    toggleDay,
-    handleSave
+    form,
+    isSubmitting,
+    handleSubmit
   };
 };

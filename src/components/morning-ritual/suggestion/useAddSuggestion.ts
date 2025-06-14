@@ -33,7 +33,8 @@ export const useAddSuggestion = () => {
         status: 'planned',
         streak: 0,
         createdAt: new Date(),
-        completionHistory: []
+        daysOfWeek: [],
+        reminders: []
       };
 
       const updatedRituals = [...(preferences.morningRituals || []), newRitual];

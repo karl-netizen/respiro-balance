@@ -1,15 +1,9 @@
 
-import React from "react";
-import { MorningRitual } from "@/context/types";
-import { 
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { useRitualEditForm } from "./hooks/useRitualEditForm";
-import RitualEditFormContent from "./RitualEditFormContent";
+import React from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { MorningRitual } from '@/context/types';
+import RitualFormContent from './RitualFormContent';
+import { useRitualEditForm } from './hooks/useRitualEditForm';
 
 interface RitualEditDialogProps {
   ritual: MorningRitual;
@@ -24,21 +18,30 @@ const RitualEditDialog: React.FC<RitualEditDialogProps> = ({
   onOpenChange,
   onSave
 }) => {
-  const formProps = useRitualEditForm({ ritual, onSave, onOpenChange });
+  const { form, isSubmitting, handleSubmit } = useRitualEditForm(ritual);
+
+  const onSubmit = (data: any) => {
+    const updatedRitual: MorningRitual = {
+      ...ritual,
+      ...data,
+      updatedAt: new Date()
+    };
+    onSave(updatedRitual);
+    onOpenChange(false);
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[550px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Edit Morning Ritual</DialogTitle>
-          <DialogDescription>
-            Update your morning ritual to better fit your routine.
-          </DialogDescription>
+          <DialogTitle>Edit Ritual</DialogTitle>
         </DialogHeader>
         
-        <RitualEditFormContent 
-          {...formProps}
-          onOpenChange={onOpenChange} 
+        <RitualFormContent
+          form={form}
+          onSubmit={handleSubmit(onSubmit)}
+          isSubmitting={isSubmitting}
+          submitLabel="Update Ritual"
         />
       </DialogContent>
     </Dialog>

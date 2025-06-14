@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -34,7 +33,6 @@ const DailyStatusDashboard: React.FC<DailyStatusDashboardProps> = ({
   // Calculate overall streak (days with 80%+ completion)
   const overallStreak = calculateOverallStreak(rituals);
   
-  // Enhanced motivational messages based on performance and context
   const getMotivationalMessage = () => {
     const currentHour = today.getHours();
     const isEarlyMorning = currentHour >= 5 && currentHour <= 8;

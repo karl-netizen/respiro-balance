@@ -1,18 +1,17 @@
 
 export const RITUAL_TAGS = [
-  'meditation',
-  'breathing',
-  'journaling',
-  'exercise',
-  'gratitude',
-  'planning',
-  'mindfulness',
-  'stretching',
-  'hydration',
-  'nutrition',
-  'affirmations',
-  'reading',
-  'music',
-  'nature',
-  'creativity'
+  'Mindfulness',
+  'Exercise',
+  'Nutrition',
+  'Journaling',
+  'Reading',
+  'Meditation',
+  'Gratitude',
+  'Planning',
+  'Hydration',
+  'Stretching'
 ];
+
+export const RITUAL_PRIORITIES = ['low', 'medium', 'high'] as const;
+
+export const RITUAL_RECURRENCE_TYPES = ['daily', 'weekdays', 'weekends', 'custom'] as const;

@@ -21,8 +21,8 @@ import { Clock, Calendar, Flame, CheckCircle2, AlertCircle, Play } from "lucide-
 
 interface RitualTimelineItemProps {
   ritual: MorningRitual;
-  onComplete: (ritualId: string) => void;
-  onDelete: (ritualId: string) => void;
+  onComplete: (ritual: MorningRitual) => void;
+  onDelete: (ritual: MorningRitual) => void;
   onUpdate: (updatedRitual: MorningRitual) => void;
 }
 
@@ -151,7 +151,7 @@ const RitualTimelineItem: React.FC<RitualTimelineItemProps> = ({
               
               <div className="flex flex-col items-end space-y-2">
                 <RitualStatusBadge status={ritual.status} />
-                {ritual.streak > 0 && (
+                {ritual.streak && ritual.streak > 0 && (
                   <div className="flex items-center space-x-1 text-sm text-orange-600">
                     <Flame className="h-4 w-4" />
                     <span className="font-semibold">{ritual.streak} day{ritual.streak !== 1 ? 's' : ''}</span>

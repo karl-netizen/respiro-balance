@@ -17,7 +17,7 @@ export const updateRitualStatuses = (rituals: MorningRitual[]): MorningRitual[] 
 
 export const shouldDoRitualToday = (ritual: MorningRitual): boolean => {
   const today = new Date();
-  const dayName = today.toLocaleDateString('en-US', { weekday: 'lowercase' });
+  const dayName = today.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
   
   switch (ritual.recurrence) {
     case 'daily':
@@ -42,13 +42,37 @@ export const wasCompletedToday = (ritual: MorningRitual): boolean => {
   return lastCompleted.toDateString() === today.toDateString();
 };
 
+export const wasCompletedOnDate = (lastCompleted?: string, date?: Date): boolean => {
+  if (!lastCompleted || !date) return false;
+  
+  const completedDate = new Date(lastCompleted);
+  return completedDate.toDateString() === date.toDateString();
+};
+
+export const shouldDoRitualYesterday = (ritual: MorningRitual): boolean => {
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const dayName = yesterday.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+  
+  switch (ritual.recurrence) {
+    case 'daily':
+      return true;
+    case 'weekdays':
+      return !['saturday', 'sunday'].includes(dayName);
+    case 'weekends':
+      return ['saturday', 'sunday'].includes(dayName);
+    case 'custom':
+      return ritual.daysOfWeek.includes(dayName);
+    default:
+      return false;
+  }
+};
+
 export const calculateStreak = (ritual: MorningRitual): number => {
-  // Simple streak calculation - could be enhanced with completion history
   return ritual.streak || 0;
 };
 
 export const getCompletionHistory = (ritual: MorningRitual): CompletionEntry[] => {
-  // Generate mock completion history for now
   const entries: CompletionEntry[] = [];
   const today = new Date();
   
@@ -59,7 +83,7 @@ export const getCompletionHistory = (ritual: MorningRitual): CompletionEntry[] =
     entries.push({
       id: `${ritual.id}-${date.toISOString().split('T')[0]}`,
       date: date.toISOString().split('T')[0],
-      completed: Math.random() > 0.3, // 70% completion rate
+      completed: Math.random() > 0.3,
       duration: ritual.duration
     });
   }
@@ -74,10 +98,26 @@ export const getNextOccurrence = (ritual: MorningRitual): Date => {
   const next = new Date(now);
   next.setHours(hours, minutes, 0, 0);
   
-  // If the time has passed today, schedule for tomorrow
   if (next <= now) {
     next.setDate(next.getDate() + 1);
   }
   
   return next;
+};
+
+export const generateRitualId = (): string => {
+  return `ritual_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+};
+
+export const getSuggestedActivities = (preferences: any): string[] => {
+  const suggestions = [
+    'Morning Meditation',
+    'Gratitude Journaling',
+    'Light Exercise',
+    'Breathing Practice',
+    'Hydration',
+    'Affirmations'
+  ];
+  
+  return suggestions.slice(0, 3);
 };

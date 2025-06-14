@@ -151,7 +151,8 @@ const RitualCreationWizard: React.FC<RitualCreationWizardProps> = ({
       status: 'planned',
       streak: 0,
       createdAt: new Date(),
-      completionHistory: []
+      daysOfWeek: [],
+      reminders: []
     };
 
     onSave(newRitual);

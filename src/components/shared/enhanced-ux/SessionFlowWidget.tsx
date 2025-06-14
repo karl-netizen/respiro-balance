@@ -1,82 +1,77 @@
 
 import React from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight, Clock, Target } from 'lucide-react';
-import { useEnhancedUXContext } from './EnhancedUXProvider';
+import { Clock, Play, Pause } from 'lucide-react';
+import { SessionFlow } from '@/context/types';
 
-export const SessionFlowWidget: React.FC = () => {
-  const { activeSessionFlow, transitionToModule, completeSessionFlow } = useEnhancedUXContext();
+interface SessionFlowWidgetProps {
+  sessionFlow: SessionFlow;
+  onPause?: () => void;
+  onResume?: () => void;
+}
 
-  if (!activeSessionFlow) return null;
-
-  const progressPercentage = (activeSessionFlow.currentStep / activeSessionFlow.totalSteps) * 100;
-  const remainingModules = activeSessionFlow.modules.slice(activeSessionFlow.currentStep + 1);
+const SessionFlowWidget: React.FC<SessionFlowWidgetProps> = ({
+  sessionFlow,
+  onPause,
+  onResume
+}) => {
+  const progress = sessionFlow.currentStep && sessionFlow.totalSteps ? 
+    (sessionFlow.currentStep / sessionFlow.totalSteps) * 100 : 0;
 
   return (
-    <Card className="border-l-4 border-l-blue-500 bg-blue-50/50">
+    <Card className="w-full max-w-md">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <Target className="h-5 w-5 text-blue-500" />
-            Active Session Flow
-          </CardTitle>
-          <Badge variant="outline" className="text-blue-600">
-            {activeSessionFlow.currentStep + 1} of {activeSessionFlow.totalSteps}
+          <CardTitle className="text-lg">Session Progress</CardTitle>
+          <Badge variant={sessionFlow.status === 'in_progress' ? 'default' : 'secondary'}>
+            {sessionFlow.status.replace('_', ' ')}
           </Badge>
         </div>
       </CardHeader>
+      
       <CardContent className="space-y-4">
         <div className="space-y-2">
-          <div className="flex items-center justify-between text-sm">
-            <span>Progress</span>
-            <span className="flex items-center gap-1">
-              <Clock className="h-3 w-3" />
-              ~{activeSessionFlow.estimatedDuration} min total
-            </span>
+          <div className="flex justify-between text-sm">
+            <span>Step {sessionFlow.currentStep || 0} of {sessionFlow.totalSteps || 0}</span>
+            <span>{Math.round(progress)}% complete</span>
           </div>
-          <Progress value={progressPercentage} className="h-2" />
+          <Progress value={progress} className="h-2" />
         </div>
 
-        <div className="space-y-2">
-          <div className="text-sm font-medium">Current: {activeSessionFlow.currentModule}</div>
-          {remainingModules.length > 0 && (
-            <div className="text-sm text-muted-foreground">
-              Next: {remainingModules.join(' → ')}
-            </div>
-          )}
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <div className="flex items-center gap-1">
+            <Clock className="h-4 w-4" />
+            <span>~{sessionFlow.estimatedDuration || 0} min remaining</span>
+          </div>
+          
+          <div className="flex gap-2">
+            {sessionFlow.status === 'in_progress' && onPause && (
+              <button onClick={onPause} className="flex items-center gap-1 hover:text-foreground">
+                <Pause className="h-4 w-4" />
+                Pause
+              </button>
+            )}
+            
+            {sessionFlow.status === 'paused' && onResume && (
+              <button onClick={onResume} className="flex items-center gap-1 hover:text-foreground">
+                <Play className="h-4 w-4" />
+                Resume
+              </button>
+            )}
+          </div>
         </div>
 
-        <div className="flex gap-2">
-          {remainingModules.length > 0 ? (
-            <Button 
-              size="sm" 
-              className="flex-1"
-              onClick={() => transitionToModule(remainingModules[0], activeSessionFlow.currentModule, {})}
-            >
-              Continue to {remainingModules[0]}
-              <ArrowRight className="h-3 w-3 ml-1" />
-            </Button>
-          ) : (
-            <Button 
-              size="sm" 
-              className="flex-1"
-              onClick={() => completeSessionFlow({})}
-            >
-              Complete Flow
-            </Button>
-          )}
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => completeSessionFlow({})}
-          >
-            End Early
-          </Button>
-        </div>
+        {sessionFlow.currentModule && (
+          <div className="text-sm">
+            <span className="text-muted-foreground">Current: </span>
+            <span className="font-medium">{sessionFlow.currentModule}</span>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
 };
+
+export default SessionFlowWidget;

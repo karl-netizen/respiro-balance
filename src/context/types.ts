@@ -2,7 +2,22 @@
 import type { MorningRitual as MorningRitualType } from '@/components/morning-ritual/types';
 
 // Use unified Bluetooth types
-export type { BluetoothDeviceInfo, BluetoothDevice, DeviceType } from '@/types/bluetooth';
+export interface BluetoothDevice {
+  id: string;
+  name: string;
+  type: string;
+  connected: boolean;
+}
+
+export interface BluetoothDeviceInfo {
+  id: string;
+  name: string;
+  type: string;
+  connected: boolean;
+  batteryLevel?: number;
+}
+
+export type DeviceType = 'heart_rate' | 'eeg' | 'gsr' | 'unknown';
 
 // Export morning ritual types
 export type MorningRitual = MorningRitualType;

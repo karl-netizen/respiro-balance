@@ -1,86 +1,54 @@
 
-/**
- * Date-related utility functions for Morning Ritual
- */
-import { RitualRecurrence, WorkDay } from "@/context/types";
+import { MorningRitual } from '@/context/types';
 
-/**
- * Check if a ritual was completed on a specific date
- */
-export const wasCompletedOnDate = (lastCompleted: string, date: Date): boolean => {
+export const wasCompletedOnDate = (lastCompleted?: string, date?: Date): boolean => {
+  if (!lastCompleted || !date) return false;
+  
   const completedDate = new Date(lastCompleted);
-  
-  return (
-    completedDate.getDate() === date.getDate() &&
-    completedDate.getMonth() === date.getMonth() &&
-    completedDate.getFullYear() === date.getFullYear()
-  );
+  return completedDate.toDateString() === date.toDateString();
 };
 
-/**
- * Check if a ritual was completed today
- * @param lastCompleted The last completed timestamp
- * @returns Boolean indicating if ritual was completed today
- */
 export const wasCompletedToday = (lastCompleted?: string): boolean => {
-  if (!lastCompleted) {
-    return false;
-  }
+  if (!lastCompleted) return false;
   
+  const completedDate = new Date(lastCompleted);
   const today = new Date();
-  return wasCompletedOnDate(lastCompleted, today);
+  
+  return completedDate.toDateString() === today.toDateString();
 };
 
-/**
- * Check if a ritual should be done today based on its recurrence pattern
- * @param recurrence Ritual recurrence pattern
- * @param daysOfWeek Optional specific days for custom recurrence
- * @returns Boolean indicating if ritual should be done today
- */
-export const shouldDoRitualToday = (
-  recurrence: string,
-  daysOfWeek?: string[]
-): boolean => {
+export const shouldDoRitualToday = (ritual: MorningRitual): boolean => {
   const today = new Date();
-  const dayOfWeek = today.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
-  const isWeekend = dayOfWeek === 'saturday' || dayOfWeek === 'sunday';
+  const dayName = today.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
   
-  switch (recurrence) {
+  switch (ritual.recurrence) {
     case 'daily':
       return true;
     case 'weekdays':
-      return !isWeekend;
+      return !['saturday', 'sunday'].includes(dayName);
     case 'weekends':
-      return isWeekend;
+      return ['saturday', 'sunday'].includes(dayName);
     case 'custom':
-      return daysOfWeek ? daysOfWeek.includes(dayOfWeek) : false;
+      return ritual.daysOfWeek.includes(dayName);
     default:
       return false;
   }
 };
 
-/**
- * Check if a ritual was scheduled for yesterday
- */
-export const shouldDoRitualYesterday = (
-  recurrence: string,
-  daysOfWeek?: string[]
-): boolean => {
+export const shouldDoRitualYesterday = (ritual: MorningRitual): boolean => {
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
+  const dayName = yesterday.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
   
-  const yesterdayName = yesterday.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
-  const isYesterdayWeekend = yesterdayName === 'saturday' || yesterdayName === 'sunday';
-  
-  switch (recurrence) {
+  switch (ritual.recurrence) {
     case 'daily':
       return true;
     case 'weekdays':
-      return !isYesterdayWeekend;
+      return !['saturday', 'sunday'].includes(dayName);
     case 'weekends':
-      return isYesterdayWeekend;
+      return ['saturday', 'sunday'].includes(dayName);
     case 'custom':
-      return daysOfWeek ? daysOfWeek.includes(yesterdayName) : false;
+      return ritual.daysOfWeek.includes(dayName);
     default:
       return false;
   }

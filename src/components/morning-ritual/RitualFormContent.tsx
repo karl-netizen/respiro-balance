@@ -11,6 +11,7 @@ import RitualPrioritySelector from './RitualPrioritySelector';
 import RitualRecurrenceSelector from './RitualRecurrenceSelector';
 import RitualTagSelector from './RitualTagSelector';
 import RitualTimeFields from './RitualTimeFields';
+import { RITUAL_TAGS } from './constants';
 
 interface RitualFormContentProps {
   form: UseFormReturn<RitualFormValues>;
@@ -34,6 +35,7 @@ const RitualFormContent: React.FC<RitualFormContentProps> = ({
   } = form;
 
   const reminders = watch('reminders') || [];
+  const selectedTags = watch('tags') || [];
 
   const addReminder = () => {
     const newReminder = {
@@ -54,6 +56,14 @@ const RitualFormContent: React.FC<RitualFormContentProps> = ({
       i === index ? { ...reminder, [field]: value } : reminder
     );
     setValue('reminders', updatedReminders);
+  };
+
+  const handleTagToggle = (tag: string) => {
+    const isSelected = selectedTags.includes(tag);
+    const updatedTags = isSelected 
+      ? selectedTags.filter(t => t !== tag)
+      : [...selectedTags, tag];
+    setValue('tags', updatedTags);
   };
 
   return (
@@ -85,7 +95,12 @@ const RitualFormContent: React.FC<RitualFormContentProps> = ({
         <RitualTimeFields form={form} />
         <RitualPrioritySelector form={form} />
         <RitualRecurrenceSelector form={form} />
-        <RitualTagSelector form={form} />
+        
+        <RitualTagSelector
+          selectedTags={selectedTags}
+          availableTags={RITUAL_TAGS}
+          onTagToggle={handleTagToggle}
+        />
 
         <div className="space-y-4">
           <div className="flex items-center justify-between">

@@ -1,47 +1,34 @@
 
-import React from "react";
-import { FormField, FormItem, FormLabel, FormControl } from "@/components/ui/form";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
-import { UseFormReturn } from "react-hook-form";
-import { RitualFormValues } from "./types";
-import { RitualPriority } from "@/context/types";
+import React from 'react';
+import { UseFormReturn } from 'react-hook-form';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { RitualFormValues, RitualPriority } from './types';
 
 interface RitualPrioritySelectorProps {
   form: UseFormReturn<RitualFormValues>;
 }
 
 const RitualPrioritySelector: React.FC<RitualPrioritySelectorProps> = ({ form }) => {
+  const { watch, setValue } = form;
+
   return (
-    <FormField
-      control={form.control}
-      name="priority"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>Priority</FormLabel>
-          <FormControl>
-            <RadioGroup
-              onValueChange={(value) => field.onChange(value as RitualPriority)}
-              value={field.value || "medium"}
-              className="flex space-x-4"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="low" id="priority-low" />
-                <Label htmlFor="priority-low">Low</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="medium" id="priority-medium" />
-                <Label htmlFor="priority-medium">Medium</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="high" id="priority-high" />
-                <Label htmlFor="priority-high">High</Label>
-              </div>
-            </RadioGroup>
-          </FormControl>
-        </FormItem>
-      )}
-    />
+    <div className="space-y-2">
+      <Label htmlFor="priority">Priority</Label>
+      <Select
+        value={watch('priority')}
+        onValueChange={(value: RitualPriority) => setValue('priority', value)}
+      >
+        <SelectTrigger>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="low">Low</SelectItem>
+          <SelectItem value="medium">Medium</SelectItem>
+          <SelectItem value="high">High</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
   );
 };
 
