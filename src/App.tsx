@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -29,6 +28,7 @@ import LandingPage from './pages/LandingPage';
 import EnhancedMeditationPage from './pages/EnhancedMeditationPage';
 import Progress from './pages/Progress';
 import WorkLifeBalance from './pages/WorkLifeBalance';
+import BiofeedbackDashboard from './pages/BiofeedbackDashboard';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -76,6 +76,9 @@ function App() {
                   <Route path="/social" element={<SocialPage />} />
                   <Route path="/morning-ritual" element={<MorningRitual />} />
                   <Route path="/progress" element={<Progress />} />
+                  <Route path="/biofeedback" element={<BiofeedbackDashboard />} />
+                  <Route path="/devices" element={<BiofeedbackDashboard />} />
+                  <Route path="/biometric-data" element={<BiofeedbackDashboard />} />
                 </Routes>
               </NotificationsProvider>
             </UserPreferencesProvider>

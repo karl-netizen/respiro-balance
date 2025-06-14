@@ -70,9 +70,9 @@ export const UserPreferencesProvider: React.FC<UserPreferencesProviderProps> = (
   );
 
   // Handle UI preference updates by mapping back to DB format
-  const handleUpdatePreferences = (updates: Partial<typeof uiPreferences>) => {
+  const handleUpdatePreferences = async (updates: Partial<typeof uiPreferences>) => {
     const dbUpdates = mapUiToDbPreferences(updates);
-    updateUserPreferences(dbUpdates);
+    await updateUserPreferences(dbUpdates);
   };
 
   // Return boolean directly

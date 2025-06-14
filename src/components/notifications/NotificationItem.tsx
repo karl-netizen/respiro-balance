@@ -1,57 +1,74 @@
 
 import React from 'react';
-import { Bell, Check, AlertCircle, Info } from 'lucide-react';
-import { useNotifications } from "@/context/NotificationsProvider";
+import { formatDistanceToNow } from 'date-fns';
+import { Bell, Trophy, Target, Lightbulb } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { Notification } from '@/context/types';
 
 interface NotificationItemProps {
   notification: Notification;
-  onRead: (id: string) => void;
+  onMarkAsRead: (id: string) => void;
 }
 
-const NotificationItem: React.FC<NotificationItemProps> = ({ notification, onRead }) => {
-  const NotificationIcon = () => {
-    switch (notification.type) {
+const NotificationItem: React.FC<NotificationItemProps> = ({
+  notification,
+  onMarkAsRead
+}) => {
+  const getIcon = (type: Notification['type']) => {
+    switch (type) {
       case 'achievement':
-        return <Check className="h-4 w-4 text-green-500" />;
+        return <Trophy className="h-4 w-4 text-yellow-500" />;
       case 'reminder':
         return <Bell className="h-4 w-4 text-blue-500" />;
-      case 'system':
-        return <AlertCircle className="h-4 w-4 text-amber-500" />;
+      case 'streak':
+        return <Target className="h-4 w-4 text-green-500" />;
+      case 'suggestion':
+        return <Lightbulb className="h-4 w-4 text-purple-500" />;
       default:
-        return <Info className="h-4 w-4 text-gray-500" />;
+        return <Bell className="h-4 w-4 text-gray-500" />;
     }
   };
-  
+
   return (
     <div 
-      className={`p-3 border-b last:border-b-0 ${notification.read ? 'bg-background' : 'bg-secondary/10'}`}
-      onClick={() => !notification.read && onRead(notification.id)}
+      className={`p-4 border-b hover:bg-muted/50 transition-colors ${
+        !notification.read ? 'bg-blue-50/50' : ''
+      }`}
     >
-      <div className="flex items-start">
-        <div className="mr-3 mt-1">
-          <NotificationIcon />
+      <div className="flex items-start gap-3">
+        <div className="flex-shrink-0 mt-1">
+          {getIcon(notification.type)}
         </div>
-        <div className="flex-1">
-          <h4 className={`text-sm font-medium ${notification.read ? 'text-foreground/80' : 'text-foreground'}`}>
-            {notification.title}
-          </h4>
-          <p className="text-xs text-muted-foreground mt-1">
-            {notification.message}
-          </p>
-          <div className="flex justify-between items-center mt-2">
-            <span className="text-xs text-muted-foreground">
-              {notification.time}
-            </span>
-            {notification.action && (
-              <a 
-                href={notification.actionUrl || '#'} 
-                className="text-xs text-primary hover:underline"
+        
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex-1">
+              <h4 className="font-medium text-sm">{notification.title}</h4>
+              <p className="text-sm text-muted-foreground mt-1">
+                {notification.message}
+              </p>
+              <p className="text-xs text-muted-foreground mt-2">
+                {formatDistanceToNow(notification.timestamp, { addSuffix: true })}
+              </p>
+            </div>
+            
+            {!notification.read && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onMarkAsRead(notification.id)}
+                className="flex-shrink-0"
               >
-                {notification.action}
-              </a>
+                Mark read
+              </Button>
             )}
           </div>
+          
+          {notification.actionUrl && (
+            <Button variant="link" size="sm" className="p-0 h-auto mt-2">
+              View Details
+            </Button>
+          )}
         </div>
       </div>
     </div>

@@ -1,148 +1,93 @@
 
-import { UserPreferencesData } from '@/types/supabase';
 import { UserPreferences } from '../types';
+import { UserPreferencesData } from '@/types/supabase';
+import defaultPreferences from '../defaultPreferences';
 
 export const mapDbToUiPreferences = (
-  dbPreferences: UserPreferencesData, 
-  subscriptionTier: string,
-  hasWearableDevice: boolean,
-  role: string
+  dbPreferences: UserPreferencesData | null,
+  subscriptionTier?: string,
+  hasWearableDevice?: boolean,
+  role?: string
 ): UserPreferences => {
-  return {
-    // User role and identification
-    userRole: role as any,
-    theme: dbPreferences.theme as any || 'light',
-    
-    // Work schedule
-    workDays: dbPreferences.work_days?.map(day => day.toLowerCase()) as any || ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
-    workStartTime: dbPreferences.work_start_time || '09:00',
-    workEndTime: dbPreferences.work_end_time || '17:00',
-    workEnvironment: dbPreferences.work_environment as any || 'office',
-    
-    // Focus and productivity
-    stressLevel: dbPreferences.stress_level as any || 'moderate',
-    focusChallenges: [],
-    energyPattern: 'morning',
-    
-    // Daily routine
-    lunchBreak: dbPreferences.lunch_break ?? true,
-    lunchTime: dbPreferences.lunch_time || '13:00',
-    morningExercise: dbPreferences.morning_exercise ?? false,
-    exerciseTime: dbPreferences.exercise_time || '07:00',
-    bedTime: dbPreferences.bed_time || '22:00',
-    
-    // Meditation preferences
-    meditationExperience: dbPreferences.meditation_experience as any || 'beginner',
-    meditationGoals: [],
-    preferredSessionDuration: dbPreferences.preferred_session_duration || 10,
-    defaultMeditationDuration: dbPreferences.preferred_session_duration || 10,
-    
-    // App usage tracking
-    lastActive: new Date().toISOString(),
-    dailyUsageMinutes: 0,
-    weeklyUsageMinutes: 0,
-    
-    // Features usage
-    hasExportedData: false,
-    hasSharedProgress: false,
-    hasCompletedOnboarding: dbPreferences.has_completed_onboarding ?? false,
-    lastOnboardingCompleted: null,
-    lastOnboardingSkipped: null,
-    lastOnboardingStep: null,
-    hasViewedTutorial: false,
-    
-    // Biometric tracking
-    metricsOfInterest: [],
-    connectedDevices: [],
-    
-    // Morning ritual
-    morningActivities: [],
-    
-    // UI preferences
-    darkMode: dbPreferences.theme === 'dark',
-    reducedMotion: false,
-    highContrast: false,
-    
-    // Time management
-    timeChallenges: [],
+  if (!dbPreferences) {
+    return {
+      ...defaultPreferences,
+      subscriptionTier: subscriptionTier || 'free',
+      hasWearableDevice: hasWearableDevice || false,
+      userRole: role as any || 'user'
+    };
+  }
 
-    // Subscription - ensure it's one of the allowed values
-    subscriptionTier: (subscriptionTier === 'premium' || subscriptionTier === 'team') 
-      ? subscriptionTier 
-      : 'free',
-    
-    // Wearable device information
-    hasWearableDevice,
-    
-    // Notification preferences
-    notifications: true,
-    notificationsSound: true,
-    notificationsVibration: true,
-    
-    // Any additional properties from the base type
+  return {
+    ...defaultPreferences,
+    theme: dbPreferences.theme || defaultPreferences.theme,
+    focusMode: false,
+    morningRituals: [],
+    wakeUpTime: dbPreferences.work_start_time || defaultPreferences.wakeUpTime,
+    sleepGoal: 8,
+    hydrationGoal: 8,
+    notificationSettings: dbPreferences.notification_settings || defaultPreferences.notificationSettings,
+    isPremium: subscriptionTier === 'premium' || subscriptionTier === 'pro',
+    userName: '',
+    userAvatar: '',
+    dailyQuote: true,
+    quoteCategory: 'motivation',
+    affirmationsEnabled: true,
+    affirmationsList: [],
+    journalPromptsEnabled: true,
+    journalPromptsList: [],
+    gratitudeList: [],
+    mindfulnessExercises: [],
+    focusTechniques: [],
+    energyLevels: [],
+    moodStates: [],
+    stressManagementTechniques: [],
+    productivityHacks: [],
+    userRole: role as any || 'user',
+    connectedDevices: dbPreferences.connected_devices || [],
+    hasWearableDevice: hasWearableDevice || false,
+    workDays: dbPreferences.work_days || defaultPreferences.workDays,
+    meditationGoals: dbPreferences.meditation_goals || [],
+    focusChallenges: [],
+    metricsOfInterest: [],
+    preferredSessionDuration: dbPreferences.preferred_session_duration || defaultPreferences.preferredSessionDuration,
+    preferred_session_duration: dbPreferences.preferred_session_duration || defaultPreferences.preferred_session_duration,
+    meditationExperience: dbPreferences.meditation_experience || defaultPreferences.meditationExperience,
+    stressLevel: 3,
+    workEnvironment: dbPreferences.work_environment || defaultPreferences.workEnvironment,
+    workStartTime: dbPreferences.work_start_time || defaultPreferences.workStartTime,
+    workEndTime: dbPreferences.work_end_time || defaultPreferences.workEndTime,
+    lunchBreak: dbPreferences.lunch_break ?? defaultPreferences.lunchBreak,
+    lunchTime: dbPreferences.lunch_time || defaultPreferences.lunchTime,
+    morningExercise: dbPreferences.morning_exercise ?? defaultPreferences.morningExercise,
+    exerciseTime: dbPreferences.exercise_time || defaultPreferences.exerciseTime,
+    bedTime: dbPreferences.bed_time || defaultPreferences.bedTime,
+    hasCompletedOnboarding: dbPreferences.has_completed_onboarding ?? defaultPreferences.hasCompletedOnboarding,
+    subscriptionTier: subscriptionTier || 'free',
+    wakeTime: dbPreferences.work_start_time || defaultPreferences.wakeTime
   };
 };
 
-export const mapUiToDbPreferences = (
-  uiPreferences: Partial<UserPreferences>
-): Partial<UserPreferencesData> => {
-  const result: Partial<UserPreferencesData> = {};
-  
-  if (uiPreferences.theme !== undefined) {
-    result.theme = uiPreferences.theme;
-  }
-  
-  if (uiPreferences.preferredSessionDuration !== undefined) {
-    result.preferred_session_duration = uiPreferences.preferredSessionDuration;
-  }
-  
-  if (uiPreferences.workDays !== undefined) {
-    result.work_days = uiPreferences.workDays.map(day => day.charAt(0).toUpperCase() + day.slice(1)) as string[];
-  }
-  
-  if (uiPreferences.meditationExperience !== undefined) {
-    result.meditation_experience = uiPreferences.meditationExperience;
-  }
-  
-  if (uiPreferences.stressLevel !== undefined) {
-    result.stress_level = uiPreferences.stressLevel;
-  }
-  
-  if (uiPreferences.workEnvironment !== undefined) {
-    result.work_environment = uiPreferences.workEnvironment;
-  }
-  
-  if (uiPreferences.workStartTime !== undefined) {
-    result.work_start_time = uiPreferences.workStartTime;
-  }
-  
-  if (uiPreferences.workEndTime !== undefined) {
-    result.work_end_time = uiPreferences.workEndTime;
-  }
-  
-  if (uiPreferences.lunchBreak !== undefined) {
-    result.lunch_break = uiPreferences.lunchBreak;
-  }
-  
-  if (uiPreferences.lunchTime !== undefined) {
-    result.lunch_time = uiPreferences.lunchTime;
-  }
-  
-  if (uiPreferences.morningExercise !== undefined) {
-    result.morning_exercise = uiPreferences.morningExercise;
-  }
-  
-  if (uiPreferences.exerciseTime !== undefined) {
-    result.exercise_time = uiPreferences.exerciseTime;
-  }
-  
-  if (uiPreferences.bedTime !== undefined) {
-    result.bed_time = uiPreferences.bedTime;
-  }
-  
-  if (uiPreferences.hasCompletedOnboarding !== undefined) {
-    result.has_completed_onboarding = uiPreferences.hasCompletedOnboarding;
-  }
-  
-  return result;
+export const mapUiToDbPreferences = (uiPreferences: Partial<UserPreferences>): Partial<UserPreferencesData> => {
+  return {
+    theme: uiPreferences.theme,
+    preferred_session_duration: uiPreferences.preferredSessionDuration || uiPreferences.preferred_session_duration,
+    work_days: uiPreferences.workDays as string[],
+    meditation_experience: uiPreferences.meditationExperience,
+    stress_level: typeof uiPreferences.stressLevel === 'number' ? 
+      uiPreferences.stressLevel.toString() : 
+      uiPreferences.stressLevel,
+    work_environment: uiPreferences.workEnvironment,
+    work_start_time: uiPreferences.workStartTime,
+    work_end_time: uiPreferences.workEndTime,
+    lunch_break: uiPreferences.lunchBreak,
+    lunch_time: uiPreferences.lunchTime,
+    morning_exercise: uiPreferences.morningExercise,
+    exercise_time: uiPreferences.exerciseTime,
+    bed_time: uiPreferences.bedTime,
+    has_completed_onboarding: uiPreferences.hasCompletedOnboarding,
+    notification_settings: uiPreferences.notificationSettings,
+    connected_devices: uiPreferences.connectedDevices,
+    meditation_goals: uiPreferences.meditationGoals
+  };
 };

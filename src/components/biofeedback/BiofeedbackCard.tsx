@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { Watch } from "lucide-react";
+import { Monitor } from "lucide-react";
 import { useUserPreferences } from "@/context";
 import { toast } from "sonner";
 import { BluetoothDevice } from "@/types/supabase";
@@ -14,7 +14,7 @@ import NoDevicesView from "./NoDevicesView";
 import TeamFeatures from "./TeamFeatures";
 
 const BiofeedbackCard = () => {
-  const { preferences, updatePreferences, connectBluetoothDevice, disconnectBluetoothDevice } = useUserPreferences();
+  const { preferences, updatePreferences } = useUserPreferences();
   const [isConnecting, setIsConnecting] = useState(false);
   const [showTeamFeatures, setShowTeamFeatures] = useState(false);
 
@@ -31,6 +31,7 @@ const BiofeedbackCard = () => {
     setIsConnecting(true);
     
     try {
+      // Fixed to not pass arguments to connectBluetoothDevice when none expected
       const success = await connectBluetoothDevice();
       
       if (success) {
@@ -55,32 +56,37 @@ const BiofeedbackCard = () => {
   const handleScanForDevices = async (deviceType?: string, options?: any): Promise<void> => {
     setIsConnecting(true);
     try {
-      await connectBluetoothDevice(deviceType, options);
+      // Fixed to not pass parameters to connectBluetoothDevice
+      await connectBluetoothDevice();
     } finally {
       setIsConnecting(false);
     }
-    return Promise.resolve(); // Explicitly return a resolved Promise
+    return Promise.resolve();
   };
 
   // Fixed to return a Promise explicitly
   const handleConnectDeviceById = async (deviceId: string, callback?: () => void): Promise<void> => {
     try {
-      await connectBluetoothDevice("heart_rate_monitor", { deviceId, callback });
-      return Promise.resolve(); // Explicitly return a resolved Promise
+      // Fixed to not pass parameters to connectBluetoothDevice
+      await connectBluetoothDevice();
+      if (callback) callback();
+      return Promise.resolve();
     } catch (error) {
       console.error("Failed to connect device:", error);
-      return Promise.reject(error); // Return rejected promise on error
+      return Promise.reject(error);
     }
   };
 
   // Fixed to return a Promise explicitly
   const handleDisconnectDeviceById = async (deviceId: string, callback?: () => void): Promise<void> => {
     try {
-      await disconnectBluetoothDevice(deviceId, callback);
-      return Promise.resolve(); // Explicitly return a resolved Promise
+      // Fixed to not pass parameters to disconnectBluetoothDevice
+      await disconnectBluetoothDevice(deviceId);
+      if (callback) callback();
+      return Promise.resolve();
     } catch (error) {
       console.error("Failed to disconnect device:", error);
-      return Promise.reject(error); // Return rejected promise on error
+      return Promise.reject(error);
     }
   };
 
@@ -94,12 +100,15 @@ const BiofeedbackCard = () => {
     }
   ] : [];
 
+  // Fixed - get functions from useUserPreferences
+  const { connectBluetoothDevice, disconnectBluetoothDevice } = useUserPreferences();
+
   return (
     <Card className="bg-white/80 backdrop-blur-sm hover:shadow-lg transition-all duration-300">
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-xl">Biofeedback</CardTitle>
-          <Watch className="h-5 w-5 text-primary" />
+          <Monitor className="h-5 w-5 text-primary" />
         </div>
         <CardDescription>
           {isTeamOrEnterprise 
@@ -126,7 +135,7 @@ const BiofeedbackCard = () => {
           ) : isConnecting ? (
             <DeviceSearching onStopScan={() => {
               setIsConnecting(false);
-              return Promise.resolve(); // Return a Promise
+              return Promise.resolve();
             }} />
           ) : (
             <NoDevicesView 
@@ -146,7 +155,7 @@ const BiofeedbackCard = () => {
                 } else {
                   if (mockDevices.length > 0) {
                     mockDevices.forEach(device => 
-                      disconnectBluetoothDevice(typeof device === "string" ? device : device.id)
+                      disconnectBluetoothDevice(device.id)
                     );
                   }
                 }

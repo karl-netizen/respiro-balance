@@ -1,51 +1,28 @@
 
-import { UserPreferences, BluetoothDevice, DeviceType, BluetoothDeviceInfo } from './types';
+import { BluetoothDeviceInfo, DeviceType } from './types';
 
-// Function to simulate connecting a Bluetooth device
-export const connectBluetoothDevice = async (): Promise<{
-  success: boolean;
-  device?: BluetoothDevice;
-}> => {
-  // This is a mock implementation since Web Bluetooth API may not be available
+export const scanForBluetoothDevices = async (): Promise<BluetoothDeviceInfo[]> => {
   try {
-    // Simulate device connection with a timeout
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    // Create a mock device
-    const mockDevice: BluetoothDevice = {
-      id: Math.random().toString(36).substring(2, 10),
-      name: "Respiro HR Monitor",
-      type: "heart_rate_monitor",
-      connected: true
-    };
-    
-    return {
-      success: true,
-      device: mockDevice
-    };
+    if (!navigator.bluetooth) {
+      throw new Error('Bluetooth not supported');
+    }
+
+    const device = await navigator.bluetooth.requestDevice({
+      filters: [
+        { services: ['heart_rate'] },
+        { services: ['0000180d-0000-1000-8000-00805f9b34fb'] }
+      ],
+      optionalServices: ['battery_service']
+    });
+
+    return [{
+      id: device.id,
+      name: device.name || 'Unknown Device',
+      type: 'heart_rate' as DeviceType,
+      services: ['heart_rate']
+    }];
   } catch (error) {
-    console.error("Failed to connect Bluetooth device:", error);
-    return {
-      success: false
-    };
+    console.error('Bluetooth scanning failed:', error);
+    return [];
   }
-};
-
-// Helper to ensure device is in the correct format
-export const normalizeDeviceId = (device: string | BluetoothDeviceInfo): string => {
-  return typeof device === "string" ? device : device.id;
-};
-
-// Function to handle disconnecting a device
-export const disconnectDevice = (
-  deviceId: string, 
-  preferences: UserPreferences
-): BluetoothDeviceInfo[] => {
-  // Handle disconnecting a specific device by its ID
-  const updatedDevices = preferences.connectedDevices.filter(device => {
-    const id = typeof device === "string" ? device : device.id;
-    return id !== deviceId;
-  });
-  
-  return updatedDevices;
 };
