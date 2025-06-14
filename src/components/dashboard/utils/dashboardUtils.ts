@@ -8,6 +8,10 @@ export const generateQuickStats = (
   weeklyGoal: number,
   meditationStats: any
 ) => {
+  // Use actual data instead of random values
+  const totalSessions = meditationStats.totalSessions || 0;
+  const averageSessionLength = meditationStats.averageSessionLength || 0;
+
   return [
     {
       title: "Current Streak",
@@ -23,13 +27,13 @@ export const generateQuickStats = (
     },
     {
       title: "Total Sessions",
-      value: meditationStats.totalSessions || 24,
+      value: totalSessions,
       icon: React.createElement(Activity, { className: "h-4 w-4 text-blue-500" }),
       description: "Completed meditations"
     },
     {
       title: "Avg. Session",
-      value: `${meditationStats.averageSessionLength || 12} min`,
+      value: `${averageSessionLength} min`,
       icon: React.createElement(Clock, { className: "h-4 w-4 text-purple-500" }),
       description: "Average session length"
     }

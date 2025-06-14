@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserPreferences } from '@/context';
 import { useMeditationStats } from '@/components/progress/useMeditationStats';
@@ -38,9 +38,10 @@ export const useDashboardData = () => {
     return `Good evening, ${name}!`;
   };
 
-  const currentStreak = meditationStats.currentStreak || Math.floor(Math.random() * 7) + 1;
+  // Use stable values from meditationStats instead of random generation
+  const currentStreak = meditationStats.currentStreak || meditationStats.streak || 0;
   const weeklyGoal = preferences?.preferred_session_duration ? preferences.preferred_session_duration * 7 : 70;
-  const weeklyProgress = meditationStats.weeklyMinutes || Math.floor(Math.random() * weeklyGoal);
+  const weeklyProgress = meditationStats.weeklyMinutes || meditationStats.weeklyCompleted || 0;
   const progressPercentage = Math.min((weeklyProgress / weeklyGoal) * 100, 100);
 
   const handleMoodSelect = (mood: string) => {
