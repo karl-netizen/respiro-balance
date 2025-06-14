@@ -30,7 +30,7 @@ export interface FilterState {
 const EnhancedMeditationPage = () => {
   const navigate = useNavigate();
   const { sessions, isLoading } = useMeditationSessions();
-  const { favorites, toggleFavorite, removeFavorites } = useMeditationFavorites();
+  const { favorites, toggleFavorite, removeFavorites, getFavoriteSessions } = useMeditationFavorites();
   const { 
     canResume, 
     getResumeTime, 
@@ -60,6 +60,11 @@ const EnhancedMeditationPage = () => {
   const incompleteSessions = useMemo(() => {
     return getIncompleteSessionsHook(sessions);
   }, [sessions, getIncompleteSessionsHook]);
+
+  // Get favorite sessions data
+  const favoriteSessionsData = useMemo(() => {
+    return getFavoriteSessions(sessions);
+  }, [sessions, getFavoriteSessions]);
 
   // Filter sessions based on current filter state
   const filteredSessions = useMemo(() => {
@@ -121,10 +126,6 @@ const EnhancedMeditationPage = () => {
     });
   }, [sessions, filters]);
 
-  const favoriteSessionsData = useMemo(() => {
-    return sessions.filter(session => favorites.includes(session.id));
-  }, [sessions, favorites]);
-
   const handleSessionSelect = (session: MeditationSession) => {
     setSelectedSession(session);
     setIsPlaying(false);
@@ -138,11 +139,8 @@ const EnhancedMeditationPage = () => {
     }
   };
 
-  const handleCompletionSubmit = (rating: number, comments: string) => {
-    setSessionFeedback({ rating, comments });
+  const handleCompletionClose = () => {
     setShowCompletionDialog(false);
-    // Here you would typically save the feedback to your backend
-    console.log('Session feedback:', { rating, comments, sessionId: selectedSession?.id });
   };
 
   const handlePlay = () => {
@@ -151,6 +149,10 @@ const EnhancedMeditationPage = () => {
 
   const handlePause = () => {
     setIsPlaying(false);
+  };
+
+  const handleFiltersChange = (newFilters: FilterState) => {
+    setFilters(newFilters);
   };
 
   const clearAllFilters = () => {
@@ -207,14 +209,14 @@ const EnhancedMeditationPage = () => {
           <div className="lg:col-span-1">
             <EnhancedMeditationFilters
               filters={filters}
-              onFiltersChange={setFilters}
+              onFiltersChange={handleFiltersChange}
               onClearAll={clearAllFilters}
               sessions={sessions}
             />
             
             {/* Progress Tracker */}
             <div className="mt-6">
-              <MeditationProgressTracker />
+              <MeditationProgressTracker sessions={sessions} />
             </div>
           </div>
 
@@ -422,7 +424,7 @@ const EnhancedMeditationPage = () => {
                     </Card>
 
                     <EnhancedAudioPlayer
-                      audioUrl={selectedSession.audioUrl}
+                      audioUrl={selectedSession.audio_url || '/placeholder-audio.mp3'}
                       title={selectedSession.title}
                       onPlay={handlePlay}
                       onPause={handlePause}
@@ -440,8 +442,7 @@ const EnhancedMeditationPage = () => {
         {showCompletionDialog && selectedSession && (
           <EnhancedSessionCompletionDialog
             session={selectedSession}
-            onSubmit={handleCompletionSubmit}
-            onClose={() => setShowCompletionDialog(false)}
+            onClose={handleCompletionClose}
           />
         )}
       </main>

@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { MeditationSession } from '@/types/meditation';
 
-export const useMeditationFavorites = (allSessions: MeditationSession[]) => {
+export const useMeditationFavorites = () => {
   const [favorites, setFavorites] = useState<string[]>([]);
   
   // Load favorites from localStorage on mount
@@ -23,7 +23,7 @@ export const useMeditationFavorites = (allSessions: MeditationSession[]) => {
     localStorage.setItem('meditationFavorites', JSON.stringify(favorites));
   }, [favorites]);
   
-  const handleToggleFavorite = (session: MeditationSession) => {
+  const toggleFavorite = (session: MeditationSession) => {
     setFavorites(prev => {
       if (prev.includes(session.id)) {
         return prev.filter(id => id !== session.id);
@@ -32,19 +32,24 @@ export const useMeditationFavorites = (allSessions: MeditationSession[]) => {
       }
     });
   };
+
+  const removeFavorites = (sessionIds: string[]) => {
+    setFavorites(prev => prev.filter(id => !sessionIds.includes(id)));
+  };
   
   const isFavorite = (sessionId: string) => {
     return favorites.includes(sessionId);
   };
   
-  const getFavoriteSessions = () => {
+  const getFavoriteSessions = (allSessions: MeditationSession[]) => {
     return allSessions.filter(session => favorites.includes(session.id));
   };
   
   return {
     favorites,
     isFavorite,
-    handleToggleFavorite,
+    toggleFavorite,
+    removeFavorites,
     getFavoriteSessions
   };
 };
