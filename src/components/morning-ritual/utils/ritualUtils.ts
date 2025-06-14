@@ -1,6 +1,25 @@
 
 import { MorningRitual, RitualStatus, CompletionEntry } from '@/context/types';
 
+export const generateRitualId = (): string => {
+  return `ritual_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
+};
+
+export const getSuggestedActivities = (): string[] => {
+  return [
+    'Meditation',
+    'Journaling',
+    'Exercise',
+    'Reading',
+    'Stretching',
+    'Hydration',
+    'Breathing exercises',
+    'Gratitude practice',
+    'Planning the day',
+    'Healthy breakfast'
+  ];
+};
+
 export const updateRitualStatuses = (rituals: MorningRitual[]): MorningRitual[] => {
   const today = new Date().toDateString();
   

@@ -8,4 +8,11 @@ export interface RitualSuggestion {
   priority: 'low' | 'medium' | 'high';
   tags: string[];
   category: string;
+  recurrence?: string;
+}
+
+export interface RitualSuggestionsState {
+  suggestions: RitualSuggestion[];
+  isLoading: boolean;
+  error?: string;
 }

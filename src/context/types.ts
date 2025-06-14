@@ -37,6 +37,8 @@ export interface Notification {
   timestamp: Date;
   read: boolean;
   actionUrl?: string;
+  time?: Date;
+  action?: () => void;
 }
 
 export interface UserPreferences {
@@ -107,6 +109,18 @@ export interface UserPreferences {
   enableProgressUpdates?: boolean;
   enableRecommendations?: boolean;
   morningDevices?: string;
+  
+  // Work-life balance properties
+  focusTimerDuration?: number;
+  breakTimerDuration?: number;
+  breakReminders?: any[];
+  breakNotificationsEnabled?: boolean;
+  
+  // Time management
+  timeManagementStyle?: string;
+  
+  // Additional onboarding
+  wakeTime?: string;
 }
 
 export interface NotificationSettings {

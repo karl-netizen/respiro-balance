@@ -3,11 +3,14 @@ import React from 'react';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { RitualReminder } from '@/context/types';
 
 interface RitualReminderSettingProps {
-  reminder: RitualReminder;
-  onUpdate: (reminder: RitualReminder) => void;
+  reminder: {
+    enabled: boolean;
+    time: number;
+    message?: string;
+  };
+  onUpdate: (reminder: { enabled: boolean; time: number; message?: string }) => void;
   disabled?: boolean;
 }
 

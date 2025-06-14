@@ -63,7 +63,19 @@ const defaultPreferences: UserPreferences = {
   enableSessionReminders: true,
   enableProgressUpdates: true,
   enableRecommendations: true,
-  morningDevices: 'phone_delayed'
+  morningDevices: 'phone_delayed',
+  
+  // Work-life balance properties
+  focusTimerDuration: 25,
+  breakTimerDuration: 5,
+  breakReminders: [],
+  breakNotificationsEnabled: true,
+  
+  // Time management
+  timeManagementStyle: 'structured',
+  
+  // Additional wake time property
+  wakeTime: '07:00'
 };
 
 export default defaultPreferences;
