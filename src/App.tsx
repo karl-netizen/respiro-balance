@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -25,6 +26,7 @@ import AccountPage from './pages/AccountPage';
 import AppSettings from './pages/AppSettings';
 import Index from './pages/Index';
 import LandingPage from './pages/LandingPage';
+import EnhancedMeditationPage from './pages/EnhancedMeditationPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {

@@ -1,184 +1,168 @@
 
-import React, { useState, useEffect } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Play, Clock, User, RotateCcw } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { MeditationSession } from '@/types/meditation';
-import { useSubscriptionContext } from '@/hooks/useSubscriptionContext';
-import { useMeditationResume } from '@/hooks/useMeditationResume';
-import { toast } from 'sonner';
-
-// Import our new enhanced components
 import EnhancedMeditationFilters from '@/components/meditation/EnhancedMeditationFilters';
+import BatchFavoritesManager from '@/components/meditation/favorites/BatchFavoritesManager';
 import EnhancedAudioPlayer from '@/components/meditation/audio/EnhancedAudioPlayer';
 import MeditationProgressTracker from '@/components/meditation/progress/MeditationProgressTracker';
-import BatchFavoritesManager from '@/components/meditation/favorites/BatchFavoritesManager';
 import EnhancedSessionCompletionDialog from '@/components/meditation/completion/EnhancedSessionCompletionDialog';
+import { useMeditationSessions } from '@/hooks/useMeditationSessions';
+import { useMeditationFavorites } from '@/hooks/useMeditationFavorites';
+import { useMeditationResume } from '@/hooks/useMeditationResume';
+import { MeditationSession } from '@/types/meditation';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Clock, Play, Heart, Users, Award } from 'lucide-react';
 
-// Import existing components and data
-import { meditationSessions } from '@/data/meditationSessions';
-import { MeditationLibraryBrowser } from '@/components/meditation';
-import SubscriptionBanner from '@/components/subscription/SubscriptionBanner';
-
-interface SessionFeedback {
-  rating: number;
-  mood: string;
-  comment: string;
-  focusImprovement: number;
-  stressReduction: number;
-  wouldRecommend: boolean;
-  favorite: boolean;
+export interface FilterState {
+  categories: string[];
+  durations: string[];
+  levels: string[];
+  instructors: string[];
+  tags: string[];
+  searchTerm: string;
 }
 
 const EnhancedMeditationPage = () => {
-  const [activeTab, setActiveTab] = useState('browse');
-  const [selectedSession, setSelectedSession] = useState<MeditationSession | null>(null);
-  const [filteredSessions, setFilteredSessions] = useState<MeditationSession[]>(meditationSessions);
-  const [favoriteSessions, setFavoriteSessions] = useState<string[]>([]);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [showCompletionDialog, setShowCompletionDialog] = useState(false);
-  const [completedSessions, setCompletedSessions] = useState<MeditationSession[]>([]);
-
-  const { isPremium } = useSubscriptionContext();
-  const {
-    saveProgress,
-    getResumeTime,
-    canResume,
+  const navigate = useNavigate();
+  const { sessions, isLoading } = useMeditationSessions();
+  const { favorites, toggleFavorite, removeFavorites } = useMeditationFavorites();
+  const { 
+    canResume, 
+    getResumeTime, 
+    getProgressPercentage, 
     markCompleted,
-    getIncompleteSessions,
-    getProgressPercentage
+    getIncompleteSessions: getIncompleteSessionsHook
   } = useMeditationResume();
 
-  // Load favorites from localStorage
-  useEffect(() => {
-    const storedFavorites = localStorage.getItem('favoriteSessions');
-    if (storedFavorites) {
-      setFavoriteSessions(JSON.parse(storedFavorites));
-    }
+  const [filters, setFilters] = useState<FilterState>({
+    categories: [],
+    durations: [],
+    levels: [],
+    instructors: [],
+    tags: [],
+    searchTerm: ''
+  });
 
-    const storedCompleted = localStorage.getItem('completedMeditationSessions');
-    if (storedCompleted) {
-      setCompletedSessions(JSON.parse(storedCompleted));
-    }
-  }, []);
+  const [selectedSession, setSelectedSession] = useState<MeditationSession | null>(null);
+  const [showCompletionDialog, setShowCompletionDialog] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [sessionFeedback, setSessionFeedback] = useState<{
+    rating: number;
+    comments: string;
+  } | null>(null);
 
-  // Save favorites to localStorage
-  useEffect(() => {
-    localStorage.setItem('favoriteSessions', JSON.stringify(favoriteSessions));
-  }, [favoriteSessions]);
+  // Get incomplete sessions for resume functionality
+  const incompleteSessions = useMemo(() => {
+    return getIncompleteSessionsHook(sessions);
+  }, [sessions, getIncompleteSessionsHook]);
 
-  // Save completed sessions to localStorage
-  useEffect(() => {
-    localStorage.setItem('completedMeditationSessions', JSON.stringify(completedSessions));
-  }, [completedSessions]);
-
-  const handleSelectSession = (session: MeditationSession) => {
-    if (session.premium && !isPremium) {
-      toast.error('Premium session', {
-        description: 'Upgrade to access premium content',
-        action: {
-          label: 'Upgrade',
-          onClick: () => window.location.href = '/subscription'
-        }
-      });
-      return;
-    }
-
-    setSelectedSession(session);
-    setActiveTab('player');
-
-    // Check if we can resume this session
-    if (canResume(session.id)) {
-      const resumeTime = getResumeTime(session.id);
-      const progressPercentage = getProgressPercentage(session.id);
-      
-      toast.info(`Resume from ${Math.floor(resumeTime / 60)}:${Math.floor(resumeTime % 60).toString().padStart(2, '0')}`, {
-        description: `${progressPercentage}% complete`,
-        action: {
-          label: 'Start Over',
-          onClick: () => saveProgress(session.id, 0, session.duration * 60, false)
-        }
-      });
-    }
-  };
-
-  const handleToggleFavorite = (session: MeditationSession) => {
-    setFavoriteSessions(prev => {
-      if (prev.includes(session.id)) {
-        return prev.filter(id => id !== session.id);
-      } else {
-        return [...prev, session.id];
+  // Filter sessions based on current filter state
+  const filteredSessions = useMemo(() => {
+    return sessions.filter(session => {
+      // Category filter
+      if (filters.categories.length > 0 && !filters.categories.includes(session.category)) {
+        return false;
       }
-    });
-  };
 
-  const handleRemoveFavorites = (sessionIds: string[]) => {
-    setFavoriteSessions(prev => prev.filter(id => !sessionIds.includes(id)));
-    toast.success(`Removed ${sessionIds.length} session${sessionIds.length !== 1 ? 's' : ''} from favorites`);
+      // Duration filter
+      if (filters.durations.length > 0) {
+        const durationMatch = filters.durations.some(duration => {
+          switch (duration) {
+            case 'under-5':
+              return session.duration < 5;
+            case '5-10':
+              return session.duration >= 5 && session.duration <= 10;
+            case '10-15':
+              return session.duration >= 10 && session.duration <= 15;
+            case '15-30':
+              return session.duration >= 15 && session.duration <= 30;
+            case '30-plus':
+              return session.duration > 30;
+            default:
+              return true;
+          }
+        });
+        if (!durationMatch) return false;
+      }
+
+      // Level filter
+      if (filters.levels.length > 0 && session.level && !filters.levels.includes(session.level)) {
+        return false;
+      }
+
+      // Instructor filter
+      if (filters.instructors.length > 0 && !filters.instructors.includes(session.instructor)) {
+        return false;
+      }
+
+      // Tags filter
+      if (filters.tags.length > 0) {
+        const hasMatchingTag = session.tags?.some(tag => filters.tags.includes(tag));
+        if (!hasMatchingTag) return false;
+      }
+
+      // Search term filter
+      if (filters.searchTerm) {
+        const searchLower = filters.searchTerm.toLowerCase();
+        const matchesSearch = 
+          session.title.toLowerCase().includes(searchLower) ||
+          session.description.toLowerCase().includes(searchLower) ||
+          session.instructor.toLowerCase().includes(searchLower) ||
+          session.tags?.some(tag => tag.toLowerCase().includes(searchLower));
+        if (!matchesSearch) return false;
+      }
+
+      return true;
+    });
+  }, [sessions, filters]);
+
+  const favoriteSessionsData = useMemo(() => {
+    return sessions.filter(session => favorites.includes(session.id));
+  }, [sessions, favorites]);
+
+  const handleSessionSelect = (session: MeditationSession) => {
+    setSelectedSession(session);
+    setIsPlaying(false);
   };
 
   const handleSessionComplete = () => {
     if (selectedSession) {
       markCompleted(selectedSession.id);
       setShowCompletionDialog(true);
+      setIsPlaying(false);
     }
   };
 
-  const handleFeedbackSubmit = (feedback: SessionFeedback) => {
-    if (selectedSession) {
-      // Update completed sessions with feedback
-      const completedSession = {
-        ...selectedSession,
-        completed: true,
-        completed_at: new Date().toISOString(),
-        rating: feedback.rating,
-        feedback: feedback.comment
-      };
-
-      setCompletedSessions(prev => {
-        const existing = prev.findIndex(s => s.id === selectedSession.id);
-        if (existing >= 0) {
-          const updated = [...prev];
-          updated[existing] = completedSession;
-          return updated;
-        }
-        return [...prev, completedSession];
-      });
-
-      // Add to favorites if requested
-      if (feedback.favorite && !favoriteSessions.includes(selectedSession.id)) {
-        setFavoriteSessions(prev => [...prev, selectedSession.id]);
-      }
-
-      toast.success('Thank you for your feedback!');
-    }
+  const handleCompletionSubmit = (rating: number, comments: string) => {
+    setSessionFeedback({ rating, comments });
+    setShowCompletionDialog(false);
+    // Here you would typically save the feedback to your backend
+    console.log('Session feedback:', { rating, comments, sessionId: selectedSession?.id });
   };
 
-  const handleAchievementUnlocked = (achievement: any) => {
-    toast.success(`Achievement Unlocked: ${achievement.title}`, {
-      description: achievement.description,
-      duration: 5000
+  const handlePlay = () => {
+    setIsPlaying(true);
+  };
+
+  const handlePause = () => {
+    setIsPlaying(false);
+  };
+
+  const clearAllFilters = () => {
+    setFilters({
+      categories: [],
+      durations: [],
+      levels: [],
+      instructors: [],
+      tags: [],
+      searchTerm: ''
     });
   };
-
-  const handleTimeUpdate = (currentTime: number, duration: number) => {
-    if (selectedSession) {
-      saveProgress(selectedSession.id, currentTime, duration, false);
-    }
-  };
-
-  const getFavoriteSessions = () => {
-    return meditationSessions.filter(session => favoriteSessions.includes(session.id));
-  };
-
-  const getIncompleteSessions = () => {
-    return getIncompleteSessions(meditationSessions);
-  };
-
-  const isFavorite = (sessionId: string) => favoriteSessions.includes(sessionId);
 
   const formatDuration = (minutes: number) => {
     if (minutes < 60) return `${minutes}m`;
@@ -187,221 +171,282 @@ const EnhancedMeditationPage = () => {
     return remainingMins > 0 ? `${hours}h ${remainingMins}m` : `${hours}h`;
   };
 
+  const handleRemoveFavorites = (sessionIds: string[]) => {
+    removeFavorites(sessionIds);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-grow flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading meditation sessions...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       
       <main className="flex-grow container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-3xl font-bold">Meditation Library</h1>
-            <p className="text-muted-foreground mt-1">
-              Your complete mindfulness companion with {meditationSessions.length} sessions
-            </p>
-          </div>
-          
-          <div className="flex items-center space-x-2">
-            <Badge variant="outline">
-              {completedSessions.length} completed
-            </Badge>
-            <Badge variant="outline">
-              {favoriteSessions.length} favorites
-            </Badge>
-          </div>
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold mb-2">Enhanced Meditation Experience</h1>
+          <p className="text-muted-foreground">
+            Discover personalized meditation sessions with advanced features and progress tracking.
+          </p>
         </div>
-        
-        {!isPremium && <SubscriptionBanner />}
-        
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-6">
-          <TabsList className="grid grid-cols-5 mb-6">
-            <TabsTrigger value="browse">Browse</TabsTrigger>
-            <TabsTrigger value="favorites">
-              Favorites
-              {favoriteSessions.length > 0 && (
-                <Badge variant="secondary" className="ml-2">
-                  {favoriteSessions.length}
-                </Badge>
-              )}
-            </TabsTrigger>
-            <TabsTrigger value="progress">Progress</TabsTrigger>
-            <TabsTrigger value="resume">
-              Resume
-              {getIncompleteSessions().length > 0 && (
-                <Badge variant="secondary" className="ml-2">
-                  {getIncompleteSessions().length}
-                </Badge>
-              )}
-            </TabsTrigger>
-            {selectedSession && (
-              <TabsTrigger value="player">
-                <Play className="h-4 w-4 mr-2" />
-                Now Playing
-              </TabsTrigger>
-            )}
-          </TabsList>
 
-          <TabsContent value="browse" className="space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* Filters Sidebar */}
+          <div className="lg:col-span-1">
             <EnhancedMeditationFilters
-              sessions={meditationSessions}
-              onFilteredSessionsChange={setFilteredSessions}
+              filters={filters}
+              onFiltersChange={setFilters}
+              onClearAll={clearAllFilters}
+              sessions={sessions}
             />
             
-            <MeditationLibraryBrowser
-              activeTab="all"
-              setActiveTab={() => {}}
-              recentlyPlayed={completedSessions.slice(-5)}
-              getFavoriteSessions={getFavoriteSessions}
-              handleSelectSession={handleSelectSession}
-              handleToggleFavorite={handleToggleFavorite}
-              isFavorite={isFavorite}
-              filterSessionsByCategory={(category) => 
-                filteredSessions.filter(s => s.category === category)
-              }
-              durationFilter={null}
-              setDurationFilter={() => {}}
-              resetFilters={() => {}}
-            />
-          </TabsContent>
+            {/* Progress Tracker */}
+            <div className="mt-6">
+              <MeditationProgressTracker />
+            </div>
+          </div>
 
-          <TabsContent value="favorites">
-            <BatchFavoritesManager
-              favoriteSessions={getFavoriteSessions()}
-              onRemoveFavorites={handleRemoveFavorites}
-              onToggleFavorite={handleToggleFavorite}
-              onSelectSession={handleSelectSession}
-            />
-          </TabsContent>
+          {/* Main Content */}
+          <div className="lg:col-span-3">
+            <Tabs defaultValue="library" className="space-y-6">
+              <TabsList>
+                <TabsTrigger value="library">Library</TabsTrigger>
+                <TabsTrigger value="favorites">Favorites</TabsTrigger>
+                <TabsTrigger value="resume">Resume</TabsTrigger>
+                <TabsTrigger value="player" disabled={!selectedSession}>Player</TabsTrigger>
+              </TabsList>
 
-          <TabsContent value="progress">
-            <MeditationProgressTracker
-              sessions={completedSessions}
-              onAchievementUnlocked={handleAchievementUnlocked}
-            />
-          </TabsContent>
-
-          <TabsContent value="resume">
-            <div className="space-y-4">
-              <h2 className="text-xl font-semibold">Continue Your Practice</h2>
-              
-              {getIncompleteSessions().length === 0 ? (
-                <div className="text-center py-12">
-                  <RotateCcw className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                  <h3 className="text-lg font-medium mb-2">All caught up!</h3>
-                  <p className="text-muted-foreground">
-                    No incomplete sessions to resume.
-                  </p>
+              <TabsContent value="library" className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-xl font-semibold">Session Library</h2>
+                    <p className="text-sm text-muted-foreground">
+                      {filteredSessions.length} sessions available
+                    </p>
+                  </div>
+                  
+                  {(filters.categories.length > 0 || filters.durations.length > 0 || 
+                    filters.levels.length > 0 || filters.instructors.length > 0 || 
+                    filters.tags.length > 0 || filters.searchTerm) && (
+                    <Button variant="outline" size="sm" onClick={clearAllFilters}>
+                      Clear All Filters
+                    </Button>
+                  )}
                 </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {getIncompleteSessions().map(session => {
-                    const progressPercentage = getProgressPercentage(session.id);
-                    const resumeTime = getResumeTime(session.id);
-                    
-                    return (
-                      <div key={session.id} className="p-4 border rounded-lg space-y-3">
-                        <div>
-                          <h3 className="font-medium">{session.title}</h3>
-                          <p className="text-sm text-muted-foreground">
-                            by {session.instructor}
-                          </p>
-                        </div>
-                        
-                        <div className="space-y-2">
-                          <div className="flex justify-between text-sm">
-                            <span>Progress</span>
-                            <span>{progressPercentage}%</span>
-                          </div>
-                          <div className="w-full bg-gray-200 rounded-full h-2">
-                            <div 
-                              className="bg-primary h-2 rounded-full" 
-                              style={{ width: `${progressPercentage}%` }}
-                            />
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                            <Clock className="h-4 w-4" />
-                            <span>{Math.floor(resumeTime / 60)}:{Math.floor(resumeTime % 60).toString().padStart(2, '0')}</span>
-                          </div>
-                          
-                          <Button 
-                            size="sm"
-                            onClick={() => handleSelectSession(session)}
+
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                  {filteredSessions.map(session => (
+                    <Card key={session.id} className="cursor-pointer hover:shadow-md transition-shadow">
+                      <CardHeader className="pb-2">
+                        <div className="flex items-start justify-between">
+                          <CardTitle className="text-lg line-clamp-2">{session.title}</CardTitle>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleFavorite(session);
+                            }}
+                            className={`${favorites.includes(session.id) ? 'text-red-500' : 'text-muted-foreground'} hover:text-red-500`}
                           >
-                            Resume
+                            <Heart className={`h-4 w-4 ${favorites.includes(session.id) ? 'fill-current' : ''}`} />
                           </Button>
                         </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          </TabsContent>
+                        <p className="text-sm text-muted-foreground">{session.instructor}</p>
+                      </CardHeader>
+                      
+                      <CardContent className="space-y-3">
+                        <p className="text-sm text-muted-foreground line-clamp-2">
+                          {session.description}
+                        </p>
 
-          {selectedSession && (
-            <TabsContent value="player">
-              <div className="max-w-2xl mx-auto space-y-6">
-                <div className="text-center space-y-2">
-                  <h2 className="text-2xl font-bold">{selectedSession.title}</h2>
-                  <div className="flex items-center justify-center space-x-4 text-muted-foreground">
-                    <div className="flex items-center space-x-1">
-                      <User className="h-4 w-4" />
-                      <span>{selectedSession.instructor}</span>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      <Clock className="h-4 w-4" />
-                      <span>{formatDuration(selectedSession.duration)}</span>
-                    </div>
-                  </div>
-                  <p className="text-muted-foreground max-w-lg mx-auto">
-                    {selectedSession.description}
+                        <div className="flex items-center space-x-2">
+                          <Badge variant="outline">{session.category}</Badge>
+                          <Badge variant="outline" className="flex items-center">
+                            <Clock className="h-3 w-3 mr-1" />
+                            {formatDuration(session.duration)}
+                          </Badge>
+                          {session.level && (
+                            <Badge variant="secondary">{session.level}</Badge>
+                          )}
+                        </div>
+
+                        {canResume(session.id) && (
+                          <div className="bg-primary/10 p-2 rounded">
+                            <p className="text-xs text-primary font-medium">
+                              Resume from {getProgressPercentage(session.id)}%
+                            </p>
+                          </div>
+                        )}
+
+                        <Button 
+                          className="w-full" 
+                          onClick={() => handleSessionSelect(session)}
+                        >
+                          <Play className="h-4 w-4 mr-2" />
+                          {canResume(session.id) ? 'Resume' : 'Start'} Session
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+
+                {filteredSessions.length === 0 && (
+                  <Card>
+                    <CardContent className="p-8 text-center">
+                      <p className="text-muted-foreground">
+                        No sessions match your current filters. Try adjusting your search criteria.
+                      </p>
+                    </CardContent>
+                  </Card>
+                )}
+              </TabsContent>
+
+              <TabsContent value="favorites">
+                <BatchFavoritesManager
+                  favoriteSessions={favoriteSessionsData}
+                  onRemoveFavorites={handleRemoveFavorites}
+                  onToggleFavorite={toggleFavorite}
+                  onSelectSession={handleSessionSelect}
+                />
+              </TabsContent>
+
+              <TabsContent value="resume" className="space-y-4">
+                <div>
+                  <h2 className="text-xl font-semibold mb-2">Continue Your Practice</h2>
+                  <p className="text-sm text-muted-foreground">
+                    Pick up where you left off with these incomplete sessions.
                   </p>
                 </div>
 
-                <EnhancedAudioPlayer
-                  audioUrl={selectedSession.audio_url}
-                  title={selectedSession.title}
-                  onPlay={() => setIsPlaying(true)}
-                  onPause={() => setIsPlaying(false)}
-                  onComplete={handleSessionComplete}
-                  onTimeUpdate={handleTimeUpdate}
-                />
-              </div>
-            </TabsContent>
-          )}
-        </Tabs>
+                {incompleteSessions.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {incompleteSessions.map(session => (
+                      <Card key={session.id}>
+                        <CardContent className="p-4">
+                          <div className="space-y-3">
+                            <div>
+                              <h3 className="font-medium">{session.title}</h3>
+                              <p className="text-sm text-muted-foreground">{session.instructor}</p>
+                            </div>
+                            
+                            <div className="w-full bg-secondary rounded-full h-2">
+                              <div 
+                                className="bg-primary h-2 rounded-full transition-all"
+                                style={{ width: `${getProgressPercentage(session.id)}%` }}
+                              />
+                            </div>
+                            
+                            <div className="flex items-center justify-between text-sm">
+                              <span className="text-muted-foreground">
+                                {getProgressPercentage(session.id)}% complete
+                              </span>
+                              <Badge variant="outline">
+                                {Math.round(getResumeTime(session.id) / 60)}m remaining
+                              </Badge>
+                            </div>
+                            
+                            <Button 
+                              className="w-full"
+                              onClick={() => handleSessionSelect(session)}
+                            >
+                              <Play className="h-4 w-4 mr-2" />
+                              Continue Session
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <Card>
+                    <CardContent className="p-8 text-center">
+                      <Award className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                      <h3 className="text-lg font-medium mb-2">All caught up!</h3>
+                      <p className="text-muted-foreground">
+                        You don't have any incomplete sessions. Start a new meditation to begin your practice.
+                      </p>
+                    </CardContent>
+                  </Card>
+                )}
+              </TabsContent>
+
+              <TabsContent value="player">
+                {selectedSession && (
+                  <div className="space-y-6">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="flex items-center justify-between">
+                          <span>{selectedSession.title}</span>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => toggleFavorite(selectedSession)}
+                            className={`${favorites.includes(selectedSession.id) ? 'text-red-500' : 'text-muted-foreground'} hover:text-red-500`}
+                          >
+                            <Heart className={`h-5 w-5 ${favorites.includes(selectedSession.id) ? 'fill-current' : ''}`} />
+                          </Button>
+                        </CardTitle>
+                        <p className="text-muted-foreground">
+                          {selectedSession.instructor} • {formatDuration(selectedSession.duration)}
+                        </p>
+                      </CardHeader>
+                      
+                      <CardContent className="space-y-4">
+                        <p className="text-muted-foreground">{selectedSession.description}</p>
+                        
+                        <div className="flex flex-wrap gap-2">
+                          <Badge variant="outline">{selectedSession.category}</Badge>
+                          {selectedSession.level && (
+                            <Badge variant="secondary">{selectedSession.level}</Badge>
+                          )}
+                          {selectedSession.tags?.map(tag => (
+                            <Badge key={tag} variant="outline" className="text-xs">
+                              {tag}
+                            </Badge>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <EnhancedAudioPlayer
+                      audioUrl={selectedSession.audioUrl}
+                      title={selectedSession.title}
+                      onPlay={handlePlay}
+                      onPause={handlePause}
+                      onComplete={handleSessionComplete}
+                      autoPlay={false}
+                    />
+                  </div>
+                )}
+              </TabsContent>
+            </Tabs>
+          </div>
+        </div>
+
+        {/* Session Completion Dialog */}
+        {showCompletionDialog && selectedSession && (
+          <EnhancedSessionCompletionDialog
+            session={selectedSession}
+            onSubmit={handleCompletionSubmit}
+            onClose={() => setShowCompletionDialog(false)}
+          />
+        )}
       </main>
       
       <Footer />
-
-      {/* Enhanced Completion Dialog */}
-      <EnhancedSessionCompletionDialog
-        isOpen={showCompletionDialog}
-        onClose={() => setShowCompletionDialog(false)}
-        session={selectedSession!}
-        meditationStats={{
-          focusScore: 85,
-          calmScore: 90,
-          timeCompleted: selectedSession ? selectedSession.duration * 60 : 0
-        }}
-        onSubmitFeedback={handleFeedbackSubmit}
-        onContinue={() => {
-          setShowCompletionDialog(false);
-          setActiveTab('browse');
-        }}
-        onReplay={() => {
-          setShowCompletionDialog(false);
-          if (selectedSession) {
-            saveProgress(selectedSession.id, 0, selectedSession.duration * 60, false);
-          }
-        }}
-        onShare={() => {
-          // Implement sharing functionality
-          toast.success('Shared your meditation achievement!');
-        }}
-      />
     </div>
   );
 };
