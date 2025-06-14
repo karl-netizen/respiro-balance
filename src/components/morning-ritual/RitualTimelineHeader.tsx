@@ -2,20 +2,22 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, BarChart3, Bell, Plus } from 'lucide-react';
+import { Calendar, BarChart3, Bell, Plus, Wand2 } from 'lucide-react';
 
 interface RitualTimelineHeaderProps {
   ritualCount: number;
   onShowAnalytics?: () => void;
   onShowNotificationSettings?: () => void;
   onCreateRitual?: () => void;
+  onShowCreationWizard?: () => void;
 }
 
 const RitualTimelineHeader: React.FC<RitualTimelineHeaderProps> = ({
   ritualCount,
   onShowAnalytics,
   onShowNotificationSettings,
-  onCreateRitual
+  onCreateRitual,
+  onShowCreationWizard
 }) => {
   return (
     <div className="flex items-center justify-between">
@@ -62,6 +64,18 @@ const RitualTimelineHeader: React.FC<RitualTimelineHeaderProps> = ({
           >
             <Bell className="h-4 w-4" />
             Notifications
+          </Button>
+        )}
+        
+        {onShowCreationWizard && (
+          <Button
+            onClick={onShowCreationWizard}
+            variant="outline"
+            size="sm"
+            className="flex items-center gap-2"
+          >
+            <Wand2 className="h-4 w-4" />
+            Smart Create
           </Button>
         )}
         
