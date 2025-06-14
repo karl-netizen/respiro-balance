@@ -8,6 +8,7 @@ import RitualForm from "@/components/morning-ritual/RitualForm";
 import StreakTracker from "@/components/morning-ritual/StreakTracker";
 import SuggestionsSection from "@/components/morning-ritual/SuggestionsSection";
 import RitualValidationReport from "@/components/morning-ritual/validation/RitualValidationReport";
+import RitualAnalyticsDashboard from "@/components/morning-ritual/analytics/RitualAnalyticsDashboard";
 import { useUserPreferences } from "@/context";
 import { useNotifications } from "@/context/NotificationsProvider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -15,7 +16,7 @@ import { Separator } from "@/components/ui/separator";
 import { Helmet } from "react-helmet";
 import { updateRitualStatuses } from "@/components/morning-ritual/utils";
 import { MorningRitual as MorningRitualType } from "@/context/types";
-import { Sunrise, Plus, Lightbulb, ClipboardCheck } from "lucide-react";
+import { Sunrise, Plus, Lightbulb, ClipboardCheck, BarChart3 } from "lucide-react";
 
 const MorningRitual = () => {
   const { preferences, updatePreferences } = useUserPreferences();
@@ -30,16 +31,13 @@ const MorningRitual = () => {
       
       // Check for streaks to notify about
       updatedRituals.forEach(ritual => {
-        // Find the corresponding original ritual
         const originalRitual = rituals.find(r => r.id === ritual.id);
         
-        // If streak increased, potentially send notification
         if (originalRitual && ritual.streak > (originalRitual.streak || 0)) {
           addStreakAchievementNotification(ritual);
         }
       });
       
-      // Only update if something actually changed
       const statusesChanged = JSON.stringify(updatedRituals) !== JSON.stringify(rituals);
       if (statusesChanged) {
         updatePreferences({ morningRituals: updatedRituals });
@@ -47,7 +45,6 @@ const MorningRitual = () => {
     }
   }, [rituals, updatePreferences, addStreakAchievementNotification]);
 
-  // Track completed rituals for today
   const completedToday = rituals.filter(ritual => {
     if (ritual.lastCompleted) {
       const lastCompleted = new Date(ritual.lastCompleted);
@@ -108,7 +105,7 @@ const MorningRitual = () => {
           )}
 
           <Tabs defaultValue={hasRituals ? "my-rituals" : "create"} className="mt-6">
-            <TabsList className="grid w-full max-w-lg mx-auto mb-8 grid-cols-4">
+            <TabsList className="grid w-full max-w-2xl mx-auto mb-8 grid-cols-5">
               <TabsTrigger value="my-rituals" className="flex items-center gap-2">
                 <Sunrise className="h-4 w-4" />
                 My Rituals
@@ -116,6 +113,10 @@ const MorningRitual = () => {
               <TabsTrigger value="create" className="flex items-center gap-2">
                 <Plus className="h-4 w-4" />
                 Create New
+              </TabsTrigger>
+              <TabsTrigger value="analytics" className="flex items-center gap-2">
+                <BarChart3 className="h-4 w-4" />
+                Analytics
               </TabsTrigger>
               <TabsTrigger value="suggestions" className="flex items-center gap-2">
                 <Lightbulb className="h-4 w-4" />
@@ -162,6 +163,22 @@ const MorningRitual = () => {
                   </p>
                 </div>
                 <RitualForm />
+              </div>
+            </TabsContent>
+
+            <TabsContent value="analytics">
+              <div className="max-w-7xl mx-auto">
+                {hasRituals ? (
+                  <RitualAnalyticsDashboard rituals={rituals} />
+                ) : (
+                  <div className="text-center p-12 bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg border-2 border-dashed border-blue-200">
+                    <BarChart3 className="h-16 w-16 text-blue-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium mb-2">No Analytics Available</h3>
+                    <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                      Create some morning rituals first to see detailed analytics and insights about your habits.
+                    </p>
+                  </div>
+                )}
               </div>
             </TabsContent>
             
