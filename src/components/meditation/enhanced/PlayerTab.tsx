@@ -1,78 +1,91 @@
 
 import React from 'react';
-import { MeditationSession } from '@/types/meditation';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Heart } from 'lucide-react';
-import EnhancedAudioPlayer from '@/components/meditation/audio/EnhancedAudioPlayer';
-
-interface PlayerTabProps {
-  selectedSession: MeditationSession | null;
-  favorites: string[];
-  toggleFavorite: (session: MeditationSession) => void;
-  formatDuration: (minutes: number) => string;
-  onPlay: () => void;
-  onPause: () => void;
-  onComplete: () => void;
-}
+import { PlayerTabProps } from './types';
+import { Play, Pause, SkipBack, SkipForward } from 'lucide-react';
 
 const PlayerTab: React.FC<PlayerTabProps> = ({
   selectedSession,
-  favorites,
-  toggleFavorite,
-  formatDuration,
-  onPlay,
-  onPause,
-  onComplete
+  isPlaying,
+  setIsPlaying,
+  currentTime,
+  setCurrentTime,
+  progress,
+  setProgress,
+  onSessionComplete,
+  formatTime
 }) => {
-  if (!selectedSession) return null;
+  if (!selectedSession) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-gray-500">No session selected. Choose a session from the library to start.</p>
+      </div>
+    );
+  }
+
+  const totalDuration = selectedSession.duration * 60;
+  const progressPercentage = (currentTime / totalDuration) * 100;
+
+  const handlePlayPause = () => {
+    setIsPlaying(!isPlaying);
+  };
+
+  const handleSeek = (seconds: number) => {
+    const newTime = Math.max(0, Math.min(currentTime + seconds, totalDuration));
+    setCurrentTime(newTime);
+  };
 
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            <span>{selectedSession.title}</span>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => toggleFavorite(selectedSession)}
-              className={`${favorites.includes(selectedSession.id) ? 'text-red-500' : 'text-muted-foreground'} hover:text-red-500`}
-            >
-              <Heart className={`h-5 w-5 ${favorites.includes(selectedSession.id) ? 'fill-current' : ''}`} />
-            </Button>
-          </CardTitle>
-          <p className="text-muted-foreground">
-            {selectedSession.instructor} • {formatDuration(selectedSession.duration)}
-          </p>
-        </CardHeader>
-        
-        <CardContent className="space-y-4">
-          <p className="text-muted-foreground">{selectedSession.description}</p>
-          
-          <div className="flex flex-wrap gap-2">
-            <Badge variant="outline">{selectedSession.category}</Badge>
-            {selectedSession.level && (
-              <Badge variant="secondary">{selectedSession.level}</Badge>
-            )}
-            {selectedSession.tags?.map(tag => (
-              <Badge key={tag} variant="outline" className="text-xs">
-                {tag}
-              </Badge>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+    <div className="max-w-md mx-auto space-y-6">
+      <div className="text-center">
+        <h2 className="text-2xl font-bold mb-2">{selectedSession.title}</h2>
+        <p className="text-gray-600">with {selectedSession.instructor}</p>
+      </div>
 
-      <EnhancedAudioPlayer
-        audioUrl={selectedSession.audio_url || '/placeholder-audio.mp3'}
-        title={selectedSession.title}
-        onPlay={onPlay}
-        onPause={onPause}
-        onComplete={onComplete}
-        autoPlay={false}
-      />
+      <div className="bg-gradient-to-br from-indigo-100 to-purple-100 rounded-lg p-8">
+        <div className="space-y-6">
+          {/* Progress Bar */}
+          <div className="space-y-2">
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div 
+                className="bg-indigo-600 h-2 rounded-full transition-all duration-300"
+                style={{ width: `${progressPercentage}%` }}
+              />
+            </div>
+            <div className="flex justify-between text-sm text-gray-600">
+              <span>{formatTime(currentTime)}</span>
+              <span>{formatTime(totalDuration)}</span>
+            </div>
+          </div>
+
+          {/* Controls */}
+          <div className="flex items-center justify-center gap-4">
+            <button
+              onClick={() => handleSeek(-30)}
+              className="p-2 text-gray-600 hover:text-indigo-600 transition-colors"
+            >
+              <SkipBack className="w-6 h-6" />
+            </button>
+            
+            <button
+              onClick={handlePlayPause}
+              className="w-16 h-16 bg-indigo-600 text-white rounded-full flex items-center justify-center hover:bg-indigo-700 transition-colors"
+            >
+              {isPlaying ? <Pause className="w-8 h-8" /> : <Play className="w-8 h-8 ml-1" />}
+            </button>
+            
+            <button
+              onClick={() => handleSeek(30)}
+              className="p-2 text-gray-600 hover:text-indigo-600 transition-colors"
+            >
+              <SkipForward className="w-6 h-6" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-lg p-4 border border-gray-200">
+        <p className="text-sm text-gray-600 leading-relaxed">{selectedSession.description}</p>
+      </div>
     </div>
   );
 };
