@@ -21,6 +21,7 @@ import FocusModePage from './pages/FocusModePage';
 import MeditateAdvanced from './pages/MeditateAdvanced';
 import SocialPage from './pages/SocialPage';
 import MeditationAudioManagement from './pages/MeditationAudioManagement';
+import MorningRitual from './pages/MorningRitual';
 import Index from './pages/Index';
 
 const queryClient = new QueryClient();
@@ -52,6 +53,7 @@ function App() {
                   <Route path="/breathing" element={<BreathingExercisesPage />} />
                   <Route path="/focus" element={<FocusModePage />} />
                   <Route path="/social" element={<SocialPage />} />
+                  <Route path="/morning-ritual" element={<MorningRitual />} />
                 </Routes>
               </Router>
             </NotificationsProvider>

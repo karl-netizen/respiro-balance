@@ -1,12 +1,47 @@
 
-import React, { Suspense, lazy } from 'react';
-import { ErrorBoundary } from 'react-error-boundary';
+import React, { Suspense, lazy, ErrorInfo, ReactNode } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Loader2, AlertTriangle } from 'lucide-react';
 
 // Lazy load heavy components
 const BiofeedbackAnalytics = lazy(() => import('@/components/analytics/BiofeedbackAnalytics'));
 const LazyMeditationPlayer = lazy(() => import('./LazyMeditationPlayer'));
+
+// Simple error boundary component
+interface ErrorBoundaryState {
+  hasError: boolean;
+  error?: Error;
+}
+
+class SimpleErrorBoundary extends React.Component<
+  { children: ReactNode; fallback: (error: Error, resetError: () => void) => ReactNode },
+  ErrorBoundaryState
+> {
+  constructor(props: any) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error('Error caught by boundary:', error, errorInfo);
+  }
+
+  resetError = () => {
+    this.setState({ hasError: false, error: undefined });
+  };
+
+  render() {
+    if (this.state.hasError && this.state.error) {
+      return this.props.fallback(this.state.error, this.resetError);
+    }
+
+    return this.props.children;
+  }
+}
 
 // Error fallback component
 const ErrorFallback: React.FC<{ error: Error; resetErrorBoundary: () => void }> = ({
@@ -44,11 +79,11 @@ interface PerformanceOptimizedAppProps {
 
 const PerformanceOptimizedApp: React.FC<PerformanceOptimizedAppProps> = ({ children }) => {
   return (
-    <ErrorBoundary FallbackComponent={ErrorFallback}>
+    <SimpleErrorBoundary fallback={ErrorFallback}>
       <Suspense fallback={<GlobalLoader />}>
         {children}
       </Suspense>
-    </ErrorBoundary>
+    </SimpleErrorBoundary>
   );
 };
 
