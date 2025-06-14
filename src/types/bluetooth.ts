@@ -1,18 +1,17 @@
 
-export type DeviceType = 'heart_rate_monitor' | 'fitness_tracker' | 'smart_watch' | 'stress_monitor' | 'heart_rate';
+export interface BluetoothDevice {
+  id: string;
+  name: string;
+  type: string;
+  connected: boolean;
+}
 
 export interface BluetoothDeviceInfo {
   id: string;
   name: string;
-  type: DeviceType;
+  type: string;
+  connected: boolean;
+  batteryLevel?: number;
   rssi?: number;
   services?: string[];
-  connected?: boolean;
-}
-
-export interface BluetoothDevice {
-  id: string;
-  name: string;
-  type: DeviceType;
-  connected: boolean;
 }

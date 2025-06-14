@@ -6,7 +6,7 @@ import { MorningRitual } from '@/context/types';
 interface RitualTimelineListProps {
   rituals: MorningRitual[];
   onComplete: (ritual: MorningRitual) => void;
-  onDelete: (ritualId: string) => void;
+  onDelete: (ritual: MorningRitual) => void;
   onUpdate: (updatedRitual: MorningRitual) => void;
 }
 
@@ -23,7 +23,7 @@ const RitualTimelineList: React.FC<RitualTimelineListProps> = ({
           key={ritual.id}
           ritual={ritual}
           onComplete={() => onComplete(ritual)}
-          onDelete={onDelete}
+          onDelete={() => onDelete(ritual)}
           onUpdate={onUpdate}
         />
       ))}

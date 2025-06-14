@@ -12,7 +12,7 @@ interface UseRitualItemProps {
 export const useRitualItem = ({ ritual, onComplete, onDelete }: UseRitualItemProps) => {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
 
-  const isToday = true; // Simplified for now
+  const isToday = true;
   const isCompletedToday = wasCompletedToday(ritual.lastCompleted);
 
   const handleComplete = useCallback(() => {

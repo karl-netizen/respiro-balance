@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useUserPreferences } from '@/context';
 import { MorningRitual } from '@/context/types';
-import { ritualFormSchema, RitualFormValues } from '../types';
+import { ritualFormSchema, RitualFormValues, RitualReminder } from '../types';
 import { toast } from 'sonner';
 
 export const useRitualForm = () => {
@@ -28,20 +28,28 @@ export const useRitualForm = () => {
 
   const onSubmit = async (data: RitualFormValues) => {
     try {
+      const reminders: RitualReminder[] = data.reminders.map(r => ({
+        enabled: r.enabled ?? true,
+        time: r.time ?? 15,
+        message: r.message
+      }));
+
       const newRitual: MorningRitual = {
         id: `ritual_${Date.now()}`,
         title: data.title,
         description: data.description || '',
         timeOfDay: data.timeOfDay,
+        startTime: data.timeOfDay,
         duration: data.duration,
         priority: data.priority,
         recurrence: data.recurrence,
         daysOfWeek: data.daysOfWeek,
-        reminderEnabled: data.reminders.length > 0,
-        reminderTime: data.reminders[0]?.time || 10,
-        reminders: data.reminders,
+        reminderEnabled: reminders.length > 0,
+        reminderTime: reminders[0]?.time || 10,
+        reminders: reminders,
         tags: data.tags,
         status: 'planned',
+        complete: false,
         streak: 0,
         createdAt: new Date()
       };

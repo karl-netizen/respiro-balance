@@ -1,15 +1,51 @@
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { MorningRitual } from '@/context/types';
 import { useUserPreferences } from '@/context';
 import { useNotifications } from '@/context/NotificationsProvider';
+
+interface RitualFilters {
+  status: string;
+  priority: string;
+  tags: string[];
+}
 
 export const useRitualTimeline = () => {
   const { preferences, updatePreferences } = useUserPreferences();
   const { addStreakAchievementNotification } = useNotifications();
   const [isLoading, setIsLoading] = useState(false);
+  const [filters, setFilters] = useState<RitualFilters>({
+    status: 'all',
+    priority: 'all',
+    tags: []
+  });
 
   const rituals = preferences.morningRituals || [];
+
+  const availableTags = useMemo(() => {
+    const allTags = rituals.flatMap(ritual => ritual.tags || []);
+    return Array.from(new Set(allTags));
+  }, [rituals]);
+
+  const sortedRituals = useMemo(() => {
+    return [...rituals].sort((a, b) => {
+      const timeA = a.timeOfDay.split(':').map(Number);
+      const timeB = b.timeOfDay.split(':').map(Number);
+      return (timeA[0] * 60 + timeA[1]) - (timeB[0] * 60 + timeB[1]);
+    });
+  }, [rituals]);
+
+  const handleFilterChange = useCallback((newFilters: Partial<RitualFilters>) => {
+    setFilters(prev => ({ ...prev, ...newFilters }));
+  }, []);
+
+  const resetFilters = useCallback(() => {
+    setFilters({
+      status: 'all',
+      priority: 'all',
+      tags: []
+    });
+  }, []);
 
   const completeRitual = useCallback(async (ritual: MorningRitual) => {
     setIsLoading(true);
@@ -60,9 +96,14 @@ export const useRitualTimeline = () => {
 
   return {
     rituals,
+    sortedRituals,
+    filters,
+    availableTags,
     isLoading,
     completeRitual,
     deleteRitual,
-    updateRitual
+    updateRitual,
+    handleFilterChange,
+    resetFilters
   };
 };

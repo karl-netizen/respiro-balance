@@ -34,25 +34,6 @@ export interface MorningRitual {
   streak?: number;
 }
 
-export interface RitualFormData {
-  id: string;
-  title: string;
-  description: string;
-  date?: Date;
-  startTime: string;
-  timeOfDay: string;
-  duration: number;
-  priority: RitualPriority;
-  recurrence: RecurrenceType;
-  daysOfWeek: string[];
-  reminderEnabled: boolean;
-  reminderTime: number;
-  reminders: RitualReminder[];
-  tags: string[];
-  complete: boolean;
-  createdAt: Date;
-}
-
 export const ritualFormSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().optional(),

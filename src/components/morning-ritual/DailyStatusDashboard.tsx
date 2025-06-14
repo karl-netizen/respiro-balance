@@ -109,7 +109,6 @@ const DailyStatusDashboard: React.FC<DailyStatusDashboardProps> = ({
   const motivation = getMotivationalMessage();
   const remainingRituals = totalRituals - completedToday;
 
-  // Get progress bar color based on completion
   const getProgressColor = () => {
     if (completionPercentage >= 90) return "bg-green-500";
     if (completionPercentage >= 70) return "bg-orange-500";

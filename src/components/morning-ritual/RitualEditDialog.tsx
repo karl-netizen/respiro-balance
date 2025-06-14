@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { MorningRitual } from '@/context/types';
 import RitualFormContent from './RitualFormContent';
 import { useRitualEditForm } from './hooks/useRitualEditForm';
+import { RitualFormValues } from './types';
 
 interface RitualEditDialogProps {
   ritual: MorningRitual;
@@ -18,12 +19,14 @@ const RitualEditDialog: React.FC<RitualEditDialogProps> = ({
   onOpenChange,
   onSave
 }) => {
-  const { form, isSubmitting, handleSubmit } = useRitualEditForm(ritual);
+  const { form, isSubmitting } = useRitualEditForm(ritual);
 
-  const onSubmit = (data: any) => {
+  const handleSubmit = (data: RitualFormValues) => {
     const updatedRitual: MorningRitual = {
       ...ritual,
       ...data,
+      startTime: data.timeOfDay,
+      complete: false,
       updatedAt: new Date()
     };
     onSave(updatedRitual);
@@ -39,7 +42,7 @@ const RitualEditDialog: React.FC<RitualEditDialogProps> = ({
         
         <RitualFormContent
           form={form}
-          onSubmit={handleSubmit(onSubmit)}
+          onSubmit={handleSubmit}
           isSubmitting={isSubmitting}
           submitLabel="Update Ritual"
         />

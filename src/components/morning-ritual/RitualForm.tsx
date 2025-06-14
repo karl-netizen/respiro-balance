@@ -37,7 +37,6 @@ const RitualForm = () => {
       form={form}
       onSubmit={onSubmit}
       isSubmitting={false}
-      submitted={submitted}
     />
   );
 

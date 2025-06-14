@@ -24,6 +24,7 @@ export const useAddSuggestion = () => {
         title: suggestion.title,
         description: suggestion.description,
         timeOfDay: suggestion.timeOfDay,
+        startTime: suggestion.timeOfDay,
         duration: suggestion.duration,
         recurrence: 'daily',
         priority: suggestion.priority,
@@ -31,6 +32,7 @@ export const useAddSuggestion = () => {
         reminderTime: 10,
         tags: suggestion.tags || [],
         status: 'planned',
+        complete: false,
         streak: 0,
         createdAt: new Date(),
         daysOfWeek: [],
@@ -44,7 +46,7 @@ export const useAddSuggestion = () => {
     }
   }, [updatePreferences, preferences.morningRituals]);
 
-  const addSuggestion = addSuggestionAsRitual; // Alias for backward compatibility
+  const addSuggestion = addSuggestionAsRitual;
 
   return { addSuggestionAsRitual, addSuggestion, isAdding };
 };

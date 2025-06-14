@@ -2,18 +2,22 @@
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
-import { MorningRitual, RitualPriority, RitualRecurrence } from '@/context/types';
-import { useUserPreferences } from '@/context';
-import { Clock, Calendar, Zap, AlertTriangle, CheckCircle2, Wand2, Plus } from 'lucide-react';
+import { CheckCircle, ArrowRight, Sparkles, Clock, Target } from 'lucide-react';
+import { MorningRitual } from '@/context/types';
 import { toast } from 'sonner';
+
+interface RitualSuggestion {
+  id: string;
+  title: string;
+  description: string;
+  duration: number;
+  timeOfDay: string;
+  priority: 'low' | 'medium' | 'high';
+  tags: string[];
+  category: string;
+}
 
 interface RitualCreationWizardProps {
   isOpen: boolean;
@@ -21,409 +25,200 @@ interface RitualCreationWizardProps {
   onSave: (ritual: MorningRitual) => void;
 }
 
-interface ConflictAlert {
-  type: 'overlap' | 'tight' | 'unrealistic';
-  message: string;
-  suggestion: string;
-}
+const RITUAL_SUGGESTIONS: RitualSuggestion[] = [
+  {
+    id: 'meditation',
+    title: 'Morning Meditation',
+    description: 'Start your day with mindfulness and clarity',
+    duration: 10,
+    timeOfDay: '07:00',
+    priority: 'high',
+    tags: ['mindfulness', 'meditation'],
+    category: 'Mental Wellness'
+  },
+  {
+    id: 'exercise',
+    title: 'Morning Exercise',
+    description: 'Energize your body with light movement',
+    duration: 20,
+    timeOfDay: '06:30',
+    priority: 'medium',
+    tags: ['exercise', 'energy'],
+    category: 'Physical Health'
+  },
+  {
+    id: 'journaling',
+    title: 'Gratitude Journaling',
+    description: 'Reflect on what you\'re grateful for',
+    duration: 5,
+    timeOfDay: '07:30',
+    priority: 'medium',
+    tags: ['gratitude', 'journaling'],
+    category: 'Mental Wellness'
+  }
+];
 
 const RitualCreationWizard: React.FC<RitualCreationWizardProps> = ({
   isOpen,
   onClose,
   onSave
 }) => {
-  const { preferences } = useUserPreferences();
-  const existingRituals = preferences.morningRituals || [];
-  
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    timeOfDay: '07:00',
-    duration: 15,
-    priority: 'medium' as RitualPriority,
-    recurrence: 'daily' as RitualRecurrence,
-    tags: [] as string[],
-    reminderEnabled: true,
-    reminderTime: 10
-  });
+  const [selectedSuggestions, setSelectedSuggestions] = useState<Set<string>>(new Set());
 
-  const [conflicts, setConflicts] = useState<ConflictAlert[]>([]);
-  const [suggestions, setSuggestions] = useState<string[]>([]);
-
-  const analyzeConflicts = () => {
-    const newConflicts: ConflictAlert[] = [];
-    const newSuggestions: string[] = [];
-
-    const timeToMinutes = (time: string): number => {
-      const [hours, minutes] = time.split(':').map(Number);
-      return hours * 60 + minutes;
-    };
-
-    const startTime = timeToMinutes(formData.timeOfDay);
-    const endTime = startTime + formData.duration;
-
-    // Check for conflicts with existing rituals
-    existingRituals.forEach(ritual => {
-      const existingStart = timeToMinutes(ritual.timeOfDay);
-      const existingEnd = existingStart + ritual.duration;
-
-      // Check for overlaps
-      if (
-        (startTime >= existingStart && startTime < existingEnd) ||
-        (endTime > existingStart && endTime <= existingEnd) ||
-        (startTime <= existingStart && endTime >= existingEnd)
-      ) {
-        newConflicts.push({
-          type: 'overlap',
-          message: `Overlaps with "${ritual.title}" (${ritual.timeOfDay})`,
-          suggestion: 'Adjust timing to avoid conflict'
-        });
-      }
-      // Check for tight scheduling
-      else if (Math.abs(endTime - existingStart) < 5 || Math.abs(existingEnd - startTime) < 5) {
-        newConflicts.push({
-          type: 'tight',
-          message: `Very close to "${ritual.title}" (${ritual.timeOfDay})`,
-          suggestion: 'Add 5+ minute buffer between rituals'
-        });
-      }
-    });
-
-    // Check for unrealistic durations
-    if (formData.duration > 45) {
-      newConflicts.push({
-        type: 'unrealistic',
-        message: 'Duration exceeds 45 minutes',
-        suggestion: 'Consider breaking into smaller segments'
-      });
+  const toggleSuggestion = (id: string) => {
+    const newSelected = new Set(selectedSuggestions);
+    if (newSelected.has(id)) {
+      newSelected.delete(id);
+    } else {
+      newSelected.add(id);
     }
-
-    // Generate smart suggestions
-    if (newConflicts.length === 0) {
-      newSuggestions.push('Perfect timing! No conflicts detected.');
-    }
-
-    if (formData.duration < 5) {
-      newSuggestions.push('Consider extending duration for better results');
-    }
-
-    if (startTime < 5 * 60) { // Before 5 AM
-      newSuggestions.push('Very early start - ensure you can maintain this consistently');
-    }
-
-    if (formData.priority === 'high' && existingRituals.filter(r => r.priority === 'high').length >= 2) {
-      newSuggestions.push('Many high-priority rituals can be overwhelming');
-    }
-
-    setConflicts(newConflicts);
-    setSuggestions(newSuggestions);
+    setSelectedSuggestions(newSelected);
   };
 
-  React.useEffect(() => {
-    if (formData.title && formData.timeOfDay) {
-      analyzeConflicts();
-    }
-  }, [formData.timeOfDay, formData.duration, existingRituals]);
-
-  const handleSave = () => {
-    if (!formData.title.trim()) {
-      toast.error('Please enter a ritual title');
+  const handleCreateRituals = () => {
+    if (selectedSuggestions.size === 0) {
+      toast.error('Please select at least one ritual to create');
       return;
     }
 
-    const hasOverlapConflicts = conflicts.some(c => c.type === 'overlap');
-    if (hasOverlapConflicts) {
-      toast.error('Please resolve time conflicts before saving');
-      return;
-    }
+    selectedSuggestions.forEach(suggestionId => {
+      const suggestion = RITUAL_SUGGESTIONS.find(s => s.id === suggestionId);
+      if (suggestion) {
+        const newRitual: MorningRitual = {
+          id: `ritual_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          title: suggestion.title,
+          description: suggestion.description,
+          timeOfDay: suggestion.timeOfDay,
+          startTime: suggestion.timeOfDay,
+          duration: suggestion.duration,
+          priority: suggestion.priority,
+          recurrence: 'daily',
+          daysOfWeek: [],
+          reminderEnabled: true,
+          reminderTime: 10,
+          reminders: [],
+          tags: suggestion.tags,
+          status: 'planned',
+          complete: false,
+          streak: 0,
+          createdAt: new Date()
+        };
 
-    const newRitual: MorningRitual = {
-      id: `ritual_${Date.now()}`,
-      title: formData.title.trim(),
-      description: formData.description.trim(),
-      timeOfDay: formData.timeOfDay,
-      duration: formData.duration,
-      recurrence: formData.recurrence,
-      priority: formData.priority,
-      reminderEnabled: formData.reminderEnabled,
-      reminderTime: formData.reminderTime,
-      tags: formData.tags,
-      status: 'planned',
-      streak: 0,
-      createdAt: new Date(),
-      daysOfWeek: [],
-      reminders: []
-    };
-
-    onSave(newRitual);
-    
-    // Reset form
-    setFormData({
-      title: '',
-      description: '',
-      timeOfDay: '07:00',
-      duration: 15,
-      priority: 'medium',
-      recurrence: 'daily',
-      tags: [],
-      reminderEnabled: true,
-      reminderTime: 10
+        onSave(newRitual);
+      }
     });
-    
+
+    toast.success(`Created ${selectedSuggestions.size} ritual${selectedSuggestions.size > 1 ? 's' : ''} successfully!`);
+    setSelectedSuggestions(new Set());
     onClose();
-    
-    toast.success('Ritual created successfully!', {
-      description: 'Your new morning ritual has been added to your timeline.'
-    });
-  };
-
-  const suggestOptimalTime = () => {
-    const occupiedTimes = existingRituals.map(r => {
-      const start = r.timeOfDay.split(':').map(Number);
-      return {
-        start: start[0] * 60 + start[1],
-        end: start[0] * 60 + start[1] + r.duration
-      };
-    }).sort((a, b) => a.start - b.start);
-
-    // Find gaps between existing rituals
-    let suggestedTime = 6 * 60; // Start at 6 AM
-
-    for (const slot of occupiedTimes) {
-      if (suggestedTime + formData.duration <= slot.start) {
-        break; // Found a gap
-      }
-      suggestedTime = slot.end + 5; // Add 5 minute buffer
-    }
-
-    const hours = Math.floor(suggestedTime / 60);
-    const minutes = suggestedTime % 60;
-    const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-    
-    setFormData(prev => ({ ...prev, timeOfDay: timeString }));
-    
-    toast.success('Optimal time suggested!', {
-      description: `Set to ${timeString} with no conflicts`
-    });
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Wand2 className="h-5 w-5" />
-            Smart Ritual Creator
+          <DialogTitle className="flex items-center space-x-2 text-2xl">
+            <Sparkles className="h-6 w-6 text-yellow-500" />
+            <span>Create Your Morning Rituals</span>
           </DialogTitle>
         </DialogHeader>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Form Section */}
-          <div className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Ritual Details</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="title">Title</Label>
-                  <Input
-                    id="title"
-                    placeholder="e.g., Morning Meditation"
-                    value={formData.title}
-                    onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    placeholder="Brief description of your ritual..."
-                    value={formData.description}
-                    onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="time">Time</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        id="time"
-                        type="time"
-                        value={formData.timeOfDay}
-                        onChange={(e) => setFormData(prev => ({ ...prev, timeOfDay: e.target.value }))}
-                      />
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={suggestOptimalTime}
-                        className="whitespace-nowrap"
-                      >
-                        <Zap className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="duration">Duration (minutes)</Label>
-                    <Select
-                      value={formData.duration.toString()}
-                      onValueChange={(value) => setFormData(prev => ({ ...prev, duration: Number(value) }))}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="5">5 minutes</SelectItem>
-                        <SelectItem value="10">10 minutes</SelectItem>
-                        <SelectItem value="15">15 minutes</SelectItem>
-                        <SelectItem value="20">20 minutes</SelectItem>
-                        <SelectItem value="30">30 minutes</SelectItem>
-                        <SelectItem value="45">45 minutes</SelectItem>
-                        <SelectItem value="60">60 minutes</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="priority">Priority</Label>
-                    <Select
-                      value={formData.priority}
-                      onValueChange={(value: RitualPriority) => setFormData(prev => ({ ...prev, priority: value }))}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="low">Low</SelectItem>
-                        <SelectItem value="medium">Medium</SelectItem>
-                        <SelectItem value="high">High</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="recurrence">Frequency</Label>
-                    <Select
-                      value={formData.recurrence}
-                      onValueChange={(value: RitualRecurrence) => setFormData(prev => ({ ...prev, recurrence: value }))}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="daily">Daily</SelectItem>
-                        <SelectItem value="weekdays">Weekdays</SelectItem>
-                        <SelectItem value="weekends">Weekends</SelectItem>
-                        <SelectItem value="custom">Custom</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+        <div className="space-y-6">
+          <div className="text-center space-y-2">
+            <p className="text-lg text-gray-600">
+              Choose from these scientifically-backed morning rituals to transform your day
+            </p>
+            <Badge className="bg-blue-100 text-blue-800">
+              Select one or more rituals to get started
+            </Badge>
           </div>
 
-          {/* Analysis Section */}
-          <div className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <AlertTriangle className="h-5 w-5" />
-                  Smart Analysis
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Conflicts */}
-                {conflicts.length > 0 && (
-                  <div className="space-y-2">
-                    <h4 className="font-medium text-sm">Detected Issues</h4>
-                    {conflicts.map((conflict, index) => (
-                      <Alert key={index} variant={conflict.type === 'overlap' ? 'destructive' : 'default'}>
-                        <AlertTriangle className="h-4 w-4" />
-                        <AlertDescription>
-                          <div className="space-y-1">
-                            <p className="font-medium">{conflict.message}</p>
-                            <p className="text-xs text-muted-foreground">{conflict.suggestion}</p>
-                          </div>
-                        </AlertDescription>
-                      </Alert>
-                    ))}
-                  </div>
-                )}
-
-                {/* Suggestions */}
-                {suggestions.length > 0 && (
-                  <div className="space-y-2">
-                    <h4 className="font-medium text-sm">Smart Suggestions</h4>
-                    {suggestions.map((suggestion, index) => (
-                      <Alert key={index}>
-                        <CheckCircle2 className="h-4 w-4" />
-                        <AlertDescription>{suggestion}</AlertDescription>
-                      </Alert>
-                    ))}
-                  </div>
-                )}
-
-                {/* Timeline Preview */}
-                <div className="space-y-2">
-                  <h4 className="font-medium text-sm">Timeline Preview</h4>
-                  <div className="space-y-1 max-h-40 overflow-y-auto">
-                    {[...existingRituals, {
-                      id: 'preview',
-                      title: formData.title || 'New Ritual',
-                      timeOfDay: formData.timeOfDay,
-                      duration: formData.duration,
-                      status: 'planned'
-                    }]
-                    .sort((a, b) => {
-                      const timeA = a.timeOfDay.split(':').map(Number);
-                      const timeB = b.timeOfDay.split(':').map(Number);
-                      return (timeA[0] * 60 + timeA[1]) - (timeB[0] * 60 + timeB[1]);
-                    })
-                    .map((ritual, index) => (
-                      <div
-                        key={ritual.id}
-                        className={`flex items-center justify-between p-2 rounded-md text-sm ${
-                          ritual.id === 'preview' 
-                            ? 'bg-blue-50 border border-blue-200' 
-                            : 'bg-gray-50'
-                        }`}
-                      >
-                        <span className={ritual.id === 'preview' ? 'font-medium text-blue-700' : ''}>
-                          {ritual.title}
-                        </span>
-                        <Badge variant="outline" className="text-xs">
-                          {ritual.timeOfDay} ({ritual.duration}m)
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {RITUAL_SUGGESTIONS.map((suggestion) => {
+              const isSelected = selectedSuggestions.has(suggestion.id);
+              
+              return (
+                <Card 
+                  key={suggestion.id}
+                  className={`cursor-pointer transition-all duration-200 hover:shadow-lg ${
+                    isSelected 
+                      ? 'ring-2 ring-blue-500 bg-blue-50 border-blue-200' 
+                      : 'hover:border-gray-300'
+                  }`}
+                  onClick={() => toggleSuggestion(suggestion.id)}
+                >
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <CardTitle className="text-lg flex items-center space-x-2">
+                          <span>{suggestion.title}</span>
+                          {isSelected && (
+                            <CheckCircle className="h-5 w-5 text-green-500" />
+                          )}
+                        </CardTitle>
+                        <Badge variant="outline" className="mt-1 text-xs">
+                          {suggestion.category}
                         </Badge>
                       </div>
-                    ))}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                    </div>
+                  </CardHeader>
+                  
+                  <CardContent className="pt-0">
+                    <CardDescription className="text-sm mb-4">
+                      {suggestion.description}
+                    </CardDescription>
+                    
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between text-sm">
+                        <div className="flex items-center space-x-1">
+                          <Clock className="h-4 w-4 text-gray-400" />
+                          <span>{suggestion.duration} min</span>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <Target className="h-4 w-4 text-gray-400" />
+                          <span className="capitalize">{suggestion.priority} priority</span>
+                        </div>
+                      </div>
+                      
+                      <div className="flex flex-wrap gap-1">
+                        {suggestion.tags.map((tag, index) => (
+                          <Badge key={index} variant="secondary" className="text-xs">
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
-        </div>
 
-        <Separator />
-
-        <div className="flex justify-end gap-3">
-          <Button variant="outline" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button 
-            onClick={handleSave}
-            disabled={!formData.title.trim() || conflicts.some(c => c.type === 'overlap')}
-            className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Create Ritual
-          </Button>
+          <div className="flex items-center justify-between pt-6 border-t">
+            <div className="text-sm text-gray-600">
+              {selectedSuggestions.size > 0 ? (
+                <span className="font-medium text-blue-600">
+                  {selectedSuggestions.size} ritual{selectedSuggestions.size > 1 ? 's' : ''} selected
+                </span>
+              ) : (
+                <span>Select rituals to continue</span>
+              )}
+            </div>
+            
+            <div className="space-x-3">
+              <Button variant="outline" onClick={onClose}>
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleCreateRituals}
+                disabled={selectedSuggestions.size === 0}
+                className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
+              >
+                Create Rituals
+                <ArrowRight className="h-4 w-4 ml-2" />
+              </Button>
+            </div>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
