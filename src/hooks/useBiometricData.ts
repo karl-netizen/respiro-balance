@@ -1,55 +1,46 @@
 
 import { useState, useEffect } from 'react';
-import { useAuth } from './useAuth';
-import { supabase } from '@/integrations/supabase/client';
-
-export interface BiometricData {
-  id: string;
-  user_id: string;
-  heart_rate?: number;
-  hrv?: number;
-  respiratory_rate?: number;
-  stress_score?: number;
-  coherence?: number;
-  recorded_at: string;
-  device_source?: string;
-}
+import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/hooks/useAuth';
+import { BiometricData } from '@/components/meditation/types/BiometricTypes';
 
 export const useBiometricData = () => {
   const { user } = useAuth();
   const [biometricData, setBiometricData] = useState<BiometricData[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  useEffect(() => {
-    const fetchBiometricData = async () => {
-      if (!user) return;
-      
-      setIsLoading(true);
-      setError(null);
-      
-      try {
-        // Using type assertion for supabase
-        const { data, error } = await (supabase as any)
-          .from('biometric_data')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('recorded_at', { ascending: false })
-          .limit(100);
-          
-        if (error) throw error;
-        
-        setBiometricData(data || []);
-      } catch (err: any) {
-        console.error('Error fetching biometric data:', err);
-        setError(err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const refreshBiometricData = async () => {
+    if (!user) return;
     
-    fetchBiometricData();
+    try {
+      setIsLoading(true);
+      const { data, error } = await supabase
+        .from('biometric_data')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('recorded_at', { ascending: false })
+        .limit(50);
+
+      if (error) throw error;
+      setBiometricData(data || []);
+    } catch (err) {
+      setError(err as Error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (user) {
+      refreshBiometricData();
+    }
   }, [user]);
 
-  return { biometricData, isLoading, error };
+  return {
+    biometricData,
+    isLoading,
+    error: error as Error,
+    refreshBiometricData
+  };
 };

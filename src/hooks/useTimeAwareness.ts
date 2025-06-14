@@ -1,56 +1,56 @@
 
 import { useState, useEffect } from 'react';
-import { TimeAwarenessService, TimePeriod } from '@/services/TimeAwarenessService';
+import { TimeAwarenessService, TimePeriod, TimeBasedRecommendations } from '@/services/TimeAwarenessService';
 import { useUserPreferences } from '@/context';
 
-export function useTimeAwareness() {
+export const useTimeAwareness = () => {
   const { preferences } = useUserPreferences();
-  const [timePeriod, setTimePeriod] = useState<TimePeriod>(TimeAwarenessService.getCurrentTimePeriod());
-  const [recommendations, setRecommendations] = useState(TimeAwarenessService.getTimeBasedRecommendations(preferences));
-  
-  // Check for time period changes
-  useEffect(() => {
-    // Initial check
-    updateTimePeriod();
-    
-    // Check every minute for time period changes
-    const intervalId = setInterval(() => {
-      updateTimePeriod();
-    }, 60000);
-    
-    return () => clearInterval(intervalId);
-  }, []);
-  
-  // Update time period and recommendations when preferences change
-  useEffect(() => {
-    setRecommendations(TimeAwarenessService.getTimeBasedRecommendations(preferences));
-  }, [preferences]);
-  
-  // Update time period and related data
+  const [currentPeriod, setCurrentPeriod] = useState<TimePeriod>('morning');
+  const [recommendations, setRecommendations] = useState<TimeBasedRecommendations>({
+    meditation: { title: '', duration: 10 },
+    breathing: { title: '', duration: 3 },
+    activity: { title: '', duration: 10 }
+  });
+  const [mostFrequentMood, setMostFrequentMood] = useState<string | null>(null);
+
   const updateTimePeriod = () => {
-    const currentPeriod = TimeAwarenessService.getCurrentTimePeriod();
-    if (currentPeriod !== timePeriod) {
-      setTimePeriod(currentPeriod);
-      setRecommendations(TimeAwarenessService.getTimeBasedRecommendations(preferences));
-    }
+    const newPeriod = TimeAwarenessService.getCurrentTimePeriod();
+    setCurrentPeriod(newPeriod);
+    
+    const newRecommendations = TimeAwarenessService.getTimeBasedRecommendations(preferences);
+    setRecommendations(newRecommendations);
+    
+    const frequentMood = TimeAwarenessService.getMostFrequentMoodForCurrentTimePeriod();
+    setMostFrequentMood(frequentMood);
   };
-  
-  // Record user mood
+
   const recordMood = (mood: string) => {
     TimeAwarenessService.recordMood(mood);
+    // Update most frequent mood after recording
+    const frequentMood = TimeAwarenessService.getMostFrequentMoodForCurrentTimePeriod();
+    setMostFrequentMood(frequentMood);
   };
-  
-  // Get a greeting based on time of day
-  const getGreeting = (userName: string = "") => {
+
+  const getGreeting = (userName: string = '') => {
     return TimeAwarenessService.getTimeBasedGreeting(userName);
   };
-  
+
+  useEffect(() => {
+    updateTimePeriod();
+    
+    // Update every hour
+    const interval = setInterval(updateTimePeriod, 3600000);
+    
+    return () => clearInterval(interval);
+  }, [preferences]);
+
   return {
-    timePeriod,
+    timePeriod: currentPeriod,
+    currentPeriod,
     recommendations,
     recordMood,
     getGreeting,
     updateTimePeriod,
-    mostFrequentMood: TimeAwarenessService.getMostFrequentMoodForCurrentTimePeriod()
+    mostFrequentMood
   };
-}
+};

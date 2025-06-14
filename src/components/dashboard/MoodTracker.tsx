@@ -1,64 +1,62 @@
 
 import React, { useState } from 'react';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
+import { Badge } from '@/components/ui/badge';
+import { Smile, Frown, Meh, Heart, Zap, Cloud } from 'lucide-react';
+import { TimeAwarenessService } from '@/services/TimeAwarenessService';
 
-interface MoodOption {
-  value: string;
-  emoji: string;
-  label: string;
-  color: string;
+export interface MoodTrackerProps {
+  onMoodSelect?: (mood: string) => void;
+  currentMood?: string | null;
 }
 
-interface MoodTrackerProps {
-  onMoodSelect: (mood: string) => void;
-  currentMood: string | null;
-}
+const MoodTracker: React.FC<MoodTrackerProps> = ({ 
+  onMoodSelect = () => {}, 
+  currentMood = null 
+}) => {
+  const [selectedMood, setSelectedMood] = useState<string | null>(currentMood);
 
-const moods: MoodOption[] = [
-  { value: 'amazing', emoji: '😄', label: 'Amazing', color: 'bg-green-100 hover:bg-green-200 text-green-800' },
-  { value: 'good', emoji: '🙂', label: 'Good', color: 'bg-lime-100 hover:bg-lime-200 text-lime-800' },
-  { value: 'okay', emoji: '😐', label: 'Okay', color: 'bg-yellow-100 hover:bg-yellow-200 text-yellow-800' },
-  { value: 'meh', emoji: '😕', label: 'Meh', color: 'bg-amber-100 hover:bg-amber-200 text-amber-800' },
-  { value: 'stressed', emoji: '😓', label: 'Stressed', color: 'bg-orange-100 hover:bg-orange-200 text-orange-800' },
-  { value: 'anxious', emoji: '😰', label: 'Anxious', color: 'bg-red-100 hover:bg-red-200 text-red-800' }
-];
+  const moods = [
+    { id: 'happy', label: 'Happy', icon: <Smile className="h-5 w-5" />, color: 'bg-green-100 text-green-800' },
+    { id: 'calm', label: 'Calm', icon: <Heart className="h-5 w-5" />, color: 'bg-blue-100 text-blue-800' },
+    { id: 'energetic', label: 'Energetic', icon: <Zap className="h-5 w-5" />, color: 'bg-yellow-100 text-yellow-800' },
+    { id: 'neutral', label: 'Neutral', icon: <Meh className="h-5 w-5" />, color: 'bg-gray-100 text-gray-800' },
+    { id: 'tired', label: 'Tired', icon: <Cloud className="h-5 w-5" />, color: 'bg-purple-100 text-purple-800' },
+    { id: 'stressed', label: 'Stressed', icon: <Frown className="h-5 w-5" />, color: 'bg-red-100 text-red-800' }
+  ];
 
-const MoodTracker: React.FC<MoodTrackerProps> = ({ onMoodSelect, currentMood }) => {
-  const handleSelect = (mood: string) => {
-    onMoodSelect(mood);
-    toast.success('Mood updated', {
-      description: 'Your mood has been recorded'
-    });
+  const handleMoodSelect = (moodId: string) => {
+    setSelectedMood(moodId);
+    TimeAwarenessService.recordMood(moodId);
+    onMoodSelect(moodId);
   };
-  
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>How are you feeling today?</CardTitle>
-        <CardDescription>
-          Tracking your mood helps us personalize your meditation recommendations.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
-          {moods.map((mood) => (
-            <Button
-              key={mood.value}
-              variant="ghost"
-              className={`flex flex-col items-center p-3 h-auto ${mood.color} ${
-                currentMood === mood.value ? 'ring-2 ring-primary' : ''
-              }`}
-              onClick={() => handleSelect(mood.value)}
-            >
-              <span className="text-2xl mb-1">{mood.emoji}</span>
-              <span className="text-xs font-medium">{mood.label}</span>
-            </Button>
-          ))}
+    <div className="space-y-3">
+      <div className="grid grid-cols-3 gap-2">
+        {moods.map((mood) => (
+          <Button
+            key={mood.id}
+            variant={selectedMood === mood.id ? "default" : "outline"}
+            size="sm"
+            className="h-auto p-2 flex flex-col items-center gap-1"
+            onClick={() => handleMoodSelect(mood.id)}
+          >
+            {mood.icon}
+            <span className="text-xs">{mood.label}</span>
+          </Button>
+        ))}
+      </div>
+      
+      {selectedMood && (
+        <div className="text-center">
+          <Badge variant="outline" className={moods.find(m => m.id === selectedMood)?.color}>
+            Current mood: {moods.find(m => m.id === selectedMood)?.label}
+          </Badge>
         </div>
-      </CardContent>
-    </Card>
+      )}
+    </div>
   );
 };
 

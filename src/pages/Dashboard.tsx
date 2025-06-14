@@ -42,6 +42,7 @@ const Dashboard: React.FC = () => {
   });
 
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [currentMood, setCurrentMood] = useState<string | null>(null);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 60000);
@@ -62,7 +63,7 @@ const Dashboard: React.FC = () => {
     return `Good evening, ${name}!`;
   };
 
-  const currentStreak = Math.floor(Math.random() * 7) + 1;
+  const currentStreak = meditationStats.currentStreak || Math.floor(Math.random() * 7) + 1;
   const weeklyGoal = preferences?.preferred_session_duration ? preferences.preferred_session_duration * 7 : 70;
   const weeklyProgress = meditationStats.weeklyMinutes || Math.floor(Math.random() * weeklyGoal);
   const progressPercentage = Math.min((weeklyProgress / weeklyGoal) * 100, 100);
@@ -93,6 +94,10 @@ const Dashboard: React.FC = () => {
       description: "Average session length"
     }
   ];
+
+  const handleMoodSelect = (mood: string) => {
+    setCurrentMood(mood);
+  };
 
   return (
     <div className="container mx-auto p-6 space-y-8">
@@ -178,7 +183,7 @@ const Dashboard: React.FC = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <MoodTracker />
+            <MoodTracker onMoodSelect={handleMoodSelect} currentMood={currentMood} />
           </CardContent>
         </Card>
 
