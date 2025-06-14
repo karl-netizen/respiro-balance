@@ -1,60 +1,55 @@
 
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
+import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
-import { useUserPreferences } from '@/context';
-import { toast } from 'sonner';
 import { Separator } from '@/components/ui/separator';
-import { Palette, Brain, Clock, Calendar, RotateCcw, Moon, Sun, Monitor } from 'lucide-react';
-
-type Theme = 'light' | 'dark' | 'system';
-type WorkDay = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
-type MeditationExperience = 'beginner' | 'intermediate' | 'advanced';
-type StressLevel = 'low' | 'moderate' | 'high';
+import { Palette, Accessibility, Target, Clock, Calendar, Sun, Moon, Monitor } from 'lucide-react';
+import { toast } from 'sonner';
 
 const AccountPreferencesSettings = () => {
-  const { preferences, updatePreferences, resetPreferences } = useUserPreferences();
-  
-  // Local state for work days
-  const [workDays, setWorkDays] = useState<WorkDay[]>(preferences.work_days as WorkDay[] || ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']);
-  
-  const daysOfWeek: { key: WorkDay; label: string }[] = [
-    { key: 'monday', label: 'Mon' },
-    { key: 'tuesday', label: 'Tue' },
-    { key: 'wednesday', label: 'Wed' },
-    { key: 'thursday', label: 'Thu' },
-    { key: 'friday', label: 'Fri' },
-    { key: 'saturday', label: 'Sat' },
-    { key: 'sunday', label: 'Sun' }
+  const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('system');
+  const [darkModeOverride, setDarkModeOverride] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const [highContrast, setHighContrast] = useState(false);
+  const [experienceLevel, setExperienceLevel] = useState('intermediate');
+  const [defaultDuration, setDefaultDuration] = useState(10);
+  const [audioGuidance, setAudioGuidance] = useState(true);
+  const [backgroundSounds, setBackgroundSounds] = useState('nature');
+  const [autoContinue, setAutoContinue] = useState(false);
+  const [vibrationAlerts, setVibrationAlerts] = useState(true);
+  const [weeklyGoal, setWeeklyGoal] = useState([30]);
+  const [workDays, setWorkDays] = useState(['monday', 'tuesday', 'wednesday', 'thursday', 'friday']);
+  const [workStartTime, setWorkStartTime] = useState('09:00');
+  const [workEndTime, setWorkEndTime] = useState('17:00');
+  const [lunchTime, setLunchTime] = useState('12:00');
+  const [lunchBreak, setLunchBreak] = useState(true);
+  const [bedtime, setBedtime] = useState('22:00');
+  const [wakeupTime, setWakeupTime] = useState('07:00');
+  const [morningExercise, setMorningExercise] = useState(false);
+  const [exerciseTime, setExerciseTime] = useState('07:30');
+
+  const handleSaveSettings = () => {
+    // Mock save - in real implementation, this would save to backend
+    toast.success("Settings saved successfully", {
+      description: "Your preferences have been updated across all devices."
+    });
+  };
+
+  const dayOptions = [
+    { id: 'monday', label: 'Monday' },
+    { id: 'tuesday', label: 'Tuesday' },
+    { id: 'wednesday', label: 'Wednesday' },
+    { id: 'thursday', label: 'Thursday' },
+    { id: 'friday', label: 'Friday' },
+    { id: 'saturday', label: 'Saturday' },
+    { id: 'sunday', label: 'Sunday' }
   ];
-
-  const handleThemeChange = (theme: Theme) => {
-    updatePreferences({ theme });
-    toast.success(`Theme changed to ${theme}`);
-  };
-
-  const handleWorkDayToggle = (day: WorkDay) => {
-    const newWorkDays = workDays.includes(day) 
-      ? workDays.filter(d => d !== day)
-      : [...workDays, day];
-    setWorkDays(newWorkDays);
-    updatePreferences({ work_days: newWorkDays });
-  };
-
-  const handleTimeChange = (field: string, value: string) => {
-    updatePreferences({ [field]: value });
-  };
-
-  const handleResetPreferences = () => {
-    resetPreferences();
-    toast.success("All preferences have been reset to default values");
-  };
 
   return (
     <div className="space-y-6">
@@ -66,72 +61,78 @@ const AccountPreferencesSettings = () => {
             Theme & Appearance
           </CardTitle>
           <CardDescription>
-            Customize the look and feel of your meditation experience
+            Customize the visual appearance of your application
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div>
-            <Label className="text-base font-medium">Theme Selection</Label>
-            <p className="text-sm text-muted-foreground mb-4">
-              Choose your preferred theme or let the system decide automatically
+          <div className="space-y-3">
+            <Label htmlFor="theme-select">Theme Selection</Label>
+            <Select value={theme} onValueChange={(value: 'light' | 'dark' | 'system') => setTheme(value)}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="light">
+                  <div className="flex items-center gap-2">
+                    <Sun className="h-4 w-4" />
+                    Light Theme
+                  </div>
+                </SelectItem>
+                <SelectItem value="dark">
+                  <div className="flex items-center gap-2">
+                    <Moon className="h-4 w-4" />
+                    Dark Theme
+                  </div>
+                </SelectItem>
+                <SelectItem value="system">
+                  <div className="flex items-center gap-2">
+                    <Monitor className="h-4 w-4" />
+                    System Auto-Detect
+                  </div>
+                </SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-sm text-muted-foreground">
+              System auto-detect follows your device's theme preference
             </p>
-            <div className="grid grid-cols-3 gap-3">
-              <Button
-                variant={preferences.theme === 'light' ? 'default' : 'outline'}
-                className="flex flex-col items-center gap-2 h-20"
-                onClick={() => handleThemeChange('light')}
-              >
-                <Sun className="h-5 w-5" />
-                <span>Light</span>
-              </Button>
-              <Button
-                variant={preferences.theme === 'dark' ? 'default' : 'outline'}
-                className="flex flex-col items-center gap-2 h-20"
-                onClick={() => handleThemeChange('dark')}
-              >
-                <Moon className="h-5 w-5" />
-                <span>Dark</span>
-              </Button>
-              <Button
-                variant={preferences.theme === 'system' ? 'default' : 'outline'}
-                className="flex flex-col items-center gap-2 h-20"
-                onClick={() => handleThemeChange('system')}
-              >
-                <Monitor className="h-5 w-5" />
-                <span>System</span>
-              </Button>
-            </div>
           </div>
 
           <Separator />
 
           <div className="space-y-4">
-            <h4 className="font-medium">Accessibility Options</h4>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label>Reduced Motion</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Minimize animations for motion sensitivity
-                  </p>
-                </div>
-                <Switch
-                  checked={preferences.reducedMotion || false}
-                  onCheckedChange={(checked) => updatePreferences({ reducedMotion: checked })}
-                />
+            <h4 className="font-medium flex items-center gap-2">
+              <Accessibility className="h-4 w-4" />
+              Accessibility Options
+            </h4>
+            
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>Dark Mode Override</Label>
+                <p className="text-sm text-muted-foreground">
+                  Force dark theme regardless of system setting
+                </p>
               </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label>High Contrast</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Enhanced contrast for better visibility
-                  </p>
-                </div>
-                <Switch
-                  checked={preferences.highContrast || false}
-                  onCheckedChange={(checked) => updatePreferences({ highContrast: checked })}
-                />
+              <Switch checked={darkModeOverride} onCheckedChange={setDarkModeOverride} />
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>Reduced Motion</Label>
+                <p className="text-sm text-muted-foreground">
+                  Minimize animations for motion sensitivity
+                </p>
               </div>
+              <Switch checked={reducedMotion} onCheckedChange={setReducedMotion} />
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>High Contrast</Label>
+                <p className="text-sm text-muted-foreground">
+                  Enhanced contrast for better visibility
+                </p>
+              </div>
+              <Switch checked={highContrast} onCheckedChange={setHighContrast} />
             </div>
           </div>
         </CardContent>
@@ -141,67 +142,112 @@ const AccountPreferencesSettings = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Brain className="h-5 w-5" />
-            Meditation Experience
+            <Target className="h-5 w-5" />
+            Meditation Experience Configuration
           </CardTitle>
           <CardDescription>
-            Configure your meditation preferences and default settings
+            Customize your meditation practice and session preferences
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <Label>Experience Level</Label>
-              <Select
-                value={preferences.meditation_experience || 'beginner'}
-                onValueChange={(value: MeditationExperience) => updatePreferences({ meditation_experience: value })}
-              >
-                <SelectTrigger className="mt-2">
+          <div className="space-y-3">
+            <Label>Experience Level</Label>
+            <Select value={experienceLevel} onValueChange={setExperienceLevel}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="beginner">Beginner - New to meditation</SelectItem>
+                <SelectItem value="intermediate">Intermediate - Some experience</SelectItem>
+                <SelectItem value="advanced">Advanced - Experienced practitioner</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-sm text-muted-foreground">
+              Affects session recommendations and difficulty filtering
+            </p>
+          </div>
+
+          <Separator />
+
+          <div className="space-y-4">
+            <h4 className="font-medium">Default Session Preferences</h4>
+            
+            <div className="space-y-3">
+              <Label>Default Duration</Label>
+              <Select value={defaultDuration.toString()} onValueChange={(value) => setDefaultDuration(parseInt(value))}>
+                <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="beginner">Beginner</SelectItem>
-                  <SelectItem value="intermediate">Intermediate</SelectItem>
-                  <SelectItem value="advanced">Advanced</SelectItem>
+                  <SelectItem value="3">3 minutes</SelectItem>
+                  <SelectItem value="5">5 minutes</SelectItem>
+                  <SelectItem value="10">10 minutes</SelectItem>
+                  <SelectItem value="15">15 minutes</SelectItem>
+                  <SelectItem value="20">20 minutes</SelectItem>
+                  <SelectItem value="30">30 minutes</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            
-            <div>
-              <Label>Stress Level</Label>
-              <Select
-                value={preferences.stress_level || 'moderate'}
-                onValueChange={(value: StressLevel) => updatePreferences({ stress_level: value })}
-              >
-                <SelectTrigger className="mt-2">
+
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>Audio Guidance</Label>
+                <p className="text-sm text-muted-foreground">Enable voice instructions by default</p>
+              </div>
+              <Switch checked={audioGuidance} onCheckedChange={setAudioGuidance} />
+            </div>
+
+            <div className="space-y-3">
+              <Label>Background Sounds</Label>
+              <Select value={backgroundSounds} onValueChange={setBackgroundSounds}>
+                <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="low">Low</SelectItem>
-                  <SelectItem value="moderate">Moderate</SelectItem>
-                  <SelectItem value="high">High</SelectItem>
+                  <SelectItem value="none">No Background Sound</SelectItem>
+                  <SelectItem value="nature">Nature Sounds</SelectItem>
+                  <SelectItem value="rain">Rain</SelectItem>
+                  <SelectItem value="ocean">Ocean Waves</SelectItem>
+                  <SelectItem value="forest">Forest</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>Auto-Continue Sessions</Label>
+                <p className="text-sm text-muted-foreground">Automatic progression between sessions</p>
+              </div>
+              <Switch checked={autoContinue} onCheckedChange={setAutoContinue} />
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>Vibration Alerts</Label>
+                <p className="text-sm text-muted-foreground">Mobile device haptic feedback</p>
+              </div>
+              <Switch checked={vibrationAlerts} onCheckedChange={setVibrationAlerts} />
             </div>
           </div>
 
-          <div>
-            <Label>Default Session Duration</Label>
-            <p className="text-sm text-muted-foreground mb-4">
-              Current: {preferences.preferred_session_duration || 10} minutes
-            </p>
-            <Slider
-              value={[preferences.preferred_session_duration || 10]}
-              onValueChange={(value) => updatePreferences({ preferred_session_duration: value[0] })}
-              max={60}
-              min={3}
-              step={1}
-              className="w-full"
-            />
-            <div className="flex justify-between text-xs text-muted-foreground mt-1">
-              <span>3 min</span>
-              <span>30 min</span>
-              <span>60 min</span>
+          <Separator />
+
+          <div className="space-y-4">
+            <h4 className="font-medium">Goal Configuration</h4>
+            
+            <div className="space-y-3">
+              <Label>Weekly Meditation Goal: {weeklyGoal[0]} minutes per day</Label>
+              <Slider
+                value={weeklyGoal}
+                onValueChange={setWeeklyGoal}
+                max={60}
+                min={0}
+                step={5}
+                className="w-full"
+              />
+              <p className="text-sm text-muted-foreground">
+                Set your daily meditation target (0-60 minutes)
+              </p>
             </div>
           </div>
         </CardContent>
@@ -215,164 +261,152 @@ const AccountPreferencesSettings = () => {
             Work-Life Integration
           </CardTitle>
           <CardDescription>
-            Configure your work schedule and break reminders
+            Configure your schedule for optimal meditation timing
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div>
-            <Label className="text-base font-medium">Work Days</Label>
-            <p className="text-sm text-muted-foreground mb-4">
-              Select the days when you want work-related meditation reminders
-            </p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {daysOfWeek.map((day) => (
-                <div key={day.key} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={day.key}
-                    checked={workDays.includes(day.key)}
-                    onCheckedChange={() => handleWorkDayToggle(day.key)}
-                  />
-                  <Label htmlFor={day.key} className="text-sm">
-                    {day.label}
-                  </Label>
-                </div>
-              ))}
+          <div className="space-y-4">
+            <h4 className="font-medium">Work Schedule</h4>
+            
+            <div className="space-y-3">
+              <Label>Work Days</Label>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {dayOptions.map((day) => (
+                  <div key={day.id} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={day.id}
+                      checked={workDays.includes(day.id)}
+                      onCheckedChange={(checked) => {
+                        if (checked) {
+                          setWorkDays([...workDays, day.id]);
+                        } else {
+                          setWorkDays(workDays.filter(d => d !== day.id));
+                        }
+                      }}
+                    />
+                    <Label htmlFor={day.id} className="text-sm">{day.label}</Label>
+                  </div>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setWorkDays(['monday', 'tuesday', 'wednesday', 'thursday', 'friday'])}
+                >
+                  Weekdays Only
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setWorkDays(dayOptions.map(d => d.id))}
+                >
+                  All Week
+                </Button>
+              </div>
             </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="work-start">Work Start Time</Label>
+                <Input
+                  id="work-start"
+                  type="time"
+                  value={workStartTime}
+                  onChange={(e) => setWorkStartTime(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="work-end">Work End Time</Label>
+                <Input
+                  id="work-end"
+                  type="time"
+                  value={workEndTime}
+                  onChange={(e) => setWorkEndTime(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>Lunch Break Integration</Label>
+                <p className="text-sm text-muted-foreground">Include lunch break in schedule</p>
+              </div>
+              <Switch checked={lunchBreak} onCheckedChange={setLunchBreak} />
+            </div>
+
+            {lunchBreak && (
+              <div className="space-y-2">
+                <Label htmlFor="lunch-time">Lunch Time</Label>
+                <Input
+                  id="lunch-time"
+                  type="time"
+                  value={lunchTime}
+                  onChange={(e) => setLunchTime(e.target.value)}
+                  className="w-full md:w-auto"
+                />
+              </div>
+            )}
           </div>
 
           <Separator />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <Label>Work Start Time</Label>
-              <Input
-                type="time"
-                value={preferences.work_start_time || '09:00'}
-                onChange={(e) => handleTimeChange('work_start_time', e.target.value)}
-                className="mt-2"
-              />
-            </div>
-            <div>
-              <Label>Work End Time</Label>
-              <Input
-                type="time"
-                value={preferences.work_end_time || '17:00'}
-                onChange={(e) => handleTimeChange('work_end_time', e.target.value)}
-                className="mt-2"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <Label>Lunch Break</Label>
-                <Switch
-                  checked={preferences.lunch_break !== false}
-                  onCheckedChange={(checked) => updatePreferences({ lunch_break: checked })}
-                />
-              </div>
-              {preferences.lunch_break !== false && (
+          <div className="space-y-4">
+            <h4 className="font-medium">Personal Schedule</h4>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="bedtime">Bedtime</Label>
                 <Input
+                  id="bedtime"
                   type="time"
-                  value={preferences.lunch_time || '12:00'}
-                  onChange={(e) => handleTimeChange('lunch_time', e.target.value)}
-                  className="mt-2"
+                  value={bedtime}
+                  onChange={(e) => setBedtime(e.target.value)}
                 />
-              )}
+                <p className="text-sm text-muted-foreground">For evening meditation recommendations</p>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="wakeup">Wake-up Time</Label>
+                <Input
+                  id="wakeup"
+                  type="time"
+                  value={wakeupTime}
+                  onChange={(e) => setWakeupTime(e.target.value)}
+                />
+                <p className="text-sm text-muted-foreground">Morning schedule integration</p>
+              </div>
             </div>
-            <div>
-              <div className="flex items-center justify-between mb-2">
+
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
                 <Label>Morning Exercise</Label>
-                <Switch
-                  checked={preferences.morning_exercise || false}
-                  onCheckedChange={(checked) => updatePreferences({ morning_exercise: checked })}
-                />
+                <p className="text-sm text-muted-foreground">Include workout in daily schedule</p>
               </div>
-              {preferences.morning_exercise && (
+              <Switch checked={morningExercise} onCheckedChange={setMorningExercise} />
+            </div>
+
+            {morningExercise && (
+              <div className="space-y-2">
+                <Label htmlFor="exercise-time">Exercise Time</Label>
                 <Input
+                  id="exercise-time"
                   type="time"
-                  value={preferences.exercise_time || '07:00'}
-                  onChange={(e) => handleTimeChange('exercise_time', e.target.value)}
-                  className="mt-2"
+                  value={exerciseTime}
+                  onChange={(e) => setExerciseTime(e.target.value)}
+                  className="w-full md:w-auto"
                 />
-              )}
-            </div>
-          </div>
-
-          <div>
-            <Label>Bedtime</Label>
-            <Input
-              type="time"
-              value={preferences.bed_time || '22:00'}
-              onChange={(e) => handleTimeChange('bed_time', e.target.value)}
-              className="mt-2"
-            />
-            <p className="text-sm text-muted-foreground mt-1">
-              Used for evening meditation recommendations
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Onboarding Management */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Clock className="h-5 w-5" />
-            Onboarding Management
-          </CardTitle>
-          <CardDescription>
-            Manage your onboarding completion status and preferences
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="font-medium">
-                Onboarding Status: {preferences.has_completed_onboarding ? 'Completed' : 'Incomplete'}
               </div>
-              <p className="text-sm text-muted-foreground">
-                {preferences.has_completed_onboarding 
-                  ? 'You have completed the initial setup process'
-                  : 'Complete onboarding to get personalized recommendations'
-                }
-              </p>
-            </div>
-            <Button
-              variant="outline"
-              onClick={() => updatePreferences({ has_completed_onboarding: false })}
-              disabled={!preferences.has_completed_onboarding}
-            >
-              Restart Onboarding
-            </Button>
+            )}
           </div>
         </CardContent>
       </Card>
 
-      {/* Reset All Preferences */}
-      <Card className="border-orange-200">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-orange-600">
-            <RotateCcw className="h-5 w-5" />
-            Reset Preferences
-          </CardTitle>
-          <CardDescription>
-            Reset all preferences to their default values
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
-            <p className="text-sm text-orange-800 mb-4">
-              This will reset all your application preferences including theme, meditation settings, work schedule, and notification preferences to their default values.
-            </p>
-            <Button variant="outline" onClick={handleResetPreferences}>
-              <RotateCcw className="h-4 w-4 mr-2" />
-              Reset All Preferences
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="flex justify-end">
+        <Button onClick={handleSaveSettings} className="w-full md:w-auto">
+          <Clock className="h-4 w-4 mr-2" />
+          Save Preferences
+        </Button>
+      </div>
     </div>
   );
 };
