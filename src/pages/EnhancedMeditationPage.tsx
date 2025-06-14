@@ -1,158 +1,160 @@
 
 import React from 'react';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import EnhancedMeditationFilters from '@/components/meditation/EnhancedMeditationFilters';
-import BatchFavoritesManager from '@/components/meditation/favorites/BatchFavoritesManager';
-import MeditationProgressTracker from '@/components/meditation/progress/MeditationProgressTracker';
-import EnhancedSessionCompletionDialog from '@/components/meditation/completion/EnhancedSessionCompletionDialog';
-import SessionLibrary from '@/components/meditation/enhanced/SessionLibrary';
-import ResumeTab from '@/components/meditation/enhanced/ResumeTab';
-import PlayerTab from '@/components/meditation/enhanced/PlayerTab';
+import { SessionLibrary } from '@/components/meditation/enhanced/SessionLibrary';
+import { ResumeTab } from '@/components/meditation/enhanced/ResumeTab';
+import { PlayerTab } from '@/components/meditation/enhanced/PlayerTab';
 import { useEnhancedMeditationPage } from '@/hooks/useEnhancedMeditationPage';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const EnhancedMeditationPage = () => {
   const {
-    // Data
-    sessions,
-    isLoading,
-    filteredSessions,
-    incompleteSessions,
-    favoriteSessionsData,
-    favorites,
-    filters,
+    activeTab,
+    setActiveTab,
     selectedSession,
-    showCompletionDialog,
+    setSelectedSession,
     isPlaying,
-    hasActiveFilters,
-    
-    // Functions
-    canResume,
-    getResumeTime,
-    getProgressPercentage,
+    setIsPlaying,
+    currentTime,
+    setCurrentTime,
+    sessions,
+    filteredSessions,
+    filters,
+    setFilters,
+    sortBy,
+    setSortBy,
+    searchTerm,
+    setSearchTerm,
+    favorites,
     toggleFavorite,
+    viewMode,
+    setViewMode,
+    progress,
+    setProgress,
+    recentSessions,
+    completedSessions,
+    favoritesList,
     handleSessionSelect,
     handleSessionComplete,
-    handleCompletionClose,
-    handlePlay,
-    handlePause,
-    handleFiltersChange,
-    clearAllFilters,
-    formatDuration,
-    handleRemoveFavorites
+    handleSessionResume,
+    formatTime,
+    getProgressColor,
+    getDifficultyColor,
+    getCategoryIcon
   } = useEnhancedMeditationPage();
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-grow flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Loading meditation sessions...</p>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'library':
+        return (
+          <SessionLibrary
+            sessions={sessions}
+            filteredSessions={filteredSessions}
+            filters={filters}
+            setFilters={setFilters}
+            sortBy={sortBy}
+            setSortBy={setSortBy}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            favorites={favorites}
+            toggleFavorite={toggleFavorite}
+            viewMode={viewMode}
+            setViewMode={setViewMode}
+            onSessionSelect={handleSessionSelect}
+            formatTime={formatTime}
+            getDifficultyColor={getDifficultyColor}
+            getCategoryIcon={getCategoryIcon}
+          />
+        );
+      case 'resume':
+        return (
+          <ResumeTab
+            recentSessions={recentSessions}
+            completedSessions={completedSessions}
+            favoritesList={favoritesList}
+            progress={progress}
+            onSessionSelect={handleSessionSelect}
+            onSessionComplete={handleSessionComplete}
+            onSessionResume={handleSessionResume}
+            formatTime={formatTime}
+            getProgressColor={getProgressColor}
+            getDifficultyColor={getDifficultyColor}
+            getCategoryIcon={getCategoryIcon}
+          />
+        );
+      case 'player':
+        return (
+          <PlayerTab
+            selectedSession={selectedSession}
+            isPlaying={isPlaying}
+            setIsPlaying={setIsPlaying}
+            currentTime={currentTime}
+            setCurrentTime={setCurrentTime}
+            progress={progress}
+            setProgress={setProgress}
+            onSessionComplete={handleSessionComplete}
+            formatTime={formatTime}
+          />
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-      
-      <main className="flex-grow container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Enhanced Meditation Experience</h1>
-          <p className="text-muted-foreground">
-            Discover personalized meditation sessions with advanced features and progress tracking.
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+      <div className="container mx-auto px-4 py-8">
+        <header className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            Enhanced Meditation Library
+          </h1>
+          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+            Discover guided meditations, mindfulness exercises, and breathing techniques 
+            designed to enhance your well-being and inner peace.
           </p>
-        </div>
+        </header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Filters Sidebar */}
-          <div className="lg:col-span-1">
-            <EnhancedMeditationFilters
-              filters={filters}
-              onFiltersChange={handleFiltersChange}
-              onClearAll={clearAllFilters}
-              sessions={sessions}
-            />
-            
-            {/* Progress Tracker */}
-            <div className="mt-6">
-              <MeditationProgressTracker sessions={sessions} />
-            </div>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+          <div className="border-b border-gray-200 dark:border-gray-700">
+            <nav className="flex">
+              <button
+                onClick={() => setActiveTab('library')}
+                className={`px-6 py-4 text-sm font-medium transition-colors ${
+                  activeTab === 'library'
+                    ? 'text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50 dark:bg-indigo-900/20 dark:text-indigo-400'
+                    : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+                }`}
+              >
+                Meditation Library
+              </button>
+              <button
+                onClick={() => setActiveTab('resume')}
+                className={`px-6 py-4 text-sm font-medium transition-colors ${
+                  activeTab === 'resume'
+                    ? 'text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50 dark:bg-indigo-900/20 dark:text-indigo-400'
+                    : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+                }`}
+              >
+                Continue Practice
+              </button>
+              {selectedSession && (
+                <button
+                  onClick={() => setActiveTab('player')}
+                  className={`px-6 py-4 text-sm font-medium transition-colors ${
+                    activeTab === 'player'
+                      ? 'text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50 dark:bg-indigo-900/20 dark:text-indigo-400'
+                      : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+                  }`}
+                >
+                  Now Playing
+                </button>
+              )}
+            </nav>
           </div>
-
-          {/* Main Content */}
-          <div className="lg:col-span-3">
-            <Tabs defaultValue="library" className="space-y-6">
-              <TabsList>
-                <TabsTrigger value="library">Library</TabsTrigger>
-                <TabsTrigger value="favorites">Favorites</TabsTrigger>
-                <TabsTrigger value="resume">Resume</TabsTrigger>
-                <TabsTrigger value="player" disabled={!selectedSession}>Player</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="library">
-                <SessionLibrary
-                  filteredSessions={filteredSessions}
-                  favorites={favorites}
-                  canResume={canResume}
-                  getProgressPercentage={getProgressPercentage}
-                  toggleFavorite={toggleFavorite}
-                  onSelectSession={handleSessionSelect}
-                  formatDuration={formatDuration}
-                  onClearFilters={clearAllFilters}
-                  hasActiveFilters={hasActiveFilters}
-                />
-              </TabsContent>
-
-              <TabsContent value="favorites">
-                <BatchFavoritesManager
-                  favoriteSessions={favoriteSessionsData}
-                  onRemoveFavorites={handleRemoveFavorites}
-                  onToggleFavorite={toggleFavorite}
-                  onSelectSession={handleSessionSelect}
-                />
-              </TabsContent>
-
-              <TabsContent value="resume">
-                <ResumeTab
-                  incompleteSessions={incompleteSessions}
-                  getProgressPercentage={getProgressPercentage}
-                  getResumeTime={getResumeTime}
-                  onSelectSession={handleSessionSelect}
-                />
-              </TabsContent>
-
-              <TabsContent value="player">
-                <PlayerTab
-                  selectedSession={selectedSession}
-                  favorites={favorites}
-                  toggleFavorite={toggleFavorite}
-                  formatDuration={formatDuration}
-                  onPlay={handlePlay}
-                  onPause={handlePause}
-                  onComplete={handleSessionComplete}
-                />
-              </TabsContent>
-            </Tabs>
+          
+          <div className="p-6">
+            {renderTabContent()}
           </div>
         </div>
-
-        {/* Session Completion Dialog */}
-        {showCompletionDialog && selectedSession && (
-          <EnhancedSessionCompletionDialog
-            session={selectedSession}
-            onClose={handleCompletionClose}
-          />
-        )}
-      </main>
-      
-      <Footer />
+      </div>
     </div>
   );
 };

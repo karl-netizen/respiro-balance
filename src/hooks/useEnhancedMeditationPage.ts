@@ -1,193 +1,288 @@
 
-import { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { MeditationSession, FilterState } from '@/types/meditation';
-import { useMeditationSessions } from '@/hooks/useMeditationSessions';
-import { useMeditationFavorites } from '@/hooks/useMeditationFavorites';
-import { useMeditationResume } from '@/hooks/useMeditationResume';
+import { useState, useEffect, useMemo } from 'react';
+import { Heart, Clock, User, Sparkles, Compass, Leaf, Mountain, Sun, Moon, Star } from 'lucide-react';
+
+export interface FilterState {
+  categories: string[];
+  durations: string[];
+  levels: string[];
+  instructors: string[];
+  searchTerm: string;
+}
+
+export interface MeditationSession {
+  id: string;
+  title: string;
+  instructor: string;
+  duration: number;
+  category: string;
+  difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
+  description: string;
+  audioUrl?: string;
+  imageUrl?: string;
+  tags: string[];
+  rating: number;
+  completionCount: number;
+}
+
+export interface SessionProgress {
+  sessionId: string;
+  progress: number;
+  lastPlayedAt: Date;
+  completed: boolean;
+}
 
 export const useEnhancedMeditationPage = () => {
-  const navigate = useNavigate();
-  const { sessions, isLoading } = useMeditationSessions();
-  const { favorites, toggleFavorite, removeFavorites, getFavoriteSessions } = useMeditationFavorites();
-  const { 
-    canResume, 
-    getResumeTime, 
-    getProgressPercentage, 
-    markCompleted,
-    getIncompleteSessions: getIncompleteSessionsHook
-  } = useMeditationResume();
+  const [activeTab, setActiveTab] = useState<'library' | 'resume' | 'player'>('library');
+  const [selectedSession, setSelectedSession] = useState<MeditationSession | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [sortBy, setSortBy] = useState<'title' | 'duration' | 'difficulty' | 'rating'>('title');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [favorites, setFavorites] = useState<Set<string>>(new Set());
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [progress, setProgress] = useState<Record<string, SessionProgress>>({});
 
   const [filters, setFilters] = useState<FilterState>({
     categories: [],
     durations: [],
     levels: [],
     instructors: [],
-    tags: [],
     searchTerm: ''
   });
 
-  const [selectedSession, setSelectedSession] = useState<MeditationSession | null>(null);
-  const [showCompletionDialog, setShowCompletionDialog] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
+  // Mock data for meditation sessions
+  const sessions: MeditationSession[] = [
+    {
+      id: '1',
+      title: 'Morning Mindfulness',
+      instructor: 'Sarah Chen',
+      duration: 10,
+      category: 'Mindfulness',
+      difficulty: 'Beginner',
+      description: 'Start your day with clarity and intention through gentle mindfulness practices.',
+      tags: ['morning', 'mindfulness', 'beginner'],
+      rating: 4.8,
+      completionCount: 1250
+    },
+    {
+      id: '2',
+      title: 'Deep Relaxation',
+      instructor: 'Marcus Johnson',
+      duration: 20,
+      category: 'Relaxation',
+      difficulty: 'Intermediate',
+      description: 'Release tension and stress with this comprehensive relaxation meditation.',
+      tags: ['relaxation', 'stress-relief', 'body-scan'],
+      rating: 4.9,
+      completionCount: 980
+    },
+    {
+      id: '3',
+      title: 'Loving Kindness',
+      instructor: 'Lisa Wong',
+      duration: 15,
+      category: 'Compassion',
+      difficulty: 'Beginner',
+      description: 'Cultivate compassion and loving-kindness for yourself and others.',
+      tags: ['compassion', 'loving-kindness', 'heart'],
+      rating: 4.7,
+      completionCount: 750
+    },
+    {
+      id: '4',
+      title: 'Focus & Concentration',
+      instructor: 'David Kim',
+      duration: 25,
+      category: 'Focus',
+      difficulty: 'Advanced',
+      description: 'Sharpen your mental focus and concentration with advanced techniques.',
+      tags: ['focus', 'concentration', 'advanced'],
+      rating: 4.6,
+      completionCount: 620
+    },
+    {
+      id: '5',
+      title: 'Sleep Preparation',
+      instructor: 'Emma Taylor',
+      duration: 30,
+      category: 'Sleep',
+      difficulty: 'Beginner',
+      description: 'Prepare your mind and body for restful, rejuvenating sleep.',
+      tags: ['sleep', 'bedtime', 'relaxation'],
+      rating: 4.8,
+      completionCount: 1100
+    }
+  ];
 
-  // Get incomplete sessions for resume functionality
-  const incompleteSessions = useMemo(() => {
-    return getIncompleteSessionsHook(sessions);
-  }, [sessions, getIncompleteSessionsHook]);
-
-  // Get favorite sessions data
-  const favoriteSessionsData = useMemo(() => {
-    return getFavoriteSessions(sessions);
-  }, [sessions, getFavoriteSessions]);
-
-  // Filter sessions based on current filter state
+  // Filter sessions based on current filters
   const filteredSessions = useMemo(() => {
     return sessions.filter(session => {
       // Category filter
       if (filters.categories.length > 0 && !filters.categories.includes(session.category)) {
         return false;
       }
-
+      
       // Duration filter
       if (filters.durations.length > 0) {
-        const durationMatch = filters.durations.some(duration => {
-          switch (duration) {
-            case 'under-5':
-              return session.duration < 5;
-            case '5-10':
-              return session.duration >= 5 && session.duration <= 10;
-            case '10-15':
-              return session.duration >= 10 && session.duration <= 15;
-            case '15-30':
-              return session.duration >= 15 && session.duration <= 30;
-            case '30-plus':
-              return session.duration > 30;
-            default:
-              return true;
-          }
-        });
-        if (!durationMatch) return false;
+        const durationCategory = session.duration <= 10 ? 'Short (≤10 min)' :
+                               session.duration <= 20 ? 'Medium (11-20 min)' :
+                               'Long (>20 min)';
+        if (!filters.durations.includes(durationCategory)) {
+          return false;
+        }
       }
-
+      
       // Level filter
-      if (filters.levels.length > 0 && session.level && !filters.levels.includes(session.level)) {
+      if (filters.levels.length > 0 && !filters.levels.includes(session.difficulty)) {
         return false;
       }
-
+      
       // Instructor filter
       if (filters.instructors.length > 0 && !filters.instructors.includes(session.instructor)) {
         return false;
       }
-
-      // Tags filter
-      if (filters.tags.length > 0) {
-        const hasMatchingTag = session.tags?.some(tag => filters.tags.includes(tag));
-        if (!hasMatchingTag) return false;
-      }
-
+      
       // Search term filter
-      if (filters.searchTerm) {
-        const searchLower = filters.searchTerm.toLowerCase();
-        const matchesSearch = 
-          session.title.toLowerCase().includes(searchLower) ||
-          session.description.toLowerCase().includes(searchLower) ||
-          session.instructor.toLowerCase().includes(searchLower) ||
-          session.tags?.some(tag => tag.toLowerCase().includes(searchLower));
-        if (!matchesSearch) return false;
+      if (searchTerm) {
+        const searchLower = searchTerm.toLowerCase();
+        return session.title.toLowerCase().includes(searchLower) ||
+               session.description.toLowerCase().includes(searchLower) ||
+               session.tags.some(tag => tag.toLowerCase().includes(searchLower));
       }
-
+      
       return true;
     });
-  }, [sessions, filters]);
+  }, [sessions, filters, searchTerm]);
 
-  const hasActiveFilters = (
-    filters.categories.length > 0 || 
-    filters.durations.length > 0 || 
-    filters.levels.length > 0 || 
-    filters.instructors.length > 0 || 
-    filters.tags.length > 0 || 
-    filters.searchTerm
-  );
+  // Get recent sessions (sessions with progress)
+  const recentSessions = useMemo(() => {
+    return sessions.filter(session => 
+      progress[session.id] && !progress[session.id].completed
+    ).slice(0, 5);
+  }, [sessions, progress]);
 
-  const handleSessionSelect = (session: MeditationSession) => {
-    setSelectedSession(session);
-    setIsPlaying(false);
+  // Get completed sessions
+  const completedSessions = useMemo(() => {
+    return sessions.filter(session => 
+      progress[session.id]?.completed
+    ).slice(0, 10);
+  }, [sessions, progress]);
+
+  // Get favorite sessions
+  const favoritesList = useMemo(() => {
+    return sessions.filter(session => favorites.has(session.id));
+  }, [sessions, favorites]);
+
+  // Toggle favorite status
+  const toggleFavorite = (sessionId: string) => {
+    setFavorites(prev => {
+      const newFavorites = new Set(prev);
+      if (newFavorites.has(sessionId)) {
+        newFavorites.delete(sessionId);
+      } else {
+        newFavorites.add(sessionId);
+      }
+      return newFavorites;
+    });
   };
 
-  const handleSessionComplete = () => {
-    if (selectedSession) {
-      markCompleted(selectedSession.id);
-      setShowCompletionDialog(true);
-      setIsPlaying(false);
+  // Handle session selection
+  const handleSessionSelect = (session: MeditationSession) => {
+    setSelectedSession(session);
+    setActiveTab('player');
+    setCurrentTime(progress[session.id]?.progress || 0);
+  };
+
+  // Handle session completion
+  const handleSessionComplete = (sessionId: string) => {
+    setProgress(prev => ({
+      ...prev,
+      [sessionId]: {
+        sessionId,
+        progress: 100,
+        lastPlayedAt: new Date(),
+        completed: true
+      }
+    }));
+  };
+
+  // Handle session resume
+  const handleSessionResume = (session: MeditationSession) => {
+    setSelectedSession(session);
+    setActiveTab('player');
+    setCurrentTime(progress[session.id]?.progress || 0);
+  };
+
+  // Utility functions
+  const formatTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const getProgressColor = (progress: number): string => {
+    if (progress >= 90) return 'text-green-600';
+    if (progress >= 50) return 'text-blue-600';
+    return 'text-gray-400';
+  };
+
+  const getDifficultyColor = (difficulty: string): string => {
+    switch (difficulty) {
+      case 'Beginner': return 'text-green-600 bg-green-100';
+      case 'Intermediate': return 'text-yellow-600 bg-yellow-100';
+      case 'Advanced': return 'text-red-600 bg-red-100';
+      default: return 'text-gray-600 bg-gray-100';
     }
   };
 
-  const handleCompletionClose = () => {
-    setShowCompletionDialog(false);
-  };
-
-  const handlePlay = () => {
-    setIsPlaying(true);
-  };
-
-  const handlePause = () => {
-    setIsPlaying(false);
-  };
-
-  const handleFiltersChange = (newFilters: FilterState) => {
-    setFilters(newFilters);
-  };
-
-  const clearAllFilters = () => {
-    setFilters({
-      categories: [],
-      durations: [],
-      levels: [],
-      instructors: [],
-      tags: [],
-      searchTerm: ''
-    });
-  };
-
-  const formatDuration = (minutes: number) => {
-    if (minutes < 60) return `${minutes}m`;
-    const hours = Math.floor(minutes / 60);
-    const remainingMins = minutes % 60;
-    return remainingMins > 0 ? `${hours}h ${remainingMins}m` : `${hours}h`;
-  };
-
-  const handleRemoveFavorites = (sessionIds: string[]) => {
-    removeFavorites(sessionIds);
+  const getCategoryIcon = (category: string) => {
+    const iconProps = { className: "h-5 w-5" };
+    switch (category) {
+      case 'Mindfulness': return <Compass {...iconProps} />;
+      case 'Relaxation': return <Leaf {...iconProps} />;
+      case 'Focus': return <Star {...iconProps} />;
+      case 'Sleep': return <Moon {...iconProps} />;
+      case 'Compassion': return <Heart {...iconProps} />;
+      case 'Energy': return <Sun {...iconProps} />;
+      case 'Anxiety': return <Mountain {...iconProps} />;
+      case 'Stress': return <Sparkles {...iconProps} />;
+      default: return <Compass {...iconProps} />;
+    }
   };
 
   return {
-    // Data
-    sessions,
-    isLoading,
-    filteredSessions,
-    incompleteSessions,
-    favoriteSessionsData,
-    favorites,
-    filters,
+    activeTab,
+    setActiveTab,
     selectedSession,
-    showCompletionDialog,
+    setSelectedSession,
     isPlaying,
-    hasActiveFilters,
-    
-    // Functions
-    canResume,
-    getResumeTime,
-    getProgressPercentage,
+    setIsPlaying,
+    currentTime,
+    setCurrentTime,
+    sessions,
+    filteredSessions,
+    filters,
+    setFilters,
+    sortBy,
+    setSortBy,
+    searchTerm,
+    setSearchTerm,
+    favorites,
     toggleFavorite,
+    viewMode,
+    setViewMode,
+    progress,
+    setProgress,
+    recentSessions,
+    completedSessions,
+    favoritesList,
     handleSessionSelect,
     handleSessionComplete,
-    handleCompletionClose,
-    handlePlay,
-    handlePause,
-    handleFiltersChange,
-    clearAllFilters,
-    formatDuration,
-    handleRemoveFavorites
+    handleSessionResume,
+    formatTime,
+    getProgressColor,
+    getDifficultyColor,
+    getCategoryIcon
   };
 };
