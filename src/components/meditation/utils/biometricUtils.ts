@@ -1,3 +1,4 @@
+
 import { BiometricData } from '../types/BiometricTypes';
 
 export const generateMockBiometricData = (): BiometricData => {
@@ -6,7 +7,7 @@ export const generateMockBiometricData = (): BiometricData => {
     hrv: 20 + Math.floor(Math.random() * 60),
     stress: Math.floor(Math.random() * 100),
     coherence: Math.floor(Math.random() * 100),
-    timestamp: Date.now()
+    timestamp: Date.now().toString()
   };
 };
 

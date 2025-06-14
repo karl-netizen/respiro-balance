@@ -1,7 +1,20 @@
-import { MorningRitual } from '@/components/morning-ritual/types';
+
+import { MorningRitual as MorningRitualType } from '@/components/morning-ritual/types';
 
 // Use unified Bluetooth types
 export { BluetoothDeviceInfo, BluetoothDevice, DeviceType } from '@/types/bluetooth';
+
+// Export morning ritual types
+export type MorningRitual = MorningRitualType;
+export type RitualPriority = 'low' | 'medium' | 'high';
+export type RitualRecurrence = 'daily' | 'weekdays' | 'weekends' | 'custom';
+export type RitualStatus = 'planned' | 'in_progress' | 'completed' | 'skipped';
+
+export interface RitualReminder {
+  enabled: boolean;
+  time?: number;
+  message?: string;
+}
 
 export type WorkDay = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
 export type StressLevelType = 'low' | 'moderate' | 'high';
@@ -14,6 +27,13 @@ export interface NotificationSettings {
   weeklyNotifications: boolean;
 }
 
+export interface UserLocation {
+  latitude?: number;
+  longitude?: number;
+  city?: string;
+  country?: string;
+}
+
 export interface UserPreferences {
   // Schedule preferences
   workDays: WorkDay[];
@@ -23,6 +43,13 @@ export interface UserPreferences {
   exerciseTime: string;
   bedTime: string;
   wakeTime?: string;
+  weekdayWakeTime?: string;
+  
+  // Location and internationalization
+  country?: string;
+  timezone?: string;
+  measurementSystem?: 'metric' | 'imperial';
+  location?: UserLocation;
   
   // Wellness preferences
   lunchBreak: boolean;
@@ -33,6 +60,7 @@ export interface UserPreferences {
   workEnvironment: 'office' | 'home' | 'hybrid';
   preferredSessionDuration: number;
   preferred_session_duration?: number;
+  morningEnergyLevel?: string;
   
   // App preferences
   hasCompletedOnboarding: boolean;
@@ -45,6 +73,7 @@ export interface UserPreferences {
   subscriptionTier: 'free' | 'premium' | 'team' | 'enterprise' | 'coach';
   theme: Theme;
   focusMode?: boolean;
+  businessAttribution?: string;
   
   // Morning ritual specific
   morningRituals?: MorningRitual[];

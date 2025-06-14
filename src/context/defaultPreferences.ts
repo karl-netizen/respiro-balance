@@ -25,7 +25,12 @@ const defaultPreferences: UserPreferences = {
   connectedDevices: [],
   hasWearableDevice: false,
   subscriptionTier: 'free',
-  theme: 'system'
+  theme: 'system',
+  // New location and measurement preferences
+  country: undefined,
+  timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+  measurementSystem: 'metric',
+  location: undefined
 };
 
 export default defaultPreferences;
