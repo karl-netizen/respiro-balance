@@ -1,52 +1,48 @@
 
 import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Flame, Clock, Calendar } from 'lucide-react';
-import { MeditationStats } from '@/components/progress/types/meditationStats';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { Button } from '@/components/ui/button';
+import { BarChart } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface DashboardStatsProps {
-  meditationStats: MeditationStats;
+  weeklyProgress: number;
+  weeklyGoal: number;
+  progressPercentage: number;
 }
 
-const DashboardStats: React.FC<DashboardStatsProps> = ({ meditationStats }) => {
+const DashboardStats: React.FC<DashboardStatsProps> = ({
+  weeklyProgress,
+  weeklyGoal,
+  progressPercentage
+}) => {
+  const navigate = useNavigate();
+
   return (
     <Card>
-      <CardContent className="p-4">
+      <CardHeader className="pb-3">
+        <CardTitle className="flex items-center gap-2 text-lg">
+          <BarChart className="h-5 w-5 text-green-500" />
+          Weekly Progress
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <div className="p-2 rounded-full bg-primary/20 mr-3">
-                <Flame className="h-4 w-4 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm font-medium">Current Streak</p>
-                <p className="text-2xl font-bold">{meditationStats.streak} days</p>
-              </div>
+          <div>
+            <div className="flex justify-between text-sm mb-2">
+              <span>Meditation Goal</span>
+              <span>{Math.round(progressPercentage)}%</span>
             </div>
+            <Progress value={progressPercentage} className="h-2" />
           </div>
-          
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <div className="p-2 rounded-full bg-primary/20 mr-3">
-                <Clock className="h-4 w-4 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm font-medium">Total Meditation</p>
-                <p className="text-2xl font-bold">{meditationStats.totalMinutes} mins</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <div className="p-2 rounded-full bg-primary/20 mr-3">
-                <Calendar className="h-4 w-4 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm font-medium">Weekly Progress</p>
-                <p className="text-2xl font-bold">{meditationStats.weeklyCompleted}/{meditationStats.weeklyGoal}</p>
-              </div>
-            </div>
+          <div className="text-center">
+            <Button 
+              className="w-full" 
+              onClick={() => navigate('/progress')}
+            >
+              View Detailed Progress
+            </Button>
           </div>
         </div>
       </CardContent>

@@ -1,12 +1,12 @@
 
 import { useState, useEffect } from 'react';
-import { TimeAwarenessService, TimePeriod, TimeBasedRecommendations } from '@/services/TimeAwarenessService';
+import { TimeAwarenessService, TimePeriod, RecommendationData } from '@/services/TimeAwarenessService';
 import { useUserPreferences } from '@/context';
 
 export const useTimeAwareness = () => {
   const { preferences } = useUserPreferences();
   const [currentPeriod, setCurrentPeriod] = useState<TimePeriod>('morning');
-  const [recommendations, setRecommendations] = useState<TimeBasedRecommendations>({
+  const [recommendations, setRecommendations] = useState<RecommendationData>({
     meditation: { title: '', duration: 10 },
     breathing: { title: '', duration: 3 },
     activity: { title: '', duration: 10 }

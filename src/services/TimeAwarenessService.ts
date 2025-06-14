@@ -1,3 +1,4 @@
+
 export type TimePeriod = 'morning' | 'afternoon' | 'evening' | 'night';
 
 export interface TimeBasedRecommendations {
@@ -171,4 +172,3 @@ export class TimeAwarenessService {
 }
 
 export const timeAwarenessService = new TimeAwarenessService();
-export type { TimeBasedRecommendations };

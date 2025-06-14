@@ -1,42 +1,22 @@
 
 import { useState, useEffect } from 'react';
-import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/hooks/useAuth';
+import { MeditationStats as MeditationStatsType } from './types/meditationStats';
 
 export interface MeditationStats {
   totalSessions: number;
   totalMinutes: number;
-  weeklyMinutes: number;
-  averageSessionLength: number;
   currentStreak: number;
   longestStreak: number;
-  favoriteSessionType: string;
-  completionRate: number;
-  streak: number;
+  weeklyMinutes: number;
   weeklyGoal: number;
-  weeklyCompleted: number;
-  monthlyTrend: 'up' | 'down' | 'stable';
-  lastSession: string;
+  averageSessionLength: number;
   lastSessionDate: string;
-  achievementProgress: { total: number; completed: number; unlocked?: number };
-  moodCorrelation: { 
-    positiveImpact: number; 
-    rating: number;
-    withMeditation?: number;
-    withoutMeditation?: number;
-  };
-  focusCorrelation: { 
-    improvement: number; 
-    rating: number;
-    withMeditation?: number;
-    withoutMeditation?: number;
-  };
-  stressScores: number[];
-  dailyMinutes: { day: string; date: string; minutes: number; sessions: number }[];
-  achievements: any[];
-  sessions: any[];
+  monthlyTrend: number[];
+  completionRate: number;
   focusScores: number[];
-  sessionsThisWeek: number;
+  stressScores: number[];
 }
 
 export const useMeditationStats = () => {
@@ -44,185 +24,117 @@ export const useMeditationStats = () => {
   const [meditationStats, setMeditationStats] = useState<MeditationStats>({
     totalSessions: 0,
     totalMinutes: 0,
-    weeklyMinutes: 0,
-    averageSessionLength: 0,
     currentStreak: 0,
     longestStreak: 0,
-    favoriteSessionType: 'guided',
-    completionRate: 0,
-    streak: 0,
+    weeklyMinutes: 0,
     weeklyGoal: 70,
-    weeklyCompleted: 0,
-    monthlyTrend: 'stable',
-    lastSession: '',
+    averageSessionLength: 0,
     lastSessionDate: '',
-    achievementProgress: { total: 10, completed: 0, unlocked: 0 },
-    moodCorrelation: { 
-      positiveImpact: 0, 
-      rating: 0,
-      withMeditation: 0,
-      withoutMeditation: 0
-    },
-    focusCorrelation: { 
-      improvement: 0, 
-      rating: 0,
-      withMeditation: 0,
-      withoutMeditation: 0
-    },
-    stressScores: [],
-    dailyMinutes: [],
-    achievements: [],
-    sessions: [],
+    monthlyTrend: [20, 35, 45, 30, 55, 40, 60, 45, 70, 50, 80, 65],
+    completionRate: 0,
     focusScores: [],
-    sessionsThisWeek: 0
+    stressScores: []
   });
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
+  const fetchMeditationStats = async () => {
     if (!user) return;
 
-    const fetchStats = async () => {
-      try {
-        setIsLoading(true);
+    try {
+      setIsLoading(true);
+      
+      // Fetch meditation sessions
+      const { data: sessions, error: sessionsError } = await supabase
+        .from('meditation_sessions')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('completed_at', { ascending: false });
+
+      if (sessionsError) throw sessionsError;
+
+      // Calculate stats
+      const totalSessions = sessions?.length || 0;
+      const totalMinutes = sessions?.reduce((sum, session) => sum + (session.duration || 0), 0) || 0;
+      const averageSessionLength = totalSessions > 0 ? Math.round(totalMinutes / totalSessions) : 0;
+
+      // Calculate weekly minutes (last 7 days)
+      const oneWeekAgo = new Date();
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+      
+      const weeklyMinutes = sessions?.filter(session => 
+        new Date(session.completed_at) >= oneWeekAgo
+      ).reduce((sum, session) => sum + (session.duration || 0), 0) || 0;
+
+      // Calculate current streak
+      let currentStreak = 0;
+      if (sessions && sessions.length > 0) {
+        const today = new Date();
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
         
-        const { data: sessions, error } = await supabase
-          .from('meditation_sessions')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('started_at', { ascending: false });
-
-        if (error) throw error;
-
-        if (sessions) {
-          const completedSessions = sessions.filter(s => s.completed);
-          const totalSessions = completedSessions.length;
-          const totalMinutes = completedSessions.reduce((sum, s) => sum + (s.duration || 0), 0);
+        // Check if there's a session today or yesterday to start counting
+        const recentSession = sessions.find(session => {
+          const sessionDate = new Date(session.completed_at);
+          return sessionDate.toDateString() === today.toDateString() || 
+                 sessionDate.toDateString() === yesterday.toDateString();
+        });
+        
+        if (recentSession) {
+          // Count consecutive days with sessions
+          const sessionDates = new Set(
+            sessions.map(session => new Date(session.completed_at).toDateString())
+          );
           
-          const weekAgo = new Date();
-          weekAgo.setDate(weekAgo.getDate() - 7);
-          const weeklyMinutes = completedSessions
-            .filter(s => new Date(s.started_at) > weekAgo)
-            .reduce((sum, s) => sum + (s.duration || 0), 0);
-
-          const sessionsThisWeek = completedSessions
-            .filter(s => new Date(s.started_at) > weekAgo).length;
-
-          const averageSessionLength = totalSessions > 0 ? Math.round(totalMinutes / totalSessions) : 0;
-
-          let currentStreak = 0;
-          const today = new Date();
-          let checkDate = new Date(today);
-          
-          while (true) {
-            const dayStart = new Date(checkDate);
-            dayStart.setHours(0, 0, 0, 0);
-            const dayEnd = new Date(checkDate);
-            dayEnd.setHours(23, 59, 59, 999);
-            
-            const hasSessionToday = completedSessions.some(s => {
-              const sessionDate = new Date(s.started_at);
-              return sessionDate >= dayStart && sessionDate <= dayEnd;
-            });
-            
-            if (hasSessionToday) {
-              currentStreak++;
-              checkDate.setDate(checkDate.getDate() - 1);
-            } else {
-              break;
-            }
+          let checkDate = new Date();
+          while (sessionDates.has(checkDate.toDateString())) {
+            currentStreak++;
+            checkDate.setDate(checkDate.getDate() - 1);
           }
-
-          const sessionTypes = completedSessions.reduce((acc, s) => {
-            acc[s.session_type] = (acc[s.session_type] || 0) + 1;
-            return acc;
-          }, {} as Record<string, number>);
-          
-          const favoriteSessionType = Object.entries(sessionTypes)
-            .sort(([,a], [,b]) => b - a)[0]?.[0] || 'guided';
-
-          const completionRate = sessions.length > 0 
-            ? Math.round((completedSessions.length / sessions.length) * 100) 
-            : 0;
-
-          const dailyMinutes = [];
-          for (let i = 6; i >= 0; i--) {
-            const date = new Date();
-            date.setDate(date.getDate() - i);
-            const dayStart = new Date(date);
-            dayStart.setHours(0, 0, 0, 0);
-            const dayEnd = new Date(date);
-            dayEnd.setHours(23, 59, 59, 999);
-            
-            const daySessions = completedSessions.filter(s => {
-              const sessionDate = new Date(s.started_at);
-              return sessionDate >= dayStart && sessionDate <= dayEnd;
-            });
-            
-            const dayMinutes = daySessions.reduce((sum, s) => sum + (s.duration || 0), 0);
-            
-            dailyMinutes.push({
-              day: date.toLocaleDateString('en-US', { weekday: 'short' }),
-              date: date.toISOString().split('T')[0],
-              minutes: dayMinutes,
-              sessions: daySessions.length
-            });
-          }
-
-          const focusScores = Array.from({ length: 7 }, () => Math.floor(Math.random() * 40) + 60);
-
-          setMeditationStats({
-            totalSessions,
-            totalMinutes,
-            weeklyMinutes,
-            averageSessionLength,
-            currentStreak,
-            longestStreak: currentStreak,
-            favoriteSessionType,
-            completionRate,
-            streak: currentStreak,
-            weeklyGoal: 70,
-            weeklyCompleted: weeklyMinutes,
-            monthlyTrend: weeklyMinutes > 50 ? 'up' : weeklyMinutes < 30 ? 'down' : 'stable',
-            lastSession: completedSessions[0]?.title || 'No sessions yet',
-            lastSessionDate: completedSessions[0]?.started_at || '',
-            achievementProgress: { 
-              total: 10, 
-              completed: Math.min(Math.floor(totalSessions / 5), 10),
-              unlocked: Math.min(Math.floor(totalSessions / 3), 8)
-            },
-            moodCorrelation: { 
-              positiveImpact: Math.min(totalSessions * 5, 85), 
-              rating: 4.2,
-              withMeditation: Math.min(totalSessions * 3, 75),
-              withoutMeditation: Math.max(50 - totalSessions * 2, 20)
-            },
-            focusCorrelation: { 
-              improvement: Math.min(totalSessions * 3, 75), 
-              rating: 4.1,
-              withMeditation: Math.min(totalSessions * 4, 80),
-              withoutMeditation: Math.max(45 - totalSessions * 2, 15)
-            },
-            stressScores: Array.from({ length: 7 }, () => Math.floor(Math.random() * 40) + 30),
-            dailyMinutes,
-            achievements: [],
-            sessions: sessions,
-            focusScores,
-            sessionsThisWeek
-          });
         }
-      } catch (error) {
-        console.error('Error fetching meditation stats:', error);
-      } finally {
-        setIsLoading(false);
       }
-    };
 
-    fetchStats();
+      // Calculate completion rate (sessions completed vs planned in last 30 days)
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      const recentSessions = sessions?.filter(session => 
+        new Date(session.completed_at) >= thirtyDaysAgo
+      ) || [];
+      
+      const completionRate = Math.min(100, Math.round((recentSessions.length / 30) * 100));
+
+      const lastSessionDate = sessions && sessions.length > 0 
+        ? new Date(sessions[0].completed_at).toLocaleDateString()
+        : '';
+
+      setMeditationStats({
+        totalSessions,
+        totalMinutes,
+        currentStreak,
+        longestStreak: Math.max(currentStreak, meditationStats.longestStreak),
+        weeklyMinutes,
+        weeklyGoal: 70,
+        averageSessionLength,
+        lastSessionDate,
+        monthlyTrend: [20, 35, 45, 30, 55, 40, 60, 45, 70, 50, 80, 65],
+        completionRate,
+        focusScores: sessions?.map(s => s.focus_score || 7).slice(0, 10) || [],
+        stressScores: sessions?.map(s => 10 - (s.stress_level || 3)).slice(0, 10) || []
+      });
+
+    } catch (error) {
+      console.error('Error fetching meditation stats:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchMeditationStats();
   }, [user]);
 
   return {
     meditationStats,
     isLoading,
-    sessions: meditationStats.sessions
+    refreshStats: fetchMeditationStats
   };
 };
