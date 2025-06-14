@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Play, Pause, RotateCcw, Heart, Clock, Star } from 'lucide-react';
+import { ArrowLeft, Play, Pause, RotateCcw, Heart, Clock, Star, Crown } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { SubscriptionGate } from '@/components/subscription/SubscriptionGate';
 import { useSubscription } from '@/components/subscription/SubscriptionProvider';
@@ -20,7 +20,7 @@ const MeditationSessionView: React.FC<MeditationSessionViewProps> = ({
 }) => {
   const { sessionId: urlSessionId } = useParams<{ sessionId: string }>();
   const navigate = useNavigate();
-  const { isPremium } = useSubscription();
+  const { isPremium, tier, minutesUsed, minutesLimit, hasExceededUsageLimit } = useSubscription();
   
   const sessionId = propSessionId || urlSessionId;
   const [isPlaying, setIsPlaying] = useState(false);
@@ -41,6 +41,19 @@ const MeditationSessionView: React.FC<MeditationSessionViewProps> = ({
   };
 
   const progress = session.duration > 0 ? (currentTime / (session.duration * 60)) * 100 : 0;
+
+  // Check if user has access to this session
+  const hasAccess = isPremium || !session.isPremium || !hasExceededUsageLimit;
+
+  const getAccessMessage = () => {
+    if (session.isPremium && !isPremium) {
+      return "This premium session requires a Premium or Premium+ subscription to access.";
+    }
+    if (hasExceededUsageLimit && !isPremium) {
+      return `You've reached your ${tier} tier limit of ${minutesLimit} minutes. Upgrade for unlimited access.`;
+    }
+    return null;
+  };
 
   const handlePlayPause = () => {
     setIsPlaying(!isPlaying);
@@ -80,11 +93,26 @@ const MeditationSessionView: React.FC<MeditationSessionViewProps> = ({
     return () => clearInterval(interval);
   }, [isPlaying, currentTime, session.duration]);
 
-  if (session.isPremium && !isPremium) {
+  const accessMessage = getAccessMessage();
+
+  if (accessMessage) {
     return (
       <div className="container max-w-4xl mx-auto p-6">
-        <SubscriptionGate feature="Premium Meditation Sessions" showPreview>
+        <SubscriptionGate feature="Premium Sessions" showPreview>
           <div className="space-y-6">
+            {/* Header */}
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => navigate('/meditate')}
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Library
+              </Button>
+            </div>
+
+            {/* Session Preview */}
             <Card>
               <CardHeader>
                 <div className="flex items-center gap-4">
@@ -94,11 +122,42 @@ const MeditationSessionView: React.FC<MeditationSessionViewProps> = ({
                     className="w-16 h-16 rounded-lg object-cover"
                   />
                   <div className="flex-1">
-                    <CardTitle className="text-2xl">{session.title}</CardTitle>
-                    <p className="text-muted-foreground mt-1">{session.description}</p>
+                    <div className="flex items-center gap-2 mb-2">
+                      <CardTitle className="text-2xl">{session.title}</CardTitle>
+                      {session.isPremium && (
+                        <Badge className="bg-yellow-100 text-yellow-800">
+                          <Crown className="h-3 w-3 mr-1" />
+                          Premium
+                        </Badge>
+                      )}
+                    </div>
+                    <p className="text-muted-foreground">{session.description}</p>
+                    <div className="flex items-center gap-4 mt-3">
+                      <Badge variant="secondary">
+                        <Clock className="h-3 w-3 mr-1" />
+                        {session.duration} min
+                      </Badge>
+                      <Badge variant="outline">{session.difficulty}</Badge>
+                      <Badge variant="outline">{session.category}</Badge>
+                      <span className="text-sm text-muted-foreground">
+                        by {session.instructor}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </CardHeader>
+              <CardContent>
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                  <p className="text-amber-800 text-sm">
+                    {accessMessage}
+                  </p>
+                  {hasExceededUsageLimit && (
+                    <p className="text-xs text-amber-600 mt-2">
+                      Current usage: {minutesUsed}/{minutesLimit} minutes this week
+                    </p>
+                  )}
+                </div>
+              </CardContent>
             </Card>
           </div>
         </SubscriptionGate>
@@ -114,7 +173,7 @@ const MeditationSessionView: React.FC<MeditationSessionViewProps> = ({
           <Button 
             variant="ghost" 
             size="sm" 
-            onClick={() => navigate('/meditation')}
+            onClick={() => navigate('/meditate')}
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Library
@@ -131,7 +190,15 @@ const MeditationSessionView: React.FC<MeditationSessionViewProps> = ({
                 className="w-16 h-16 rounded-lg object-cover"
               />
               <div className="flex-1">
-                <CardTitle className="text-2xl">{session.title}</CardTitle>
+                <div className="flex items-center gap-2 mb-2">
+                  <CardTitle className="text-2xl">{session.title}</CardTitle>
+                  {session.isPremium && (
+                    <Badge className="bg-yellow-100 text-yellow-800">
+                      <Crown className="h-3 w-3 mr-1" />
+                      Premium
+                    </Badge>
+                  )}
+                </div>
                 <p className="text-muted-foreground mt-1">{session.description}</p>
                 <div className="flex items-center gap-4 mt-3">
                   <Badge variant="secondary">
@@ -149,10 +216,29 @@ const MeditationSessionView: React.FC<MeditationSessionViewProps> = ({
           </CardHeader>
         </Card>
 
-        {/* Player */}
+        {/* Audio Controls Visual Placeholder */}
         <Card>
           <CardContent className="p-8">
             <div className="text-center space-y-6">
+              {/* Audio Controls Section */}
+              <div className="bg-gray-50 rounded-lg p-6 border-2 border-dashed border-gray-200">
+                <div className="text-gray-500 text-sm mb-4">Audio Controls (Visual Layout)</div>
+                <div className="flex justify-center items-center gap-4 mb-4">
+                  <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                    <span className="text-xs">Vol</span>
+                  </div>
+                  <div className="w-12 h-12 bg-blue-200 rounded-full flex items-center justify-center">
+                    <Play className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                    <span className="text-xs">Skip</span>
+                  </div>
+                </div>
+                <div className="w-full bg-gray-200 h-2 rounded-full">
+                  <div className="bg-blue-500 h-2 rounded-full" style={{ width: '35%' }}></div>
+                </div>
+              </div>
+
               {/* Progress */}
               <div className="space-y-2">
                 <Progress value={progress} className="h-2" />

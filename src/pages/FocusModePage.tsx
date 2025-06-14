@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Target, Clock, TrendingUp, Calendar, BarChart3, Settings } from 'lucide-react';
+import { Target, Clock, TrendingUp, Calendar, BarChart3, Settings, Zap } from 'lucide-react';
 import { ProductivityMetrics } from '@/components/focus-mode/analytics/ProductivityMetrics';
 import { TrendAnalysis } from '@/components/focus-mode/analytics/TrendAnalysis';
 import { InsightsGenerator } from '@/components/focus-mode/analytics/InsightsGenerator';
@@ -34,7 +34,7 @@ const FocusModePage = () => {
     {
       type: 'suggestion' as const,
       title: 'Reduce Afternoon Distractions',
-      description: 'Consider using focus mode or finding a quieter environment for afternoon sessions.',
+      description: 'Consider using Focus Mode notifications or finding a quieter environment for afternoon sessions.',
       action: 'Enable Focus Mode'
     }
   ];
@@ -45,9 +45,12 @@ const FocusModePage = () => {
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold">Focus Mode</h1>
-              <p className="text-muted-foreground mt-2">
-                Enhance your productivity with focused work sessions
+              <div className="flex items-center gap-3 mb-2">
+                <Zap className="h-8 w-8 text-orange-500" />
+                <h1 className="text-3xl font-bold">Focus Mode</h1>
+              </div>
+              <p className="text-muted-foreground">
+                Transform your productivity with scientifically-proven focus techniques and comprehensive analytics
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -57,17 +60,65 @@ const FocusModePage = () => {
               </Badge>
               <Button variant="outline" size="sm">
                 <Settings className="h-4 w-4 mr-2" />
-                Settings
+                Focus Mode Settings
               </Button>
             </div>
           </div>
+        </div>
+
+        {/* Focus Mode Overview Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2">
+                <Clock className="h-5 w-5 text-blue-500" />
+                <div>
+                  <p className="text-sm text-muted-foreground">Today's Focus</p>
+                  <p className="text-2xl font-bold">2h 45m</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2">
+                <Target className="h-5 w-5 text-green-500" />
+                <div>
+                  <p className="text-sm text-muted-foreground">Sessions</p>
+                  <p className="text-2xl font-bold">6</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-purple-500" />
+                <div>
+                  <p className="text-sm text-muted-foreground">Streak</p>
+                  <p className="text-2xl font-bold">12 days</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2">
+                <BarChart3 className="h-5 w-5 text-orange-500" />
+                <div>
+                  <p className="text-sm text-muted-foreground">Efficiency</p>
+                  <p className="text-2xl font-bold">87%</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="timer" className="flex items-center gap-2">
               <Clock className="h-4 w-4" />
-              Timer
+              Focus Timer
             </TabsTrigger>
             <TabsTrigger value="analytics" className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
@@ -75,7 +126,7 @@ const FocusModePage = () => {
             </TabsTrigger>
             <TabsTrigger value="calendar" className="flex items-center gap-2">
               <Calendar className="h-4 w-4" />
-              Calendar
+              Schedule
             </TabsTrigger>
             <TabsTrigger value="history" className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4" />
@@ -89,7 +140,17 @@ const FocusModePage = () => {
 
           <TabsContent value="timer">
             <div className="grid gap-6">
-              <FocusTimer />
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Zap className="h-5 w-5 text-orange-500" />
+                    Focus Mode Timer
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <FocusTimer />
+                </CardContent>
+              </Card>
             </div>
           </TabsContent>
 
@@ -115,7 +176,7 @@ const FocusModePage = () => {
             <InsightsGenerator 
               insights={insights}
               onActionClick={(insight) => {
-                console.log('Action clicked:', insight);
+                console.log('Focus Mode action clicked:', insight);
               }}
             />
           </TabsContent>
