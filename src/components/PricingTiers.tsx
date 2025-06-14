@@ -38,12 +38,12 @@ const PricingTiers = () => {
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900 dark:text-gray-100">Simple, Transparent Pricing</h2>
           <p className="text-foreground/70 max-w-2xl mx-auto text-gray-700 dark:text-gray-300">
-            Choose the plan that fits your needs. All plans include access to our 
+            Choose the plan that fits your meditation journey. All plans include access to our 
             mobile app and web platform.
           </p>
         </div>
         
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {/* Free Tier */}
           <Card className="flex flex-col border-border shadow-md hover:shadow-lg transition-all duration-200 bg-white dark:bg-gray-800">
             <CardHeader>
@@ -53,16 +53,16 @@ const PricingTiers = () => {
                 <span className="text-muted-foreground ml-2 dark:text-gray-300">/month</span>
               </div>
               <CardDescription className="mt-2 text-gray-600 dark:text-gray-300">
-                Get started with basic meditation and mindfulness
+                Essential meditation and breathing basics
               </CardDescription>
             </CardHeader>
             <CardContent className="flex-1">
               <ul className="space-y-2">
-                <PricingFeature>Basic meditation sessions</PricingFeature>
-                <PricingFeature>60 minutes of meditation per month</PricingFeature>
-                <PricingFeature>Simple progress tracking</PricingFeature>
-                <PricingFeature>3 morning ritual templates</PricingFeature>
-                <PricingFeature>Basic breathing exercises</PricingFeature>
+                <PricingFeature>5 Core Sessions - Essential meditation and quick breaks</PricingFeature>
+                <PricingFeature>Basic Breathing Techniques - 3 fundamental patterns</PricingFeature>
+                <PricingFeature>Simple Progress Tracking - Basic analytics and streaks</PricingFeature>
+                <PricingFeature>Community Access - Join discussions and view content</PricingFeature>
+                <PricingFeature>Weekly Session Limit - Up to 3 sessions per week</PricingFeature>
               </ul>
             </CardContent>
             <CardFooter>
@@ -94,24 +94,21 @@ const PricingTiers = () => {
             <CardHeader>
               <CardTitle className="text-xl text-gray-900 dark:text-white">Premium</CardTitle>
               <div className="mt-4">
-                <span className="text-3xl font-bold text-gray-900 dark:text-white">$9</span>
+                <span className="text-3xl font-bold text-gray-900 dark:text-white">$7.99</span>
                 <span className="text-muted-foreground ml-2 dark:text-gray-300">/month</span>
               </div>
               <CardDescription className="mt-2 text-gray-600 dark:text-gray-300">
-                Unlock the full potential of your mindfulness journey
+                Comprehensive meditation and breathing toolkit
               </CardDescription>
             </CardHeader>
             <CardContent className="flex-1">
               <ul className="space-y-2">
-                <PricingFeature highlighted>All features in Free plan</PricingFeature>
-                <PricingFeature highlighted>Unlimited meditation minutes</PricingFeature>
-                <PricingFeature highlighted>Advanced meditation techniques</PricingFeature>
-                <PricingFeature highlighted>Full biometric integration</PricingFeature>
-                <PricingFeature highlighted>Personalized recommendations</PricingFeature>
-                <PricingFeature highlighted>Detailed progress analytics</PricingFeature>
-                <PricingFeature highlighted>Custom morning rituals</PricingFeature>
-                <PricingFeature highlighted>Offline download access</PricingFeature>
-                <PricingFeature highlighted>Priority support</PricingFeature>
+                <PricingFeature highlighted>14 Meditation Sessions - Comprehensive guided library</PricingFeature>
+                <PricingFeature highlighted>Advanced Breathing Techniques - All patterns and customizations</PricingFeature>
+                <PricingFeature highlighted>Unlimited Sessions - No weekly limits or restrictions</PricingFeature>
+                <PricingFeature highlighted>Full Progress Analytics - Detailed insights and trends</PricingFeature>
+                <PricingFeature highlighted>Social Features - Complete community engagement</PricingFeature>
+                <PricingFeature highlighted>Focus Mode - Advanced Pomodoro timer with analytics</PricingFeature>
               </ul>
             </CardContent>
             <CardFooter>
@@ -119,32 +116,31 @@ const PricingTiers = () => {
                 className="w-full bg-respiro-dark hover:bg-respiro-darker text-white font-medium"
                 openInNewTab={false}
               >
-                Upgrade Now
+                Upgrade to Premium
               </PaymentButton>
             </CardFooter>
           </Card>
           
-          {/* Team Tier */}
+          {/* Premium Plus Tier */}
           <Card className="flex flex-col border-border shadow-md hover:shadow-lg transition-all duration-200 bg-white dark:bg-gray-800">
             <CardHeader>
-              <CardTitle className="text-xl text-gray-900 dark:text-white">Team</CardTitle>
+              <CardTitle className="text-xl text-gray-900 dark:text-white">Premium Plus</CardTitle>
               <div className="mt-4">
-                <span className="text-3xl font-bold text-gray-900 dark:text-white">$49</span>
+                <span className="text-3xl font-bold text-gray-900 dark:text-white">$12.99</span>
                 <span className="text-muted-foreground ml-2 dark:text-gray-300">/month</span>
               </div>
               <CardDescription className="mt-2 text-gray-600 dark:text-gray-300">
-                Perfect for small teams and organizations
+                Complete platform access with AI insights
               </CardDescription>
             </CardHeader>
             <CardContent className="flex-1">
               <ul className="space-y-2">
-                <PricingFeature>All features in Premium plan</PricingFeature>
-                <PricingFeature>5 team member accounts</PricingFeature>
-                <PricingFeature>Team progress dashboard</PricingFeature>
-                <PricingFeature>Group challenges and goals</PricingFeature>
-                <PricingFeature>Admin controls</PricingFeature>
-                <PricingFeature>Team analytics</PricingFeature>
-                <PricingFeature>Custom onboarding</PricingFeature>
+                <PricingFeature>Complete Library - All 22 sessions including exclusive content</PricingFeature>
+                <PricingFeature>Biofeedback Integration - Real-time heart rate monitoring</PricingFeature>
+                <PricingFeature>Advanced Analytics - AI-powered insights and recommendations</PricingFeature>
+                <PricingFeature>Priority Support - Enhanced customer service</PricingFeature>
+                <PricingFeature>Early Access - First access to new features and content</PricingFeature>
+                <PricingFeature>Social Hub Premium - Advanced community features</PricingFeature>
               </ul>
             </CardContent>
             <CardFooter>
@@ -152,15 +148,15 @@ const PricingTiers = () => {
                 variant="outline" 
                 className="w-full text-white bg-respiro-dark border-respiro-dark hover:bg-respiro-darker font-medium"
                 onClick={() => {
-                  toast.info("Contact Sales", {
-                    description: "For team plans, please contact our sales team."
+                  toast.info("Premium Plus Available Soon", {
+                    description: "Premium Plus features will be available soon. Contact us for early access."
                   });
                   
                   // Email client will open in new tab
-                  window.open("mailto:sales@respirobalance.com?subject=Team Plan Inquiry", "_blank");
+                  window.open("mailto:sales@respirobalance.com?subject=Premium Plus Early Access", "_blank");
                 }}
               >
-                Contact Sales
+                Coming Soon
               </Button>
             </CardFooter>
           </Card>
@@ -168,7 +164,7 @@ const PricingTiers = () => {
         
         <div className="mt-16 text-center">
           <p className="text-sm text-muted-foreground max-w-2xl mx-auto text-gray-700 dark:text-gray-300">
-            All plans include access to our mobile app and web platform. Premium plan
+            All plans include access to our mobile app and web platform. Premium plans
             can be canceled at any time. For enterprise solutions or custom
             pricing, please contact our sales team.
           </p>
