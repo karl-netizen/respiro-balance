@@ -66,6 +66,166 @@ export type Database = {
           },
         ]
       }
+      challenge_participations: {
+        Row: {
+          challenge_id: string
+          completion_date: string | null
+          id: string
+          joined_at: string | null
+          progress: Json | null
+          status: string | null
+          user_id: string
+        }
+        Insert: {
+          challenge_id: string
+          completion_date?: string | null
+          id?: string
+          joined_at?: string | null
+          progress?: Json | null
+          status?: string | null
+          user_id: string
+        }
+        Update: {
+          challenge_id?: string
+          completion_date?: string | null
+          id?: string
+          joined_at?: string | null
+          progress?: Json | null
+          status?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "challenge_participations_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "community_challenges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "challenge_participations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_challenges: {
+        Row: {
+          challenge_type: string
+          completion_criteria: Json
+          created_at: string | null
+          created_by: string | null
+          description: string
+          difficulty_level: string | null
+          duration_days: number
+          end_date: string
+          id: string
+          participant_count: number | null
+          participant_limit: number | null
+          rewards: Json | null
+          start_date: string
+          status: string | null
+          title: string
+        }
+        Insert: {
+          challenge_type: string
+          completion_criteria: Json
+          created_at?: string | null
+          created_by?: string | null
+          description: string
+          difficulty_level?: string | null
+          duration_days: number
+          end_date: string
+          id?: string
+          participant_count?: number | null
+          participant_limit?: number | null
+          rewards?: Json | null
+          start_date: string
+          status?: string | null
+          title: string
+        }
+        Update: {
+          challenge_type?: string
+          completion_criteria?: Json
+          created_at?: string | null
+          created_by?: string | null
+          description?: string
+          difficulty_level?: string | null
+          duration_days?: number
+          end_date?: string
+          id?: string
+          participant_count?: number | null
+          participant_limit?: number | null
+          rewards?: Json | null
+          start_date?: string
+          status?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_challenges_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_groups: {
+        Row: {
+          activity_level: string | null
+          category: string
+          created_at: string | null
+          created_by: string
+          description: string | null
+          group_image_url: string | null
+          id: string
+          member_count: number | null
+          name: string
+          privacy_type: string | null
+          rules: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          activity_level?: string | null
+          category: string
+          created_at?: string | null
+          created_by: string
+          description?: string | null
+          group_image_url?: string | null
+          id?: string
+          member_count?: number | null
+          name: string
+          privacy_type?: string | null
+          rules?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          activity_level?: string | null
+          category?: string
+          created_at?: string | null
+          created_by?: string
+          description?: string | null
+          group_image_url?: string | null
+          id?: string
+          member_count?: number | null
+          name?: string
+          privacy_type?: string | null
+          rules?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_groups_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       focus_achievements: {
         Row: {
           achievement_key: string
@@ -140,6 +300,92 @@ export type Database = {
           work_intervals?: number | null
         }
         Relationships: []
+      }
+      group_memberships: {
+        Row: {
+          group_id: string
+          id: string
+          joined_at: string | null
+          last_active: string | null
+          role: string | null
+          user_id: string
+        }
+        Insert: {
+          group_id: string
+          id?: string
+          joined_at?: string | null
+          last_active?: string | null
+          role?: string | null
+          user_id: string
+        }
+        Update: {
+          group_id?: string
+          id?: string
+          joined_at?: string | null
+          last_active?: string | null
+          role?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_memberships_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "community_groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "group_memberships_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leaderboard_entries: {
+        Row: {
+          calculated_at: string | null
+          id: string
+          leaderboard_type: string
+          period_end: string | null
+          period_start: string
+          rank: number | null
+          score: number
+          time_period: string
+          user_id: string
+        }
+        Insert: {
+          calculated_at?: string | null
+          id?: string
+          leaderboard_type: string
+          period_end?: string | null
+          period_start: string
+          rank?: number | null
+          score: number
+          time_period: string
+          user_id: string
+        }
+        Update: {
+          calculated_at?: string | null
+          id?: string
+          leaderboard_type?: string
+          period_end?: string | null
+          period_start?: string
+          rank?: number | null
+          score?: number
+          time_period?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leaderboard_entries_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       meditation_sessions: {
         Row: {
@@ -283,6 +529,229 @@ export type Database = {
           },
         ]
       }
+      post_comments: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          likes_count: number | null
+          parent_comment_id: string | null
+          post_id: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          likes_count?: number | null
+          parent_comment_id?: string | null
+          post_id: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          likes_count?: number | null
+          parent_comment_id?: string | null
+          post_id?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_comments_parent_comment_id_fkey"
+            columns: ["parent_comment_id"]
+            isOneToOne: false
+            referencedRelation: "post_comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "social_posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_comments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      post_interactions: {
+        Row: {
+          created_at: string | null
+          id: string
+          interaction_type: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          interaction_type: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          interaction_type?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_interactions_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "social_posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_interactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reward_transactions: {
+        Row: {
+          amount: number
+          created_at: string | null
+          description: string | null
+          id: string
+          metadata: Json | null
+          source: string
+          transaction_type: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          source: string
+          transaction_type: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          source?: string
+          transaction_type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reward_transactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shared_achievements: {
+        Row: {
+          achievement_data: Json
+          achievement_type: string
+          id: string
+          platform: string | null
+          share_message: string | null
+          shared_at: string | null
+          user_id: string
+        }
+        Insert: {
+          achievement_data: Json
+          achievement_type: string
+          id?: string
+          platform?: string | null
+          share_message?: string | null
+          shared_at?: string | null
+          user_id: string
+        }
+        Update: {
+          achievement_data?: Json
+          achievement_type?: string
+          id?: string
+          platform?: string | null
+          share_message?: string | null
+          shared_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shared_achievements_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      social_posts: {
+        Row: {
+          comments_count: number | null
+          content: string
+          created_at: string | null
+          id: string
+          likes_count: number | null
+          metadata: Json | null
+          post_type: string | null
+          privacy_level: string | null
+          shares_count: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          comments_count?: number | null
+          content: string
+          created_at?: string | null
+          id?: string
+          likes_count?: number | null
+          metadata?: Json | null
+          post_type?: string | null
+          privacy_level?: string | null
+          shares_count?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          comments_count?: number | null
+          content?: string
+          created_at?: string | null
+          id?: string
+          likes_count?: number | null
+          metadata?: Json | null
+          post_type?: string | null
+          privacy_level?: string | null
+          shares_count?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "social_posts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       subscribers: {
         Row: {
           created_at: string
@@ -391,6 +860,89 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "user_achievements_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_friendships: {
+        Row: {
+          addressee_id: string
+          created_at: string | null
+          id: string
+          requester_id: string
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          addressee_id: string
+          created_at?: string | null
+          id?: string
+          requester_id: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          addressee_id?: string
+          created_at?: string | null
+          id?: string
+          requester_id?: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_friendships_addressee_id_fkey"
+            columns: ["addressee_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_friendships_requester_id_fkey"
+            columns: ["requester_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_notifications: {
+        Row: {
+          created_at: string | null
+          data: Json | null
+          id: string
+          message: string
+          notification_type: string
+          read_at: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          data?: Json | null
+          id?: string
+          message: string
+          notification_type: string
+          read_at?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          data?: Json | null
+          id?: string
+          message?: string
+          notification_type?: string
+          read_at?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_notifications_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "user_profiles"
@@ -525,6 +1077,103 @@ export type Database = {
           subscription_tier?: string | null
         }
         Relationships: []
+      }
+      user_rewards: {
+        Row: {
+          active_badges: Json | null
+          coin_balance: number | null
+          created_at: string | null
+          id: string
+          reward_inventory: Json | null
+          total_coins_earned: number | null
+          total_coins_spent: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          active_badges?: Json | null
+          coin_balance?: number | null
+          created_at?: string | null
+          id?: string
+          reward_inventory?: Json | null
+          total_coins_earned?: number | null
+          total_coins_spent?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          active_badges?: Json | null
+          coin_balance?: number | null
+          created_at?: string | null
+          id?: string
+          reward_inventory?: Json | null
+          total_coins_earned?: number | null
+          total_coins_spent?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_rewards_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_social_profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string | null
+          current_streak: number | null
+          display_name: string | null
+          id: string
+          level: number | null
+          longest_streak: number | null
+          privacy_settings: Json | null
+          total_points: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          current_streak?: number | null
+          display_name?: string | null
+          id?: string
+          level?: number | null
+          longest_streak?: number | null
+          privacy_settings?: Json | null
+          total_points?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          current_streak?: number | null
+          display_name?: string | null
+          id?: string
+          level?: number | null
+          longest_streak?: number | null
+          privacy_settings?: Json | null
+          total_points?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_social_profiles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
