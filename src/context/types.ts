@@ -1,8 +1,8 @@
 
-import { MorningRitual as MorningRitualType } from '@/components/morning-ritual/types';
+import type { MorningRitual as MorningRitualType } from '@/components/morning-ritual/types';
 
 // Use unified Bluetooth types
-export { BluetoothDeviceInfo, BluetoothDevice, DeviceType } from '@/types/bluetooth';
+export type { BluetoothDeviceInfo, BluetoothDevice, DeviceType } from '@/types/bluetooth';
 
 // Export morning ritual types
 export type MorningRitual = MorningRitualType;
@@ -16,14 +16,15 @@ export interface RitualReminder {
   message?: string;
 }
 
-// Missing types that were causing errors
+// Notification types with correct type values
 export interface Notification {
   id: string;
-  type: 'info' | 'success' | 'warning' | 'error';
+  type: 'info' | 'success' | 'warning' | 'error' | 'achievement' | 'reminder' | 'streak' | 'suggestion';
   title: string;
   message: string;
   timestamp: Date;
   read: boolean;
+  actionUrl?: string;
 }
 
 export interface CompletionEntry {
@@ -39,6 +40,8 @@ export interface SessionFlow {
   totalSteps: number;
   estimatedDuration: number;
   status: 'not_started' | 'in_progress' | 'completed' | 'paused';
+  currentModule: string;
+  modules: string[];
 }
 
 export type WorkDay = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
@@ -46,6 +49,7 @@ export type StressLevelType = 'low' | 'moderate' | 'high';
 export type Theme = 'light' | 'dark' | 'system';
 export type MeasurementSystem = 'metric' | 'imperial';
 export type TimeManagementStyle = 'pomodoro' | 'timeblocking' | 'deadline' | 'flexible';
+export type SubscriptionTier = 'free' | 'premium' | 'team' | 'enterprise' | 'coach';
 
 export interface NotificationSettings {
   sessionReminders: boolean;
@@ -97,7 +101,7 @@ export interface UserPreferences {
   notificationSettings: NotificationSettings;
   connectedDevices: BluetoothDeviceInfo[];
   hasWearableDevice: boolean;
-  subscriptionTier: 'free' | 'premium' | 'team' | 'enterprise' | 'coach';
+  subscriptionTier: SubscriptionTier;
   theme: Theme;
   focusMode?: boolean;
   businessAttribution?: string;
@@ -176,6 +180,18 @@ export interface UserPreferences {
   morningDevices?: string;
   focusTimerDuration?: number;
   breakTimerDuration?: number;
+  
+  // App Settings specific
+  darkMode?: boolean;
+  reducedMotion?: boolean;
+  highContrast?: boolean;
+  enableBackgroundAudio?: boolean;
+  highQualityAudio?: boolean;
+  offlineAccess?: boolean;
+  
+  // Format converters compatibility
+  weeklyMeditationGoal?: number;
+  defaultMeditationDuration?: number;
 }
 
 export interface UserPreferencesContextType {

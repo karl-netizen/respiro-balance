@@ -1,100 +1,119 @@
 
 import { useState, useCallback } from 'react';
-import { useUserPreferences } from '@/context';
 import { MorningRitual } from '@/context/types';
 
-interface ScheduleConflict {
-  type: 'overlap' | 'dependency' | 'weather';
-  ritual1: string;
-  ritual2?: string;
-  suggestion: string;
+export interface Dependency {
+  id: string;
+  ritualId: string;
+  dependsOnId: string;
+  type: 'required' | 'optional';
 }
 
-interface ScheduleOptimization {
-  conflicts: ScheduleConflict[];
-  feasibilityScore: number;
+export interface WeatherAlternative {
+  id: string;
+  ritualId: string;
+  condition: string;
+  alternativeAction: string;
+}
+
+export interface ScheduleOptimization {
+  totalDuration: number;
+  conflicts: string[];
   suggestions: string[];
+  efficiency: number;
 }
 
 export const useAdvancedScheduling = () => {
-  const { preferences, updatePreferences } = useUserPreferences();
+  const [dependencies, setDependencies] = useState<Dependency[]>([]);
+  const [weatherAlternatives, setWeatherAlternatives] = useState<WeatherAlternative[]>([]);
+  const [scheduleOptimization, setScheduleOptimization] = useState<ScheduleOptimization>({
+    totalDuration: 0,
+    conflicts: [],
+    suggestions: [],
+    efficiency: 0
+  });
   const [isOptimizing, setIsOptimizing] = useState(false);
 
-  const analyzeSchedule = useCallback((rituals: MorningRitual[]): ScheduleOptimization => {
-    const conflicts: ScheduleConflict[] = [];
-    
-    // Check for time overlaps
-    const sortedRituals = [...rituals].sort((a, b) => 
-      a.timeOfDay.localeCompare(b.timeOfDay)
-    );
+  const addDependency = useCallback((dependency: Omit<Dependency, 'id'>) => {
+    const newDependency = { ...dependency, id: crypto.randomUUID() };
+    setDependencies(prev => [...prev, newDependency]);
+  }, []);
 
-    for (let i = 0; i < sortedRituals.length - 1; i++) {
-      const current = sortedRituals[i];
-      const next = sortedRituals[i + 1];
-      
-      const currentEnd = new Date(`2000-01-01T${current.timeOfDay}`);
-      currentEnd.setMinutes(currentEnd.getMinutes() + current.duration);
-      
-      const nextStart = new Date(`2000-01-01T${next.timeOfDay}`);
-      
-      if (currentEnd > nextStart) {
-        conflicts.push({
-          type: 'overlap',
-          ritual1: current.title,
-          ritual2: next.title,
-          suggestion: `Move ${next.title} to ${currentEnd.toTimeString().slice(0, 5)}`
-        });
-      }
+  const removeDependency = useCallback((id: string) => {
+    setDependencies(prev => prev.filter(d => d.id !== id));
+  }, []);
+
+  const addWeatherAlternative = useCallback((alternative: Omit<WeatherAlternative, 'id'>) => {
+    const newAlternative = { ...alternative, id: crypto.randomUUID() };
+    setWeatherAlternatives(prev => [...prev, newAlternative]);
+  }, []);
+
+  const removeWeatherAlternative = useCallback((id: string) => {
+    setWeatherAlternatives(prev => prev.filter(a => a.id !== id));
+  }, []);
+
+  const updateWeatherAlternative = useCallback((id: string, updates: Partial<WeatherAlternative>) => {
+    setWeatherAlternatives(prev => 
+      prev.map(alt => alt.id === id ? { ...alt, ...updates } : alt)
+    );
+  }, []);
+
+  const analyzeSchedule = useCallback((rituals: MorningRitual[] = []) => {
+    const totalDuration = rituals.reduce((sum, ritual) => sum + ritual.duration, 0);
+    const conflicts: string[] = [];
+    const suggestions: string[] = [];
+
+    // Analyze for conflicts
+    rituals.forEach((ritual, index) => {
+      const timeSlot = new Date(`2000-01-01T${ritual.timeOfDay}`);
+      rituals.slice(index + 1).forEach(otherRitual => {
+        const otherTimeSlot = new Date(`2000-01-01T${otherRitual.timeOfDay}`);
+        const timeDiff = Math.abs(timeSlot.getTime() - otherTimeSlot.getTime()) / (1000 * 60);
+        
+        if (timeDiff < Math.max(ritual.duration, otherRitual.duration)) {
+          conflicts.push(`${ritual.title} conflicts with ${otherRitual.title}`);
+        }
+      });
+    });
+
+    // Generate suggestions
+    if (totalDuration > 120) {
+      suggestions.push('Consider breaking rituals into shorter sessions');
+    }
+    if (conflicts.length > 0) {
+      suggestions.push('Adjust timing to avoid conflicts');
     }
 
-    const feasibilityScore = Math.max(0, 100 - (conflicts.length * 15));
-    
-    return {
+    const efficiency = Math.max(0, 100 - (conflicts.length * 20) - Math.max(0, (totalDuration - 60) / 2));
+
+    setScheduleOptimization({
+      totalDuration,
       conflicts,
-      feasibilityScore,
-      suggestions: conflicts.map(c => c.suggestion)
-    };
+      suggestions,
+      efficiency
+    });
+
+    return { totalDuration, conflicts, suggestions, efficiency };
   }, []);
 
   const optimizeSchedule = useCallback(async () => {
     setIsOptimizing(true);
-    try {
-      const rituals = preferences.morningRituals || [];
-      const optimization = analyzeSchedule(rituals);
-      
-      // Auto-resolve simple conflicts
-      const optimizedRituals = [...rituals];
-      
-      // Simple optimization: spread overlapping rituals
-      for (const conflict of optimization.conflicts) {
-        if (conflict.type === 'overlap' && conflict.ritual2) {
-          const ritual1Index = optimizedRituals.findIndex(r => r.title === conflict.ritual1);
-          const ritual2Index = optimizedRituals.findIndex(r => r.title === conflict.ritual2);
-          
-          if (ritual1Index !== -1 && ritual2Index !== -1) {
-            const ritual1 = optimizedRituals[ritual1Index];
-            const ritual2 = optimizedRituals[ritual2Index];
-            
-            const ritual1End = new Date(`2000-01-01T${ritual1.timeOfDay}`);
-            ritual1End.setMinutes(ritual1End.getMinutes() + ritual1.duration + 5); // 5 min buffer
-            
-            optimizedRituals[ritual2Index] = {
-              ...ritual2,
-              timeOfDay: ritual1End.toTimeString().slice(0, 5)
-            };
-          }
-        }
-      }
-      
-      await updatePreferences({ morningRituals: optimizedRituals });
-    } finally {
-      setIsOptimizing(false);
-    }
-  }, [preferences.morningRituals, analyzeSchedule, updatePreferences]);
+    // Simulate optimization process
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    setIsOptimizing(false);
+  }, []);
 
   return {
+    dependencies,
+    weatherAlternatives,
+    scheduleOptimization,
+    isOptimizing,
+    addDependency,
+    removeDependency,
+    addWeatherAlternative,
+    removeWeatherAlternative,
+    updateWeatherAlternative,
     analyzeSchedule,
-    optimizeSchedule,
-    isOptimizing
+    optimizeSchedule
   };
 };

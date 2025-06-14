@@ -3,6 +3,8 @@ import { BiometricData } from '../types/BiometricTypes';
 
 export const generateMockBiometricData = (): BiometricData => {
   return {
+    id: crypto.randomUUID(),
+    user_id: 'mock-user-id',
     heartRate: 60 + Math.floor(Math.random() * 40),
     hrv: 20 + Math.floor(Math.random() * 60),
     stress: Math.floor(Math.random() * 100),

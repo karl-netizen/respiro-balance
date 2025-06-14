@@ -6,7 +6,6 @@ import { UserPreferencesData } from '@/types/supabase';
 export const dbToAppFormat = (dbData: UserPreferencesData): Partial<UserPreferences> => {
   return {
     theme: dbData.theme as 'light' | 'dark' | 'system',
-    weeklyMeditationGoal: 150, // Default value
     defaultMeditationDuration: dbData.preferred_session_duration,
     workDays: dbData.work_days?.map(day => day.toLowerCase() as WorkDay) || [],
     meditationExperience: dbData.meditation_experience as any,
@@ -27,10 +26,12 @@ export const dbToAppFormat = (dbData: UserPreferencesData): Partial<UserPreferen
 export const appToDbFormat = (appData: Partial<UserPreferences>): Partial<UserPreferencesData> => {
   return {
     theme: appData.theme,
-    preferred_session_duration: appData.defaultMeditationDuration,
+    preferred_session_duration: appData.preferredSessionDuration || appData.defaultMeditationDuration,
     work_days: appData.workDays?.map(day => day.charAt(0).toUpperCase() + day.slice(1)),
     meditation_experience: appData.meditationExperience as string,
-    stress_level: appData.stressLevel as string,
+    stress_level: typeof appData.stressLevel === 'string' ? 
+      appData.stressLevel : 
+      String(appData.stressLevel),
     work_environment: appData.workEnvironment as string,
     work_start_time: appData.workStartTime,
     work_end_time: appData.workEndTime,

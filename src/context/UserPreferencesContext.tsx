@@ -8,6 +8,8 @@ export const UserPreferencesContext = createContext<UserPreferencesContextType>(
   updatePreferences: async () => {},
   resetPreferences: () => {},
   isCoach: false,
+  isEnterprise: false,
+  isLoading: false,
   connectBluetoothDevice: async () => false,
   disconnectBluetoothDevice: async () => false,
 } as UserPreferencesContextType);

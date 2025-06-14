@@ -7,6 +7,8 @@ export interface BluetoothDevice {
   connected: boolean;
 }
 
+export type SubscriptionTier = 'free' | 'premium' | 'team' | 'enterprise' | 'coach';
+
 export interface UserPreferencesData {
   id?: string;
   user_id?: string;
@@ -14,6 +16,7 @@ export interface UserPreferencesData {
   preferred_session_duration?: number;
   work_days?: string[];
   meditation_experience?: string;
+  meditation_goals?: string[];
   stress_level?: string;
   work_environment?: string;
   work_start_time?: string;
@@ -24,6 +27,8 @@ export interface UserPreferencesData {
   exercise_time?: string;
   bed_time?: string;
   has_completed_onboarding?: boolean;
+  notification_settings?: any;
+  connected_devices?: any;
   updated_at?: string;
 }
 

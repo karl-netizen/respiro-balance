@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { formatDistanceToNow } from 'date-fns';
-import { Bell, Trophy, Target, Lightbulb } from 'lucide-react';
+import { Bell, Trophy, Target, Lightbulb, Info, CheckCircle, AlertTriangle, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Notification } from '@/context/types';
 
@@ -24,6 +24,14 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
         return <Target className="h-4 w-4 text-green-500" />;
       case 'suggestion':
         return <Lightbulb className="h-4 w-4 text-purple-500" />;
+      case 'info':
+        return <Info className="h-4 w-4 text-blue-500" />;
+      case 'success':
+        return <CheckCircle className="h-4 w-4 text-green-500" />;
+      case 'warning':
+        return <AlertTriangle className="h-4 w-4 text-yellow-500" />;
+      case 'error':
+        return <XCircle className="h-4 w-4 text-red-500" />;
       default:
         return <Bell className="h-4 w-4 text-gray-500" />;
     }

@@ -55,14 +55,14 @@ export const mapDbToUiPreferences = (
     bedTime: dbPreferences.bed_time || defaultPreferences.bedTime,
     lunchBreak: dbPreferences.lunch_break ?? defaultPreferences.lunchBreak,
     morningExercise: dbPreferences.morning_exercise ?? defaultPreferences.morningExercise,
-    meditationExperience: dbPreferences.meditation_experience || defaultPreferences.meditationExperience,
-    meditationGoals: (dbPreferences.meditation_goals as string[]) || defaultPreferences.meditationGoals,
+    meditationExperience: (dbPreferences.meditation_experience as any) || defaultPreferences.meditationExperience,
+    meditationGoals: dbPreferences.meditation_goals || defaultPreferences.meditationGoals,
     stressLevel: (dbPreferences.stress_level as any) || defaultPreferences.stressLevel,
-    workEnvironment: dbPreferences.work_environment || defaultPreferences.workEnvironment,
+    workEnvironment: (dbPreferences.work_environment as any) || defaultPreferences.workEnvironment,
     preferredSessionDuration: dbPreferences.preferred_session_duration || defaultPreferences.preferredSessionDuration,
     hasCompletedOnboarding: dbPreferences.has_completed_onboarding ?? defaultPreferences.hasCompletedOnboarding,
-    notificationSettings: (dbPreferences.notification_settings as any) || defaultPreferences.notificationSettings,
-    connectedDevices: (dbPreferences.connected_devices as any) || defaultPreferences.connectedDevices,
+    notificationSettings: dbPreferences.notification_settings || defaultPreferences.notificationSettings,
+    connectedDevices: dbPreferences.connected_devices || defaultPreferences.connectedDevices,
     hasWearableDevice: hasWearableDevice || false,
     subscriptionTier: subscriptionTier as any || 'free'
   };
@@ -74,6 +74,7 @@ export const mapUiToDbPreferences = (uiPreferences: Partial<UserPreferences>): P
     preferred_session_duration: uiPreferences.preferredSessionDuration,
     work_days: uiPreferences.workDays as string[],
     meditation_experience: uiPreferences.meditationExperience,
+    meditation_goals: uiPreferences.meditationGoals,
     stress_level: typeof uiPreferences.stressLevel === 'string' ? 
       uiPreferences.stressLevel : 
       String(uiPreferences.stressLevel),
@@ -86,9 +87,8 @@ export const mapUiToDbPreferences = (uiPreferences: Partial<UserPreferences>): P
     exercise_time: uiPreferences.exerciseTime,
     bed_time: uiPreferences.bedTime,
     has_completed_onboarding: uiPreferences.hasCompletedOnboarding,
-    notification_settings: uiPreferences.notificationSettings as any,
-    connected_devices: uiPreferences.connectedDevices as any,
-    meditation_goals: uiPreferences.meditationGoals
+    notification_settings: uiPreferences.notificationSettings,
+    connected_devices: uiPreferences.connectedDevices
   };
 };
 
