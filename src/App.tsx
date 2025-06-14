@@ -22,6 +22,8 @@ import MeditateAdvanced from './pages/MeditateAdvanced';
 import SocialPage from './pages/SocialPage';
 import MeditationAudioManagement from './pages/MeditationAudioManagement';
 import MorningRitual from './pages/MorningRitual';
+import AccountPage from './pages/AccountPage';
+import AppSettings from './pages/AppSettings';
 import Index from './pages/Index';
 
 const queryClient = new QueryClient({
@@ -54,6 +56,8 @@ function App() {
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/settings" element={<Settings />} />
                   <Route path="/settingspage" element={<SettingsPage />} />
+                  <Route path="/account" element={<AccountPage />} />
+                  <Route path="/app-settings" element={<AppSettings />} />
                   <Route path="/subscription" element={<SubscriptionPage />} />
                   <Route path="/meditation" element={<MeditationPage />} />
                   <Route path="/meditation/advanced" element={<MeditateAdvanced />} />

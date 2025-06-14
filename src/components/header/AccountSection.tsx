@@ -28,7 +28,7 @@ const AccountSection = () => {
           <Link to="/login">Log in</Link>
         </Button>
         <Button size="sm" asChild>
-          <Link to="/signup">Sign up</Link>
+          <Link to="/register">Sign up</Link>
         </Button>
       </div>
     );
@@ -75,7 +75,7 @@ const AccountSection = () => {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link to="/account" className="cursor-pointer">
+          <Link to="/settingspage" className="cursor-pointer">
             <Settings className="mr-2 h-4 w-4" />
             <span>Account Settings</span>
           </Link>
@@ -84,6 +84,7 @@ const AccountSection = () => {
         <DropdownMenuItem onClick={() => signOut?.()} className="cursor-pointer">
           <LogOut className="mr-2 h-4 w-4" />
           <span>Log out</span>
+        </Link>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
