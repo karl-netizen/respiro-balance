@@ -9,9 +9,9 @@ export const generateRitualId = generateId;
 
 // Date and time utilities
 export const wasCompletedToday = (ritual: MorningRitual): boolean => {
-  if (!ritual.last_completed) return false;
+  if (!ritual.lastCompleted) return false;
   const today = new Date().toDateString();
-  const completedDate = new Date(ritual.last_completed).toDateString();
+  const completedDate = new Date(ritual.lastCompleted).toDateString();
   return today === completedDate;
 };
 
@@ -23,8 +23,8 @@ export const shouldDoRitualToday = (ritual: MorningRitual): boolean => {
   if (ritual.recurrence === 'daily') return true;
   if (ritual.recurrence === 'weekdays') return today >= 1 && today <= 5;
   if (ritual.recurrence === 'weekends') return today === 0 || today === 6;
-  if (ritual.recurrence === 'custom' && ritual.days_of_week) {
-    return ritual.days_of_week.includes(todayName);
+  if (ritual.recurrence === 'custom' && ritual.daysOfWeek) {
+    return ritual.daysOfWeek.includes(todayName);
   }
   
   return false;

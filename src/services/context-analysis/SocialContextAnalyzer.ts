@@ -6,27 +6,25 @@ export class SocialContextAnalyzer implements Analyzer {
     const recommendations: ContextualRecommendation[] = [];
     
     // Check if user hasn't engaged socially recently
-    const lastSocialActivity = this.getLastSocialActivityDays();
-    if (lastSocialActivity > 7) {
+    const hasRecentSocialActivity = context.sessionHistory.some(session => 
+      session.shared || session.social_engagement
+    );
+    
+    if (!hasRecentSocialActivity && context.sessionHistory.length > 10) {
       recommendations.push({
         id: 'social-engagement',
         type: 'social',
         priority: 'low',
-        title: 'Connect with the Community',
-        description: 'Join challenges or share your progress with others.',
-        action: 'Visit Social Hub',
+        title: 'Join the Community',
+        description: 'Share your progress and connect with others on their wellness journey.',
+        action: 'Explore Community',
         module: 'Social',
         route: '/social',
         confidence: 0.6,
-        reasons: ['No recent social activity', 'Community support improves consistency'],
+        reasons: ['Low community engagement', 'Social support improves outcomes']
       });
     }
     
     return recommendations;
-  }
-
-  private getLastSocialActivityDays(): number {
-    // This would check social interactions, for now return a mock value
-    return Math.floor(Math.random() * 14);
   }
 }

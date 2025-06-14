@@ -5,65 +5,61 @@ export class PatternContextAnalyzer implements Analyzer {
   analyze(context: AnalysisContext): ContextualRecommendation[] {
     const recommendations: ContextualRecommendation[] = [];
     
-    // Check meditation consistency
-    const recentMeditationDays = this.getRecentMeditationDays(context.sessionHistory);
-    if (recentMeditationDays < 3) {
+    if (context.sessionHistory.length === 0) return recommendations;
+    
+    // Analyze session frequency
+    const last7Days = new Date();
+    last7Days.setDate(last7Days.getDate() - 7);
+    
+    const recentSessions = context.sessionHistory.filter(session => 
+      new Date(session.started_at || session.created_at) > last7Days
+    );
+    
+    if (recentSessions.length < 3) {
       recommendations.push({
-        id: 'consistency-boost',
+        id: 'consistency-building',
         type: 'meditation',
         priority: 'medium',
-        title: 'Rebuild Your Meditation Streak',
-        description: 'You\'ve missed a few days. Start with a short session.',
-        action: 'Quick Meditation',
+        title: 'Build Consistency',
+        description: 'You\'ve been less active lately. A short session can help rebuild momentum.',
+        action: 'Quick Session',
         module: 'Meditation',
         route: '/meditation?tab=quick-breaks',
         confidence: 0.7,
-        reasons: ['Decreased meditation consistency', 'Short sessions rebuild habits'],
+        reasons: ['Low recent activity', 'Consistency improves outcomes']
       });
     }
     
-    // Focus session performance analysis
-    const focusPerformance = this.getRecentFocusPerformance(context.sessionHistory);
-    if (focusPerformance < 0.6) {
+    // Analyze preferred session types
+    const sessionTypes = recentSessions.map(s => s.session_type || s.type);
+    const mostCommon = this.getMostCommonElement(sessionTypes);
+    
+    if (mostCommon && recentSessions.length > 5) {
       recommendations.push({
-        id: 'focus-improvement',
-        type: 'focus',
-        priority: 'medium',
-        title: 'Enhance Your Focus Sessions',
-        description: 'Recent focus sessions show room for improvement.',
-        action: 'Focus Training',
-        module: 'Focus Mode',
-        route: '/focus?mode=training',
+        id: 'preferred-pattern',
+        type: mostCommon as any,
+        priority: 'low',
+        title: `Continue Your ${mostCommon} Practice`,
+        description: `You\'ve been enjoying ${mostCommon} sessions. Ready for another?`,
+        action: `Start ${mostCommon}`,
+        module: mostCommon,
+        route: `/${mostCommon}`,
         confidence: 0.75,
-        reasons: ['Low focus session performance', 'Training mode available'],
+        reasons: ['Based on your preferences', 'Consistent practice pattern']
       });
     }
     
     return recommendations;
   }
-
-  private getRecentMeditationDays(sessionHistory: any[]): number {
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  
+  private getMostCommonElement(arr: string[]): string | null {
+    if (arr.length === 0) return null;
     
-    const uniqueDays = new Set();
-    sessionHistory.forEach(session => {
-      if (session.session_type === 'meditation' && new Date(session.started_at) > sevenDaysAgo) {
-        uniqueDays.add(new Date(session.started_at).toDateString());
-      }
-    });
+    const counts = arr.reduce((acc, item) => {
+      acc[item] = (acc[item] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
     
-    return uniqueDays.size;
-  }
-
-  private getRecentFocusPerformance(sessionHistory: any[]): number {
-    const focusSessions = sessionHistory
-      .filter(session => session.session_type === 'focus')
-      .slice(-5);
-    
-    if (focusSessions.length === 0) return 0.8; // Default good performance
-    
-    const avgScore = focusSessions.reduce((sum, session) => sum + (session.focus_score || 70), 0) / focusSessions.length;
-    return avgScore / 100;
+    return Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
   }
 }

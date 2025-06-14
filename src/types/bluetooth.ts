@@ -9,3 +9,10 @@ export interface BluetoothDeviceInfo {
   services?: string[];
   connected?: boolean;
 }
+
+export interface BluetoothDevice {
+  id: string;
+  name: string;
+  type: DeviceType;
+  connected: boolean;
+}

@@ -6,7 +6,7 @@ import { Switch } from "@/components/ui/switch";
 import { Monitor } from "lucide-react";
 import { useUserPreferences } from "@/context";
 import { toast } from "sonner";
-import { BluetoothDevice } from "@/types/supabase";
+import { BluetoothDevice, BluetoothDeviceInfo } from "@/types/bluetooth";
 
 import ConnectedDevicesList from "./ConnectedDevicesList";
 import DeviceSearching from "./DeviceSearching";
@@ -30,10 +30,10 @@ const BiofeedbackCard = () => {
     
     try {
       // Mock device for connection
-      const mockDevice = {
+      const mockDevice: BluetoothDeviceInfo = {
         id: 'mock-device-001',
         name: 'Respiro HR Monitor',
-        type: 'heart_rate_monitor' as const,
+        type: 'heart_rate_monitor',
         rssi: -45,
         services: ['heart_rate']
       };
@@ -70,10 +70,10 @@ const BiofeedbackCard = () => {
 
   const handleConnectDeviceById = async (deviceId: string, callback?: () => void): Promise<void> => {
     try {
-      const mockDevice = {
+      const mockDevice: BluetoothDeviceInfo = {
         id: deviceId,
         name: 'Mock Device',
-        type: 'heart_rate_monitor' as const,
+        type: 'heart_rate_monitor',
         rssi: -45,
         services: ['heart_rate']
       };
@@ -154,10 +154,10 @@ const BiofeedbackCard = () => {
               onCheckedChange={(checked) => {
                 updatePreferences({ hasWearableDevice: checked });
                 if (checked) {
-                  const mockDevice = {
+                  const mockDevice: BluetoothDeviceInfo = {
                     id: 'mock-device-001',
                     name: 'Respiro HR Monitor',
-                    type: 'heart_rate_monitor' as const,
+                    type: 'heart_rate_monitor',
                     rssi: -45,
                     services: ['heart_rate']
                   };
