@@ -46,7 +46,6 @@ const EnhancedMeditationPage = () => {
       case 'library':
         return (
           <SessionLibrary
-            sessions={filteredSessions}
             filteredSessions={filteredSessions}
             filters={filters}
             setFilters={setFilters}
