@@ -43,8 +43,8 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
   };
   
   return (
-    <div className="absolute right-0 mt-2 w-80 bg-background border rounded-md shadow-lg z-50">
-      <div className="px-4 py-3 border-b flex justify-between items-center">
+    <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-50">
+      <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
         <h3 className="font-medium">Notifications</h3>
         <Button 
           variant="ghost" 
@@ -68,8 +68,8 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
             {notifications.map((notification) => (
               <li 
                 key={notification.id} 
-                className={`px-4 py-3 hover:bg-secondary/50 transition-colors cursor-pointer ${
-                  !notification.read ? 'bg-secondary/30' : ''
+                className={`px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer ${
+                  !notification.read ? 'bg-gray-50 dark:bg-gray-700' : ''
                 }`}
               >
                 <div className="flex gap-3">
@@ -90,7 +90,7 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
         </ScrollArea>
       )}
       
-      <div className="px-4 py-2 border-t">
+      <div className="px-4 py-2 border-t border-gray-200 dark:border-gray-700">
         <Button variant="ghost" size="sm" className="w-full" onClick={onClose}>
           Close
         </Button>

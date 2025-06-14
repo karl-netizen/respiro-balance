@@ -57,7 +57,7 @@ const AccountSection = () => {
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56 z-[60]">
+      <DropdownMenuContent align="end" className="w-56 z-[60] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg">
         <DropdownMenuLabel className="flex justify-between items-center">
           <span>My Account</span>
           <SubscriptionBadge />
