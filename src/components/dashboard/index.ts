@@ -10,5 +10,16 @@ export { default as RecommendationCard } from './RecommendationCard';
 export { default as QuickAccessSection } from './QuickAccessSection';
 export { default as ActivityCalendar } from './ActivityCalendar';
 
+// New refactored components
+export { default as DashboardLayout } from './DashboardLayout';
+export { default as DashboardMainContent } from './DashboardMainContent';
+export { default as DashboardHeader } from './DashboardHeader';
+
+// Hooks
+export { useDashboardData } from './hooks/useDashboardData';
+
+// Utils
+export { generateQuickStats } from './utils/dashboardUtils';
+
 // Types
 export type { ActivityEntry } from './ActivityCalendar';
