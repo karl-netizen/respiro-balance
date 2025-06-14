@@ -119,17 +119,18 @@ const ProfileAvatarUpload: React.FC<ProfileAvatarUploadProps> = ({
       {showUploadButton ? (
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <div className="relative cursor-pointer group">
-              <Avatar className={`${sizeClasses[size]} ring-2 ring-background`}>
-                <AvatarImage src={displayAvatarUrl} alt="Profile picture" />
+            <Button
+              variant="ghost"
+              size="icon"
+              className={`${sizeClasses[size]} rounded-full p-0 overflow-hidden hover:opacity-80 transition-opacity`}
+            >
+              <Avatar className={`${sizeClasses[size]} border-2 border-background`}>
+                <AvatarImage src={displayAvatarUrl} alt="Profile picture" className="object-cover" />
                 <AvatarFallback className="bg-primary text-primary-foreground">
                   {userInitials}
                 </AvatarFallback>
               </Avatar>
-              <div className="absolute inset-0 bg-black bg-opacity-50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                <Camera className="h-4 w-4 text-white" />
-              </div>
-            </div>
+            </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
@@ -174,8 +175,8 @@ const ProfileAvatarUpload: React.FC<ProfileAvatarUploadProps> = ({
           </DialogContent>
         </Dialog>
       ) : (
-        <Avatar className={`${sizeClasses[size]} ring-2 ring-background`}>
-          <AvatarImage src={displayAvatarUrl} alt="Profile picture" />
+        <Avatar className={`${sizeClasses[size]} border-2 border-background`}>
+          <AvatarImage src={displayAvatarUrl} alt="Profile picture" className="object-cover" />
           <AvatarFallback className="bg-primary text-primary-foreground">
             {userInitials}
           </AvatarFallback>
