@@ -5,7 +5,10 @@ import RitualTimelineHeader from "./RitualTimelineHeader";
 import RitualFilter from "./RitualFilter";
 import RitualFilterEmptyState from "./RitualFilterEmptyState";
 import RitualTimelineList from "./RitualTimelineList";
+import DailyStatusDashboard from "./DailyStatusDashboard";
+import WeeklyPerformanceSummary from "./WeeklyPerformanceSummary";
 import { useRitualTimeline } from "./hooks/useRitualTimeline";
+import { toast } from "sonner";
 
 const RitualTimeline = () => {
   const {
@@ -20,6 +23,27 @@ const RitualTimeline = () => {
     resetFilters,
     isLoading
   } = useRitualTimeline();
+  
+  const handleCompleteRemaining = () => {
+    const pendingRituals = rituals.filter(ritual => 
+      ritual.status !== 'completed' || 
+      !ritual.lastCompleted || 
+      new Date(ritual.lastCompleted).toDateString() !== new Date().toDateString()
+    );
+    
+    if (pendingRituals.length === 0) {
+      toast.success("All rituals already completed for today!");
+      return;
+    }
+    
+    // Show confirmation dialog for bulk completion
+    if (window.confirm(`Mark ${pendingRituals.length} remaining rituals as completed?`)) {
+      pendingRituals.forEach(ritual => {
+        completeRitual(ritual.id);
+      });
+      toast.success(`Completed ${pendingRituals.length} rituals!`);
+    }
+  };
   
   if (isLoading) {
     return (
@@ -41,6 +65,15 @@ const RitualTimeline = () => {
 
   return (
     <div className="space-y-8">
+      {/* Daily Status Dashboard */}
+      <DailyStatusDashboard 
+        rituals={rituals}
+        onCompleteRemaining={handleCompleteRemaining}
+      />
+      
+      {/* Weekly Performance Summary */}
+      <WeeklyPerformanceSummary rituals={rituals} />
+      
       <RitualTimelineHeader ritualCount={rituals.length} />
       
       {/* Filter Component */}

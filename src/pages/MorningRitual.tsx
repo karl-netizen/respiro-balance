@@ -7,6 +7,7 @@ import RitualTimeline from "@/components/morning-ritual/RitualTimeline";
 import RitualForm from "@/components/morning-ritual/RitualForm";
 import StreakTracker from "@/components/morning-ritual/StreakTracker";
 import SuggestionsSection from "@/components/morning-ritual/SuggestionsSection";
+import RitualValidationReport from "@/components/morning-ritual/validation/RitualValidationReport";
 import { useUserPreferences } from "@/context";
 import { useNotifications } from "@/context/NotificationsProvider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -14,7 +15,7 @@ import { Separator } from "@/components/ui/separator";
 import { Helmet } from "react-helmet";
 import { updateRitualStatuses } from "@/components/morning-ritual/utils";
 import { MorningRitual as MorningRitualType } from "@/context/types";
-import { Sunrise, Plus, Lightbulb } from "lucide-react";
+import { Sunrise, Plus, Lightbulb, ClipboardCheck } from "lucide-react";
 
 const MorningRitual = () => {
   const { preferences, updatePreferences } = useUserPreferences();
@@ -107,10 +108,10 @@ const MorningRitual = () => {
           )}
 
           <Tabs defaultValue={hasRituals ? "my-rituals" : "create"} className="mt-6">
-            <TabsList className="grid w-full max-w-md mx-auto mb-8 grid-cols-3">
+            <TabsList className="grid w-full max-w-lg mx-auto mb-8 grid-cols-4">
               <TabsTrigger value="my-rituals" className="flex items-center gap-2">
                 <Sunrise className="h-4 w-4" />
-                My Morning Rituals
+                My Rituals
               </TabsTrigger>
               <TabsTrigger value="create" className="flex items-center gap-2">
                 <Plus className="h-4 w-4" />
@@ -119,6 +120,10 @@ const MorningRitual = () => {
               <TabsTrigger value="suggestions" className="flex items-center gap-2">
                 <Lightbulb className="h-4 w-4" />
                 Suggestions
+              </TabsTrigger>
+              <TabsTrigger value="validation" className="flex items-center gap-2">
+                <ClipboardCheck className="h-4 w-4" />
+                Validation
               </TabsTrigger>
             </TabsList>
             
@@ -169,6 +174,18 @@ const MorningRitual = () => {
                   </p>
                 </div>
                 <SuggestionsSection />
+              </div>
+            </TabsContent>
+
+            <TabsContent value="validation">
+              <div className="max-w-6xl mx-auto">
+                <div className="text-center mb-8">
+                  <h2 className="text-2xl font-bold mb-2">Feature Validation Report</h2>
+                  <p className="text-muted-foreground">
+                    Comprehensive analysis of implemented vs. specified Morning Ritual features
+                  </p>
+                </div>
+                <RitualValidationReport />
               </div>
             </TabsContent>
           </Tabs>
