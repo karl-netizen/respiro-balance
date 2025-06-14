@@ -1,7 +1,6 @@
-
 import React from "react";
 import { MorningRitual } from "@/context/types";
-import { RitualFilters } from "../RitualFilter";
+import { RitualFilters } from "../types";
 import EmptyRitualState from "../EmptyRitualState";
 import RitualTimelineHeader from "../RitualTimelineHeader";
 import RitualFilter from "../RitualFilter";
@@ -20,13 +19,13 @@ interface RitualTimelineContentProps {
   availableTags: string[];
   isLoading: boolean;
   onComplete: (ritual: MorningRitual) => void;
-  onDelete: (ritualId: string) => void;
+  onDelete: (ritual: MorningRitual) => void;
   onUpdate: (updatedRitual: MorningRitual) => void;
-  onFilterChange: (newFilters: RitualFilters) => void;
+  onFilterChange: (newFilters: Partial<RitualFilters>) => void;
   onResetFilters: () => void;
   onShowAnalytics: () => void;
   onShowNotificationSettings: () => void;
-  completeRitual: (ritualId: string) => void;
+  completeRitual: (ritual: MorningRitual) => void;
 }
 
 const RitualTimelineContent: React.FC<RitualTimelineContentProps> = ({
@@ -60,7 +59,7 @@ const RitualTimelineContent: React.FC<RitualTimelineContentProps> = ({
     
     if (window.confirm(`Mark ${pendingRituals.length} remaining ritual${pendingRituals.length !== 1 ? 's' : ''} as completed for today?`)) {
       pendingRituals.forEach(ritual => {
-        completeRitual(ritual.id);
+        completeRitual(ritual);
       });
       
       toast.success(`🎉 Completed ${pendingRituals.length} ritual${pendingRituals.length !== 1 ? 's' : ''}!`, {

@@ -3,12 +3,7 @@ import { useState, useCallback, useMemo } from 'react';
 import { MorningRitual } from '@/context/types';
 import { useUserPreferences } from '@/context';
 import { useNotifications } from '@/context/NotificationsProvider';
-
-interface RitualFilters {
-  status: string;
-  priority: string;
-  tags: string[];
-}
+import { RitualFilters } from '../types';
 
 export const useRitualTimeline = () => {
   const { preferences, updatePreferences } = useUserPreferences();
@@ -17,7 +12,8 @@ export const useRitualTimeline = () => {
   const [filters, setFilters] = useState<RitualFilters>({
     status: 'all',
     priority: 'all',
-    tags: []
+    tags: [],
+    timeRange: 'all'
   });
 
   const rituals = preferences.morningRituals || [];
@@ -43,7 +39,8 @@ export const useRitualTimeline = () => {
     setFilters({
       status: 'all',
       priority: 'all',
-      tags: []
+      tags: [],
+      timeRange: 'all'
     });
   }, []);
 

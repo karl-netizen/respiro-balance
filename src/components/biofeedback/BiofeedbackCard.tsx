@@ -34,6 +34,7 @@ const BiofeedbackCard = () => {
         id: 'mock-device-001',
         name: 'Respiro HR Monitor',
         type: 'heart_rate_monitor',
+        connected: true,
         rssi: -45,
         services: ['heart_rate']
       };
@@ -74,6 +75,7 @@ const BiofeedbackCard = () => {
         id: deviceId,
         name: 'Mock Device',
         type: 'heart_rate_monitor',
+        connected: true,
         rssi: -45,
         services: ['heart_rate']
       };
@@ -158,6 +160,7 @@ const BiofeedbackCard = () => {
                     id: 'mock-device-001',
                     name: 'Respiro HR Monitor',
                     type: 'heart_rate_monitor',
+                    connected: true,
                     rssi: -45,
                     services: ['heart_rate']
                   };

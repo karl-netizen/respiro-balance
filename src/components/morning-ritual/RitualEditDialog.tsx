@@ -26,8 +26,7 @@ const RitualEditDialog: React.FC<RitualEditDialogProps> = ({
       ...ritual,
       ...data,
       startTime: data.timeOfDay,
-      complete: false,
-      updatedAt: new Date()
+      complete: false
     };
     onSave(updatedRitual);
     onOpenChange(false);

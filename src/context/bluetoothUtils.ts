@@ -19,7 +19,7 @@ export const scanForBluetoothDevices = async (): Promise<BluetoothDeviceInfo[]> 
       id: device.id,
       name: device.name || 'Unknown Device',
       type: 'heart_rate' as DeviceType,
-      services: ['heart_rate']
+      connected: true
     }];
   } catch (error) {
     console.error('Bluetooth scanning failed:', error);

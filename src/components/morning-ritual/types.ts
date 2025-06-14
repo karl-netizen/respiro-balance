@@ -11,6 +11,13 @@ export interface RitualReminder {
   message?: string;
 }
 
+export interface RitualFilters {
+  status: string;
+  priority: string;
+  tags: string[];
+  timeRange?: string;
+}
+
 export interface MorningRitual {
   id: string;
   title: string;
@@ -29,6 +36,7 @@ export interface MorningRitual {
   complete: boolean;
   completed?: boolean;
   createdAt: Date;
+  updatedAt?: Date;
   status: RitualStatus;
   lastCompleted?: string;
   streak?: number;
