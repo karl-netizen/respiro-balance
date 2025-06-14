@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Clock, Flame, Heart, Lock } from 'lucide-react';
+import { Clock, Flame, Heart, Lock, Target } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface QuickAccessSectionProps {
@@ -14,6 +14,13 @@ const QuickAccessSection: React.FC<QuickAccessSectionProps> = ({ isPremium }) =>
   
   const quickLinks = [
     {
+      title: 'Focus Session',
+      description: 'Start focused work',
+      icon: <Target className="h-4 w-4" />,
+      action: () => navigate('/focus'),
+      premium: false
+    },
+    {
       title: 'Quick Break',
       description: '5-minute meditation',
       icon: <Clock className="h-4 w-4" />,
@@ -21,8 +28,8 @@ const QuickAccessSection: React.FC<QuickAccessSectionProps> = ({ isPremium }) =>
       premium: false
     },
     {
-      title: 'Focus Session',
-      description: 'Enhance concentration',
+      title: 'Deep Focus',
+      description: 'Enhanced concentration',
       icon: <Flame className="h-4 w-4" />,
       action: () => navigate('/meditate?tab=deep'),
       premium: false

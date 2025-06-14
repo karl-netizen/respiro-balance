@@ -1,8 +1,8 @@
 
 import React from 'react';
-import { SessionLibrary } from '@/components/meditation/enhanced/SessionLibrary';
-import { ResumeTab } from '@/components/meditation/enhanced/ResumeTab';
-import { PlayerTab } from '@/components/meditation/enhanced/PlayerTab';
+import SessionLibrary from '@/components/meditation/enhanced/SessionLibrary';
+import ResumeTab from '@/components/meditation/enhanced/ResumeTab';
+import PlayerTab from '@/components/meditation/enhanced/PlayerTab';
 import { useEnhancedMeditationPage } from '@/hooks/useEnhancedMeditationPage';
 
 const EnhancedMeditationPage = () => {

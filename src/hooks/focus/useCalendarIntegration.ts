@@ -2,73 +2,86 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 
-interface CalendarEvent {
+export interface CalendarConnection {
   id: string;
-  title: string;
-  start: string;
-  end: string;
-  location?: string;
-  attendees?: string[];
+  provider: 'google' | 'outlook';
+  connected: boolean;
+  email?: string;
+  lastSync?: Date;
 }
 
-interface CalendarConnection {
+export interface CalendarEvent {
   id: string;
-  provider: string;
-  connected: boolean;
-  lastSync: string;
+  title: string;
+  start: Date;
+  end: Date;
+  location?: string;
+  description?: string;
 }
 
 export const useCalendarIntegration = () => {
   const { user } = useAuth();
-  const [connections, setConnections] = useState<CalendarConnection[]>([]);
+  const [connections, setConnections] = useState<CalendarConnection[]>([
+    { id: 'google', provider: 'google', connected: false },
+    { id: 'outlook', provider: 'outlook', connected: false }
+  ]);
   const [upcomingEvents, setUpcomingEvents] = useState<CalendarEvent[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (user) {
-      loadConnections();
+      loadCalendarConnections();
       loadUpcomingEvents();
     }
   }, [user]);
 
-  const loadConnections = async () => {
-    try {
-      // Mock connections for demo
-      const mockConnections: CalendarConnection[] = [
-        {
-          id: '1',
-          provider: 'google',
-          connected: false,
-          lastSync: new Date().toISOString()
-        }
-      ];
-      setConnections(mockConnections);
-    } catch (error) {
-      console.error('Error loading calendar connections:', error);
-    }
+  const loadCalendarConnections = async () => {
+    // Mock implementation - in real app, this would check actual connections
+    const mockConnections: CalendarConnection[] = [
+      { 
+        id: 'google', 
+        provider: 'google', 
+        connected: false,
+        email: user?.email,
+        lastSync: new Date()
+      },
+      { 
+        id: 'outlook', 
+        provider: 'outlook', 
+        connected: false 
+      }
+    ];
+    
+    setConnections(mockConnections);
   };
 
   const loadUpcomingEvents = async () => {
     setIsLoading(true);
     try {
-      // Mock upcoming events for demo
+      // Mock upcoming events
       const mockEvents: CalendarEvent[] = [
         {
           id: '1',
           title: 'Team Standup',
-          start: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(), // 2 hours from now
-          end: new Date(Date.now() + 2.5 * 60 * 60 * 1000).toISOString(),
-          attendees: ['team@company.com']
+          start: new Date(Date.now() + 2 * 60 * 60 * 1000), // 2 hours from now
+          end: new Date(Date.now() + 2.5 * 60 * 60 * 1000),
+          location: 'Conference Room A'
         },
         {
           id: '2',
           title: 'Project Review',
-          start: new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString(), // 4 hours from now
-          end: new Date(Date.now() + 5 * 60 * 60 * 1000).toISOString(),
-          location: 'Conference Room A'
+          start: new Date(Date.now() + 4 * 60 * 60 * 1000), // 4 hours from now
+          end: new Date(Date.now() + 5 * 60 * 60 * 1000),
+          description: 'Quarterly project review meeting'
+        },
+        {
+          id: '3',
+          title: 'Client Call',
+          start: new Date(Date.now() + 6 * 60 * 60 * 1000), // 6 hours from now
+          end: new Date(Date.now() + 7 * 60 * 60 * 1000)
         }
       ];
-
+      
       setUpcomingEvents(mockEvents);
     } catch (error) {
       console.error('Error loading calendar events:', error);
@@ -77,24 +90,23 @@ export const useCalendarIntegration = () => {
     }
   };
 
-  const connectCalendar = async (provider: 'google' | 'outlook') => {
+  const connectCalendar = async (provider: 'google' | 'outlook'): Promise<boolean> => {
     try {
-      // Mock successful connection
+      // Mock implementation - in real app, this would initiate OAuth flow
       console.log(`Connecting to ${provider} calendar...`);
       
-      const newConnection: CalendarConnection = {
-        id: Date.now().toString(),
-        provider,
-        connected: true,
-        lastSync: new Date().toISOString()
-      };
-
+      // Simulate connection process
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
       setConnections(prev => prev.map(conn => 
-        conn.provider === provider ? newConnection : conn
+        conn.provider === provider 
+          ? { ...conn, connected: true, lastSync: new Date() }
+          : conn
       ));
+      
       return true;
     } catch (error) {
-      console.error(`Error connecting to ${provider}:`, error);
+      console.error(`Error connecting to ${provider} calendar:`, error);
       return false;
     }
   };
@@ -103,7 +115,7 @@ export const useCalendarIntegration = () => {
     try {
       setConnections(prev => prev.map(conn => 
         conn.id === connectionId 
-          ? { ...conn, connected: false, lastSync: new Date().toISOString() }
+          ? { ...conn, connected: false, lastSync: undefined }
           : conn
       ));
     } catch (error) {
@@ -112,24 +124,24 @@ export const useCalendarIntegration = () => {
   };
 
   const scheduleFocusSession = async (
-    title: string,
-    startTime: Date,
-    duration: number
-  ) => {
+    title: string, 
+    startTime: Date, 
+    durationMinutes: number
+  ): Promise<string | null> => {
     try {
-      // Mock scheduling focus session
-      console.log('Scheduling focus session:', { title, startTime, duration });
-      
-      const endTime = new Date(startTime.getTime() + duration * 60 * 1000);
+      // Mock implementation - in real app, this would create calendar event
+      const endTime = new Date(startTime.getTime() + durationMinutes * 60 * 1000);
       
       const newEvent: CalendarEvent = {
-        id: Date.now().toString(),
+        id: `focus-${Date.now()}`,
         title,
-        start: startTime.toISOString(),
-        end: endTime.toISOString()
+        start: startTime,
+        end: endTime,
+        description: `Focus session - ${durationMinutes} minutes of deep work`
       };
-
-      setUpcomingEvents(prev => [...prev, newEvent]);
+      
+      setUpcomingEvents(prev => [...prev, newEvent].sort((a, b) => a.start.getTime() - b.start.getTime()));
+      
       return newEvent.id;
     } catch (error) {
       console.error('Error scheduling focus session:', error);
@@ -137,38 +149,39 @@ export const useCalendarIntegration = () => {
     }
   };
 
-  const findAvailableSlots = (
-    date: Date,
-    duration: number,
-    workingHours: { start: number; end: number } = { start: 9, end: 17 }
-  ) => {
-    const availableSlots: Date[] = [];
-    const dayEvents = upcomingEvents.filter(event => {
-      const eventDate = new Date(event.start);
-      return eventDate.toDateString() === date.toDateString();
-    });
-
-    // Generate potential slots every 30 minutes during working hours
-    for (let hour = workingHours.start; hour < workingHours.end; hour++) {
-      for (let minute = 0; minute < 60; minute += 30) {
-        const slotStart = new Date(date);
-        slotStart.setHours(hour, minute, 0, 0);
-        const slotEnd = new Date(slotStart.getTime() + duration * 60 * 1000);
-
-        // Check if slot conflicts with existing events
-        const hasConflict = dayEvents.some(event => {
-          const eventStart = new Date(event.start);
-          const eventEnd = new Date(event.end);
-          return (slotStart < eventEnd && slotEnd > eventStart);
-        });
-
-        if (!hasConflict && slotEnd.getHours() <= workingHours.end) {
-          availableSlots.push(slotStart);
-        }
+  const findAvailableSlots = (date: Date, durationMinutes: number): Date[] => {
+    const startOfDay = new Date(date);
+    startOfDay.setHours(9, 0, 0, 0); // Start at 9 AM
+    
+    const endOfDay = new Date(date);
+    endOfDay.setHours(17, 0, 0, 0); // End at 5 PM
+    
+    const slots: Date[] = [];
+    const eventsForDay = upcomingEvents.filter(event => 
+      event.start.toDateString() === date.toDateString()
+    );
+    
+    // Generate 30-minute slots throughout the day
+    let currentTime = new Date(startOfDay);
+    while (currentTime < endOfDay) {
+      const slotEnd = new Date(currentTime.getTime() + durationMinutes * 60 * 1000);
+      
+      // Check if this slot conflicts with any existing events
+      const hasConflict = eventsForDay.some(event => 
+        (currentTime >= event.start && currentTime < event.end) ||
+        (slotEnd > event.start && slotEnd <= event.end) ||
+        (currentTime <= event.start && slotEnd >= event.end)
+      );
+      
+      if (!hasConflict) {
+        slots.push(new Date(currentTime));
       }
+      
+      // Move to next 30-minute slot
+      currentTime.setMinutes(currentTime.getMinutes() + 30);
     }
-
-    return availableSlots;
+    
+    return slots;
   };
 
   return {
@@ -179,9 +192,6 @@ export const useCalendarIntegration = () => {
     disconnectCalendar,
     scheduleFocusSession,
     findAvailableSlots,
-    refetch: () => {
-      loadConnections();
-      loadUpcomingEvents();
-    }
+    refreshEvents: loadUpcomingEvents
   };
 };
