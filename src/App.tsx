@@ -25,6 +25,7 @@ import MorningRitual from './pages/MorningRitual';
 import AccountPage from './pages/AccountPage';
 import AppSettings from './pages/AppSettings';
 import Index from './pages/Index';
+import LandingPage from './pages/LandingPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -49,6 +50,7 @@ function App() {
                 <Toaster />
                 <Routes>
                   <Route path="/" element={<Index />} />
+                  <Route path="/landing" element={<LandingPage />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
                   <Route path="/forgot-password" element={<ForgotPassword />} />

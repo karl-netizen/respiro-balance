@@ -14,7 +14,7 @@ import { Separator } from '@/components/ui/separator';
 import { Palette, Brain, Clock, Calendar, RotateCcw, Moon, Sun, Monitor } from 'lucide-react';
 
 type Theme = 'light' | 'dark' | 'system';
-type WorkDay = 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday';
+type WorkDay = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
 type MeditationExperience = 'beginner' | 'intermediate' | 'advanced';
 type StressLevel = 'low' | 'moderate' | 'high';
 
@@ -22,9 +22,17 @@ const AccountPreferencesSettings = () => {
   const { preferences, updatePreferences, resetPreferences } = useUserPreferences();
   
   // Local state for work days
-  const [workDays, setWorkDays] = useState<WorkDay[]>(preferences.workDays as WorkDay[] || ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']);
+  const [workDays, setWorkDays] = useState<WorkDay[]>(preferences.work_days as WorkDay[] || ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']);
   
-  const daysOfWeek: WorkDay[] = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const daysOfWeek: { key: WorkDay; label: string }[] = [
+    { key: 'monday', label: 'Mon' },
+    { key: 'tuesday', label: 'Tue' },
+    { key: 'wednesday', label: 'Wed' },
+    { key: 'thursday', label: 'Thu' },
+    { key: 'friday', label: 'Fri' },
+    { key: 'saturday', label: 'Sat' },
+    { key: 'sunday', label: 'Sun' }
+  ];
 
   const handleThemeChange = (theme: Theme) => {
     updatePreferences({ theme });
@@ -36,7 +44,7 @@ const AccountPreferencesSettings = () => {
       ? workDays.filter(d => d !== day)
       : [...workDays, day];
     setWorkDays(newWorkDays);
-    updatePreferences({ workDays: newWorkDays });
+    updatePreferences({ work_days: newWorkDays });
   };
 
   const handleTimeChange = (field: string, value: string) => {
@@ -145,8 +153,8 @@ const AccountPreferencesSettings = () => {
             <div>
               <Label>Experience Level</Label>
               <Select
-                value={preferences.meditationExperience || 'beginner'}
-                onValueChange={(value: MeditationExperience) => updatePreferences({ meditationExperience: value })}
+                value={preferences.meditation_experience || 'beginner'}
+                onValueChange={(value: MeditationExperience) => updatePreferences({ meditation_experience: value })}
               >
                 <SelectTrigger className="mt-2">
                   <SelectValue />
@@ -162,8 +170,8 @@ const AccountPreferencesSettings = () => {
             <div>
               <Label>Stress Level</Label>
               <Select
-                value={preferences.stressLevel || 'moderate'}
-                onValueChange={(value: StressLevel) => updatePreferences({ stressLevel: value })}
+                value={preferences.stress_level || 'moderate'}
+                onValueChange={(value: StressLevel) => updatePreferences({ stress_level: value })}
               >
                 <SelectTrigger className="mt-2">
                   <SelectValue />
@@ -180,11 +188,11 @@ const AccountPreferencesSettings = () => {
           <div>
             <Label>Default Session Duration</Label>
             <p className="text-sm text-muted-foreground mb-4">
-              Current: {preferences.preferredSessionDuration || 10} minutes
+              Current: {preferences.preferred_session_duration || 10} minutes
             </p>
             <Slider
-              value={[preferences.preferredSessionDuration || 10]}
-              onValueChange={(value) => updatePreferences({ preferredSessionDuration: value[0] })}
+              value={[preferences.preferred_session_duration || 10]}
+              onValueChange={(value) => updatePreferences({ preferred_session_duration: value[0] })}
               max={60}
               min={3}
               step={1}
@@ -218,14 +226,14 @@ const AccountPreferencesSettings = () => {
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {daysOfWeek.map((day) => (
-                <div key={day} className="flex items-center space-x-2">
+                <div key={day.key} className="flex items-center space-x-2">
                   <Checkbox
-                    id={day}
-                    checked={workDays.includes(day)}
-                    onCheckedChange={() => handleWorkDayToggle(day)}
+                    id={day.key}
+                    checked={workDays.includes(day.key)}
+                    onCheckedChange={() => handleWorkDayToggle(day.key)}
                   />
-                  <Label htmlFor={day} className="text-sm">
-                    {day.slice(0, 3)}
+                  <Label htmlFor={day.key} className="text-sm">
+                    {day.label}
                   </Label>
                 </div>
               ))}
@@ -239,8 +247,8 @@ const AccountPreferencesSettings = () => {
               <Label>Work Start Time</Label>
               <Input
                 type="time"
-                value={preferences.workStartTime || '09:00'}
-                onChange={(e) => handleTimeChange('workStartTime', e.target.value)}
+                value={preferences.work_start_time || '09:00'}
+                onChange={(e) => handleTimeChange('work_start_time', e.target.value)}
                 className="mt-2"
               />
             </div>
@@ -248,8 +256,8 @@ const AccountPreferencesSettings = () => {
               <Label>Work End Time</Label>
               <Input
                 type="time"
-                value={preferences.workEndTime || '17:00'}
-                onChange={(e) => handleTimeChange('workEndTime', e.target.value)}
+                value={preferences.work_end_time || '17:00'}
+                onChange={(e) => handleTimeChange('work_end_time', e.target.value)}
                 className="mt-2"
               />
             </div>
@@ -260,15 +268,15 @@ const AccountPreferencesSettings = () => {
               <div className="flex items-center justify-between mb-2">
                 <Label>Lunch Break</Label>
                 <Switch
-                  checked={preferences.lunchBreak !== false}
-                  onCheckedChange={(checked) => updatePreferences({ lunchBreak: checked })}
+                  checked={preferences.lunch_break !== false}
+                  onCheckedChange={(checked) => updatePreferences({ lunch_break: checked })}
                 />
               </div>
-              {preferences.lunchBreak !== false && (
+              {preferences.lunch_break !== false && (
                 <Input
                   type="time"
-                  value={preferences.lunchTime || '12:00'}
-                  onChange={(e) => handleTimeChange('lunchTime', e.target.value)}
+                  value={preferences.lunch_time || '12:00'}
+                  onChange={(e) => handleTimeChange('lunch_time', e.target.value)}
                   className="mt-2"
                 />
               )}
@@ -277,15 +285,15 @@ const AccountPreferencesSettings = () => {
               <div className="flex items-center justify-between mb-2">
                 <Label>Morning Exercise</Label>
                 <Switch
-                  checked={preferences.morningExercise || false}
-                  onCheckedChange={(checked) => updatePreferences({ morningExercise: checked })}
+                  checked={preferences.morning_exercise || false}
+                  onCheckedChange={(checked) => updatePreferences({ morning_exercise: checked })}
                 />
               </div>
-              {preferences.morningExercise && (
+              {preferences.morning_exercise && (
                 <Input
                   type="time"
-                  value={preferences.exerciseTime || '07:00'}
-                  onChange={(e) => handleTimeChange('exerciseTime', e.target.value)}
+                  value={preferences.exercise_time || '07:00'}
+                  onChange={(e) => handleTimeChange('exercise_time', e.target.value)}
                   className="mt-2"
                 />
               )}
@@ -296,8 +304,8 @@ const AccountPreferencesSettings = () => {
             <Label>Bedtime</Label>
             <Input
               type="time"
-              value={preferences.bedTime || '22:00'}
-              onChange={(e) => handleTimeChange('bedTime', e.target.value)}
+              value={preferences.bed_time || '22:00'}
+              onChange={(e) => handleTimeChange('bed_time', e.target.value)}
               className="mt-2"
             />
             <p className="text-sm text-muted-foreground mt-1">
@@ -322,10 +330,10 @@ const AccountPreferencesSettings = () => {
           <div className="flex items-center justify-between">
             <div>
               <div className="font-medium">
-                Onboarding Status: {preferences.hasCompletedOnboarding ? 'Completed' : 'Incomplete'}
+                Onboarding Status: {preferences.has_completed_onboarding ? 'Completed' : 'Incomplete'}
               </div>
               <p className="text-sm text-muted-foreground">
-                {preferences.hasCompletedOnboarding 
+                {preferences.has_completed_onboarding 
                   ? 'You have completed the initial setup process'
                   : 'Complete onboarding to get personalized recommendations'
                 }
@@ -333,8 +341,8 @@ const AccountPreferencesSettings = () => {
             </div>
             <Button
               variant="outline"
-              onClick={() => updatePreferences({ hasCompletedOnboarding: false })}
-              disabled={!preferences.hasCompletedOnboarding}
+              onClick={() => updatePreferences({ has_completed_onboarding: false })}
+              disabled={!preferences.has_completed_onboarding}
             >
               Restart Onboarding
             </Button>

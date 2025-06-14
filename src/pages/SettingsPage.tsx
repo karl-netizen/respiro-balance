@@ -1,64 +1,73 @@
-import React from 'react';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+
+import React, { useState } from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import AccountGeneralSettings from '@/components/settings/AccountGeneralSettings';
-import AccountNotificationSettings from '@/components/settings/AccountNotificationSettings';
 import AccountPreferencesSettings from '@/components/settings/AccountPreferencesSettings';
+import AccountNotificationSettings from '@/components/settings/AccountNotificationSettings';
 import AccountSecuritySettings from '@/components/settings/AccountSecuritySettings';
 import AccountSubscriptionSettings from '@/components/settings/AccountSubscriptionSettings';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useUserPreferences } from '@/context';
-import { SubscriptionStatus } from '@/components/subscription/SubscriptionStatus';
+import { User, Settings, Bell, Shield, Crown } from 'lucide-react';
 
-const SettingsPage: React.FC = () => {
-  const { preferences } = useUserPreferences();
-  
-  // Fixed to use includes for subscription tier check
-  const isPremiumOrEnterprise = ["premium", "enterprise"].includes(preferences.subscriptionTier);
-  const subscriptionTier = preferences.subscriptionTier || 'free';
+const SettingsPage = () => {
+  const [activeTab, setActiveTab] = useState('general');
 
   return (
-    <>
-      <Header />
-      <main className="container mx-auto py-8 px-4 max-w-4xl">
-        <h1 className="text-3xl font-semibold mb-6">Account Settings</h1>
-        
-        <Tabs defaultValue="general" className="space-y-6">
+    <div className="min-h-screen bg-background">
+      <div className="container max-w-6xl mx-auto py-8 px-4">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold">Account Settings</h1>
+          <p className="text-muted-foreground mt-2">
+            Manage your account preferences, security, and subscription settings.
+          </p>
+        </div>
+
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="general">General</TabsTrigger>
-            <TabsTrigger value="preferences">Preferences</TabsTrigger>
-            <TabsTrigger value="notifications">Notifications</TabsTrigger>
-            <TabsTrigger value="security">Security</TabsTrigger>
-            <TabsTrigger value="subscription">Subscription</TabsTrigger>
+            <TabsTrigger value="general" className="flex items-center gap-2">
+              <User className="h-4 w-4" />
+              General
+            </TabsTrigger>
+            <TabsTrigger value="preferences" className="flex items-center gap-2">
+              <Settings className="h-4 w-4" />
+              Preferences
+            </TabsTrigger>
+            <TabsTrigger value="notifications" className="flex items-center gap-2">
+              <Bell className="h-4 w-4" />
+              Notifications
+            </TabsTrigger>
+            <TabsTrigger value="security" className="flex items-center gap-2">
+              <Shield className="h-4 w-4" />
+              Security
+            </TabsTrigger>
+            <TabsTrigger value="subscription" className="flex items-center gap-2">
+              <Crown className="h-4 w-4" />
+              Subscription
+            </TabsTrigger>
           </TabsList>
-          
-          <TabsContent value="general" className="space-y-4">
+
+          <TabsContent value="general">
             <AccountGeneralSettings />
           </TabsContent>
-          
-          <TabsContent value="preferences" className="space-y-4">
+
+          <TabsContent value="preferences">
             <AccountPreferencesSettings />
           </TabsContent>
-          
-          <TabsContent value="notifications" className="space-y-4">
+
+          <TabsContent value="notifications">
             <AccountNotificationSettings />
           </TabsContent>
-          
-          <TabsContent value="security" className="space-y-4">
+
+          <TabsContent value="security">
             <AccountSecuritySettings />
           </TabsContent>
-          
-          <TabsContent value="subscription" className="space-y-4">
-            <SubscriptionStatus />
-            <AccountSubscriptionSettings 
-              subscriptionTier={subscriptionTier}
-              isPremium={isPremiumOrEnterprise}
-            />
+
+          <TabsContent value="subscription">
+            <AccountSubscriptionSettings />
           </TabsContent>
         </Tabs>
-      </main>
-      <Footer />
-    </>
+      </div>
+    </div>
   );
 };
 

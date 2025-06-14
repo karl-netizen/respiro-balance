@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -29,12 +28,16 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 const AccountSubscriptionSettings = () => {
   const { 
     isPremium, 
-    tierName, 
-    meditationMinutesUsed, 
-    meditationMinutesLimit, 
-    focusSessionsUsed, 
-    focusSessionsLimit 
+    tierName
   } = useSubscriptionContext();
+
+  // Mock usage data since it's not available in the subscription context
+  const mockUsageData = {
+    meditationMinutesUsed: 45,
+    meditationMinutesLimit: 60,
+    focusSessionsUsed: 8,
+    focusSessionsLimit: 10
+  };
 
   // Mock subscription data - in real implementation, this would come from Stripe/payment provider
   const subscriptionData = {
@@ -60,12 +63,12 @@ const AccountSubscriptionSettings = () => {
   const [autoRenewal, setAutoRenewal] = useState(true);
 
   // Calculate usage percentages
-  const meditationUsagePercent = meditationMinutesLimit > 0 
-    ? Math.round((meditationMinutesUsed / meditationMinutesLimit) * 100)
+  const meditationUsagePercent = mockUsageData.meditationMinutesLimit > 0 
+    ? Math.round((mockUsageData.meditationMinutesUsed / mockUsageData.meditationMinutesLimit) * 100)
     : 0;
   
-  const focusUsagePercent = focusSessionsLimit > 0 
-    ? Math.round((focusSessionsUsed / focusSessionsLimit) * 100)
+  const focusUsagePercent = mockUsageData.focusSessionsLimit > 0 
+    ? Math.round((mockUsageData.focusSessionsUsed / mockUsageData.focusSessionsLimit) * 100)
     : 0;
 
   const getUsageColor = (percent: number) => {
@@ -189,7 +192,7 @@ const AccountSubscriptionSettings = () => {
               <div className="flex items-center justify-between mb-2">
                 <Label>Meditation Minutes</Label>
                 <span className={`text-sm font-medium ${getUsageColor(meditationUsagePercent)}`}>
-                  {meditationMinutesUsed} / {meditationMinutesLimit} minutes
+                  {mockUsageData.meditationMinutesUsed} / {mockUsageData.meditationMinutesLimit} minutes
                 </span>
               </div>
               <Progress 
@@ -207,7 +210,7 @@ const AccountSubscriptionSettings = () => {
               <div className="flex items-center justify-between mb-2">
                 <Label>Focus Sessions</Label>
                 <span className={`text-sm font-medium ${getUsageColor(focusUsagePercent)}`}>
-                  {focusSessionsUsed} / {focusSessionsLimit} sessions
+                  {mockUsageData.focusSessionsUsed} / {mockUsageData.focusSessionsLimit} sessions
                 </span>
               </div>
               <Progress 
