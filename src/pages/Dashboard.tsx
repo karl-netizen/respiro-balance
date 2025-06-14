@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -21,7 +22,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useMeditationStats } from '@/components/progress/useMeditationStats';
 import { useTimeAwareness } from '@/hooks/useTimeAwareness';
 import MoodTracker from '@/components/dashboard/MoodTracker';
-import SmartRecommendations from '@/components/shared/SmartRecommendations';
+import SmartRecommendations from '@/components/shared/smart-recommendations';
 import CrossModuleActions from '@/components/shared/CrossModuleActions';
 import { useRealTimeSync } from '@/hooks/useRealTimeSync';
 
