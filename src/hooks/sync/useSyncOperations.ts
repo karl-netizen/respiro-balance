@@ -7,7 +7,7 @@ export const useSyncOperations = () => {
   const { user } = useAuth();
 
   const syncSessionData = useCallback(async () => {
-    if (!user) return;
+    if (!user || !supabase) return;
     
     try {
       const { data: sessions, error } = await supabase
@@ -27,7 +27,7 @@ export const useSyncOperations = () => {
   }, [user]);
   
   const syncProgressData = useCallback(async () => {
-    if (!user) return;
+    if (!user || !supabase) return;
     
     try {
       const { data: achievements, error } = await supabase
@@ -45,7 +45,7 @@ export const useSyncOperations = () => {
   }, [user]);
   
   const syncSocialData = useCallback(async () => {
-    if (!user) return;
+    if (!user || !supabase) return;
     
     try {
       const { data: socialProfile, error } = await supabase

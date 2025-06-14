@@ -26,8 +26,14 @@ export const useRealTimeSync = (config: RealTimeSyncConfig = {}) => {
   };
   
   const updateContextAnalysis = useCallback(() => {
-    const sessions = JSON.parse(sessionStorage.getItem('recentSessions') || '[]');
-    contextAnalysisEngine.updateContext(preferences, biometricData, sessions);
+    if (!preferences || !biometricData) return;
+    
+    try {
+      const sessions = JSON.parse(sessionStorage.getItem('recentSessions') || '[]');
+      contextAnalysisEngine.updateContext(preferences, biometricData, sessions);
+    } catch (error) {
+      console.error('Context analysis update failed:', error);
+    }
   }, [preferences, biometricData]);
   
   const syncData = useCallback(async () => {
@@ -36,7 +42,7 @@ export const useRealTimeSync = (config: RealTimeSyncConfig = {}) => {
     try {
       const promises = [];
       
-      if (defaultConfig.enableBiometricSync) {
+      if (defaultConfig.enableBiometricSync && refreshBiometricData) {
         promises.push(refreshBiometricData());
       }
       
@@ -63,19 +69,26 @@ export const useRealTimeSync = (config: RealTimeSyncConfig = {}) => {
   useEffect(() => {
     if (!user) return;
     
+    // Initial sync
     syncData();
     
+    // Setup interval sync
     if (defaultConfig.syncInterval) {
       syncIntervalRef.current = setInterval(syncData, defaultConfig.syncInterval);
     }
     
-    setupSubscriptions();
+    // Setup realtime subscriptions
+    if (setupSubscriptions) {
+      setupSubscriptions();
+    }
     
     return () => {
       if (syncIntervalRef.current) {
         clearInterval(syncIntervalRef.current);
       }
-      cleanup();
+      if (cleanup) {
+        cleanup();
+      }
     };
   }, [user, syncData, setupSubscriptions, cleanup, defaultConfig.syncInterval]);
   
