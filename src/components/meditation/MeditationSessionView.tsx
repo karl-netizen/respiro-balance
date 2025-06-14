@@ -20,7 +20,7 @@ const MeditationSessionView: React.FC<MeditationSessionViewProps> = ({
 }) => {
   const { sessionId: urlSessionId } = useParams<{ sessionId: string }>();
   const navigate = useNavigate();
-  const { isPremium, tier, minutesUsed, minutesLimit, hasExceededUsageLimit } = useSubscription();
+  const { isPremium, subscription } = useSubscription();
   
   const sessionId = propSessionId || urlSessionId;
   const [isPlaying, setIsPlaying] = useState(false);
@@ -42,15 +42,12 @@ const MeditationSessionView: React.FC<MeditationSessionViewProps> = ({
 
   const progress = session.duration > 0 ? (currentTime / (session.duration * 60)) * 100 : 0;
 
-  // Check if user has access to this session
-  const hasAccess = isPremium || !session.isPremium || !hasExceededUsageLimit;
+  // Check if user has access to this session - simplified access check
+  const hasAccess = isPremium || !session.isPremium;
 
   const getAccessMessage = () => {
     if (session.isPremium && !isPremium) {
       return "This premium session requires a Premium or Premium+ subscription to access.";
-    }
-    if (hasExceededUsageLimit && !isPremium) {
-      return `You've reached your ${tier} tier limit of ${minutesLimit} minutes. Upgrade for unlimited access.`;
     }
     return null;
   };
@@ -151,11 +148,9 @@ const MeditationSessionView: React.FC<MeditationSessionViewProps> = ({
                   <p className="text-amber-800 text-sm">
                     {accessMessage}
                   </p>
-                  {hasExceededUsageLimit && (
-                    <p className="text-xs text-amber-600 mt-2">
-                      Current usage: {minutesUsed}/{minutesLimit} minutes this week
-                    </p>
-                  )}
+                  <p className="text-xs text-amber-600 mt-2">
+                    Upgrade to access unlimited premium sessions
+                  </p>
                 </div>
               </CardContent>
             </Card>
