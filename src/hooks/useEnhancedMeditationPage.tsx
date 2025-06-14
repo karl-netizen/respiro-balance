@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useMemo } from 'react';
 import { Heart, Clock, User, Sparkles, Compass, Leaf, Mountain, Sun, Moon, Star } from 'lucide-react';
 
@@ -23,6 +22,8 @@ export interface MeditationSession {
   tags: string[];
   rating: number;
   completionCount: number;
+  session_type: string;
+  level: string;
 }
 
 export interface SessionProgress {
@@ -63,7 +64,9 @@ export const useEnhancedMeditationPage = () => {
       description: 'Start your day with clarity and intention through gentle mindfulness practices.',
       tags: ['morning', 'mindfulness', 'beginner'],
       rating: 4.8,
-      completionCount: 1250
+      completionCount: 1250,
+      session_type: 'guided',
+      level: 'beginner'
     },
     {
       id: '2',
@@ -75,7 +78,9 @@ export const useEnhancedMeditationPage = () => {
       description: 'Release tension and stress with this comprehensive relaxation meditation.',
       tags: ['relaxation', 'stress-relief', 'body-scan'],
       rating: 4.9,
-      completionCount: 980
+      completionCount: 980,
+      session_type: 'guided',
+      level: 'intermediate'
     },
     {
       id: '3',
@@ -87,7 +92,9 @@ export const useEnhancedMeditationPage = () => {
       description: 'Cultivate compassion and loving-kindness for yourself and others.',
       tags: ['compassion', 'loving-kindness', 'heart'],
       rating: 4.7,
-      completionCount: 750
+      completionCount: 750,
+      session_type: 'guided',
+      level: 'beginner'
     },
     {
       id: '4',
@@ -99,7 +106,9 @@ export const useEnhancedMeditationPage = () => {
       description: 'Sharpen your mental focus and concentration with advanced techniques.',
       tags: ['focus', 'concentration', 'advanced'],
       rating: 4.6,
-      completionCount: 620
+      completionCount: 620,
+      session_type: 'guided',
+      level: 'advanced'
     },
     {
       id: '5',
@@ -111,7 +120,9 @@ export const useEnhancedMeditationPage = () => {
       description: 'Prepare your mind and body for restful, rejuvenating sleep.',
       tags: ['sleep', 'bedtime', 'relaxation'],
       rating: 4.8,
-      completionCount: 1100
+      completionCount: 1100,
+      session_type: 'guided',
+      level: 'beginner'
     }
   ];
 

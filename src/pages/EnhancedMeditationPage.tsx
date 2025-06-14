@@ -46,7 +46,7 @@ const EnhancedMeditationPage = () => {
       case 'library':
         return (
           <SessionLibrary
-            sessions={sessions}
+            sessions={filteredSessions}
             filteredSessions={filteredSessions}
             filters={filters}
             setFilters={setFilters}
@@ -54,8 +54,8 @@ const EnhancedMeditationPage = () => {
             setSortBy={setSortBy}
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
-            favorites={favorites}
-            toggleFavorite={toggleFavorite}
+            favorites={Array.from(favorites)}
+            toggleFavorite={(session) => toggleFavorite(session.id)}
             viewMode={viewMode}
             setViewMode={setViewMode}
             onSessionSelect={handleSessionSelect}
@@ -67,15 +67,9 @@ const EnhancedMeditationPage = () => {
       case 'resume':
         return (
           <ResumeTab
-            recentSessions={recentSessions}
-            completedSessions={completedSessions}
-            favoritesList={favoritesList}
-            progress={progress}
+            sessions={sessions}
             onSessionSelect={handleSessionSelect}
-            onSessionComplete={handleSessionComplete}
-            onSessionResume={handleSessionResume}
             formatTime={formatTime}
-            getProgressColor={getProgressColor}
             getDifficultyColor={getDifficultyColor}
             getCategoryIcon={getCategoryIcon}
           />
