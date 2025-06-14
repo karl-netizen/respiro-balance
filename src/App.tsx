@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -62,6 +61,7 @@ function App() {
                   <Route path="/app-settings" element={<AppSettings />} />
                   <Route path="/subscription" element={<SubscriptionPage />} />
                   <Route path="/meditation" element={<MeditationPage />} />
+                  <Route path="/meditation/enhanced" element={<EnhancedMeditationPage />} />
                   <Route path="/meditation/advanced" element={<MeditateAdvanced />} />
                   <Route path="/meditation/audio-management" element={<MeditationAudioManagement />} />
                   <Route path="/breathing" element={<BreathingExercisesPage />} />
