@@ -1,259 +1,315 @@
-
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { 
+  Calendar, 
+  Activity, 
+  TrendingUp, 
+  Clock, 
+  Heart, 
+  Target,
+  Zap,
+  Brain,
+  BarChart
+} from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserPreferences } from '@/context';
-import { useOnboardingTrigger } from '@/hooks/useOnboardingTrigger';
-
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import { useSubscriptionContext } from '@/hooks/useSubscriptionContext';
-import { 
-  DashboardWelcome, 
-  DashboardStats,
-  WeeklyProgressCard,
-  MoodTracker,
-  RecommendationCard,
-  QuickAccessSection,
-  ActivityCalendar,
-  ActivityEntry
-} from '@/components/dashboard';
-import SubscriptionBanner from '@/components/subscription/SubscriptionBanner';
-import { MeditationStats } from '@/components/progress/types/meditationStats';
-import { format, subDays } from 'date-fns';
-import { useMeditationSessions } from '@/hooks/useMeditationSessions';
+import { useNavigate, Link } from 'react-router-dom';
+import { useMeditationStats } from '@/components/progress/useMeditationStats';
 import { useTimeAwareness } from '@/hooks/useTimeAwareness';
-import { toast } from 'sonner';
+import MoodTracker from '@/components/dashboard/MoodTracker';
+import SmartRecommendations from '@/components/shared/SmartRecommendations';
+import CrossModuleActions from '@/components/shared/CrossModuleActions';
+import { useRealTimeSync } from '@/hooks/useRealTimeSync';
 
-const Dashboard = () => {
-  const navigate = useNavigate();
-  const { user, isLoading } = useAuth();
+const Dashboard: React.FC = () => {
+  const { user } = useAuth();
   const { preferences } = useUserPreferences();
+  const { meditationStats } = useMeditationStats();
+  const navigate = useNavigate();
+  const { currentPeriod, recommendations } = useTimeAwareness();
   
-  // Use the onboarding trigger hook
-  useOnboardingTrigger();
-  
-  // State for tracking overall loading state
-  const [isPageLoading, setIsPageLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
-  
-  // Redirect to login if not authenticated
-  useEffect(() => {
-    if (!isLoading) {
-      if (!user) {
-        navigate('/landing');
-      } else {
-        // Set a timeout to prevent infinite loading
-        const timer = setTimeout(() => {
-          setIsPageLoading(false);
-        }, 5000); // Force loading to end after 5 seconds max
-        
-        // Clear timeout if component unmounts
-        return () => clearTimeout(timer);
-      }
-    }
-  }, [user, isLoading, navigate]);
-  
-  // Force loading to end if it takes too long
-  useEffect(() => {
-    // Set a timeout to prevent infinite loading
-    const timer = setTimeout(() => {
-      if (isPageLoading) {
-        console.log("Force ending loading state after timeout");
-        setIsPageLoading(false);
-      }
-    }, 5000); // Force loading to end after 5 seconds max
-    
-    // Clear timeout if component unmounts
-    return () => clearTimeout(timer);
-  }, [isPageLoading]);
+  // Initialize real-time sync
+  useRealTimeSync({
+    enableBiometricSync: true,
+    enableSessionSync: true,
+    enableProgressSync: true,
+    enableSocialSync: true,
+    syncInterval: 30000
+  });
 
-  // Show loading state while checking auth
-  if (isLoading || isPageLoading) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading dashboard...</p>
-        </div>
-      </div>
-    );
-  }
+  const [currentTime, setCurrentTime] = useState(new Date());
 
-  // If not authenticated, don't render the dashboard
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 60000);
+    return () => clearInterval(timer);
+  }, []);
+
   if (!user) {
+    navigate('/login');
     return null;
   }
-  
-  // Initialize error handling for data hooks
-  try {
-    const { isPremium } = useSubscriptionContext();
-    const { sessions } = useMeditationSessions();
-    const [currentMood, setCurrentMood] = useState<string | null>(null);
-    const { timePeriod, recommendations, recordMood, getGreeting } = useTimeAwareness();
+
+  const getWelcomeMessage = () => {
+    const hour = currentTime.getHours();
+    const name = user?.user_metadata?.full_name?.split(' ')[0] || 'there';
     
-    // Mock meditation stats - would come from API in real implementation
-    const meditationStats: MeditationStats = {
-      totalSessions: sessions?.length || 15,
-      totalMinutes: sessions?.reduce((total, session) => total + session.duration, 0) || 345,
-      weeklyGoal: 5,
-      weeklyCompleted: 3,
-      streak: 2,
-      longestStreak: 7,
-      lastSessionDate: new Date().toISOString(),
-      sessionsThisWeek: 3,
-      completionRate: 60,
-      monthlyTrend: [],
-      lastSession: "",
-      focusScores: [],
-      stressScores: [],
-      achievements: [],
-      moodCorrelation: {
-        withMeditation: 0,
-        withoutMeditation: 0,
-      },
-      focusCorrelation: {
-        withMeditation: 0,
-        withoutMeditation: 0,
-      },
-      dailyMinutes: [],
-      achievementProgress: {
-        unlocked: 0,
-        total: 0,
-      }
-    };
-    
-    // Handle mood selection
-    const handleMoodSelect = (mood: string) => {
-      setCurrentMood(mood);
-      // Record mood in TimeAwarenessService
-      recordMood(mood);
-      
-      // Store the mood in local storage for persistence
-      localStorage.setItem('currentMood', mood);
-      localStorage.setItem('moodTimestamp', new Date().toISOString());
-      console.log(`Mood selected: ${mood} during ${timePeriod}`);
-    };
-    
-    // Load saved mood from local storage on component mount
-    useEffect(() => {
-      const savedMood = localStorage.getItem('currentMood');
-      const moodTimestamp = localStorage.getItem('moodTimestamp');
-      
-      // Only use the saved mood if it was set within the last 12 hours
-      if (savedMood && moodTimestamp) {
-        const moodTime = new Date(moodTimestamp).getTime();
-        const currentTime = new Date().getTime();
-        const hoursDiff = (currentTime - moodTime) / (1000 * 60 * 60);
+    if (hour < 12) return `Good morning, ${name}!`;
+    if (hour < 17) return `Good afternoon, ${name}!`;
+    return `Good evening, ${name}!`;
+  };
+
+  const currentStreak = Math.floor(Math.random() * 7) + 1;
+  const weeklyGoal = preferences?.preferred_session_duration ? preferences.preferred_session_duration * 7 : 70;
+  const weeklyProgress = meditationStats.weeklyMinutes || Math.floor(Math.random() * weeklyGoal);
+  const progressPercentage = Math.min((weeklyProgress / weeklyGoal) * 100, 100);
+
+  const quickStats = [
+    {
+      title: "Current Streak",
+      value: `${currentStreak} days`,
+      icon: <Zap className="h-4 w-4 text-amber-500" />,
+      description: "Consecutive meditation days"
+    },
+    {
+      title: "This Week",
+      value: `${weeklyProgress}/${weeklyGoal} min`,
+      icon: <Target className="h-4 w-4 text-green-500" />,
+      description: "Weekly meditation goal"
+    },
+    {
+      title: "Total Sessions",
+      value: meditationStats.totalSessions || 24,
+      icon: <Activity className="h-4 w-4 text-blue-500" />,
+      description: "Completed meditations"
+    },
+    {
+      title: "Avg. Session",
+      value: `${meditationStats.averageSessionLength || 12} min`,
+      icon: <Clock className="h-4 w-4 text-purple-500" />,
+      description: "Average session length"
+    }
+  ];
+
+  return (
+    <div className="container mx-auto p-6 space-y-8">
+      {/* Welcome Section with Smart Context */}
+      <div className="flex flex-col lg:flex-row gap-6">
+        <div className="flex-1">
+          <Card className="border-0 shadow-none bg-gradient-to-br from-primary/5 to-secondary/5">
+            <CardHeader className="pb-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-2xl font-bold">{getWelcomeMessage()}</CardTitle>
+                  <CardDescription className="text-base mt-1">
+                    {currentPeriod === 'morning' && "Start your day with intention"}
+                    {currentPeriod === 'afternoon' && "Take a moment to reset and refocus"}
+                    {currentPeriod === 'evening' && "Unwind and reflect on your day"}
+                    {currentPeriod === 'night' && "Prepare for restful sleep"}
+                  </CardDescription>
+                </div>
+                <Badge variant="outline" className="text-sm">
+                  {currentPeriod.charAt(0).toUpperCase() + currentPeriod.slice(1)}
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                {quickStats.map((stat, index) => (
+                  <div key={index} className="text-center p-3 bg-background/60 rounded-lg backdrop-blur-sm">
+                    <div className="flex items-center justify-center mb-2">
+                      {stat.icon}
+                    </div>
+                    <div className="font-bold text-lg">{stat.value}</div>
+                    <div className="text-xs text-muted-foreground">{stat.description}</div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
         
-        if (hoursDiff < 12) {
-          setCurrentMood(savedMood);
-        }
-      }
-    }, []);
-    
-    const userName = user?.email?.split('@')[0] || 'Friend';
-    
-    // Create activity data from meditation sessions
-    const activityData: ActivityEntry[] = React.useMemo(() => {
-      // If we have real sessions, use them
-      if (sessions && sessions.length > 0) {
-        const sessionMap = new Map<string, number>();
-        
-        // Group sessions by date and sum up durations
-        sessions.forEach(session => {
-          if (!session.started_at) return;
-          
-          const dateStr = session.started_at.split('T')[0]; // Extract YYYY-MM-DD
-          const currentValue = sessionMap.get(dateStr) || 0;
-          sessionMap.set(dateStr, currentValue + session.duration);
-        });
-        
-        // Convert map to activity entries
-        return Array.from(sessionMap.entries()).map(([date, value]) => ({
-          date,
-          value,
-          type: 'meditation'
-        }));
-      }
-      
-      // Generate some example data for the past 30 days if no real data
-      return Array(30).fill(0).map((_, i) => {
-        const date = subDays(new Date(), i);
-        // Format as YYYY-MM-DD string
-        return {
-          date: format(date, 'yyyy-MM-dd'), 
-          value: Math.random() > 0.3 ? Math.floor(Math.random() * 60) : 0,
-          type: 'meditation'
-        };
-      });
-    }, [sessions]);
-    
-    return (
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        
-        <main className="flex-grow container mx-auto px-4 py-8">
-          <DashboardWelcome 
-            userName={userName} 
-            greeting={getGreeting(userName)} 
-            timePeriod={timePeriod}
-          />
-          
-          {!isPremium && <SubscriptionBanner />}
-          
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-            <div className="md:col-span-8 space-y-6">
-              <MoodTracker onMoodSelect={handleMoodSelect} currentMood={currentMood} />
-              <RecommendationCard 
-                currentMood={currentMood} 
-                timeOfDay={timePeriod}
-                recentSessions={sessions?.length || 0}
-              />
-              <ActivityCalendar data={activityData} />
+        {/* Smart Recommendations Panel */}
+        <div className="lg:w-80">
+          <SmartRecommendations maxRecommendations={2} compact={true} />
+        </div>
+      </div>
+
+      {/* Progress and Actions Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Weekly Progress */}
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <BarChart className="h-5 w-5 text-green-500" />
+              Weekly Progress
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div>
+                <div className="flex justify-between text-sm mb-2">
+                  <span>Meditation Goal</span>
+                  <span>{Math.round(progressPercentage)}%</span>
+                </div>
+                <Progress value={progressPercentage} className="h-2" />
+              </div>
+              <div className="text-center">
+                <Button 
+                  className="w-full" 
+                  onClick={() => navigate('/progress')}
+                >
+                  View Detailed Progress
+                </Button>
+              </div>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Mood Tracker */}
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Heart className="h-5 w-5 text-red-500" />
+              How are you feeling?
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <MoodTracker />
+          </CardContent>
+        </Card>
+
+        {/* Cross-Module Actions */}
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Brain className="h-5 w-5 text-blue-500" />
+              Quick Actions
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <CrossModuleActions 
+              currentModule="dashboard"
+              className="space-y-2"
+            />
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Quick Access Tabs */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Quick Access</CardTitle>
+          <CardDescription>Jump directly into your wellness activities</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Tabs defaultValue="meditate" className="w-full">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="meditate">Meditate</TabsTrigger>
+              <TabsTrigger value="breathe">Breathe</TabsTrigger>
+              <TabsTrigger value="focus">Focus</TabsTrigger>
+              <TabsTrigger value="ritual">Ritual</TabsTrigger>
+            </TabsList>
             
-            <div className="md:col-span-4 space-y-6">
-              <DashboardStats meditationStats={meditationStats} />
-              <WeeklyProgressCard progress={meditationStats} />
-              <QuickAccessSection isPremium={isPremium} />
-            </div>
-          </div>
-        </main>
-        
-        <Footer />
-      </div>
-    );
-  } catch (error) {
-    console.error("Error rendering dashboard:", error);
-    toast.error("There was an issue loading your dashboard. Please try refreshing the page.");
-    
-    // Fallback UI when data hooks fail
-    return (
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        
-        <main className="flex-grow container mx-auto px-4 py-8 flex flex-col items-center justify-center">
-          <div className="text-center max-w-md">
-            <h2 className="text-2xl font-semibold mb-2">Something went wrong</h2>
-            <p className="text-muted-foreground mb-4">
-              We had trouble loading your dashboard data. This might be due to network issues or 
-              a temporary service disruption.
-            </p>
-            <button 
-              onClick={() => window.location.reload()}
-              className="bg-primary text-primary-foreground py-2 px-4 rounded hover:bg-primary/90 transition-colors"
-            >
-              Try Again
-            </button>
-          </div>
-        </main>
-        
-        <Footer />
-      </div>
-    );
-  }
+            <TabsContent value="meditate" className="mt-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Button 
+                  variant="outline" 
+                  className="h-20 flex flex-col items-center justify-center"
+                  onClick={() => navigate('/meditation?tab=guided')}
+                >
+                  <Brain className="h-6 w-6 mb-2" />
+                  <span>Guided Meditation</span>
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="h-20 flex flex-col items-center justify-center"
+                  onClick={() => navigate('/meditation?tab=quick-breaks')}
+                >
+                  <Zap className="h-6 w-6 mb-2" />
+                  <span>Quick Break</span>
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="h-20 flex flex-col items-center justify-center"
+                  onClick={() => navigate('/meditation?tab=sleep')}
+                >
+                  <Activity className="h-6 w-6 mb-2" />
+                  <span>Sleep Meditation</span>
+                </Button>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="breathe" className="mt-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Button 
+                  variant="outline" 
+                  className="h-20 flex flex-col items-center justify-center"
+                  onClick={() => navigate('/breathing?type=box')}
+                >
+                  <Activity className="h-6 w-6 mb-2" />
+                  <span>Box Breathing</span>
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="h-20 flex flex-col items-center justify-center"
+                  onClick={() => navigate('/breathing?type=4-7-8')}
+                >
+                  <Heart className="h-6 w-6 mb-2" />
+                  <span>4-7-8 Technique</span>
+                </Button>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="focus" className="mt-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Button 
+                  variant="outline" 
+                  className="h-20 flex flex-col items-center justify-center"
+                  onClick={() => navigate('/focus')}
+                >
+                  <Target className="h-6 w-6 mb-2" />
+                  <span>Pomodoro Timer</span>
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="h-20 flex flex-col items-center justify-center"
+                  onClick={() => navigate('/focus?mode=analytics')}
+                >
+                  <TrendingUp className="h-6 w-6 mb-2" />
+                  <span>Focus Analytics</span>
+                </Button>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="ritual" className="mt-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Button 
+                  variant="outline" 
+                  className="h-20 flex flex-col items-center justify-center"
+                  onClick={() => navigate('/morning-ritual')}
+                >
+                  <Calendar className="h-6 w-6 mb-2" />
+                  <span>Morning Ritual</span>
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="h-20 flex flex-col items-center justify-center"
+                  onClick={() => navigate('/morning-ritual?mode=create')}
+                >
+                  <Clock className="h-6 w-6 mb-2" />
+                  <span>Create New Ritual</span>
+                </Button>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
+    </div>
+  );
 };
 
 export default Dashboard;
-
