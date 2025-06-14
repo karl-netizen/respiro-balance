@@ -1,4 +1,3 @@
-
 export interface MeditationSession {
   id: string;
   title: string;
@@ -59,3 +58,11 @@ export interface MeditationRecommendation {
   tags?: string[];
 }
 
+export interface FilterState {
+  categories: string[];
+  durations: string[];
+  levels: string[];
+  instructors: string[];
+  tags: string[];
+  searchTerm: string;
+}

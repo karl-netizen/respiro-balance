@@ -28,6 +28,7 @@ const ProfileAvatarUpload: React.FC<ProfileAvatarUploadProps> = ({
   const { user, updateProfile } = useAuth();
   const [isUploading, setIsUploading] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState(user?.user_metadata?.avatar_url || '');
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const sizeClasses = {
@@ -55,16 +56,22 @@ const ProfileAvatarUpload: React.FC<ProfileAvatarUploadProps> = ({
     setIsUploading(true);
 
     try {
-      // Create a URL for the uploaded image (in a real app, this would upload to a server)
+      // Create a URL for the uploaded image
       const objectUrl = URL.createObjectURL(file);
       setAvatarUrl(objectUrl);
       
       // Update user profile with new avatar URL
-      await updateProfile({ 
-        avatar_url: objectUrl 
-      });
+      if (updateProfile) {
+        await updateProfile({ 
+          user_metadata: {
+            ...user?.user_metadata,
+            avatar_url: objectUrl 
+          }
+        });
+      }
 
       toast.success('Profile picture updated successfully');
+      setIsDialogOpen(false);
     } catch (error) {
       console.error('Error uploading avatar:', error);
       toast.error('Failed to update profile picture');
@@ -80,8 +87,16 @@ const ProfileAvatarUpload: React.FC<ProfileAvatarUploadProps> = ({
   const removeAvatar = async () => {
     try {
       setAvatarUrl('');
-      await updateProfile({ avatar_url: '' });
+      if (updateProfile) {
+        await updateProfile({ 
+          user_metadata: {
+            ...user?.user_metadata,
+            avatar_url: '' 
+          }
+        });
+      }
       toast.success('Profile picture removed');
+      setIsDialogOpen(false);
     } catch (error) {
       console.error('Error removing avatar:', error);
       toast.error('Failed to remove profile picture');
@@ -89,6 +104,7 @@ const ProfileAvatarUpload: React.FC<ProfileAvatarUploadProps> = ({
   };
 
   const userInitials = user?.email?.charAt(0).toUpperCase() || 'U';
+  const displayAvatarUrl = avatarUrl || user?.user_metadata?.avatar_url;
 
   return (
     <div className={`relative ${className}`}>
@@ -101,11 +117,11 @@ const ProfileAvatarUpload: React.FC<ProfileAvatarUploadProps> = ({
       />
       
       {showUploadButton ? (
-        <Dialog>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <div className="relative cursor-pointer group">
               <Avatar className={`${sizeClasses[size]} ring-2 ring-background`}>
-                <AvatarImage src={avatarUrl} alt="Profile picture" />
+                <AvatarImage src={displayAvatarUrl} alt="Profile picture" />
                 <AvatarFallback className="bg-primary text-primary-foreground">
                   {userInitials}
                 </AvatarFallback>
@@ -124,7 +140,7 @@ const ProfileAvatarUpload: React.FC<ProfileAvatarUploadProps> = ({
             </DialogHeader>
             <div className="flex flex-col items-center space-y-4">
               <Avatar className="h-24 w-24">
-                <AvatarImage src={avatarUrl} alt="Profile picture" />
+                <AvatarImage src={displayAvatarUrl} alt="Profile picture" />
                 <AvatarFallback className="bg-primary text-primary-foreground text-2xl">
                   {userInitials}
                 </AvatarFallback>
@@ -140,7 +156,7 @@ const ProfileAvatarUpload: React.FC<ProfileAvatarUploadProps> = ({
                   <span>{isUploading ? 'Uploading...' : 'Upload Photo'}</span>
                 </Button>
                 
-                {avatarUrl && (
+                {displayAvatarUrl && (
                   <Button 
                     variant="outline" 
                     onClick={removeAvatar}
@@ -159,7 +175,7 @@ const ProfileAvatarUpload: React.FC<ProfileAvatarUploadProps> = ({
         </Dialog>
       ) : (
         <Avatar className={`${sizeClasses[size]} ring-2 ring-background`}>
-          <AvatarImage src={avatarUrl} alt="Profile picture" />
+          <AvatarImage src={displayAvatarUrl} alt="Profile picture" />
           <AvatarFallback className="bg-primary text-primary-foreground">
             {userInitials}
           </AvatarFallback>

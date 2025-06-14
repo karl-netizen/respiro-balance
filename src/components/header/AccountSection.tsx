@@ -18,7 +18,7 @@ import ProfileAvatarUpload from "@/components/profile/ProfileAvatarUpload";
 
 const AccountSection = () => {
   const { user, loading, signOut } = useAuth();
-  const { isPremium, tierName } = useSubscriptionContext();
+  const { isPremium } = useSubscriptionContext();
 
   // Show login/signup buttons if not logged in
   if (!user && !loading) {
@@ -49,7 +49,7 @@ const AccountSection = () => {
           size="icon"
           className="relative rounded-full focus-visible:ring-offset-0 focus-visible:ring-0 p-1"
         >
-          <ProfileAvatarUpload size="sm" showUploadButton={false} />
+          <ProfileAvatarUpload size="sm" showUploadButton={true} />
           {isPremium && (
             <div className="absolute -bottom-1 -right-1 rounded-full bg-primary w-3 h-3 border border-background flex items-center justify-center">
               <Crown className="h-2 w-2 text-background" />

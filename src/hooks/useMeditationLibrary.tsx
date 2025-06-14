@@ -1,84 +1,49 @@
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { MeditationSession } from '@/types/meditation';
 import { useMeditationSessions } from './useMeditationSessions';
 import { useMeditationFavorites } from './useMeditationFavorites';
-import { useRecentlyPlayedSessions } from './useRecentlyPlayedSessions';
-import { useMeditationRatings } from './useMeditationRatings';
-import { useMeditationFilters } from './useMeditationFilters';
-import { useMeditationAudio } from './useMeditationAudio';
-import { meditationSessions } from '@/data/meditationSessions';
 
 export const useMeditationLibrary = () => {
-  const [selectedSession, setSelectedSession] = useState<MeditationSession | null>(null);
-  const { startSession, completeSession, isStarting } = useMeditationSessions();
+  const { sessions, isLoading, error } = useMeditationSessions();
+  const { favorites, isFavorite, toggleFavorite, removeFavorites, getFavoriteSessions } = useMeditationFavorites();
   
-  // Use the smaller, focused hooks
-  const { favorites, isFavorite, handleToggleFavorite, getFavoriteSessions } = 
-    useMeditationFavorites(meditationSessions);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [selectedDuration, setSelectedDuration] = useState<string>('');
   
-  const { recentlyPlayed, addToRecentlyPlayed } = 
-    useRecentlyPlayedSessions(meditationSessions);
-  
-  const { showRatingDialog, setShowRatingDialog, handleSubmitRating } = 
-    useMeditationRatings();
-  
-  const { durationFilter, setDurationFilter,
-    filterSessionsByCategory: filterByCategory, resetFilters } = 
-    useMeditationFilters();
-    
-  // Integrate audio with meditation sessions
-  const { sessionsWithAudio, audioEnabled, audioFiles } = useMeditationAudio(meditationSessions);
-  
-  const handleSelectSession = async (session: MeditationSession) => {
-    setSelectedSession(session);
-    
-    // Add to recently played
-    addToRecentlyPlayed(session);
-    
-    // Start the session in the backend
-    await startSession({ 
-      sessionType: session.category, 
-      duration: session.duration 
+  const filteredSessions = useMemo(() => {
+    return sessions.filter(session => {
+      const matchesSearch = session.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           session.description.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesCategory = !selectedCategory || session.category === selectedCategory;
+      const matchesDuration = !selectedDuration || 
+        (selectedDuration === 'short' && session.duration <= 10) ||
+        (selectedDuration === 'medium' && session.duration > 10 && session.duration <= 20) ||
+        (selectedDuration === 'long' && session.duration > 20);
+      
+      return matchesSearch && matchesCategory && matchesDuration;
     });
-  };
-  
-  const handleCompleteSession = async (sessionId: string) => {
-    await completeSession(sessionId);
-    setShowRatingDialog(true);
-  };
-  
-  const filterSessionsByCategory = (category: 'guided' | 'quick' | 'deep' | 'sleep') => {
-    // Use sessions with audio if available
-    const sessionsToFilter = audioEnabled ? sessionsWithAudio : meditationSessions;
-    return filterByCategory(sessionsToFilter, category);
-  };
-  
-  const getSessionWithAudio = (sessionId: string): MeditationSession | undefined => {
-    return sessionsWithAudio.find(session => session.id === sessionId);
-  };
+  }, [sessions, searchTerm, selectedCategory, selectedDuration]);
+
+  const favoriteSessions = useMemo(() => {
+    return getFavoriteSessions(sessions);
+  }, [sessions, getFavoriteSessions]);
 
   return {
-    meditationSessions: audioEnabled ? sessionsWithAudio : meditationSessions,
-    selectedSession,
-    setSelectedSession,
-    handleSelectSession,
-    handleCompleteSession,
-    filterSessionsByCategory,
-    isStarting,
+    sessions: filteredSessions,
     favorites,
+    favoriteSessions,
+    isLoading,
+    error,
+    searchTerm,
+    setSearchTerm,
+    selectedCategory,
+    setSelectedCategory,
+    selectedDuration,
+    setSelectedDuration,
     isFavorite,
-    handleToggleFavorite,
-    getFavoriteSessions,
-    recentlyPlayed,
-    showRatingDialog,
-    setShowRatingDialog,
-    handleSubmitRating,
-    durationFilter,
-    setDurationFilter,
-    resetFilters,
-    audioEnabled,
-    audioFiles,
-    getSessionWithAudio
+    toggleFavorite,
+    removeFavorites
   };
 };
