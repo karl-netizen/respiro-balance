@@ -1,4 +1,3 @@
-
 export { default as RitualHero } from './RitualHero';
 export { default as RitualTimeline } from './RitualTimeline';
 export { default as RitualTimelineItem } from './RitualTimelineItem';
@@ -19,6 +18,9 @@ export { default as RitualStatusIcon } from './RitualStatusIcon';
 export { default as RitualStatusBadge } from './RitualStatusBadge';
 export { default as RitualMetadata } from './RitualMetadata';
 export { default as RitualActions } from './RitualActions';
+export { default as RitualTimelineContainer } from './timeline/RitualTimelineContainer';
+export { default as RitualTimelineContent } from './timeline/RitualTimelineContent';
+export { default as RitualTimelineModals } from './timeline/RitualTimelineModals';
 export * from './utils';
 export * from './types';
 export * from './filterUtils';
