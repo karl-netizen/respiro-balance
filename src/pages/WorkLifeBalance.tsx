@@ -1,7 +1,7 @@
 
 import React from 'react';
 import Header from '@/components/Header';
-import { WorkLifeBalanceSection } from '@/components/work-life-balance';
+import WorkLifeBalanceSection from '@/components/work-life-balance';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Briefcase, Clock, Heart, Zap } from 'lucide-react';
