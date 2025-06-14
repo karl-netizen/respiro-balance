@@ -24,7 +24,7 @@ const DailyStatusDashboard: React.FC<DailyStatusDashboardProps> = ({
   
   // Calculate completion stats
   const completedToday = rituals.filter(ritual => 
-    ritual.status === 'completed' && wasCompletedToday(ritual.lastCompleted)
+    ritual.status === 'completed' && wasCompletedToday(ritual)
   ).length;
   
   const totalRituals = rituals.length;

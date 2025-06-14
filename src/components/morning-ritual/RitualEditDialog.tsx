@@ -22,11 +22,26 @@ const RitualEditDialog: React.FC<RitualEditDialogProps> = ({
   const { form, isSubmitting } = useRitualEditForm(ritual);
 
   const handleSubmit = (data: RitualFormValues) => {
+    const reminders = data.reminders.map(r => ({
+      enabled: r.enabled ?? true,
+      time: r.time ?? 15,
+      message: r.message
+    }));
+
     const updatedRitual: MorningRitual = {
       ...ritual,
-      ...data,
+      title: data.title,
+      description: data.description || '',
+      timeOfDay: data.timeOfDay,
       startTime: data.timeOfDay,
-      complete: false
+      duration: data.duration,
+      priority: data.priority,
+      recurrence: data.recurrence,
+      tags: data.tags,
+      daysOfWeek: data.daysOfWeek,
+      reminders: reminders,
+      complete: false,
+      updatedAt: new Date()
     };
     onSave(updatedRitual);
     onOpenChange(false);

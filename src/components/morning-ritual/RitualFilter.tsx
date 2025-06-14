@@ -1,36 +1,17 @@
 
-import React from "react";
-import { Filter, Clock, Tag, CheckCircle } from "lucide-react";
-import { RitualStatus } from "@/context/types";
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { 
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
+import React from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { X, Filter } from 'lucide-react';
+import { RitualStatus } from '@/context/types';
 
 export interface RitualFilters {
-  status: RitualStatus | "all";
-  timeRange: {
-    start: string;
-    end: string;
-  } | null;
+  status: 'all' | RitualStatus;
+  priority: 'all' | 'low' | 'medium' | 'high';
   tags: string[];
+  timeRange?: 'all' | { start: string; end: string };
 }
 
 interface RitualFilterProps {
@@ -46,188 +27,100 @@ const RitualFilter: React.FC<RitualFilterProps> = ({
   onFilterChange,
   onResetFilters
 }) => {
-  // Function to update status filter
-  const handleStatusChange = (value: string) => {
+  const handleStatusChange = (status: string) => {
     onFilterChange({
       ...filters,
-      status: value as RitualStatus | "all"
+      status: status as 'all' | RitualStatus
     });
   };
 
-  // Function to update time range filter
-  const handleTimeRangeChange = (startOrEnd: "start" | "end", value: string) => {
+  const handlePriorityChange = (priority: string) => {
     onFilterChange({
       ...filters,
-      timeRange: {
-        ...filters.timeRange || { start: "00:00", end: "23:59" },
-        [startOrEnd]: value
-      }
+      priority: priority as 'all' | 'low' | 'medium' | 'high'
     });
   };
 
-  // Function to toggle a tag in the filter
   const handleTagToggle = (tag: string) => {
-    const updatedTags = filters.tags.includes(tag)
+    const newTags = filters.tags.includes(tag)
       ? filters.tags.filter(t => t !== tag)
       : [...filters.tags, tag];
     
     onFilterChange({
       ...filters,
-      tags: updatedTags
+      tags: newTags
     });
   };
 
-  // Calculate how many filters are active
-  const getActiveFilterCount = () => {
-    let count = 0;
-    if (filters.status !== "all") count++;
-    if (filters.timeRange) count++;
-    if (filters.tags.length > 0) count++;
-    return count;
-  };
+  const hasActiveFilters = filters.status !== 'all' || 
+                          filters.priority !== 'all' || 
+                          filters.tags.length > 0;
 
   return (
-    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-      <div className="flex gap-2 flex-wrap">
-        {/* Status Filter */}
-        <Select 
-          value={filters.status} 
-          onValueChange={handleStatusChange}
-        >
-          <SelectTrigger className="w-[180px]">
-            <div className="flex items-center gap-2">
-              <CheckCircle className="h-4 w-4" />
-              <SelectValue placeholder="Filter by status" />
-            </div>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Statuses</SelectItem>
-            <SelectItem value="planned">Planned</SelectItem>
-            <SelectItem value="completed">Completed</SelectItem>
-            <SelectItem value="in_progress">In Progress</SelectItem>
-            <SelectItem value="missed">Missed</SelectItem>
-          </SelectContent>
-        </Select>
-
-        {/* Time Range Filter */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="w-[180px] justify-start">
-              <Clock className="mr-2 h-4 w-4" />
-              Time Range
-              {filters.timeRange && (
-                <Badge variant="secondary" className="ml-2 text-xs">
-                  {filters.timeRange.start}-{filters.timeRange.end}
-                </Badge>
-              )}
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56">
-            <DropdownMenuLabel>Filter by Time</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <div className="p-2">
-              <div className="space-y-2">
-                <Label htmlFor="start-time">From</Label>
-                <Input
-                  id="start-time"
-                  type="time"
-                  value={filters.timeRange?.start || "00:00"}
-                  onChange={(e) => handleTimeRangeChange("start", e.target.value)}
-                />
-              </div>
-              <div className="space-y-2 mt-2">
-                <Label htmlFor="end-time">To</Label>
-                <Input
-                  id="end-time"
-                  type="time"
-                  value={filters.timeRange?.end || "23:59"}
-                  onChange={(e) => handleTimeRangeChange("end", e.target.value)}
-                />
-              </div>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="w-full mt-2"
-                onClick={() => onFilterChange({...filters, timeRange: null})}
-              >
-                Clear Time Filter
-              </Button>
-            </div>
-          </DropdownMenuContent>
-        </DropdownMenu>
-
-        {/* Tags Filter */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="w-[180px] justify-start">
-              <Tag className="mr-2 h-4 w-4" />
-              Tags
-              {filters.tags.length > 0 && (
-                <Badge variant="secondary" className="ml-2 text-xs">
-                  {filters.tags.length}
-                </Badge>
-              )}
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56">
-            <DropdownMenuLabel>Filter by Tags</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              {availableTags.length > 0 ? (
-                availableTags.map(tag => (
-                  <DropdownMenuItem 
-                    key={tag} 
-                    className="cursor-pointer"
-                    onClick={() => handleTagToggle(tag)}
-                  >
-                    <div className={cn(
-                      "flex items-center w-full",
-                      filters.tags.includes(tag) ? "font-medium" : ""
-                    )}>
-                      <div className={cn(
-                        "h-3 w-3 rounded-full mr-2",
-                        filters.tags.includes(tag) ? "bg-primary" : "bg-secondary"
-                      )} />
-                      {tag}
-                    </div>
-                  </DropdownMenuItem>
-                ))
-              ) : (
-                <div className="px-2 py-1 text-sm text-muted-foreground">No tags available</div>
-              )}
-            </DropdownMenuGroup>
-            {filters.tags.length > 0 && (
-              <>
-                <DropdownMenuSeparator />
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="w-full"
-                  onClick={() => onFilterChange({...filters, tags: []})}
-                >
-                  Clear Tag Filters
-                </Button>
-              </>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-2">
+          <Filter className="h-4 w-4" />
+          <span className="font-medium">Filters</span>
+        </div>
+        {hasActiveFilters && (
+          <Button variant="ghost" size="sm" onClick={onResetFilters}>
+            Clear All
+          </Button>
+        )}
       </div>
 
-      {/* Reset All Filters Button */}
-      {getActiveFilterCount() > 0 && (
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          onClick={onResetFilters}
-          className="text-muted-foreground"
-        >
-          <Filter className="mr-2 h-4 w-4" />
-          Reset Filters
-          <Badge variant="secondary" className="ml-2">
-            {getActiveFilterCount()}
-          </Badge>
-        </Button>
-      )}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <label className="text-sm font-medium mb-2 block">Status</label>
+          <Select value={filters.status} onValueChange={handleStatusChange}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="planned">Planned</SelectItem>
+              <SelectItem value="completed">Completed</SelectItem>
+              <SelectItem value="skipped">Skipped</SelectItem>
+              <SelectItem value="missed">Missed</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div>
+          <label className="text-sm font-medium mb-2 block">Priority</label>
+          <Select value={filters.priority} onValueChange={handlePriorityChange}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Priorities</SelectItem>
+              <SelectItem value="low">Low</SelectItem>
+              <SelectItem value="medium">Medium</SelectItem>
+              <SelectItem value="high">High</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div>
+          <label className="text-sm font-medium mb-2 block">Tags</label>
+          <div className="flex flex-wrap gap-2">
+            {availableTags.map(tag => (
+              <Badge
+                key={tag}
+                variant={filters.tags.includes(tag) ? "default" : "outline"}
+                className="cursor-pointer"
+                onClick={() => handleTagToggle(tag)}
+              >
+                {tag}
+                {filters.tags.includes(tag) && (
+                  <X className="h-3 w-3 ml-1" />
+                )}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

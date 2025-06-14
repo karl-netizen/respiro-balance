@@ -1,6 +1,7 @@
+
 import React from "react";
 import { MorningRitual } from "@/context/types";
-import { RitualFilters } from "../types";
+import { RitualFilters } from "../RitualFilter";
 import EmptyRitualState from "../EmptyRitualState";
 import RitualTimelineHeader from "../RitualTimelineHeader";
 import RitualFilter from "../RitualFilter";
@@ -21,7 +22,7 @@ interface RitualTimelineContentProps {
   onComplete: (ritual: MorningRitual) => void;
   onDelete: (ritual: MorningRitual) => void;
   onUpdate: (updatedRitual: MorningRitual) => void;
-  onFilterChange: (newFilters: Partial<RitualFilters>) => void;
+  onFilterChange: (newFilters: RitualFilters) => void;
   onResetFilters: () => void;
   onShowAnalytics: () => void;
   onShowNotificationSettings: () => void;
