@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Crown, Calendar, CreditCard, Check, X, Sparkles, Target, Users, BarChart3 } from 'lucide-react';
 import { useSubscription } from '@/hooks/useSubscription';
