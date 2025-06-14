@@ -9,6 +9,8 @@ import DailyStatusDashboard from "./DailyStatusDashboard";
 import WeeklyPerformanceSummary from "./WeeklyPerformanceSummary";
 import { useRitualTimeline } from "./hooks/useRitualTimeline";
 import { toast } from "sonner";
+import { Card } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 
 const RitualTimeline = () => {
   const {
@@ -32,27 +34,38 @@ const RitualTimeline = () => {
     );
     
     if (pendingRituals.length === 0) {
-      toast.success("All rituals already completed for today!");
+      toast.success("All rituals already completed for today! 🎉", {
+        description: "You're absolutely crushing it!",
+      });
       return;
     }
     
     // Show confirmation dialog for bulk completion
-    if (window.confirm(`Mark ${pendingRituals.length} remaining rituals as completed?`)) {
+    if (window.confirm(`Mark ${pendingRituals.length} remaining ritual${pendingRituals.length !== 1 ? 's' : ''} as completed for today?`)) {
       pendingRituals.forEach(ritual => {
         completeRitual(ritual.id);
       });
-      toast.success(`Completed ${pendingRituals.length} rituals!`);
+      
+      toast.success(`🎉 Completed ${pendingRituals.length} ritual${pendingRituals.length !== 1 ? 's' : ''}!`, {
+        description: "Perfect day achieved! Keep up the amazing work!",
+      });
     }
   };
   
   if (isLoading) {
     return (
       <div className="space-y-8">
-        <div className="animate-pulse h-8 bg-slate-200 rounded w-3/4 mb-4"></div>
-        <div className="animate-pulse h-16 bg-slate-200 rounded mb-8"></div>
+        {/* Enhanced loading state */}
+        <div className="space-y-4">
+          <div className="animate-pulse h-12 bg-gradient-to-r from-slate-200 to-slate-300 rounded-lg w-3/4"></div>
+          <div className="animate-pulse h-32 bg-gradient-to-r from-slate-200 to-slate-300 rounded-lg"></div>
+        </div>
+        
+        <div className="animate-pulse h-48 bg-gradient-to-r from-slate-200 to-slate-300 rounded-lg"></div>
+        
         <div className="space-y-6">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="animate-pulse h-32 bg-slate-200 rounded"></div>
+            <div key={i} className="animate-pulse h-40 bg-gradient-to-r from-slate-200 to-slate-300 rounded-lg"></div>
           ))}
         </div>
       </div>
@@ -65,34 +78,49 @@ const RitualTimeline = () => {
 
   return (
     <div className="space-y-8">
-      {/* Daily Status Dashboard */}
+      {/* Enhanced Daily Status Dashboard */}
       <DailyStatusDashboard 
         rituals={rituals}
         onCompleteRemaining={handleCompleteRemaining}
       />
       
-      {/* Weekly Performance Summary */}
+      <Separator className="my-8" />
+      
+      {/* Enhanced Weekly Performance Summary */}
       <WeeklyPerformanceSummary rituals={rituals} />
       
-      <RitualTimelineHeader ritualCount={rituals.length} />
+      <Separator className="my-8" />
       
-      {/* Filter Component */}
-      <RitualFilter 
-        filters={filters}
-        availableTags={availableTags}
-        onFilterChange={handleFilterChange}
-        onResetFilters={resetFilters}
-      />
+      {/* Timeline Header with enhanced styling */}
+      <div className="relative">
+        <RitualTimelineHeader ritualCount={rituals.length} />
+        
+        {/* Enhanced Filter Component */}
+        <Card className="mt-6 p-4 bg-gradient-to-r from-gray-50 to-blue-50 border border-blue-200">
+          <RitualFilter 
+            filters={filters}
+            availableTags={availableTags}
+            onFilterChange={handleFilterChange}
+            onResetFilters={resetFilters}
+          />
+        </Card>
+      </div>
       
+      {/* Enhanced Timeline List */}
       {sortedRituals.length === 0 ? (
         <RitualFilterEmptyState onResetFilters={resetFilters} />
       ) : (
-        <RitualTimelineList 
-          rituals={sortedRituals}
-          onComplete={completeRitual}
-          onDelete={deleteRitual}
-          onUpdate={updateRitual}
-        />
+        <div className="relative">
+          {/* Enhanced timeline connector line */}
+          <div className="absolute left-[23px] top-6 bottom-10 w-[3px] bg-gradient-to-b from-blue-200 via-purple-200 to-pink-200 z-0 rounded-full shadow-sm"></div>
+          
+          <RitualTimelineList 
+            rituals={sortedRituals}
+            onComplete={completeRitual}
+            onDelete={deleteRitual}
+            onUpdate={updateRitual}
+          />
+        </div>
       )}
     </div>
   );
