@@ -41,11 +41,11 @@ function App() {
   
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <SubscriptionProvider>
-          <UserPreferencesProvider>
-            <NotificationsProvider>
-              <Router>
+      <Router>
+        <AuthProvider>
+          <SubscriptionProvider>
+            <UserPreferencesProvider>
+              <NotificationsProvider>
                 <Toaster />
                 <Routes>
                   <Route path="/" element={<Index />} />
@@ -67,11 +67,11 @@ function App() {
                   <Route path="/social" element={<SocialPage />} />
                   <Route path="/morning-ritual" element={<MorningRitual />} />
                 </Routes>
-              </Router>
-            </NotificationsProvider>
-          </UserPreferencesProvider>
-        </SubscriptionProvider>
-      </AuthProvider>
+              </NotificationsProvider>
+            </UserPreferencesProvider>
+          </SubscriptionProvider>
+        </AuthProvider>
+      </Router>
     </QueryClientProvider>
   );
 }

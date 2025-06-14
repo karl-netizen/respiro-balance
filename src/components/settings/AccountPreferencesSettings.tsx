@@ -13,20 +13,25 @@ import { toast } from 'sonner';
 import { Separator } from '@/components/ui/separator';
 import { Palette, Brain, Clock, Calendar, RotateCcw, Moon, Sun, Monitor } from 'lucide-react';
 
+type Theme = 'light' | 'dark' | 'system';
+type WorkDay = 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday';
+type MeditationExperience = 'beginner' | 'intermediate' | 'advanced';
+type StressLevel = 'low' | 'moderate' | 'high';
+
 const AccountPreferencesSettings = () => {
   const { preferences, updatePreferences, resetPreferences } = useUserPreferences();
   
   // Local state for work days
-  const [workDays, setWorkDays] = useState(preferences.workDays || ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']);
+  const [workDays, setWorkDays] = useState<WorkDay[]>(preferences.workDays as WorkDay[] || ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']);
   
-  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const daysOfWeek: WorkDay[] = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-  const handleThemeChange = (theme: string) => {
+  const handleThemeChange = (theme: Theme) => {
     updatePreferences({ theme });
     toast.success(`Theme changed to ${theme}`);
   };
 
-  const handleWorkDayToggle = (day: string) => {
+  const handleWorkDayToggle = (day: WorkDay) => {
     const newWorkDays = workDays.includes(day) 
       ? workDays.filter(d => d !== day)
       : [...workDays, day];
@@ -141,7 +146,7 @@ const AccountPreferencesSettings = () => {
               <Label>Experience Level</Label>
               <Select
                 value={preferences.meditationExperience || 'beginner'}
-                onValueChange={(value) => updatePreferences({ meditationExperience: value })}
+                onValueChange={(value: MeditationExperience) => updatePreferences({ meditationExperience: value })}
               >
                 <SelectTrigger className="mt-2">
                   <SelectValue />
@@ -158,7 +163,7 @@ const AccountPreferencesSettings = () => {
               <Label>Stress Level</Label>
               <Select
                 value={preferences.stressLevel || 'moderate'}
-                onValueChange={(value) => updatePreferences({ stressLevel: value })}
+                onValueChange={(value: StressLevel) => updatePreferences({ stressLevel: value })}
               >
                 <SelectTrigger className="mt-2">
                   <SelectValue />

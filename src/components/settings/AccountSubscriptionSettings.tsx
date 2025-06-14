@@ -1,216 +1,156 @@
 
-import React from 'react';
-import { Card, CardHeader, CardContent, CardDescription, CardTitle, CardFooter } from '@/components/ui/card';
+import React, { useState } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { useSubscriptionContext } from '@/hooks/useSubscriptionContext';
-import { ArrowRight, Crown, CreditCard, Calendar, AlertCircle, CheckCircle, Gift } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
+import { useSubscriptionContext } from '@/hooks/useSubscriptionContext';
+import { toast } from 'sonner';
 import { Separator } from '@/components/ui/separator';
-import { SubscriptionTier } from '@/context/types';
+import { 
+  CreditCard, 
+  Crown, 
+  Calendar, 
+  Clock, 
+  TrendingUp, 
+  Download, 
+  AlertTriangle,
+  CheckCircle,
+  XCircle,
+  Users,
+  Shield,
+  Zap,
+  Star
+} from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
-interface AccountSubscriptionSettingsProps {
-  subscriptionTier?: SubscriptionTier | string;
-  isPremium?: boolean;
-}
-
-const AccountSubscriptionSettings: React.FC<AccountSubscriptionSettingsProps> = ({ subscriptionTier, isPremium }) => {
+const AccountSubscriptionSettings = () => {
   const { 
+    isPremium, 
     tierName, 
-    subscriptionData,
-    isPremium: contextIsPremium,
-    isSubscribed
+    meditationMinutesUsed, 
+    meditationMinutesLimit, 
+    focusSessionsUsed, 
+    focusSessionsLimit 
   } = useSubscriptionContext();
-  
-  // Use props if provided, otherwise use context values
-  const isUserPremium = isPremium !== undefined ? isPremium : contextIsPremium;
-  const userTierName = tierName || (subscriptionTier ? subscriptionTier.charAt(0).toUpperCase() + subscriptionTier.slice(1) : 'Free');
-  
-  const minutesUsed = subscriptionData?.meditation_minutes_used || 15;
-  const minutesLimit = subscriptionData?.meditation_minutes_limit || 60;
-  const usagePercentage = Math.min(Math.round((minutesUsed / minutesLimit) * 100), 100);
 
-  // Mock billing data for premium users
-  const billingData = isUserPremium ? {
-    nextBillingDate: 'April 15, 2024',
-    billingAmount: '$7.99',
-    paymentMethod: '**** **** **** 1234',
-    autoRenewal: true,
-    subscriptionStart: 'March 15, 2024'
-  } : null;
-
-  // Calculate days until reset for free users
-  const getDaysUntilReset = () => {
-    const now = new Date();
-    const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-    const diffTime = nextMonth.getTime() - now.getTime();
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  // Mock subscription data - in real implementation, this would come from Stripe/payment provider
+  const subscriptionData = {
+    planName: isPremium ? 'Premium' : 'Free',
+    price: isPremium ? '$9.99/month' : 'Free',
+    nextBilling: '2024-07-15',
+    paymentMethod: '**** **** **** 4242',
+    status: 'Active',
+    features: isPremium ? [
+      'Unlimited meditation sessions',
+      'Advanced analytics',
+      'Premium content library',
+      'Biofeedback integration',
+      'Priority support',
+      'Export functionality'
+    ] : [
+      '3 meditation sessions per month',
+      'Basic progress tracking',
+      'Limited content library'
+    ]
   };
 
-  const daysUntilReset = getDaysUntilReset();
+  const [autoRenewal, setAutoRenewal] = useState(true);
 
-  const getUsageColor = () => {
-    if (usagePercentage >= 100) return 'text-red-600';
-    if (usagePercentage >= 85) return 'text-red-500';
-    if (usagePercentage >= 60) return 'text-yellow-500';
+  // Calculate usage percentages
+  const meditationUsagePercent = meditationMinutesLimit > 0 
+    ? Math.round((meditationMinutesUsed / meditationMinutesLimit) * 100)
+    : 0;
+  
+  const focusUsagePercent = focusSessionsLimit > 0 
+    ? Math.round((focusSessionsUsed / focusSessionsLimit) * 100)
+    : 0;
+
+  const getUsageColor = (percent: number) => {
+    if (percent >= 100) return 'text-red-600';
+    if (percent >= 80) return 'text-orange-600';
     return 'text-green-600';
   };
 
-  const getProgressColor = () => {
-    if (usagePercentage >= 100) return 'bg-red-500';
-    if (usagePercentage >= 85) return 'bg-red-400';
-    if (usagePercentage >= 60) return 'bg-yellow-400';
+  const getProgressColor = (percent: number) => {
+    if (percent >= 100) return 'bg-red-500';
+    if (percent >= 80) return 'bg-orange-500';
     return 'bg-green-500';
   };
 
+  const handleUpgrade = () => {
+    // Mock upgrade flow - in real implementation, this would redirect to Stripe checkout
+    toast.success("Redirecting to upgrade page...");
+  };
+
+  const handleDowngrade = () => {
+    // Mock downgrade flow
+    toast.success("Downgrade request submitted");
+  };
+
+  const handleCancelSubscription = () => {
+    // Mock cancellation flow
+    toast.success("Subscription will be cancelled at the end of the billing period");
+  };
+
+  const handleUpdatePayment = () => {
+    // Mock payment update flow
+    toast.success("Redirecting to payment update...");
+  };
+
+  const days = Math.ceil((new Date('2024-07-15').getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+
   return (
     <div className="space-y-6">
-      {/* Current Plan & Status */}
+      {/* Current Plan Overview */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            {isUserPremium ? (
-              <Crown className="h-5 w-5 text-yellow-600" />
-            ) : (
-              <Gift className="h-5 w-5" />
-            )}
+            <Crown className="h-5 w-5" />
             Current Plan
           </CardTitle>
           <CardDescription>
-            Your subscription details and plan benefits
+            Your subscription details and plan information
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex items-center justify-between">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <h3 className="text-lg font-semibold">{userTierName} Plan</h3>
-                <Badge 
-                  variant={isUserPremium ? "default" : "secondary"}
-                  className={isUserPremium ? "bg-yellow-100 text-yellow-800" : ""}
-                >
-                  {isSubscribed ? 'Active' : 'Free'}
-                </Badge>
+            <div className="flex items-center gap-3">
+              <div className={`w-12 h-12 rounded-full flex items-center justify-center ${isPremium ? 'bg-primary' : 'bg-muted'}`}>
+                {isPremium ? <Crown className="h-6 w-6 text-primary-foreground" /> : <Users className="h-6 w-6 text-muted-foreground" />}
               </div>
-              <p className="text-sm text-muted-foreground">
-                {isUserPremium
-                  ? "Premium features activated with unlimited access"
-                  : "Free tier with limited features"}
-              </p>
+              <div>
+                <div className="font-semibold text-lg">{subscriptionData.planName}</div>
+                <div className="text-sm text-muted-foreground">{subscriptionData.price}</div>
+              </div>
             </div>
-            {isUserPremium && (
-              <Crown className="h-12 w-12 text-yellow-600" />
-            )}
+            <Badge variant={isPremium ? 'default' : 'secondary'} className="flex items-center gap-1">
+              {isPremium ? <CheckCircle className="h-3 w-3" /> : <XCircle className="h-3 w-3" />}
+              {subscriptionData.status}
+            </Badge>
           </div>
 
-          {/* Billing Information for Premium Users */}
-          {isUserPremium && billingData && (
+          {isPremium && (
             <>
               <Separator />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-sm">
-                    <Calendar className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-muted-foreground">Next Billing:</span>
-                    <span className="font-medium">{billingData.nextBillingDate}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <CreditCard className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-muted-foreground">Amount:</span>
-                    <span className="font-medium">{billingData.billingAmount}/month</span>
-                  </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                  <span>Next billing: {subscriptionData.nextBilling}</span>
                 </div>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-sm">
-                    <span className="text-muted-foreground">Payment Method:</span>
-                    <span className="font-medium">{billingData.paymentMethod}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <span className="text-muted-foreground">Auto-Renewal:</span>
-                    <span className="font-medium flex items-center gap-1">
-                      {billingData.autoRenewal ? (
-                        <>
-                          <CheckCircle className="h-3 w-3 text-green-600" />
-                          Enabled
-                        </>
-                      ) : (
-                        <>
-                          <AlertCircle className="h-3 w-3 text-red-600" />
-                          Disabled
-                        </>
-                      )}
-                    </span>
-                  </div>
+                <div className="flex items-center gap-2">
+                  <CreditCard className="h-4 w-4 text-muted-foreground" />
+                  <span>Payment: {subscriptionData.paymentMethod}</span>
                 </div>
-              </div>
-            </>
-          )}
-
-          {/* Usage Tracking for Free Plan */}
-          {!isUserPremium && (
-            <>
-              <Separator />
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h4 className="font-medium">Monthly Usage</h4>
-                  <span className={`text-sm font-medium ${getUsageColor()}`}>
-                    {minutesUsed} / {minutesLimit} minutes
-                  </span>
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-muted-foreground" />
+                  <span>{days} days until renewal</span>
                 </div>
-                
-                <div className="space-y-2">
-                  <Progress 
-                    value={usagePercentage} 
-                    className="h-3"
-                    style={{
-                      background: usagePercentage >= 100 ? '#fef2f2' : 
-                                 usagePercentage >= 85 ? '#fefce8' : '#f0f9ff'
-                    }}
-                  />
-                  <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>0 min</span>
-                    <span>{Math.round(minutesLimit / 2)} min</span>
-                    <span>{minutesLimit} min</span>
-                  </div>
-                </div>
-
-                {/* Usage Warnings & Suggestions */}
-                <div className="p-4 rounded-lg border">
-                  {usagePercentage >= 100 ? (
-                    <div className="text-center space-y-2">
-                      <AlertCircle className="h-6 w-6 text-red-600 mx-auto" />
-                      <div className="text-red-800 font-medium">Monthly Limit Reached</div>
-                      <p className="text-sm text-red-600">
-                        You've used all your free minutes. Upgrade to Premium for unlimited access.
-                      </p>
-                      <div className="text-xs text-red-500">
-                        Limit resets in {daysUntilReset} day{daysUntilReset !== 1 ? 's' : ''}
-                      </div>
-                    </div>
-                  ) : usagePercentage >= 80 ? (
-                    <div className="text-center space-y-2">
-                      <AlertCircle className="h-6 w-6 text-yellow-600 mx-auto" />
-                      <div className="text-yellow-800 font-medium">Approaching Limit</div>
-                      <p className="text-sm text-yellow-600">
-                        You're close to your monthly limit. Consider upgrading to Premium.
-                      </p>
-                      <div className="text-xs text-yellow-500">
-                        Limit resets in {daysUntilReset} day{daysUntilReset !== 1 ? 's' : ''}
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="text-center space-y-2">
-                      <CheckCircle className="h-6 w-6 text-green-600 mx-auto" />
-                      <div className="text-green-800 font-medium">On Track</div>
-                      <p className="text-sm text-green-600">
-                        You're using your meditation minutes well. Keep up the great work!
-                      </p>
-                      <div className="text-xs text-green-500">
-                        Limit resets in {daysUntilReset} day{daysUntilReset !== 1 ? 's' : ''}
-                      </div>
-                    </div>
-                  )}
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                  <span>Auto-renewal: {autoRenewal ? 'Enabled' : 'Disabled'}</span>
                 </div>
               </div>
             </>
@@ -218,127 +158,290 @@ const AccountSubscriptionSettings: React.FC<AccountSubscriptionSettingsProps> = 
 
           <Separator />
 
-          {/* Plan Features */}
           <div>
-            <h4 className="font-medium text-sm mb-3">Plan Features:</h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div className="flex items-center gap-2 text-sm">
-                <CheckCircle className="h-4 w-4 text-green-600" />
-                <span>{isUserPremium ? "Unlimited meditation minutes" : "60 meditation minutes/month"}</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm">
-                <CheckCircle className="h-4 w-4 text-green-600" />
-                <span>{isUserPremium ? "Advanced meditation techniques" : "Basic meditation techniques"}</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm">
-                <CheckCircle className="h-4 w-4 text-green-600" />
-                <span>{isUserPremium ? "Advanced biometric tracking" : "Basic progress tracking"}</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm">
-                <CheckCircle className="h-4 w-4 text-green-600" />
-                <span>{isUserPremium ? "Priority customer support" : "Community support"}</span>
-              </div>
-              {isUserPremium && (
-                <>
-                  <div className="flex items-center gap-2 text-sm">
-                    <CheckCircle className="h-4 w-4 text-green-600" />
-                    <span>Offline meditation downloads</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <CheckCircle className="h-4 w-4 text-green-600" />
-                    <span>Custom meditation programs</span>
-                  </div>
-                </>
-              )}
+            <h4 className="font-medium mb-3">Plan Features</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              {subscriptionData.features.map((feature, index) => (
+                <div key={index} className="flex items-center gap-2 text-sm">
+                  <CheckCircle className="h-4 w-4 text-green-500" />
+                  <span>{feature}</span>
+                </div>
+              ))}
             </div>
           </div>
         </CardContent>
-        <CardFooter>
-          <Button asChild className="w-full">
-            <Link to="/subscription">
-              {isUserPremium ? "Manage Subscription" : "Upgrade to Premium"}
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
-        </CardFooter>
       </Card>
 
-      {/* Payment Method Management (Premium Users Only) */}
-      {isUserPremium && billingData && (
+      {/* Usage Tracking for Free Plan */}
+      {!isPremium && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5" />
+              Usage This Month
+            </CardTitle>
+            <CardDescription>
+              Track your usage against your plan limits
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <Label>Meditation Minutes</Label>
+                <span className={`text-sm font-medium ${getUsageColor(meditationUsagePercent)}`}>
+                  {meditationMinutesUsed} / {meditationMinutesLimit} minutes
+                </span>
+              </div>
+              <Progress 
+                value={meditationUsagePercent} 
+                className="w-full h-2"
+              />
+              {meditationUsagePercent >= 80 && (
+                <p className="text-sm text-orange-600 mt-1">
+                  {meditationUsagePercent >= 100 ? 'Limit reached!' : 'Approaching your monthly limit'}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <Label>Focus Sessions</Label>
+                <span className={`text-sm font-medium ${getUsageColor(focusUsagePercent)}`}>
+                  {focusSessionsUsed} / {focusSessionsLimit} sessions
+                </span>
+              </div>
+              <Progress 
+                value={focusUsagePercent} 
+                className="w-full h-2"
+              />
+              {focusUsagePercent >= 80 && (
+                <p className="text-sm text-orange-600 mt-1">
+                  {focusUsagePercent >= 100 ? 'Limit reached!' : 'Approaching your monthly limit'}
+                </p>
+              )}
+            </div>
+
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="flex items-start gap-3">
+                <Zap className="h-5 w-5 text-blue-600 mt-0.5" />
+                <div>
+                  <h4 className="font-medium text-blue-900">Upgrade for Unlimited Access</h4>
+                  <p className="text-sm text-blue-700 mt-1">
+                    Get unlimited meditation sessions, advanced analytics, and premium content with our Premium plan.
+                  </p>
+                  <Button onClick={handleUpgrade} className="mt-3" size="sm">
+                    Upgrade to Premium
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Billing & Payment Management for Premium */}
+      {isPremium && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <CreditCard className="h-5 w-5" />
-              Payment Method
+              Billing & Payment
             </CardTitle>
             <CardDescription>
-              Manage your payment information and billing preferences
+              Manage your payment methods and billing preferences
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between p-4 border rounded-lg">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-6 bg-blue-600 rounded flex items-center justify-center text-white text-xs font-bold">
-                  VISA
+          <CardContent className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4 border rounded-lg">
+                <div className="flex items-center justify-between mb-2">
+                  <Label>Auto-Renewal</Label>
+                  <Switch
+                    checked={autoRenewal}
+                    onCheckedChange={setAutoRenewal}
+                  />
                 </div>
-                <div>
-                  <div className="font-medium">{billingData.paymentMethod}</div>
-                  <div className="text-sm text-muted-foreground">Expires 12/26</div>
-                </div>
-              </div>
-              <Button variant="outline" size="sm">
-                Update
-              </Button>
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <div>
-                <Label className="font-medium">Auto-Renewal</Label>
                 <p className="text-sm text-muted-foreground">
-                  Automatically renew subscription each month
+                  Automatically renew your subscription each month
                 </p>
               </div>
-              <Switch checked={billingData.autoRenewal} />
+              
+              <div className="p-4 border rounded-lg">
+                <div className="font-medium mb-1">Next Billing Date</div>
+                <div className="text-sm text-muted-foreground">
+                  {subscriptionData.nextBilling} ({days} days)
+                </div>
+              </div>
+            </div>
+
+            <Separator />
+
+            <div className="flex flex-wrap gap-3">
+              <Button variant="outline" onClick={handleUpdatePayment}>
+                <CreditCard className="h-4 w-4 mr-2" />
+                Update Payment Method
+              </Button>
+              <Button variant="outline">
+                <Download className="h-4 w-4 mr-2" />
+                Download Receipts
+              </Button>
+            </div>
+
+            <div className="bg-gray-50 border rounded-lg p-4">
+              <h4 className="font-medium mb-2">Billing History</h4>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span>Jun 15, 2024 - Premium Monthly</span>
+                  <span className="font-medium">$9.99</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>May 15, 2024 - Premium Monthly</span>
+                  <span className="font-medium">$9.99</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Apr 15, 2024 - Premium Monthly</span>
+                  <span className="font-medium">$9.99</span>
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
       )}
 
-      {/* Billing History (Premium Users Only) */}
-      {isUserPremium && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Billing History</CardTitle>
-            <CardDescription>
-              View your recent billing and payment history
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {[
-                { date: 'March 15, 2024', amount: '$7.99', status: 'Paid', invoice: 'INV-2024-003' },
-                { date: 'February 15, 2024', amount: '$7.99', status: 'Paid', invoice: 'INV-2024-002' },
-                { date: 'January 15, 2024', amount: '$7.99', status: 'Paid', invoice: 'INV-2024-001' }
-              ].map((bill, index) => (
-                <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
-                  <div>
-                    <div className="font-medium">{bill.date}</div>
-                    <div className="text-sm text-muted-foreground">
-                      {bill.invoice} • Premium Monthly
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="font-medium">{bill.amount}</div>
-                    <Badge variant="default" className="text-xs">
-                      {bill.status}
-                    </Badge>
-                  </div>
-                </div>
-              ))}
+      {/* Plan Comparison & Actions */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Star className="h-5 w-5" />
+            Plan Management
+          </CardTitle>
+          <CardDescription>
+            Compare plans and manage your subscription
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Free Plan */}
+            <div className={`border rounded-lg p-4 ${!isPremium ? 'border-primary bg-primary/5' : ''}`}>
+              <div className="flex items-center gap-2 mb-3">
+                <Users className="h-5 w-5" />
+                <h3 className="font-semibold">Free Plan</h3>
+                {!isPremium && <Badge>Current</Badge>}
+              </div>
+              <div className="text-2xl font-bold mb-2">$0<span className="text-sm font-normal">/month</span></div>
+              <ul className="space-y-1 text-sm text-muted-foreground">
+                <li>• 3 meditation sessions/month</li>
+                <li>• Basic progress tracking</li>
+                <li>• Limited content library</li>
+              </ul>
             </div>
-          </CardContent>
-        </Card>
-      )}
+
+            {/* Premium Plan */}
+            <div className={`border rounded-lg p-4 ${isPremium ? 'border-primary bg-primary/5' : ''}`}>
+              <div className="flex items-center gap-2 mb-3">
+                <Crown className="h-5 w-5" />
+                <h3 className="font-semibold">Premium Plan</h3>
+                {isPremium && <Badge>Current</Badge>}
+              </div>
+              <div className="text-2xl font-bold mb-2">$9.99<span className="text-sm font-normal">/month</span></div>
+              <ul className="space-y-1 text-sm text-muted-foreground">
+                <li>• Unlimited sessions</li>
+                <li>• Advanced analytics</li>
+                <li>• Premium content</li>
+                <li>• Biofeedback integration</li>
+                <li>• Priority support</li>
+              </ul>
+            </div>
+          </div>
+
+          <Separator />
+
+          <div className="flex flex-wrap gap-3">
+            {!isPremium ? (
+              <Button onClick={handleUpgrade} className="flex items-center gap-2">
+                <Crown className="h-4 w-4" />
+                Upgrade to Premium
+              </Button>
+            ) : (
+              <>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="outline">
+                      Downgrade to Free
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Downgrade to Free Plan</DialogTitle>
+                      <DialogDescription>
+                        You'll lose access to premium features but keep your progress data. This change will take effect at the end of your current billing period.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="flex justify-end gap-4 mt-4">
+                      <Button variant="outline">Cancel</Button>
+                      <Button onClick={handleDowngrade}>
+                        Confirm Downgrade
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+                
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" className="text-red-600 border-red-200 hover:bg-red-50">
+                      <XCircle className="h-4 w-4 mr-2" />
+                      Cancel Subscription
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Cancel Subscription</DialogTitle>
+                      <DialogDescription>
+                        Your subscription will remain active until {subscriptionData.nextBilling}. After that, you'll be switched to the free plan.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="flex justify-end gap-4 mt-4">
+                      <Button variant="outline">Keep Subscription</Button>
+                      <Button variant="destructive" onClick={handleCancelSubscription}>
+                        Cancel Subscription
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Support & Help */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Shield className="h-5 w-5" />
+            Support & Help
+          </CardTitle>
+          <CardDescription>
+            Get help with your subscription and billing questions
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Button variant="outline" className="h-auto p-4 flex flex-col items-start">
+              <div className="font-medium">Billing Support</div>
+              <div className="text-sm text-muted-foreground">
+                Questions about charges or payments
+              </div>
+            </Button>
+            <Button variant="outline" className="h-auto p-4 flex flex-col items-start">
+              <div className="font-medium">Plan Questions</div>
+              <div className="text-sm text-muted-foreground">
+                Need help choosing the right plan
+              </div>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
