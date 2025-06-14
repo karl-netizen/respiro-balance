@@ -1,140 +1,153 @@
-/**
- * Utility functions for ritual management
- */
-import { MorningRitual, RitualStatus, CompletionRecord } from "@/context/types";
-import { shouldDoRitualToday, shouldDoRitualYesterday, wasCompletedOnDate, wasCompletedToday } from "./dateUtils";
-import { TimeAwarenessService } from "@/services/TimeAwarenessService";
 
-/**
- * Generate a unique ID for a new ritual
- * @returns Unique ID string
- */
-export const generateRitualId = (): string => {
-  return 'ritual_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-};
+import { MorningRitual, RitualStatus, CompletionEntry } from '@/context/types';
 
-/**
- * Generate a suggested ritual based on user preferences
- * @param wakeTime User's wake time
- * @param morningEnergyLevel User's morning energy level
- * @param existingActivities Current morning activities
- * @returns Array of activity suggestions
- */
-export const getSuggestedActivities = (
-  wakeTime: string = "07:00",
-  morningEnergyLevel: number = 5,
-  existingActivities: string[] = []
-): string[] => {
-  const timePeriod = TimeAwarenessService.getCurrentTimePeriod();
-  
-  // Base suggestions everyone should consider
-  const baseSuggestions = ["hydration", "meditation"];
-  
-  // Time of day may impact energy level or other factors
-  const adjustedEnergyLevel = 
-    timePeriod === 'morning' ? morningEnergyLevel : 
-    timePeriod === 'night' ? Math.max(2, morningEnergyLevel - 3) : 
-    morningEnergyLevel;
-  
-  // Energy-based suggestions
-  const energyBasedSuggestions = adjustedEnergyLevel <= 3
-    ? ["journaling", "stretching"] // Low energy
-    : adjustedEnergyLevel >= 8
-      ? ["exercise", "cold_shower"] // High energy
-      : ["stretching", "planning"]; // Medium energy
-  
-  // Filter out activities the user is already doing
-  return [...baseSuggestions, ...energyBasedSuggestions]
-    .filter(activity => !existingActivities.includes(activity));
-};
-
-/**
- * Updates ritual statuses based on current date and completion
- * @param rituals Array of morning rituals
- * @returns Updated array of rituals with correct statuses
- */
 export const updateRitualStatuses = (rituals: MorningRitual[]): MorningRitual[] => {
-  const today = new Date();
-  const yesterday = new Date(today);
-  yesterday.setDate(yesterday.getDate() - 1);
+  const today = new Date().toDateString();
   
   return rituals.map(ritual => {
-    // Skip if already completed today
-    if (ritual.status === 'completed' && wasCompletedToday(ritual.lastCompleted)) {
-      return ritual;
+    const lastCompleted = ritual.lastCompleted ? new Date(ritual.lastCompleted).toDateString() : null;
+    const isCompletedToday = lastCompleted === today;
+    
+    let status: RitualStatus = 'planned';
+    let streak = ritual.streak || 0;
+    let completionHistory = [...ritual.completionHistory];
+    
+    // Check if ritual time has passed
+    const now = new Date();
+    const [hours, minutes] = ritual.timeOfDay.split(':').map(Number);
+    const ritualTime = new Date();
+    ritualTime.setHours(hours, minutes, 0, 0);
+    
+    if (isCompletedToday) {
+      status = 'completed';
+    } else if (now > ritualTime) {
+      status = 'missed';
+      // Add missed entry if not already recorded
+      const todayEntry = completionHistory.find(entry => entry.date === today);
+      if (!todayEntry) {
+        completionHistory.push({
+          date: today,
+          success: false,
+          notes: 'Automatically marked as missed'
+        });
+      }
     }
     
-    // Check if should be done today
-    const isScheduledToday = shouldDoRitualToday(ritual.recurrence, ritual.daysOfWeek);
-    
-    // If not scheduled for today, leave as is
-    if (!isScheduledToday) {
-      return ritual;
-    }
-    
-    // If it was scheduled yesterday but not completed, mark as missed and reset streak
-    const wasScheduledYesterday = shouldDoRitualYesterday(ritual.recurrence, ritual.daysOfWeek);
-    const wasCompletedYesterday = ritual.lastCompleted && wasCompletedOnDate(ritual.lastCompleted, yesterday);
-    
-    if (wasScheduledYesterday && !wasCompletedYesterday && ritual.status !== 'missed') {
-      // Add to completion history
-      const completionHistory = ritual.completionHistory || [];
-      const yesterdayRecord: CompletionRecord = {
-        date: yesterday.toISOString().split('T')[0],
-        status: 'missed'
-      };
-      
-      return {
-        ...ritual,
-        status: 'missed' as RitualStatus,
-        streak: 0,
-        completionHistory: [...completionHistory, yesterdayRecord]
-      };
-    }
-    
-    // If scheduled for today and not yet marked, set as planned
-    if (ritual.status !== 'planned' && ritual.status !== 'in_progress') {
-      return {
-        ...ritual,
-        status: 'planned' as RitualStatus
-      };
-    }
-    
-    return ritual;
+    return {
+      ...ritual,
+      status,
+      streak,
+      completionHistory
+    };
   });
 };
 
-/**
- * Record completion of a ritual
- * @param ritual The ritual to mark as completed
- * @param partialCompletion Whether the ritual was only partially completed
- * @param notes Optional notes about the completion
- * @returns Updated ritual object with completion record
- */
-export const recordRitualCompletion = (
+export const completeRitual = (
   ritual: MorningRitual, 
-  partialCompletion: boolean = false,
-  notes?: string
+  notes?: string,
+  completionLevel: 'completed' | 'partial' = 'completed'
 ): MorningRitual => {
+  const today = new Date().toDateString();
   const now = new Date();
-  const today = now.toISOString().split('T')[0];
   
-  // Create completion record
-  const completionRecord: CompletionRecord = {
+  // Update completion history
+  const updatedHistory = ritual.completionHistory.filter(entry => entry.date !== today);
+  const newEntry: CompletionEntry = {
     date: today,
-    status: partialCompletion ? 'partially_completed' : 'completed',
-    completedAt: now.toISOString(),
-    notes
+    success: completionLevel === 'completed',
+    notes: notes || undefined
   };
+  updatedHistory.push(newEntry);
   
-  // Update history
-  const completionHistory = ritual.completionHistory || [];
+  // Calculate new streak
+  let newStreak = ritual.streak || 0;
+  if (completionLevel === 'completed') {
+    newStreak = calculateStreak(updatedHistory);
+  }
   
   return {
     ...ritual,
-    status: partialCompletion ? 'partially_completed' : 'completed',
+    status: completionLevel as RitualStatus,
     lastCompleted: now.toISOString(),
-    streak: ritual.streak + 1,
-    completionHistory: [...completionHistory, completionRecord]
+    streak: newStreak,
+    completionHistory: updatedHistory
   };
+};
+
+export const calculateStreak = (completionHistory: CompletionEntry[]): number => {
+  if (!completionHistory.length) return 0;
+  
+  // Sort by date descending
+  const sortedHistory = [...completionHistory]
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  
+  let streak = 0;
+  const today = new Date();
+  
+  for (let i = 0; i < sortedHistory.length; i++) {
+    const entry = sortedHistory[i];
+    const entryDate = new Date(entry.date);
+    const daysDiff = Math.floor((today.getTime() - entryDate.getTime()) / (1000 * 60 * 60 * 24));
+    
+    // If this entry is from today or yesterday and successful, continue streak
+    if (daysDiff <= i && entry.success) {
+      streak++;
+    } else {
+      break;
+    }
+  }
+  
+  return streak;
+};
+
+export const getRitualProgress = (ritual: MorningRitual, days: number = 30) => {
+  const startDate = new Date();
+  startDate.setDate(startDate.getDate() - days);
+  
+  const recentHistory = ritual.completionHistory.filter(entry => 
+    new Date(entry.date) >= startDate
+  );
+  
+  const totalDays = days;
+  const completedDays = recentHistory.filter(entry => entry.success).length;
+  const completionRate = totalDays > 0 ? (completedDays / totalDays) * 100 : 0;
+  
+  return {
+    completedDays,
+    totalDays,
+    completionRate: Math.round(completionRate),
+    currentStreak: ritual.streak || 0
+  };
+};
+
+export const getWeeklyProgress = (rituals: MorningRitual[]) => {
+  const today = new Date();
+  const weekStart = new Date(today);
+  weekStart.setDate(today.getDate() - today.getDay());
+  
+  const weekDays = Array.from({ length: 7 }, (_, i) => {
+    const date = new Date(weekStart);
+    date.setDate(weekStart.getDate() + i);
+    return date.toDateString();
+  });
+  
+  return weekDays.map(day => {
+    const dayRituals = rituals.map(ritual => {
+      const dayEntry = ritual.completionHistory.find(entry => entry.date === day);
+      return {
+        ritual: ritual.title,
+        completed: dayEntry?.success || false,
+        notes: dayEntry?.notes
+      };
+    });
+    
+    const completed = dayRituals.filter(r => r.completed).length;
+    const total = rituals.length;
+    
+    return {
+      date: day,
+      rituals: dayRituals,
+      completionRate: total > 0 ? (completed / total) * 100 : 0
+    };
+  });
 };

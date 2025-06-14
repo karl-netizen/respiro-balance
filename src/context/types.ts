@@ -1,3 +1,4 @@
+
 export interface MorningRitual {
   id: string;
   title: string;
@@ -28,10 +29,14 @@ export interface CompletionEntry {
   notes?: string;
 }
 
-export interface CompletionRecord {
-  date: string;
-  completed: boolean;
-  notes?: string;
+export interface Notification {
+  id: string;
+  type: 'achievement' | 'reminder' | 'streak' | 'suggestion';
+  title: string;
+  message: string;
+  timestamp: Date;
+  read: boolean;
+  actionUrl?: string;
 }
 
 export interface UserPreferences {
@@ -92,6 +97,16 @@ export interface UserPreferences {
   morningEnergyLevel?: number;
   ritualDependencies?: any[];
   weatherAlternatives?: any[];
+  
+  // Onboarding-related properties
+  lastOnboardingStep?: number;
+  lastOnboardingCompleted?: boolean;
+  timeChallenges?: string[];
+  attributionSource?: string;
+  enableSessionReminders?: boolean;
+  enableProgressUpdates?: boolean;
+  enableRecommendations?: boolean;
+  morningDevices?: string;
 }
 
 export interface NotificationSettings {
