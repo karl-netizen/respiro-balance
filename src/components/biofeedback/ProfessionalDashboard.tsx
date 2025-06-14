@@ -33,7 +33,7 @@ export const ProfessionalDashboard: React.FC<ProfessionalDashboardProps> = ({
     complianceRate: 85,
     overallImprovement: 23,
     riskFactors: ['Elevated baseline stress', 'Irregular sleep patterns'],
-    treatmentGoals: ['Reduce resting HR to 65 BPM', 'Improve HRV to 50ms', 'Maintain stress <20%'],
+    treatmentGoals: ['Reduce resting HR to 65 BPM', 'Improve HRV to 50ms', 'Maintain stress under 20%'],
     
     recentMetrics: {
       avgHeartRate: 72,
@@ -157,7 +157,7 @@ export const ProfessionalDashboard: React.FC<ProfessionalDashboardProps> = ({
               </div>
               <div className="text-right">
                 <span className="font-bold">{mockClinicalData.recentMetrics.avgHRV} ms</span>
-                <p className="text-xs text-muted-foreground">Target: >50 ms</p>
+                <p className="text-xs text-muted-foreground">Target: greater than 50 ms</p>
               </div>
             </div>
             
@@ -168,7 +168,7 @@ export const ProfessionalDashboard: React.FC<ProfessionalDashboardProps> = ({
               </div>
               <div className="text-right">
                 <span className="font-bold">{mockClinicalData.recentMetrics.avgStressLevel}%</span>
-                <p className="text-xs text-muted-foreground">Target: <25%</p>
+                <p className="text-xs text-muted-foreground">Target: less than 25%</p>
               </div>
             </div>
           </div>
