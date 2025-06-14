@@ -14,15 +14,23 @@ export interface MorningRitual {
   reminderEnabled: boolean;
   reminderTime: number;
   completionHistory: CompletionEntry[];
+  daysOfWeek?: WorkDay[];
 }
 
-export type RitualStatus = 'planned' | 'completed' | 'skipped';
+export type RitualStatus = 'planned' | 'completed' | 'skipped' | 'in_progress' | 'missed';
 export type RitualRecurrence = 'daily' | 'weekdays' | 'weekends' | 'custom';
 export type RitualPriority = 'low' | 'medium' | 'high';
+export type WorkDay = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
 
 export interface CompletionEntry {
   date: string;
   success: boolean;
+  notes?: string;
+}
+
+export interface CompletionRecord {
+  date: string;
+  completed: boolean;
   notes?: string;
 }
 
@@ -62,6 +70,7 @@ export interface UserPreferences {
   focusChallenges?: string[];
   metricsOfInterest?: string[];
   preferredSessionDuration?: number;
+  preferred_session_duration?: number;
   meditationExperience?: string;
   stressLevel?: number;
   workEnvironment?: string;
@@ -75,6 +84,14 @@ export interface UserPreferences {
   recommendedSessionDuration?: number;
   recommendedMeditationTime?: number;
   recommendedTechniques?: string[];
+  subscriptionTier?: string;
+  businessAttribution?: string;
+  hasCompletedOnboarding?: boolean;
+  morningActivities?: string[];
+  weekdayWakeTime?: string;
+  morningEnergyLevel?: number;
+  ritualDependencies?: any[];
+  weatherAlternatives?: any[];
 }
 
 export interface NotificationSettings {

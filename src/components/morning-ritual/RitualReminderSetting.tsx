@@ -1,113 +1,90 @@
 
-import React from "react";
-import { 
-  FormControl, 
-  FormField, 
-  FormItem, 
-  FormLabel, 
-  FormDescription
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
-import { Button } from "@/components/ui/button";
-import { Plus, Trash2 } from "lucide-react";
-import { UseFormReturn } from "react-hook-form";
-import { RitualFormValues } from "./types";
-import { RitualReminder } from "@/context/types";
-import { generateRitualId } from "./utils";
+import React from 'react';
+import { Switch } from '@/components/ui/switch';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { RitualReminder } from '@/context/types';
 
 interface RitualReminderSettingProps {
-  form: UseFormReturn<RitualFormValues>;
+  reminder: RitualReminder;
+  onUpdate: (reminder: RitualReminder) => void;
+  disabled?: boolean;
 }
 
-const RitualReminderSetting: React.FC<RitualReminderSettingProps> = ({ form }) => {
-  const reminders = form.watch('reminders') || [];
-  
-  const addReminder = () => {
-    const newReminder: RitualReminder = {
-      id: generateRitualId(),
-      time: "08:00",
-      type: 'in-app',
-      enabled: true
-    };
-    
-    form.setValue('reminders', [...reminders, newReminder]);
-  };
-  
-  const removeReminder = (index: number) => {
-    const updatedReminders = [...reminders];
-    updatedReminders.splice(index, 1);
-    form.setValue('reminders', updatedReminders);
-  };
-  
-  const updateReminderTime = (index: number, time: string) => {
-    const updatedReminders = [...reminders];
-    updatedReminders[index] = {
-      ...updatedReminders[index],
-      time
-    };
-    form.setValue('reminders', updatedReminders);
-  };
-  
-  const toggleReminder = (index: number, enabled: boolean) => {
-    const updatedReminders = [...reminders];
-    updatedReminders[index] = {
-      ...updatedReminders[index],
+const RitualReminderSetting: React.FC<RitualReminderSettingProps> = ({
+  reminder,
+  onUpdate,
+  disabled = false
+}) => {
+  const handleEnabledChange = (enabled: boolean) => {
+    onUpdate({
+      ...reminder,
       enabled
-    };
-    form.setValue('reminders', updatedReminders);
+    });
   };
-  
+
+  const handleTimeChange = (value: string) => {
+    const timeInMinutes = parseInt(value) || 0;
+    onUpdate({
+      ...reminder,
+      time: timeInMinutes
+    });
+  };
+
+  const handleMessageChange = (value: string) => {
+    onUpdate({
+      ...reminder,
+      message: value
+    });
+  };
+
   return (
-    <FormField
-      control={form.control}
-      name="reminders"
-      render={() => (
-        <FormItem className="space-y-3">
-          <FormLabel>Reminders</FormLabel>
-          <FormDescription>
-            Set reminders to help you stick to your ritual
-          </FormDescription>
-          <FormControl>
-            <div className="space-y-2">
-              {reminders.map((reminder, index) => (
-                <div key={reminder.id} className="flex items-center gap-3">
-                  <Switch 
-                    checked={reminder.enabled}
-                    onCheckedChange={(checked) => toggleReminder(index, checked)}
-                  />
-                  <Input
-                    type="time"
-                    value={reminder.time}
-                    onChange={(e) => updateReminderTime(index, e.target.value)}
-                    className="w-32"
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => removeReminder(index)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              ))}
-              
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={addReminder}
-                className="mt-2"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Add Reminder
-              </Button>
-            </div>
-          </FormControl>
-        </FormItem>
+    <div className="space-y-4 p-4 border rounded-lg">
+      <div className="flex items-center justify-between">
+        <Label htmlFor="reminder-enabled" className="text-sm font-medium">
+          Enable Reminder
+        </Label>
+        <Switch
+          id="reminder-enabled"
+          checked={reminder.enabled}
+          onCheckedChange={handleEnabledChange}
+          disabled={disabled}
+        />
+      </div>
+
+      {reminder.enabled && (
+        <>
+          <div className="space-y-2">
+            <Label htmlFor="reminder-time" className="text-sm font-medium">
+              Minutes before ritual
+            </Label>
+            <Input
+              id="reminder-time"
+              type="number"
+              value={reminder.time}
+              onChange={(e) => handleTimeChange(e.target.value)}
+              disabled={disabled}
+              min="0"
+              max="60"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="reminder-message" className="text-sm font-medium">
+              Custom message (optional)
+            </Label>
+            <Input
+              id="reminder-message"
+              type="text"
+              value={reminder.message || ''}
+              onChange={(e) => handleMessageChange(e.target.value)}
+              disabled={disabled}
+              placeholder="Custom reminder message..."
+            />
+          </div>
+        </>
       )}
-    />
+    </div>
   );
 };
 
