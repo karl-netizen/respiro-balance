@@ -8,9 +8,9 @@ export const generateQuickStats = (
   weeklyGoal: number,
   meditationStats: any
 ) => {
-  // Use actual data instead of random values
-  const totalSessions = meditationStats.totalSessions || 0;
-  const averageSessionLength = meditationStats.averageSessionLength || 0;
+  // Use stable values from meditationStats instead of random generation
+  const totalSessions = meditationStats?.totalSessions || 0;
+  const averageSessionLength = meditationStats?.averageSessionLength || 0;
 
   return [
     {

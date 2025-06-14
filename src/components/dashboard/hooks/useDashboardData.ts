@@ -38,11 +38,26 @@ export const useDashboardData = () => {
     return `Good evening, ${name}!`;
   };
 
-  // Use stable values from meditationStats instead of random generation
-  const currentStreak = meditationStats.currentStreak || meditationStats.streak || 0;
-  const weeklyGoal = preferences?.preferred_session_duration ? preferences.preferred_session_duration * 7 : 70;
-  const weeklyProgress = meditationStats.weeklyMinutes || meditationStats.weeklyCompleted || 0;
-  const progressPercentage = Math.min((weeklyProgress / weeklyGoal) * 100, 100);
+  // Memoize the calculated stats to prevent constant re-renders
+  const stableStats = useMemo(() => {
+    const currentStreak = meditationStats?.currentStreak || meditationStats?.streak || 0;
+    const weeklyGoal = preferences?.preferred_session_duration ? preferences.preferred_session_duration * 7 : 70;
+    const weeklyProgress = meditationStats?.weeklyMinutes || meditationStats?.weeklyCompleted || 0;
+    const progressPercentage = Math.min((weeklyProgress / weeklyGoal) * 100, 100);
+
+    return {
+      currentStreak,
+      weeklyGoal,
+      weeklyProgress,
+      progressPercentage
+    };
+  }, [
+    meditationStats?.currentStreak,
+    meditationStats?.streak,
+    meditationStats?.weeklyMinutes,
+    meditationStats?.weeklyCompleted,
+    preferences?.preferred_session_duration
+  ]);
 
   const handleMoodSelect = (mood: string) => {
     setCurrentMood(mood);
@@ -53,10 +68,10 @@ export const useDashboardData = () => {
     currentPeriod,
     currentMood,
     meditationStats,
-    currentStreak,
-    weeklyGoal,
-    weeklyProgress,
-    progressPercentage,
+    currentStreak: stableStats.currentStreak,
+    weeklyGoal: stableStats.weeklyGoal,
+    weeklyProgress: stableStats.weeklyProgress,
+    progressPercentage: stableStats.progressPercentage,
     welcomeMessage: getWelcomeMessage(),
     handleMoodSelect
   };
