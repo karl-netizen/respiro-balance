@@ -1,160 +1,159 @@
-import { Dispatch, SetStateAction } from 'react';
-
-export type Theme = 'light' | 'dark' | 'system';
-
-export interface User {
-  id: string;
-  email: string;
-  name?: string;
-  avatarUrl?: string;
-  createdAt?: string;
-}
-
-export type WorkDay =
-  | 'monday'
-  | 'tuesday'
-  | 'wednesday'
-  | 'thursday'
-  | 'friday'
-  | 'saturday'
-  | 'sunday';
-
-export type RitualRecurrence = 'daily' | 'weekdays' | 'weekends' | 'custom';
-
-export type RitualPriority = 'high' | 'medium' | 'low';
-
-export type RitualStatus = 'planned' | 'in_progress' | 'completed' | 'missed' | 'partially_completed';
-
-export interface CompletionRecord {
-  date: string;
-  status: RitualStatus;
-  completedAt?: string;
-  notes?: string;
-}
-
 export interface MorningRitual {
   id: string;
   title: string;
-  description?: string;
+  description: string;
   timeOfDay: string;
   duration: number;
   recurrence: RitualRecurrence;
-  daysOfWeek?: WorkDay[];
   priority: RitualPriority;
-  reminderEnabled: boolean;
-  reminderTime: number;
   tags: string[];
   status: RitualStatus;
-  lastCompleted?: string;
   streak: number;
-  completionHistory?: CompletionRecord[];
+  lastCompleted?: string;
   createdAt: Date;
-  updatedAt?: Date;
+  reminderEnabled: boolean;
+  reminderTime: number;
+  completionHistory: CompletionEntry[];
 }
 
-export interface Achievement {
-  id: string;
-  title: string;
-  description: string;
-  icon?: string;
-  points?: number;
-}
+export type RitualStatus = 'planned' | 'completed' | 'skipped';
+export type RitualRecurrence = 'daily' | 'weekdays' | 'weekends' | 'custom';
+export type RitualPriority = 'low' | 'medium' | 'high';
 
-export interface Notification {
-  id: string;
-  type: 'achievement' | 'reminder' | 'info' | 'warning' | 'error';
-  title: string;
-  message: string;
-  timestamp: string;
-  read: boolean;
-  achievement?: Achievement;
+export interface CompletionEntry {
+  date: string;
+  success: boolean;
+  notes?: string;
 }
 
 export interface UserPreferences {
-  theme: Theme;
-  enableNotifications: boolean;
-  weekdayWakeTime?: string;
-  weekendWakeTime?: string;
-  morningRituals?: MorningRitual[];
-  dailyGoal?: number;
+  theme: 'light' | 'dark' | 'system';
+  focusMode: boolean;
+  morningRituals: MorningRitual[];
+  wakeUpTime: string;
+  sleepGoal: number;
+  hydrationGoal: number;
+  notificationSettings: NotificationSettings;
+  isPremium: boolean;
   lastSync?: string;
-  biometricDataEnabled?: boolean;
-  preferredLanguage?: string;
-  enableDarkMode?: boolean;
-  subscribedToNewsletter?: boolean;
-  profileVisibility?: 'public' | 'private' | 'followers';
-  displayCompletedRituals?: boolean;
-  achievementNotifications?: boolean;
-  reminderNotifications?: boolean;
-  customNotificationSound?: string;
-  snoozeDuration?: number;
-  locationTrackingEnabled?: boolean;
-  contextualRemindersEnabled?: boolean;
-  ritualDependencies?: RitualDependency[];
-  weatherAlternatives?: WeatherAlternative[];
-  scheduleOptimization?: {
-    autoOptimize: boolean;
-    bufferTime: number;
-    maxMorningDuration: number;
-  };
+  userName: string;
+  userAvatar: string;
+  dailyQuote: boolean;
+  quoteCategory: string;
+  affirmationsEnabled: boolean;
+  affirmationsList: string[];
+  journalPromptsEnabled: boolean;
+  journalPromptsList: string[];
+  gratitudeList: string[];
+  mindfulnessExercises: string[];
+  focusTechniques: string[];
+  energyLevels: number[];
+  moodStates: string[];
+  stressManagementTechniques: string[];
+  productivityHacks: string[];
+  userRole?: 'user' | 'coach' | 'admin';
+  connectedDevices?: BluetoothDeviceInfo[];
+  hasWearableDevice?: boolean;
+  wearableDeviceType?: string;
+  wearableDeviceId?: string;
+  lastSyncDate?: string;
+  workDays?: string[];
+  meditationGoals?: string[];
+  focusChallenges?: string[];
+  metricsOfInterest?: string[];
+  preferredSessionDuration?: number;
+  meditationExperience?: string;
+  stressLevel?: number;
+  workEnvironment?: string;
+  workStartTime?: string;
+  workEndTime?: string;
+  lunchBreak?: boolean;
+  lunchTime?: string;
+  morningExercise?: boolean;
+  exerciseTime?: string;
+  bedTime?: string;
+  recommendedSessionDuration?: number;
+  recommendedMeditationTime?: number;
+  recommendedTechniques?: string[];
 }
 
-export interface UserPreferencesContextProps {
+export interface NotificationSettings {
+  morningReminder: boolean;
+  eveningReflection: boolean;
+  focusPrompts: boolean;
+  customReminders: CustomReminder[];
+}
+
+export interface CustomReminder {
+  id: string;
+  time: string;
+  message: string;
+  days: string[];
+}
+
+export interface Quote {
+  text: string;
+  author: string;
+}
+
+export interface Affirmation {
+  id: string;
+  text: string;
+}
+
+export interface JournalPrompt {
+  id: string;
+  text: string;
+}
+
+export interface GratitudeItem {
+  id: string;
+  text: string;
+}
+
+export interface MindfulnessExercise {
+  id: string;
+  title: string;
+  description: string;
+  duration: number;
+}
+
+export interface FocusTechnique {
+  id: string;
+  title: string;
+  description: string;
+}
+
+export interface BluetoothDevice {
+  id: string;
+  name: string;
+  type: DeviceType;
+  connected: boolean;
+  batteryLevel?: number;
+  lastSync?: Date;
+}
+
+export interface BluetoothDeviceInfo {
+  id: string;
+  name: string;
+  type: DeviceType;
+  rssi?: number;
+  services?: string[];
+}
+
+export type DeviceType = 'heart_rate' | 'fitness_tracker' | 'smartwatch' | 'headband' | 'other';
+
+export interface RitualReminder {
+  enabled: boolean;
+  time: number; // minutes before ritual
+  message?: string;
+}
+
+export interface UserPreferencesContextType {
   preferences: UserPreferences;
-  updatePreferences: (updates: Partial<UserPreferences>) => void;
+  updatePreferences: (updates: Partial<UserPreferences>) => Promise<void>;
   resetPreferences: () => void;
-}
-
-export interface AuthContextProps {
-  user: User | null;
-  setUser: Dispatch<SetStateAction<User | null>>;
-  isLoading: boolean;
-  setIsLoading: Dispatch<SetStateAction<boolean>>;
-}
-
-export interface RitualFormData {
-  id: string;
-  title: string;
-  description: string;
-  date: Date | undefined;
-  startTime: string;
-  duration: number;
-  priority: RitualPriority;
-  recurrence: RecurrenceType;
-  reminderEnabled: boolean;
-  reminderTime: number;
-  tags: string[];
-  complete: boolean;
-  createdAt: Date;
-}
-
-export type RecurrenceType = 'daily' | 'weekly' | 'monthly';
-
-export interface RitualFormValues {
-  title: string;
-  description: string;
-  timeOfDay: string;
-  duration: number;
-  recurrence: RecurrenceType;
-  priority: RitualPriority;
-  tags: string[];
-}
-
-export interface RitualDependency {
-  id: string;
-  parentId: string;
-  childId: string;
-  type: 'sequential' | 'conditional' | 'trigger';
-  delay?: number; // minutes
-  condition?: string;
-}
-
-export interface WeatherAlternative {
-  id: string;
-  ritualId: string;
-  condition: 'rainy' | 'cold' | 'hot' | 'windy' | 'snowy';
-  alternativeTitle: string;
-  alternativeDuration: number;
-  alternativeLocation: 'indoor' | 'covered' | 'different';
-  description: string;
+  isCoach: boolean;
+  connectBluetoothDevice: (device: BluetoothDeviceInfo) => Promise<boolean>;
+  disconnectBluetoothDevice: (deviceId: string) => Promise<boolean>;
 }

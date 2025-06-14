@@ -1,9 +1,8 @@
-
 import { UserPreferences } from './types';
 
 const defaultPreferences: UserPreferences = {
   // User role and identification
-  userRole: 'client',
+  userRole: 'user',
   theme: 'system',
   
   // Work schedule
@@ -13,7 +12,7 @@ const defaultPreferences: UserPreferences = {
   workEnvironment: 'office',
   
   // Focus and productivity
-  stressLevel: 'moderate',
+  stressLevel: 3,
   focusChallenges: [],
   energyPattern: 'morning',
   
@@ -21,13 +20,13 @@ const defaultPreferences: UserPreferences = {
   lunchBreak: true,
   lunchTime: '12:00',
   morningExercise: false,
-  exerciseTime: '',
+  exerciseTime: '07:00',
   bedTime: '22:00',
   
   // Meditation preferences
   meditationExperience: 'beginner',
   meditationGoals: [],
-  preferredSessionDuration: 10,
+  preferredSessionDuration: 15,
   defaultMeditationDuration: 10,
   
   // App usage tracking
@@ -47,6 +46,10 @@ const defaultPreferences: UserPreferences = {
   // Biometric tracking
   metricsOfInterest: [],
   connectedDevices: [],
+  hasWearableDevice: false,
+  wearableDeviceType: '',
+  wearableDeviceId: '',
+  lastSyncDate: '',
   
   // Morning ritual
   morningActivities: [],
@@ -60,9 +63,9 @@ const defaultPreferences: UserPreferences = {
   timeChallenges: [],
   
   // Personalization algorithm results
-  recommendedSessionDuration: undefined,
-  recommendedMeditationTime: undefined,
-  recommendedTechniques: undefined,
+  recommendedSessionDuration: 15,
+  recommendedMeditationTime: 10,
+  recommendedTechniques: ['breathing'],
   
   // Subscription
   subscriptionTier: 'free',
