@@ -17,7 +17,7 @@ export const wasCompletedToday = (ritual: MorningRitual): boolean => {
 
 export const shouldDoRitualToday = (ritual: MorningRitual): boolean => {
   const today = new Date().getDay(); // 0 = Sunday, 1 = Monday, etc.
-  const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
   const todayName = dayNames[today];
   
   if (ritual.recurrence === 'daily') return true;

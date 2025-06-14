@@ -1,7 +1,34 @@
 
 import { UserPreferences } from '../types';
 import { UserPreferencesData } from '@/types/supabase';
-import defaultPreferences from '../defaultPreferences';
+
+// Create default preferences inline since the file doesn't exist yet
+const defaultPreferences: UserPreferences = {
+  workDays: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
+  workStartTime: '09:00',
+  workEndTime: '17:00',
+  lunchTime: '12:00',
+  exerciseTime: '07:00',
+  bedTime: '22:00',
+  lunchBreak: true,
+  morningExercise: false,
+  meditationExperience: 'beginner',
+  meditationGoals: ['stress_reduction', 'better_sleep'],
+  stressLevel: 'moderate',
+  workEnvironment: 'office',
+  preferredSessionDuration: 10,
+  hasCompletedOnboarding: false,
+  notificationSettings: {
+    sessionReminders: true,
+    achievementNotifications: true,
+    streakAlerts: true,
+    weeklyNotifications: true
+  },
+  connectedDevices: [],
+  hasWearableDevice: false,
+  subscriptionTier: 'free',
+  theme: 'system'
+};
 
 export const mapDbToUiPreferences = (
   dbPreferences: UserPreferencesData | null,
@@ -12,71 +39,44 @@ export const mapDbToUiPreferences = (
   if (!dbPreferences) {
     return {
       ...defaultPreferences,
-      subscriptionTier: subscriptionTier || 'free',
-      hasWearableDevice: hasWearableDevice || false,
-      userRole: role as any || 'user'
+      subscriptionTier: subscriptionTier as any || 'free',
+      hasWearableDevice: hasWearableDevice || false
     };
   }
 
   return {
     ...defaultPreferences,
-    theme: dbPreferences.theme || defaultPreferences.theme,
-    focusMode: false,
-    morningRituals: [],
-    wakeUpTime: dbPreferences.work_start_time || defaultPreferences.wakeUpTime,
-    sleepGoal: 8,
-    hydrationGoal: 8,
-    notificationSettings: dbPreferences.notification_settings || defaultPreferences.notificationSettings,
-    isPremium: subscriptionTier === 'premium' || subscriptionTier === 'pro',
-    userName: '',
-    userAvatar: '',
-    dailyQuote: true,
-    quoteCategory: 'motivation',
-    affirmationsEnabled: true,
-    affirmationsList: [],
-    journalPromptsEnabled: true,
-    journalPromptsList: [],
-    gratitudeList: [],
-    mindfulnessExercises: [],
-    focusTechniques: [],
-    energyLevels: [],
-    moodStates: [],
-    stressManagementTechniques: [],
-    productivityHacks: [],
-    userRole: role as any || 'user',
-    connectedDevices: dbPreferences.connected_devices || [],
-    hasWearableDevice: hasWearableDevice || false,
-    workDays: dbPreferences.work_days || defaultPreferences.workDays,
-    meditationGoals: dbPreferences.meditation_goals || [],
-    focusChallenges: [],
-    metricsOfInterest: [],
-    preferredSessionDuration: dbPreferences.preferred_session_duration || defaultPreferences.preferredSessionDuration,
-    preferred_session_duration: dbPreferences.preferred_session_duration || defaultPreferences.preferred_session_duration,
-    meditationExperience: dbPreferences.meditation_experience || defaultPreferences.meditationExperience,
-    stressLevel: 3,
-    workEnvironment: dbPreferences.work_environment || defaultPreferences.workEnvironment,
+    theme: (dbPreferences.theme as any) || defaultPreferences.theme,
+    workDays: (dbPreferences.work_days as any) || defaultPreferences.workDays,
     workStartTime: dbPreferences.work_start_time || defaultPreferences.workStartTime,
     workEndTime: dbPreferences.work_end_time || defaultPreferences.workEndTime,
-    lunchBreak: dbPreferences.lunch_break ?? defaultPreferences.lunchBreak,
     lunchTime: dbPreferences.lunch_time || defaultPreferences.lunchTime,
-    morningExercise: dbPreferences.morning_exercise ?? defaultPreferences.morningExercise,
     exerciseTime: dbPreferences.exercise_time || defaultPreferences.exerciseTime,
     bedTime: dbPreferences.bed_time || defaultPreferences.bedTime,
+    lunchBreak: dbPreferences.lunch_break ?? defaultPreferences.lunchBreak,
+    morningExercise: dbPreferences.morning_exercise ?? defaultPreferences.morningExercise,
+    meditationExperience: dbPreferences.meditation_experience || defaultPreferences.meditationExperience,
+    meditationGoals: (dbPreferences.meditation_goals as string[]) || defaultPreferences.meditationGoals,
+    stressLevel: (dbPreferences.stress_level as any) || defaultPreferences.stressLevel,
+    workEnvironment: dbPreferences.work_environment || defaultPreferences.workEnvironment,
+    preferredSessionDuration: dbPreferences.preferred_session_duration || defaultPreferences.preferredSessionDuration,
     hasCompletedOnboarding: dbPreferences.has_completed_onboarding ?? defaultPreferences.hasCompletedOnboarding,
-    subscriptionTier: subscriptionTier || 'free',
-    wakeTime: dbPreferences.work_start_time || defaultPreferences.wakeTime
+    notificationSettings: (dbPreferences.notification_settings as any) || defaultPreferences.notificationSettings,
+    connectedDevices: (dbPreferences.connected_devices as any) || defaultPreferences.connectedDevices,
+    hasWearableDevice: hasWearableDevice || false,
+    subscriptionTier: subscriptionTier as any || 'free'
   };
 };
 
 export const mapUiToDbPreferences = (uiPreferences: Partial<UserPreferences>): Partial<UserPreferencesData> => {
   return {
     theme: uiPreferences.theme,
-    preferred_session_duration: uiPreferences.preferredSessionDuration || uiPreferences.preferred_session_duration,
+    preferred_session_duration: uiPreferences.preferredSessionDuration,
     work_days: uiPreferences.workDays as string[],
     meditation_experience: uiPreferences.meditationExperience,
-    stress_level: typeof uiPreferences.stressLevel === 'number' ? 
-      uiPreferences.stressLevel.toString() : 
-      uiPreferences.stressLevel,
+    stress_level: typeof uiPreferences.stressLevel === 'string' ? 
+      uiPreferences.stressLevel : 
+      String(uiPreferences.stressLevel),
     work_environment: uiPreferences.workEnvironment,
     work_start_time: uiPreferences.workStartTime,
     work_end_time: uiPreferences.workEndTime,
@@ -86,8 +86,12 @@ export const mapUiToDbPreferences = (uiPreferences: Partial<UserPreferences>): P
     exercise_time: uiPreferences.exerciseTime,
     bed_time: uiPreferences.bedTime,
     has_completed_onboarding: uiPreferences.hasCompletedOnboarding,
-    notification_settings: uiPreferences.notificationSettings,
-    connected_devices: uiPreferences.connectedDevices,
+    notification_settings: uiPreferences.notificationSettings as any,
+    connected_devices: uiPreferences.connectedDevices as any,
     meditation_goals: uiPreferences.meditationGoals
   };
 };
+
+// Export aliases for backward compatibility
+export const mapToUserPreferences = mapDbToUiPreferences;
+export const mapToUserPreferencesData = mapUiToDbPreferences;

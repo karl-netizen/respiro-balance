@@ -1,9 +1,10 @@
+
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import { UserPreferences, UserPreferencesContextType } from './types';
 import { BluetoothDeviceInfo } from '@/types/bluetooth';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/hooks/useAuth';
-import { mapToUserPreferences, mapToUserPreferencesData } from './utils/preferencesMapper';
+import { mapDbToUiPreferences, mapUiToDbPreferences } from './utils/preferencesMapper';
 
 // Default preferences
 const defaultPreferences: UserPreferences = {
@@ -62,7 +63,7 @@ export const UserPreferencesProvider: React.FC<UserPreferencesProviderProps> = (
         if (error && error.code !== 'PGRST116') {
           console.error('Error loading preferences:', error);
         } else if (data) {
-          const mappedPreferences = mapToUserPreferences(data);
+          const mappedPreferences = mapDbToUiPreferences(data);
           setPreferences({ ...defaultPreferences, ...mappedPreferences });
         }
       } catch (error) {
@@ -82,7 +83,7 @@ export const UserPreferencesProvider: React.FC<UserPreferencesProviderProps> = (
       const newPreferences = { ...preferences, ...updates };
       setPreferences(newPreferences);
 
-      const mappedData = mapToUserPreferencesData(newPreferences);
+      const mappedData = mapUiToDbPreferences(newPreferences);
       
       const { error } = await supabase
         .from('user_preferences')

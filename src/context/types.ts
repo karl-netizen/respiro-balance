@@ -1,205 +1,121 @@
+import { MorningRitual } from '@/components/morning-ritual/types';
 
-export interface MorningRitual {
-  id: string;
-  title: string;
-  description: string;
-  timeOfDay: string;
-  duration: number;
-  recurrence: RitualRecurrence;
-  priority: RitualPriority;
-  tags: string[];
-  status: RitualStatus;
-  streak: number;
-  lastCompleted?: string;
-  createdAt: Date;
-  reminderEnabled: boolean;
-  reminderTime: number;
-  completionHistory: CompletionEntry[];
-  daysOfWeek?: WorkDay[];
-}
+// Use unified Bluetooth types
+export { BluetoothDeviceInfo, BluetoothDevice, DeviceType } from '@/types/bluetooth';
 
-export type RitualStatus = 'planned' | 'completed' | 'skipped' | 'in_progress' | 'missed';
-export type RitualRecurrence = 'daily' | 'weekdays' | 'weekends' | 'custom';
-export type RitualPriority = 'low' | 'medium' | 'high';
 export type WorkDay = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
+export type StressLevelType = 'low' | 'moderate' | 'high';
+export type Theme = 'light' | 'dark' | 'system';
 
-export interface CompletionEntry {
-  date: string;
-  success: boolean;
-  notes?: string;
-}
-
-export interface Notification {
-  id: string;
-  type: 'achievement' | 'reminder' | 'streak' | 'suggestion';
-  title: string;
-  message: string;
-  timestamp: Date;
-  read: boolean;
-  actionUrl?: string;
-  time?: Date;
-  action?: () => void;
+export interface NotificationSettings {
+  sessionReminders: boolean;
+  achievementNotifications: boolean;
+  streakAlerts: boolean;
+  weeklyNotifications: boolean;
 }
 
 export interface UserPreferences {
-  theme: 'light' | 'dark' | 'system';
-  focusMode: boolean;
-  morningRituals: MorningRitual[];
-  wakeUpTime: string;
-  sleepGoal: number;
-  hydrationGoal: number;
+  // Schedule preferences
+  workDays: WorkDay[];
+  workStartTime: string;
+  workEndTime: string;
+  lunchTime: string;
+  exerciseTime: string;
+  bedTime: string;
+  wakeTime?: string;
+  
+  // Wellness preferences
+  lunchBreak: boolean;
+  morningExercise: boolean;
+  meditationExperience: 'beginner' | 'intermediate' | 'advanced';
+  meditationGoals: string[];
+  stressLevel: StressLevelType;
+  workEnvironment: 'office' | 'home' | 'hybrid';
+  preferredSessionDuration: number;
+  preferred_session_duration?: number;
+  
+  // App preferences
+  hasCompletedOnboarding: boolean;
+  lastOnboardingStep?: number;
+  lastOnboardingCompleted?: string;
+  lastOnboardingSkipped?: string;
   notificationSettings: NotificationSettings;
-  isPremium: boolean;
-  lastSync?: string;
-  userName: string;
-  userAvatar: string;
-  dailyQuote: boolean;
-  quoteCategory: string;
-  affirmationsEnabled: boolean;
-  affirmationsList: string[];
-  journalPromptsEnabled: boolean;
-  journalPromptsList: string[];
-  gratitudeList: string[];
-  mindfulnessExercises: string[];
-  focusTechniques: string[];
-  energyLevels: number[];
-  moodStates: string[];
-  stressManagementTechniques: string[];
-  productivityHacks: string[];
-  userRole?: 'user' | 'coach' | 'admin';
-  connectedDevices?: BluetoothDeviceInfo[];
-  hasWearableDevice?: boolean;
-  wearableDeviceType?: string;
-  wearableDeviceId?: string;
-  lastSyncDate?: string;
-  workDays?: string[];
-  meditationGoals?: string[];
+  connectedDevices: BluetoothDeviceInfo[];
+  hasWearableDevice: boolean;
+  subscriptionTier: 'free' | 'premium' | 'team' | 'enterprise' | 'coach';
+  theme: Theme;
+  focusMode?: boolean;
+  
+  // Morning ritual specific
+  morningRituals?: MorningRitual[];
+  
+  // Onboarding specific fields
   focusChallenges?: string[];
   metricsOfInterest?: string[];
-  preferredSessionDuration?: number;
-  preferred_session_duration?: number;
-  meditationExperience?: string;
-  stressLevel?: number;
-  workEnvironment?: string;
-  workStartTime?: string;
-  workEndTime?: string;
-  lunchBreak?: boolean;
-  lunchTime?: string;
-  morningExercise?: boolean;
-  exerciseTime?: string;
-  bedTime?: string;
-  recommendedSessionDuration?: number;
-  recommendedMeditationTime?: number;
-  recommendedTechniques?: string[];
-  subscriptionTier?: string;
-  businessAttribution?: string;
-  hasCompletedOnboarding?: boolean;
   morningActivities?: string[];
-  weekdayWakeTime?: string;
-  morningEnergyLevel?: number;
-  ritualDependencies?: any[];
-  weatherAlternatives?: any[];
-  
-  // Onboarding-related properties
-  lastOnboardingStep?: number;
-  lastOnboardingCompleted?: boolean;
   timeChallenges?: string[];
-  attributionSource?: string;
-  enableSessionReminders?: boolean;
-  enableProgressUpdates?: boolean;
-  enableRecommendations?: boolean;
-  morningDevices?: string;
+  energyPattern?: string;
   
-  // Work-life balance properties
-  focusTimerDuration?: number;
-  breakTimerDuration?: number;
-  breakReminders?: any[];
-  breakNotificationsEnabled?: boolean;
+  // Enhanced UX fields
+  recommendedSessionDuration?: number;
+  recommendedMeditationTime?: string;
+  recommendedTechniques?: string[];
   
-  // Time management
-  timeManagementStyle?: string;
+  // User profile
+  userName?: string;
+  userAvatar?: string;
   
-  // Additional onboarding
-  wakeTime?: string;
-}
+  // Daily inspiration
+  dailyQuote?: boolean;
+  quoteCategory?: string;
+  
+  // Affirmations
+  affirmationsEnabled?: boolean;
+  affirmationsList?: string[];
+  
+  // Journaling
+  journalPromptsEnabled?: boolean;
+  journalPromptsList?: string[];
+  
+  // Gratitude
+  gratitudeList?: string[];
+  
+  // Mindfulness exercises
+  mindfulnessExercises?: string[];
+  
+  // Focus techniques
+  focusTechniques?: string[];
+  
+  // Energy levels
+  energyLevels?: string[];
+  
+  // Mood states
+  moodStates?: string[];
+  
+  // Stress management techniques
+  stressManagementTechniques?: string[];
+  
+  // Productivity hacks
+  productivityHacks?: string[];
 
-export interface NotificationSettings {
-  morningReminder: boolean;
-  eveningReflection: boolean;
-  focusPrompts: boolean;
-  customReminders: CustomReminder[];
-}
-
-export interface CustomReminder {
-  id: string;
-  time: string;
-  message: string;
-  days: string[];
-}
-
-export interface Quote {
-  text: string;
-  author: string;
-}
-
-export interface Affirmation {
-  id: string;
-  text: string;
-}
-
-export interface JournalPrompt {
-  id: string;
-  text: string;
-}
-
-export interface GratitudeItem {
-  id: string;
-  text: string;
-}
-
-export interface MindfulnessExercise {
-  id: string;
-  title: string;
-  description: string;
-  duration: number;
-}
-
-export interface FocusTechnique {
-  id: string;
-  title: string;
-  description: string;
-}
-
-export interface BluetoothDevice {
-  id: string;
-  name: string;
-  type: DeviceType;
-  connected: boolean;
-  batteryLevel?: number;
-  lastSync?: Date;
-}
-
-export interface BluetoothDeviceInfo {
-  id: string;
-  name: string;
-  type: DeviceType;
-  rssi?: number;
-  services?: string[];
-}
-
-export type DeviceType = 'heart_rate' | 'fitness_tracker' | 'smartwatch' | 'headband' | 'other';
-
-export interface RitualReminder {
-  enabled: boolean;
-  time: number; // minutes before ritual
-  message?: string;
+  // User role
+  userRole?: 'user' | 'admin' | 'coach';
+  
+  // Hydration and sleep goals
+  sleepGoal?: number;
+  hydrationGoal?: number;
+  
+  // Cross-module progress
+  cross_module_progress?: any;
 }
 
 export interface UserPreferencesContextType {
   preferences: UserPreferences;
   updatePreferences: (updates: Partial<UserPreferences>) => Promise<void>;
   resetPreferences: () => void;
-  isCoach: boolean;
   connectBluetoothDevice: (device: BluetoothDeviceInfo) => Promise<boolean>;
   disconnectBluetoothDevice: (deviceId: string) => Promise<boolean>;
+  isCoach: boolean;
+  isEnterprise: boolean;
+  isLoading: boolean;
 }

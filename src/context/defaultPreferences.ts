@@ -2,80 +2,30 @@
 import { UserPreferences } from './types';
 
 const defaultPreferences: UserPreferences = {
-  theme: 'light',
-  focusMode: false,
-  morningRituals: [],
-  wakeUpTime: '07:00',
-  sleepGoal: 8,
-  hydrationGoal: 8,
-  notificationSettings: {
-    morningReminder: true,
-    eveningReflection: true,
-    focusPrompts: true,
-    customReminders: []
-  },
-  isPremium: false,
-  userName: '',
-  userAvatar: '',
-  dailyQuote: true,
-  quoteCategory: 'motivation',
-  affirmationsEnabled: true,
-  affirmationsList: [],
-  journalPromptsEnabled: true,
-  journalPromptsList: [],
-  gratitudeList: [],
-  mindfulnessExercises: [],
-  focusTechniques: [],
-  energyLevels: [],
-  moodStates: [],
-  stressManagementTechniques: [],
-  productivityHacks: [],
-  userRole: 'user',
-  connectedDevices: [],
-  hasWearableDevice: false,
-  workDays: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-  meditationGoals: [],
-  focusChallenges: [],
-  metricsOfInterest: [],
-  preferredSessionDuration: 10,
-  preferred_session_duration: 10,
-  meditationExperience: 'beginner',
-  stressLevel: 3,
-  workEnvironment: 'office',
+  workDays: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
   workStartTime: '09:00',
   workEndTime: '17:00',
-  lunchBreak: true,
   lunchTime: '12:00',
-  morningExercise: false,
   exerciseTime: '07:00',
   bedTime: '22:00',
+  lunchBreak: true,
+  morningExercise: false,
+  meditationExperience: 'beginner',
+  meditationGoals: ['stress_reduction', 'better_sleep'],
+  stressLevel: 'moderate',
+  workEnvironment: 'office',
+  preferredSessionDuration: 10,
   hasCompletedOnboarding: false,
-  morningActivities: [],
-  morningEnergyLevel: 5,
-  ritualDependencies: [],
-  weatherAlternatives: [],
-  
-  // Additional onboarding properties
-  lastOnboardingStep: 0,
-  lastOnboardingCompleted: false,
-  timeChallenges: [],
-  attributionSource: '',
-  enableSessionReminders: true,
-  enableProgressUpdates: true,
-  enableRecommendations: true,
-  morningDevices: 'phone_delayed',
-  
-  // Work-life balance properties
-  focusTimerDuration: 25,
-  breakTimerDuration: 5,
-  breakReminders: [],
-  breakNotificationsEnabled: true,
-  
-  // Time management
-  timeManagementStyle: 'structured',
-  
-  // Additional wake time property
-  wakeTime: '07:00'
+  notificationSettings: {
+    sessionReminders: true,
+    achievementNotifications: true,
+    streakAlerts: true,
+    weeklyNotifications: true
+  },
+  connectedDevices: [],
+  hasWearableDevice: false,
+  subscriptionTier: 'free',
+  theme: 'system'
 };
 
 export default defaultPreferences;

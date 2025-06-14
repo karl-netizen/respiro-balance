@@ -1,5 +1,5 @@
 
-export type DeviceType = 'heart_rate_monitor' | 'fitness_tracker' | 'smart_watch' | 'stress_monitor';
+export type DeviceType = 'heart_rate_monitor' | 'fitness_tracker' | 'smart_watch' | 'stress_monitor' | 'heart_rate';
 
 export interface BluetoothDeviceInfo {
   id: string;
