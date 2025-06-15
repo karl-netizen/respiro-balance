@@ -91,7 +91,7 @@ const DashboardQuickAccess: React.FC = () => {
                 onClick={() => navigate('/focus')}
               >
                 <Target className="h-6 w-6 mb-2 text-purple-500" />
-                <span>Pomodoro Timer</span>
+                <span>Focus Timer</span>
               </Button>
               <Button 
                 variant="outline" 
