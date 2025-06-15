@@ -21,7 +21,6 @@ const Dashboard: React.FC = () => {
   const {
     user,
     currentPeriod,
-    currentMood,
     meditationStats,
     currentStreak,
     weeklyGoal,
@@ -37,6 +36,7 @@ const Dashboard: React.FC = () => {
     if (user) {
       const todayMood = getMoodCheckForToday();
       if (todayMood) {
+        console.log('Setting daily mood from storage:', todayMood);
         setDailyMood(todayMood);
         handleMoodSelect(todayMood);
       } else {
@@ -59,6 +59,7 @@ const Dashboard: React.FC = () => {
   );
 
   const handleMoodModalSelect = (mood: string) => {
+    console.log('Mood selected from modal:', mood);
     setMoodCheckForToday(mood);
     setDailyMood(mood);
     handleMoodSelect(mood);
@@ -69,7 +70,10 @@ const Dashboard: React.FC = () => {
     setShowMoodModal(true);
   };
 
-  const effectiveMood = dailyMood || currentMood;
+  // Use dailyMood as the primary source of truth
+  const effectiveMood = dailyMood;
+
+  console.log('Dashboard render - dailyMood:', dailyMood, 'effectiveMood:', effectiveMood);
 
   return (
     <DashboardLayout>
@@ -106,7 +110,7 @@ const Dashboard: React.FC = () => {
         weeklyGoal={weeklyGoal}
         progressPercentage={progressPercentage}
         currentMood={effectiveMood}
-        onMoodSelect={handleMoodSelect}
+        onMoodSelect={handleMoodModalSelect}
         currentStreak={currentStreak}
       />
 

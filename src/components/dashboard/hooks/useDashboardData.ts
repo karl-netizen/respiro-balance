@@ -22,7 +22,6 @@ export const useDashboardData = () => {
   });
 
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [currentMood, setCurrentMood] = useState<string | null>(null);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 60000);
@@ -89,13 +88,13 @@ export const useDashboardData = () => {
   ]);
 
   const handleMoodSelect = (mood: string) => {
-    setCurrentMood(mood);
+    console.log('handleMoodSelect called with:', mood);
+    // This function is now just for compatibility, actual mood state is managed in Dashboard
   };
 
   return {
     user,
     currentPeriod,
-    currentMood,
     meditationStats,
     currentStreak: stableStats.currentStreak,
     weeklyGoal: stableStats.weeklyGoal,
