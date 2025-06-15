@@ -48,8 +48,8 @@ export const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
   };
 
   return (
-    <Card className={`flex flex-col h-full transition-all duration-300 hover:shadow-lg hover:scale-105 hover:border-primary/50 cursor-pointer ${
-      highlighted ? 'border-primary shadow-lg scale-105' : 'hover:border-2'
+    <Card className={`flex flex-col h-full transition-all duration-300 border-2 hover:shadow-lg hover:scale-105 hover:border-primary/50 cursor-pointer ${
+      highlighted ? 'border-primary shadow-lg scale-105' : 'border-gray-200 hover:border-primary'
     } ${isCurrentPlan ? 'ring-2 ring-primary ring-opacity-50' : ''}`}>
       <CardHeader className={`${highlighted ? 'bg-primary/5' : ''}`}>
         <div className="flex justify-between items-center mb-2">
