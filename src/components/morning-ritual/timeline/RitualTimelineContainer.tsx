@@ -36,6 +36,13 @@ const RitualTimelineContainer = () => {
     deleteRitual(ritual);
   };
 
+  const handleCompleteRitual = (ritualId: string) => {
+    const ritual = rituals.find(r => r.id === ritualId);
+    if (ritual) {
+      completeRitual(ritual);
+    }
+  };
+
   return (
     <>
       <RitualTimelineContent
@@ -62,7 +69,7 @@ const RitualTimelineContainer = () => {
         onCloseAnalytics={() => setShowAnalytics(false)}
         onCloseNotificationSettings={() => setShowNotificationSettings(false)}
         onCloseCompletion={() => setSelectedRitualForCompletion(null)}
-        onCompleteRitual={completeRitual}
+        onCompleteRitual={handleCompleteRitual}
       />
     </>
   );
