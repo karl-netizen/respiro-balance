@@ -6,6 +6,7 @@ import { Circle } from "lucide-react";
 import DesktopNav from "./header/DesktopNav";
 import MobileMenu from "./header/MobileMenu";
 import AccountSection from "./header/AccountSection";
+import BackButton from "./header/BackButton";
 import { NotificationBell } from "./notifications";
 import { MenuIcon } from "lucide-react";
 
@@ -49,7 +50,8 @@ const Header = () => {
       )}
     >
       <div className="container flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center">
+        <div className="flex items-center gap-4">
+          <BackButton />
           <button
             className="flex items-center text-xl font-bold tracking-tight hover:text-primary transition-colors"
             aria-label="Home"
