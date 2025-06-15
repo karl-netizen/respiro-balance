@@ -48,36 +48,45 @@ export const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
   };
 
   return (
-    <Card className={`flex flex-col h-full transition-all duration-300 border-2 hover:shadow-lg hover:scale-105 hover:border-primary/50 cursor-pointer ${
-      highlighted ? 'border-primary shadow-lg scale-105' : 'border-gray-200 hover:border-primary'
-    } ${isCurrentPlan ? 'ring-2 ring-primary ring-opacity-50' : ''}`}>
-      <CardHeader className={`${highlighted ? 'bg-primary/5' : ''}`}>
-        <div className="flex justify-between items-center mb-2">
-          <h3 className="text-xl font-bold">{title}</h3>
-          {highlighted && <span className="bg-primary/20 text-primary text-xs px-2 py-1 rounded-full">Popular</span>}
+    <Card className={`flex flex-col border-border shadow-md hover:shadow-lg transition-all duration-200 bg-white dark:bg-gray-800 ${
+      highlighted ? 'relative border-respiro-dark before:absolute before:inset-0 before:-z-10 before:rounded-lg before:bg-respiro-dark/5' : ''
+    } ${isCurrentPlan ? 'ring-2 ring-respiro-dark ring-opacity-50' : ''}`}>
+      {highlighted && (
+        <div className="absolute top-0 right-0 transform translate-x-1/4 -translate-y-1/3">
+          <div className="bg-respiro-dark text-white text-xs font-medium px-3 py-1 rounded-full">
+            Most Popular
+          </div>
         </div>
-        <p className="text-muted-foreground text-sm">{description}</p>
+      )}
+      
+      <CardHeader>
+        <h3 className="text-xl font-bold text-gray-900 dark:text-white">{title}</h3>
+        <div className="mt-4">
+          <span className="text-3xl font-bold text-gray-900 dark:text-white">${price}</span>
+          <span className="text-muted-foreground ml-2 dark:text-gray-300">/{interval}</span>
+        </div>
+        <p className="text-gray-600 dark:text-gray-300 mt-2">{description}</p>
       </CardHeader>
+      
       <CardContent className="flex-grow">
-        <div className="mb-6">
-          <span className="text-3xl font-bold">${price}</span>
-          <span className="text-muted-foreground">/{interval}</span>
-        </div>
-
         <ul className="space-y-2">
           {features.map((feature, index) => (
-            <li key={index} className="flex items-center">
+            <li key={index} className={`flex items-start ${
+              highlighted ? 'text-respiro-dark font-medium dark:text-respiro-light' : 'text-gray-700 dark:text-gray-300'
+            }`}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="w-5 h-5 text-green-500 mr-2"
+                className={`w-5 h-5 mr-2 mt-0.5 flex-shrink-0 ${
+                  highlighted ? 'text-respiro-dark dark:text-respiro-light' : 'text-green-500'
+                }`}
               >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <span className="text-sm">{feature}</span>
+              <span>{feature}</span>
             </li>
           ))}
         </ul>
@@ -97,22 +106,26 @@ export const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
           </div>
         )}
       </CardContent>
+      
       <CardFooter>
         {isCurrentPlan ? (
           <Button 
             onClick={onManage} 
             variant="outline" 
-            className="w-full border-2 border-gray-300 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors"
+            className="w-full text-white bg-respiro-dark border-respiro-dark hover:bg-respiro-darker font-medium"
           >
             Manage Subscription
           </Button>
         ) : (
           <Button 
             onClick={onSubscribe} 
-            variant="outline"
-            className="w-full border-2 border-gray-300 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors"
+            className={`w-full font-medium ${
+              highlighted 
+                ? 'bg-respiro-dark hover:bg-respiro-darker text-white' 
+                : 'text-white bg-respiro-dark border-respiro-dark hover:bg-respiro-darker'
+            }`}
           >
-            {isActive ? 'Change Plan' : 'Subscribe'}
+            {isActive ? 'Change Plan' : (price === 0 ? 'Start Free Plan' : (highlighted ? 'Upgrade to Premium' : 'Coming Soon'))}
           </Button>
         )}
       </CardFooter>

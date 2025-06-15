@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { SubscriptionCard } from './SubscriptionCard';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -20,8 +21,8 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
     manageSubscription 
   } = useSubscription();
   
-  const handleSubscribe = async (tier: 'premium' | 'premium-plus') => {
-    if (!user) {
+  const handleSubscribe = async (tier: 'free' | 'premium' | 'premium-plus') => {
+    if (!user && tier !== 'free') {
       toast.error("Please sign in to subscribe", {
         description: "You need to have an account to subscribe to a plan."
       });
@@ -29,18 +30,38 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
     }
     
     try {
-      // If user has their own function, use that
-      if (onSelectPremium && tier === 'premium') {
-        onSelectPremium();
+      // Handle free plan
+      if (tier === 'free') {
+        toast.success("Free plan selected!", {
+          description: "Welcome to Respiro Balance"
+        });
+        // Navigate to onboarding or dashboard
+        window.location.href = '/onboarding';
         return;
       }
       
-      // Otherwise use our function which will redirect to checkout
-      const checkoutUrl = await startPremiumCheckout();
-      if (checkoutUrl) {
-        window.location.href = checkoutUrl;
-      } else {
-        throw new Error("Failed to get checkout URL");
+      // Handle premium plan
+      if (tier === 'premium') {
+        if (onSelectPremium) {
+          onSelectPremium();
+          return;
+        }
+        
+        const checkoutUrl = await startPremiumCheckout();
+        if (checkoutUrl) {
+          window.location.href = checkoutUrl;
+        } else {
+          throw new Error("Failed to get checkout URL");
+        }
+        return;
+      }
+      
+      // Handle premium plus (coming soon)
+      if (tier === 'premium-plus') {
+        toast.info("Premium Plus Available Soon", {
+          description: "Premium Plus features will be available soon. Contact us for early access."
+        });
+        window.open("mailto:sales@respirobalance.com?subject=Premium Plus Early Access", "_blank");
       }
     } catch (error) {
       toast.error("Checkout failed", {
@@ -71,7 +92,7 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
 
   return (
     <div>
-      <div className="grid md:grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
         {/* Free Plan */}
         <SubscriptionCard
           title="Free"
@@ -90,7 +111,7 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
             current_period_end: '',
             cancel_at_period_end: false
           } : undefined}
-          onSubscribe={() => {}}
+          onSubscribe={() => handleSubscribe('free')}
         />
 
         {/* Premium Plan */}
@@ -141,9 +162,12 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
         />
       </div>
       
-      <div className="mt-8 text-center text-sm text-muted-foreground">
-        <p>All plans include access to our mobile app and web platform. Premium plans can be canceled anytime.</p>
-        <p className="mt-1">Need special pricing for your team? <a href="/contact" className="underline">Contact us</a></p>
+      <div className="mt-16 text-center">
+        <p className="text-sm text-muted-foreground max-w-2xl mx-auto text-gray-700 dark:text-gray-300">
+          All plans include access to our mobile app and web platform. Premium plans
+          can be canceled at any time. For enterprise solutions or custom
+          pricing, please contact our sales team.
+        </p>
       </div>
     </div>
   );
