@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Smile, Frown, Meh, Heart, Zap, Cloud } from 'lucide-react';
+import { Smile, Frown, Meh, Heart, Zap, Cloud, X } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 
 interface MoodCheckModalProps {
@@ -80,60 +80,79 @@ const MoodCheckModal: React.FC<MoodCheckModalProps> = ({ open, onMoodSelect }) =
     }
   };
 
+  const handleClose = () => {
+    // Close the modal by calling onMoodSelect with a default mood or handle differently
+    // For now, we'll just select 'neutral' as default if user closes without selecting
+    onMoodSelect('neutral');
+  };
+
   const selectedMoodData = moods.find(m => m.id === selectedMood);
 
   return (
     <Dialog open={open} onOpenChange={() => {}}>
-      <DialogContent className="sm:max-w-2xl max-h-[80vh] bg-white border-2 border-gray-200 shadow-2xl">
-        <div className="flex flex-col h-full max-h-[75vh]">
-          <DialogHeader className="text-center space-y-3 pb-4 flex-shrink-0">
+      <DialogContent className="sm:max-w-2xl h-[90vh] max-h-[600px] bg-white border-2 border-gray-200 shadow-2xl p-0">
+        {/* Header with close button */}
+        <div className="flex items-center justify-between p-6 pb-4 border-b border-gray-100">
+          <div className="text-center flex-1">
             <DialogTitle className="text-2xl font-bold text-gray-900">
               How are you feeling today?
             </DialogTitle>
-            <p className="text-base text-gray-700">
+            <p className="text-base text-gray-700 mt-2">
               Your mood helps us recommend the perfect activities for you
             </p>
-          </DialogHeader>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleClose}
+            className="absolute top-4 right-4 h-8 w-8 p-0 hover:bg-gray-100"
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
 
-          <div className="flex-1 overflow-y-auto space-y-4 min-h-0">
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              {moods.map((mood) => (
-                <Card
-                  key={mood.id}
-                  className={`p-4 cursor-pointer transition-all duration-200 border-2 ${
-                    selectedMood === mood.id 
-                      ? `${mood.selectedColor} ring-2 ring-primary ring-offset-2 shadow-lg` 
-                      : `${mood.color} hover:shadow-md`
-                  }`}
-                  onClick={() => handleMoodSelect(mood.id)}
-                >
-                  <div className="flex flex-col items-center text-center space-y-2">
-                    <div className={selectedMood === mood.id ? mood.textColor : 'text-gray-600'}>
-                      {mood.icon}
-                    </div>
-                    <div>
-                      <h3 className={`font-semibold text-base ${selectedMood === mood.id ? mood.textColor : 'text-gray-800'}`}>
-                        {mood.label}
-                      </h3>
-                      <p className={`text-xs ${selectedMood === mood.id ? mood.textColor : 'text-gray-600'}`}>
-                        {mood.description}
-                      </p>
-                    </div>
+        {/* Scrollable content */}
+        <div className="flex-1 overflow-y-auto px-6 py-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {moods.map((mood) => (
+              <Card
+                key={mood.id}
+                className={`p-4 cursor-pointer transition-all duration-200 border-2 ${
+                  selectedMood === mood.id 
+                    ? `${mood.selectedColor} ring-2 ring-primary ring-offset-2 shadow-lg` 
+                    : `${mood.color} hover:shadow-md`
+                }`}
+                onClick={() => handleMoodSelect(mood.id)}
+              >
+                <div className="flex flex-col items-center text-center space-y-2">
+                  <div className={selectedMood === mood.id ? mood.textColor : 'text-gray-600'}>
+                    {mood.icon}
                   </div>
-                </Card>
-              ))}
-            </div>
-
-            {selectedMood && selectedMoodData && (
-              <div className="text-center p-3 bg-primary/10 rounded-lg border border-primary/20">
-                <p className="text-primary font-medium text-sm">
-                  Perfect! Based on feeling {selectedMoodData.label.toLowerCase()}, we'll recommend activities to help you make the most of your day.
-                </p>
-              </div>
-            )}
+                  <div>
+                    <h3 className={`font-semibold text-base ${selectedMood === mood.id ? mood.textColor : 'text-gray-800'}`}>
+                      {mood.label}
+                    </h3>
+                    <p className={`text-xs ${selectedMood === mood.id ? mood.textColor : 'text-gray-600'}`}>
+                      {mood.description}
+                    </p>
+                  </div>
+                </div>
+              </Card>
+            ))}
           </div>
 
-          <div className="flex justify-center pt-6 flex-shrink-0 border-t border-gray-100 mt-4">
+          {selectedMood && selectedMoodData && (
+            <div className="text-center p-3 bg-primary/10 rounded-lg border border-primary/20 mt-4">
+              <p className="text-primary font-medium text-sm">
+                Perfect! Based on feeling {selectedMoodData.label.toLowerCase()}, we'll recommend activities to help you make the most of your day.
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Fixed bottom section with button */}
+        <div className="border-t border-gray-100 p-6">
+          <div className="flex justify-center">
             <Button 
               onClick={handleContinue}
               disabled={!selectedMood}
