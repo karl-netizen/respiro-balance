@@ -25,7 +25,7 @@ const SessionPlayerCard: React.FC<SessionPlayerCardProps> = ({
   onAudioTimeUpdate
 }) => {
   return (
-    <Card className="border-4 border-white bg-respiro-dark">
+    <Card className="border-4 border-white bg-respiro-dark hover:shadow-xl hover:scale-[1.02] transition-all duration-300">
       <CardContent className="pt-6 bg-respiro-dark rounded-md shadow-lg">
         <EnhancedSessionPlayer
           session={session}

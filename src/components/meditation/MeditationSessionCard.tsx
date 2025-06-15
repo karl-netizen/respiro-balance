@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Clock, Heart, Star } from "lucide-react";
+import { Clock, Heart, Star, Brain, Zap, Target, Moon } from "lucide-react";
 import { MeditationSession } from '@/types/meditation';
 
 interface MeditationSessionCardProps {
@@ -19,8 +19,19 @@ const MeditationSessionCard: React.FC<MeditationSessionCardProps> = ({
   isFavorite,
   onToggleFavorite
 }) => {
+  const getCategoryIcon = (category: string) => {
+    const iconProps = { className: "h-8 w-8 text-primary mb-3" };
+    switch (category.toLowerCase()) {
+      case 'guided': return <Brain {...iconProps} />;
+      case 'quick': return <Zap {...iconProps} />;
+      case 'deep': return <Target {...iconProps} />;
+      case 'sleep': return <Moon {...iconProps} />;
+      default: return <Brain {...iconProps} />;
+    }
+  };
+
   return (
-    <Card className="overflow-hidden hover:shadow-md transition-shadow">
+    <Card className="overflow-hidden hover:shadow-lg hover:scale-105 transition-all duration-300 cursor-pointer group">
       <div 
         className="h-32 bg-secondary/50 flex items-center justify-center"
         style={session.image_url ? { backgroundImage: `url(${session.image_url})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
@@ -31,33 +42,36 @@ const MeditationSessionCard: React.FC<MeditationSessionCardProps> = ({
       </div>
       
       <CardHeader className="p-4 pb-2">
-        <div className="flex justify-between items-start">
-          <CardTitle className="text-lg">{session.title}</CardTitle>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="h-8 w-8" 
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggleFavorite();
-            }}
-          >
-            <Heart className={`h-4 w-4 ${isFavorite ? 'fill-red-500 text-red-500' : ''}`} />
-            <span className="sr-only">Toggle favorite</span>
-          </Button>
+        <div className="flex flex-col items-center text-center">
+          {getCategoryIcon(session.category)}
+          <div className="flex justify-between items-start w-full">
+            <CardTitle className="text-lg group-hover:text-primary transition-colors duration-300">{session.title}</CardTitle>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-8 w-8 hover:scale-110 transition-transform duration-200" 
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleFavorite();
+              }}
+            >
+              <Heart className={`h-4 w-4 transition-colors duration-200 ${isFavorite ? 'fill-red-500 text-red-500' : 'hover:text-red-500'}`} />
+              <span className="sr-only">Toggle favorite</span>
+            </Button>
+          </div>
         </div>
-        <div className="flex gap-2 items-center mt-1">
-          <Badge variant="outline" className="text-xs">
+        <div className="flex gap-2 items-center mt-1 justify-center">
+          <Badge variant="outline" className="text-xs group-hover:border-primary transition-colors duration-300">
             {session.category}
           </Badge>
-          <Badge variant="outline" className="text-xs">
+          <Badge variant="outline" className="text-xs group-hover:border-primary transition-colors duration-300">
             {session.level || session.difficulty || 'Beginner'}
           </Badge>
         </div>
       </CardHeader>
       
       <CardContent className="p-4 pt-0">
-        <CardDescription className="line-clamp-2 mb-3 h-10">
+        <CardDescription className="line-clamp-2 mb-3 h-10 text-center">
           {session.description}
         </CardDescription>
         
@@ -76,7 +90,11 @@ const MeditationSessionCard: React.FC<MeditationSessionCardProps> = ({
       </CardContent>
       
       <CardFooter className="p-2 border-t">
-        <Button className="w-full" variant="ghost" onClick={onSelect}>
+        <Button 
+          className="w-full hover:bg-primary/90 transition-colors duration-300" 
+          variant="ghost" 
+          onClick={onSelect}
+        >
           Begin Session
         </Button>
       </CardFooter>
