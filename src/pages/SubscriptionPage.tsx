@@ -55,15 +55,6 @@ const SubscriptionPage = () => {
       <Header />
       
       <main className="flex-grow container max-w-4xl mx-auto px-4 py-8">
-        <div className="mb-6">
-          <Button variant="ghost" asChild>
-            <Link to="/settings" className="flex items-center">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Settings
-            </Link>
-          </Button>
-        </div>
-        
         {showCheckout ? (
           <CheckoutFlow 
             onCancel={handleCheckoutCancel} 
