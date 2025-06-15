@@ -15,6 +15,7 @@ import { FocusHistory } from '@/components/focus-mode/FocusHistory';
 import { FocusControls } from '@/components/focus-mode/FocusControls';
 import { FocusSettingsDialog } from '@/components/focus-mode/FocusSettingsDialog';
 import { useFocus } from '@/context/FocusProvider';
+import BackButton from '@/components/header/BackButton';
 
 const FocusModePage = () => {
   const [activeTab, setActiveTab] = useState('timer');
@@ -57,14 +58,17 @@ const FocusModePage = () => {
       <div className="container mx-auto p-6">
         <div className="mb-8">
           <div className="flex items-center justify-between">
-            <div>
-              <div className="flex items-center gap-3 mb-2">
-                <Zap className="h-8 w-8 text-orange-500" />
-                <h1 className="text-3xl font-bold">Focus Mode</h1>
+            <div className="flex items-center gap-4">
+              <BackButton />
+              <div>
+                <div className="flex items-center gap-3 mb-2">
+                  <Zap className="h-8 w-8 text-orange-500" />
+                  <h1 className="text-3xl font-bold">Focus Mode</h1>
+                </div>
+                <p className="text-muted-foreground">
+                  Transform your productivity with scientifically-proven focus techniques and comprehensive analytics
+                </p>
               </div>
-              <p className="text-muted-foreground">
-                Transform your productivity with scientifically-proven focus techniques and comprehensive analytics
-              </p>
             </div>
             <div className="flex items-center gap-2">
               <Badge variant="outline" className="flex items-center gap-1">

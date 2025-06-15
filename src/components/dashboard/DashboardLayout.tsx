@@ -1,6 +1,5 @@
 
 import React from 'react';
-import SmartRecommendations from '@/components/shared/smart-recommendations';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -22,15 +21,8 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
   welcomeSection
 }) => {
   return (
-    <div className="flex flex-col lg:flex-row gap-6">
-      <div className="flex-1">
-        {welcomeSection}
-      </div>
-      
-      {/* Smart Recommendations Panel */}
-      <div className="lg:w-80">
-        <SmartRecommendations maxRecommendations={2} compact={true} />
-      </div>
+    <div className="mb-6">
+      {welcomeSection}
     </div>
   );
 };
