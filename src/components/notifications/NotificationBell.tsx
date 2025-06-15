@@ -29,13 +29,18 @@ export function NotificationBell() {
     };
   }, []);
   
+  const handleToggle = () => {
+    console.log('Notification bell clicked, current state:', isOpen);
+    setIsOpen(!isOpen);
+  };
+  
   return (
     <div className="relative" ref={containerRef}>
       <Button
         variant="ghost"
         size="icon"
         className="relative"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={handleToggle}
         aria-label="Notifications"
       >
         <Bell className="h-5 w-5" />

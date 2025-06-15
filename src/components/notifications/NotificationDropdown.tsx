@@ -28,7 +28,7 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
   const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
-    <div className="absolute right-0 top-full mt-2 w-80 bg-white dark:bg-gray-800 border rounded-lg shadow-lg z-50">
+    <div className="absolute right-0 top-full mt-2 w-80 bg-white dark:bg-gray-800 border rounded-lg shadow-lg z-[100]">
       <div className="flex items-center justify-between p-4 border-b">
         <h3 className="font-semibold">Notifications</h3>
         <div className="flex items-center gap-2">
