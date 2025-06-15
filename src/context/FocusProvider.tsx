@@ -1,5 +1,4 @@
-
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect, useRef } from 'react';
 
 // Define the types for our focus context
 interface FocusSession {
@@ -111,9 +110,90 @@ export const FocusProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const [progress, setProgress] = useState(0);
   const [currentInterval, setCurrentInterval] = useState('work');
   const [isActive, setIsActive] = useState(false);
+  const [intervalCount, setIntervalCount] = useState(0);
+  
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Timer countdown effect
+  useEffect(() => {
+    if (timerState === 'work' || timerState === 'break' || timerState === 'long-break') {
+      timerRef.current = setInterval(() => {
+        setTimeRemaining(prev => {
+          if (prev <= 1) {
+            // Timer finished
+            handleTimerComplete();
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } else {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    }
+    
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+  }, [timerState]);
+  
+  // Update progress
+  useEffect(() => {
+    let totalDuration = settings.workDuration;
+    if (timerState === 'break') {
+      totalDuration = settings.breakDuration;
+    } else if (timerState === 'long-break') {
+      totalDuration = settings.longBreakDuration;
+    }
+    
+    const progressPercentage = ((totalDuration - timeRemaining) / totalDuration) * 100;
+    setProgress(Math.max(0, Math.min(100, progressPercentage)));
+  }, [timeRemaining, timerState, settings]);
+  
+  const handleTimerComplete = () => {
+    if (timerState === 'work') {
+      const newCount = intervalCount + 1;
+      setIntervalCount(newCount);
+      
+      // Check if it's time for a long break
+      if (newCount % settings.longBreakAfterIntervals === 0) {
+        setTimerState('long-break');
+        setTimeRemaining(settings.longBreakDuration);
+        setCurrentInterval('long-break');
+      } else {
+        setTimerState('break');
+        setTimeRemaining(settings.breakDuration);
+        setCurrentInterval('break');
+      }
+      
+      if (settings.autoStartBreaks) {
+        // Timer will continue automatically
+      } else {
+        setTimerState('paused');
+        setIsActive(false);
+      }
+    } else if (timerState === 'break' || timerState === 'long-break') {
+      setTimerState('work');
+      setTimeRemaining(settings.workDuration);
+      setCurrentInterval('work');
+      
+      if (settings.autoStartWork) {
+        // Timer will continue automatically
+      } else {
+        setTimerState('paused');
+        setIsActive(false);
+      }
+    }
+  };
   
   // Start a new focus session
   const startSession = () => {
+    console.log('Starting focus session...');
     const newSession: FocusSession = {
       id: `session-${Date.now()}`,
       startTime: new Date(),
@@ -130,20 +210,27 @@ export const FocusProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setCurrentInterval('work');
     setProgress(0);
     setIsActive(true);
+    setIntervalCount(0);
+    console.log('Focus session started:', { timerState: 'work', timeRemaining: settings.workDuration });
   };
   
   // Pause the current session
   const pauseSession = () => {
-    if (timerState !== 'idle' && timerState !== 'completed') {
+    if (timerState !== 'idle' && timerState !== 'completed' && timerState !== 'paused') {
       setTimerState('paused');
       setIsActive(false);
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
     }
   };
   
   // Resume the current session
   const resumeSession = () => {
     if (timerState === 'paused') {
-      setTimerState('work'); // Assume we resume to work state
+      setTimerState(currentInterval === 'work' ? 'work' : 
+                   currentInterval === 'break' ? 'break' : 'long-break');
       setIsActive(true);
     }
   };
@@ -166,6 +253,11 @@ export const FocusProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       setTimerState('completed');
       setIsActive(false);
       
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+      
       // Update stats
       setStats(prev => ({
         ...prev,
@@ -181,9 +273,18 @@ export const FocusProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   // Skip the current interval (work or break)
   const skipInterval = () => {
     if (timerState === 'work') {
-      setTimerState('break');
-      setTimeRemaining(settings.breakDuration);
-      setCurrentInterval('break');
+      const newCount = intervalCount + 1;
+      setIntervalCount(newCount);
+      
+      if (newCount % settings.longBreakAfterIntervals === 0) {
+        setTimerState('long-break');
+        setTimeRemaining(settings.longBreakDuration);
+        setCurrentInterval('long-break');
+      } else {
+        setTimerState('break');
+        setTimeRemaining(settings.breakDuration);
+        setCurrentInterval('break');
+      }
     } else if (timerState === 'break' || timerState === 'long-break') {
       setTimerState('work');
       setTimeRemaining(settings.workDuration);
@@ -213,7 +314,11 @@ export const FocusProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   
   // Update settings
   const updateSettings = (newSettings: Partial<FocusSettings>) => {
-    setSettings(prev => ({ ...prev, ...newSettings }));
+    setSettings(prev => {
+      const updated = { ...prev, ...newSettings };
+      console.log('Settings updated:', updated);
+      return updated;
+    });
   };
   
   const value: FocusContextType = {
@@ -232,7 +337,7 @@ export const FocusProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     updateSettings,
     remaining: timeRemaining,
     progress,
-    currentInterval,
+    currentInterval: String(intervalCount + 1),
     isActive
   };
   
