@@ -15,6 +15,11 @@ export { default as DashboardLayout } from './DashboardLayout';
 export { default as DashboardMainContent } from './DashboardMainContent';
 export { default as DashboardHeader } from './DashboardHeader';
 
+// New mood-focused components
+export { default as MoodCheckModal } from './MoodCheckModal';
+export { default as MoodBasedRecommendations } from './MoodBasedRecommendations';
+export { default as MoodDashboardHeader } from './MoodDashboardHeader';
+
 // Hooks
 export { useDashboardData } from './hooks/useDashboardData';
 

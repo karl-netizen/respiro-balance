@@ -2,7 +2,7 @@
 import React from 'react';
 import DashboardActionCards from './DashboardActionCards';
 import WeeklyProgressCard, { WeeklyProgressData } from './WeeklyProgressCard';
-import { SmartRecommendations } from '@/components/shared/smart-recommendations/SmartRecommendations';
+import MoodBasedRecommendations from './MoodBasedRecommendations';
 
 interface DashboardMainContentProps {
   weeklyProgress: number;
@@ -35,21 +35,34 @@ const DashboardMainContent: React.FC<DashboardMainContentProps> = ({
         <WeeklyProgressCard progress={progressData} />
       </div>
 
-      {/* Middle Column - Actions */}
+      {/* Middle Column - Mood-Based Recommendations or Actions */}
       <div className="lg:col-span-1">
-        <DashboardActionCards
-          currentMood={currentMood}
-          onMoodSelect={onMoodSelect}
-        />
+        {currentMood ? (
+          <MoodBasedRecommendations currentMood={currentMood} />
+        ) : (
+          <DashboardActionCards
+            currentMood={currentMood}
+            onMoodSelect={onMoodSelect}
+          />
+        )}
       </div>
 
-      {/* Right Column - Smart Recommendations */}
+      {/* Right Column - Actions (when mood-based recs are shown) or Smart Recommendations */}
       <div className="lg:col-span-1">
-        <SmartRecommendations 
-          maxRecommendations={3}
-          showOnlyHighPriority={false}
-          compact={false}
-        />
+        {currentMood ? (
+          <DashboardActionCards
+            currentMood={currentMood}
+            onMoodSelect={onMoodSelect}
+          />
+        ) : (
+          <div className="space-y-4">
+            {/* Fallback content when no mood is selected */}
+            <DashboardActionCards
+              currentMood={currentMood}
+              onMoodSelect={onMoodSelect}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
