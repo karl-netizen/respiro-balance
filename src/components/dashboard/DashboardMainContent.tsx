@@ -3,6 +3,7 @@ import React from 'react';
 import DashboardActionCards from './DashboardActionCards';
 import WeeklyProgressCard from './WeeklyProgressCard';
 import { SmartRecommendations } from '@/components/shared/smart-recommendations/SmartRecommendations';
+import { CrossModuleActions } from '@/components/shared/CrossModuleActions';
 
 interface DashboardMainContentProps {
   weeklyProgress: number;
@@ -19,15 +20,18 @@ const DashboardMainContent: React.FC<DashboardMainContentProps> = ({
   currentMood,
   onMoodSelect
 }) => {
+  // Create progress object to match WeeklyProgressCard interface
+  const progressData = {
+    weeklyCompleted: weeklyProgress,
+    weeklyGoal: weeklyGoal,
+    streak: 0 // This should come from the dashboard data, adding default for now
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
       {/* Left Column - Progress */}
       <div className="lg:col-span-1">
-        <WeeklyProgressCard
-          weeklyProgress={weeklyProgress}
-          weeklyGoal={weeklyGoal}
-          progressPercentage={progressPercentage}
-        />
+        <WeeklyProgressCard progress={progressData} />
       </div>
 
       {/* Middle Column - Actions */}
@@ -35,6 +39,10 @@ const DashboardMainContent: React.FC<DashboardMainContentProps> = ({
         <DashboardActionCards
           currentMood={currentMood}
           onMoodSelect={onMoodSelect}
+        />
+        <CrossModuleActions
+          currentModule="dashboard"
+          className="mt-4"
         />
       </div>
 
