@@ -84,63 +84,65 @@ const MoodCheckModal: React.FC<MoodCheckModalProps> = ({ open, onMoodSelect }) =
 
   return (
     <Dialog open={open} onOpenChange={() => {}}>
-      <DialogContent className="sm:max-w-2xl max-h-[85vh] bg-white border-2 border-gray-200 shadow-2xl flex flex-col p-0">
-        <DialogHeader className="text-center space-y-3 p-6 pb-4 flex-shrink-0">
-          <DialogTitle className="text-2xl font-bold text-gray-900">
-            How are you feeling today?
-          </DialogTitle>
-          <p className="text-base text-gray-700">
-            Your mood helps us recommend the perfect activities for you
-          </p>
-        </DialogHeader>
+      <DialogContent className="sm:max-w-2xl max-h-[80vh] bg-white border-2 border-gray-200 shadow-2xl">
+        <div className="flex flex-col h-full max-h-[75vh]">
+          <DialogHeader className="text-center space-y-3 pb-4 flex-shrink-0">
+            <DialogTitle className="text-2xl font-bold text-gray-900">
+              How are you feeling today?
+            </DialogTitle>
+            <p className="text-base text-gray-700">
+              Your mood helps us recommend the perfect activities for you
+            </p>
+          </DialogHeader>
 
-        <div className="flex-1 overflow-y-auto px-6 space-y-4">
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            {moods.map((mood) => (
-              <Card
-                key={mood.id}
-                className={`p-4 cursor-pointer transition-all duration-200 border-2 ${
-                  selectedMood === mood.id 
-                    ? `${mood.selectedColor} ring-2 ring-primary ring-offset-2 shadow-lg` 
-                    : `${mood.color} hover:shadow-md`
-                }`}
-                onClick={() => handleMoodSelect(mood.id)}
-              >
-                <div className="flex flex-col items-center text-center space-y-2">
-                  <div className={selectedMood === mood.id ? mood.textColor : 'text-gray-600'}>
-                    {mood.icon}
+          <div className="flex-1 overflow-y-auto space-y-4 min-h-0">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              {moods.map((mood) => (
+                <Card
+                  key={mood.id}
+                  className={`p-4 cursor-pointer transition-all duration-200 border-2 ${
+                    selectedMood === mood.id 
+                      ? `${mood.selectedColor} ring-2 ring-primary ring-offset-2 shadow-lg` 
+                      : `${mood.color} hover:shadow-md`
+                  }`}
+                  onClick={() => handleMoodSelect(mood.id)}
+                >
+                  <div className="flex flex-col items-center text-center space-y-2">
+                    <div className={selectedMood === mood.id ? mood.textColor : 'text-gray-600'}>
+                      {mood.icon}
+                    </div>
+                    <div>
+                      <h3 className={`font-semibold text-base ${selectedMood === mood.id ? mood.textColor : 'text-gray-800'}`}>
+                        {mood.label}
+                      </h3>
+                      <p className={`text-xs ${selectedMood === mood.id ? mood.textColor : 'text-gray-600'}`}>
+                        {mood.description}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className={`font-semibold text-base ${selectedMood === mood.id ? mood.textColor : 'text-gray-800'}`}>
-                      {mood.label}
-                    </h3>
-                    <p className={`text-xs ${selectedMood === mood.id ? mood.textColor : 'text-gray-600'}`}>
-                      {mood.description}
-                    </p>
-                  </div>
-                </div>
-              </Card>
-            ))}
+                </Card>
+              ))}
+            </div>
+
+            {selectedMood && selectedMoodData && (
+              <div className="text-center p-3 bg-primary/10 rounded-lg border border-primary/20">
+                <p className="text-primary font-medium text-sm">
+                  Perfect! Based on feeling {selectedMoodData.label.toLowerCase()}, we'll recommend activities to help you make the most of your day.
+                </p>
+              </div>
+            )}
           </div>
 
-          {selectedMood && selectedMoodData && (
-            <div className="text-center p-3 bg-primary/10 rounded-lg border border-primary/20 mb-4">
-              <p className="text-primary font-medium text-sm">
-                Perfect! Based on feeling {selectedMoodData.label.toLowerCase()}, we'll recommend activities to help you make the most of your day.
-              </p>
-            </div>
-          )}
-        </div>
-
-        <div className="flex justify-center p-6 pt-4 flex-shrink-0 border-t border-gray-100">
-          <Button 
-            onClick={handleContinue}
-            disabled={!selectedMood}
-            size="lg"
-            className="px-8 py-3 text-lg font-semibold bg-primary hover:bg-primary/90 text-white disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Continue to Dashboard
-          </Button>
+          <div className="flex justify-center pt-6 flex-shrink-0 border-t border-gray-100 mt-4">
+            <Button 
+              onClick={handleContinue}
+              disabled={!selectedMood}
+              size="lg"
+              className="px-8 py-3 text-lg font-semibold bg-primary hover:bg-primary/90 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Continue to Dashboard
+            </Button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
