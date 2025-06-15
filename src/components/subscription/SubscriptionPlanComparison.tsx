@@ -5,6 +5,8 @@ import { useSubscription } from '@/hooks/useSubscription';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
+import { NoOverlapGrid } from '@/components/responsive/NoOverlapGrid';
+import { useDeviceDetection } from '@/hooks/useDeviceDetection';
 
 interface SubscriptionPlanComparisonProps {
   onSelectPremium?: () => void;
@@ -14,6 +16,7 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
   onSelectPremium
 }) => {
   const { user } = useAuth();
+  const { deviceType } = useDeviceDetection();
   const { 
     isPremium, 
     subscriptionData, 
@@ -90,9 +93,22 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
   // Determine current user's tier
   const currentTier = isPremium ? (subscriptionData?.tier || 'premium') : 'free';
 
+  // Grid configuration based on device type
+  const gridColumns = {
+    mobile: 1,
+    tablet: 2,
+    desktop: 3,
+  };
+
+  const gridGap = deviceType === 'mobile' ? 'md' : deviceType === 'tablet' ? 'lg' : 'xl';
+
   return (
     <div>
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+      <NoOverlapGrid
+        columns={gridColumns}
+        gap={gridGap}
+        className="max-w-6xl mx-auto"
+      >
         {/* Free Plan */}
         <SubscriptionCard
           title="Free"
@@ -160,10 +176,12 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
           onSubscribe={() => handleSubscribe('premium-plus')}
           onManage={handleManageSubscription}
         />
-      </div>
+      </NoOverlapGrid>
       
-      <div className="mt-16 text-center">
-        <p className="text-sm text-muted-foreground max-w-2xl mx-auto text-gray-700 dark:text-gray-300">
+      <div className={`text-center ${deviceType === 'mobile' ? 'mt-8' : 'mt-16'}`}>
+        <p className={`text-sm text-muted-foreground mx-auto text-gray-700 dark:text-gray-300 ${
+          deviceType === 'mobile' ? 'px-4' : 'max-w-2xl'
+        }`}>
           All plans include access to our mobile app and web platform. Premium plans
           can be canceled at any time. For enterprise solutions or custom
           pricing, please contact our sales team.

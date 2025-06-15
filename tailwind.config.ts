@@ -13,12 +13,59 @@ export default {
 	theme: {
 		container: {
 			center: true,
-			padding: '2rem',
+			padding: {
+				DEFAULT: '1rem',
+				sm: '1rem',
+				md: '1.5rem',
+				lg: '2rem',
+				xl: '2rem',
+				'2xl': '2rem',
+			},
 			screens: {
-				'2xl': '1400px'
+				'sm': '640px',
+				'md': '768px',
+				'lg': '1024px',
+				'xl': '1280px',
+				'2xl': '1536px'
 			}
 		},
 		extend: {
+			screens: {
+				'xs': '475px',
+				'3xl': '1600px',
+				// Touch device specific breakpoints
+				'touch': { 'raw': '(hover: none) and (pointer: coarse)' },
+				'no-touch': { 'raw': '(hover: hover) and (pointer: fine)' },
+			},
+			spacing: {
+				// Brand-consistent spacing scale
+				'brand-xs': 'var(--spacing-xs)',
+				'brand-sm': 'var(--spacing-sm)',
+				'brand-md': 'var(--spacing-md)',
+				'brand-lg': 'var(--spacing-lg)',
+				'brand-xl': 'var(--spacing-xl)',
+				'brand-2xl': 'var(--spacing-2xl)',
+				'brand-3xl': 'var(--spacing-3xl)',
+				// Touch-friendly sizes
+				'touch-target': 'var(--touch-target-min)',
+				'touch-gap': 'var(--touch-spacing-min)',
+				// Device-specific spacing
+				'mobile-xs': 'var(--mobile-spacing-xs)',
+				'mobile-sm': 'var(--mobile-spacing-sm)',
+				'mobile-md': 'var(--mobile-spacing-md)',
+				'mobile-lg': 'var(--mobile-spacing-lg)',
+				'mobile-xl': 'var(--mobile-spacing-xl)',
+				'tablet-xs': 'var(--tablet-spacing-xs)',
+				'tablet-sm': 'var(--tablet-spacing-sm)',
+				'tablet-md': 'var(--tablet-spacing-md)',
+				'tablet-lg': 'var(--tablet-spacing-lg)',
+				'tablet-xl': 'var(--tablet-spacing-xl)',
+				'desktop-xs': 'var(--desktop-spacing-xs)',
+				'desktop-sm': 'var(--desktop-spacing-sm)',
+				'desktop-md': 'var(--desktop-spacing-md)',
+				'desktop-lg': 'var(--desktop-spacing-lg)',
+				'desktop-xl': 'var(--desktop-spacing-xl)',
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -76,6 +123,17 @@ export default {
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
 			},
+			fontSize: {
+				// Responsive typography scale
+				'brand-xs': ['var(--font-size-xs)', { lineHeight: '1.4' }],
+				'brand-sm': ['var(--font-size-sm)', { lineHeight: '1.5' }],
+				'brand-base': ['var(--font-size-base)', { lineHeight: '1.6' }],
+				'brand-lg': ['var(--font-size-lg)', { lineHeight: '1.6' }],
+				'brand-xl': ['var(--font-size-xl)', { lineHeight: '1.4' }],
+				'brand-2xl': ['var(--font-size-2xl)', { lineHeight: '1.3' }],
+				'brand-3xl': ['var(--font-size-3xl)', { lineHeight: '1.2' }],
+				'brand-4xl': ['var(--font-size-4xl)', { lineHeight: '1.1' }],
+			},
 			keyframes: {
 				'accordion-down': {
 					from: { height: '0' },
@@ -116,6 +174,20 @@ export default {
 				'slide-right': {
 					'0%': { transform: 'translateX(-10px)', opacity: '0' },
 					'100%': { transform: 'translateX(0)', opacity: '1' }
+				},
+				// Touch interaction animations
+				'touch-feedback': {
+					'0%': { transform: 'scale(1)' },
+					'50%': { transform: 'scale(0.95)' },
+					'100%': { transform: 'scale(1)' }
+				},
+				'mobile-slide-up': {
+					'0%': { transform: 'translateY(100%)', opacity: '0' },
+					'100%': { transform: 'translateY(0)', opacity: '1' }
+				},
+				'mobile-slide-down': {
+					'0%': { transform: 'translateY(0)', opacity: '1' },
+					'100%': { transform: 'translateY(100%)', opacity: '0' }
 				}
 			},
 			animation: {
@@ -128,7 +200,10 @@ export default {
 				breathe: 'breathe 4s infinite ease-in-out',
 				'float-up': 'float-up 0.8s ease-out',
 				'slide-in': 'slide-in 0.5s ease-out',
-				'slide-right': 'slide-right 0.5s ease-out'
+				'slide-right': 'slide-right 0.5s ease-out',
+				'touch-feedback': 'touch-feedback 0.2s ease-out',
+				'mobile-slide-up': 'mobile-slide-up 0.3s ease-out',
+				'mobile-slide-down': 'mobile-slide-down 0.3s ease-out'
 			},
 			backdropFilter: {
 				'none': 'none',
@@ -136,6 +211,23 @@ export default {
 			},
 			fontFamily: {
 				sans: ['Inter', 'system-ui', 'sans-serif']
+			},
+			gridTemplateColumns: {
+				// Custom grid patterns for different devices
+				'mobile-safe': '1fr',
+				'tablet-safe': 'repeat(auto-fit, minmax(300px, 1fr))',
+				'desktop-safe': 'repeat(auto-fit, minmax(350px, 1fr))',
+			},
+			minHeight: {
+				'touch-target': 'var(--touch-target-min)',
+				'mobile-section': '50vh',
+				'tablet-section': '40vh',
+				'desktop-section': '30vh',
+			},
+			maxWidth: {
+				'mobile-content': '100%',
+				'tablet-content': '768px',
+				'desktop-content': '1200px',
 			}
 		}
 	},

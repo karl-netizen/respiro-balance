@@ -3,6 +3,228 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Brand-Consistent Responsive Design System */
+:root {
+  /* Brand Colors - NEVER change these across devices */
+  --respiro-light: #E0F2F1;
+  --respiro-default: #4DB6AC;
+  --respiro-dark: #00897B;
+  --respiro-darker: #00695C;
+  --respiro-text: #263238;
+
+  /* Brand-Consistent Spacing Scale - maintain ratios across devices */
+  --spacing-xs: 0.25rem;    /* 4px */
+  --spacing-sm: 0.5rem;     /* 8px */
+  --spacing-md: 1rem;       /* 16px */
+  --spacing-lg: 1.5rem;     /* 24px */
+  --spacing-xl: 2rem;       /* 32px */
+  --spacing-2xl: 3rem;      /* 48px */
+  --spacing-3xl: 4rem;      /* 64px */
+
+  /* Mobile-specific spacing (tighter) */
+  --mobile-spacing-xs: 0.125rem;  /* 2px */
+  --mobile-spacing-sm: 0.25rem;   /* 4px */
+  --mobile-spacing-md: 0.5rem;    /* 8px */
+  --mobile-spacing-lg: 1rem;      /* 16px */
+  --mobile-spacing-xl: 1.5rem;    /* 24px */
+
+  /* Tablet-specific spacing (medium) */
+  --tablet-spacing-xs: 0.25rem;   /* 4px */
+  --tablet-spacing-sm: 0.375rem;  /* 6px */
+  --tablet-spacing-md: 0.75rem;   /* 12px */
+  --tablet-spacing-lg: 1.25rem;   /* 20px */
+  --tablet-spacing-xl: 1.75rem;   /* 28px */
+
+  /* Desktop spacing (generous) */
+  --desktop-spacing-xs: 0.375rem; /* 6px */
+  --desktop-spacing-sm: 0.5rem;   /* 8px */
+  --desktop-spacing-md: 1rem;     /* 16px */
+  --desktop-spacing-lg: 1.5rem;   /* 24px */
+  --desktop-spacing-xl: 2rem;     /* 32px */
+
+  /* Touch-friendly minimum sizes */
+  --touch-target-min: 44px;
+  --touch-spacing-min: 8px;
+
+  /* Brand Typography Scale */
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+  --font-size-4xl: 2.25rem;
+}
+
+/* Mobile-First Responsive Base Styles */
+.brand-container {
+  padding: var(--mobile-spacing-md);
+  gap: var(--mobile-spacing-md);
+  background-color: var(--respiro-light);
+  flex-direction: column;
+}
+
+/* Tablet optimizations */
+@media (min-width: 768px) {
+  .brand-container {
+    padding: var(--tablet-spacing-lg);
+    gap: var(--tablet-spacing-lg);
+    flex-direction: row;
+  }
+}
+
+/* Desktop optimizations */
+@media (min-width: 1024px) {
+  .brand-container {
+    padding: var(--desktop-spacing-xl);
+    gap: var(--desktop-spacing-xl);
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}
+
+/* No-Overlap Interactive Elements */
+.no-overlap-element {
+  margin: var(--mobile-spacing-sm);
+  border: 1px solid var(--respiro-dark);
+  position: relative;
+  overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  .no-overlap-element {
+    margin: var(--tablet-spacing-sm);
+  }
+}
+
+@media (min-width: 1024px) {
+  .no-overlap-element {
+    margin: var(--desktop-spacing-sm);
+  }
+}
+
+/* Touch-Optimized Elements */
+@media (hover: none) and (pointer: coarse) {
+  .touch-optimized {
+    min-height: var(--touch-target-min);
+    min-width: var(--touch-target-min);
+    margin: var(--touch-spacing-min);
+    background-color: var(--respiro-dark);
+  }
+
+  .touch-optimized:active {
+    transform: scale(0.95);
+    transition: transform 0.1s ease-in-out;
+  }
+}
+
+/* Brand-Consistent Buttons */
+.brand-button {
+  background-color: var(--respiro-dark);
+  color: white;
+  border: none;
+  transition: all 0.2s ease-in-out;
+}
+
+.brand-button:hover {
+  background-color: var(--respiro-darker);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 137, 123, 0.3);
+}
+
+.brand-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 137, 123, 0.2);
+}
+
+/* Responsive Typography with Brand Consistency */
+.brand-heading {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 700;
+  color: var(--respiro-text);
+  line-height: 1.2;
+}
+
+.brand-body {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 400;
+  color: var(--respiro-text);
+  line-height: 1.6;
+}
+
+/* Mobile typography */
+@media (max-width: 767px) {
+  .brand-heading {
+    font-size: var(--font-size-xl);
+    margin-bottom: var(--mobile-spacing-md);
+  }
+  .brand-body {
+    font-size: var(--font-size-base);
+    margin-bottom: var(--mobile-spacing-sm);
+  }
+}
+
+/* Tablet typography */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .brand-heading {
+    font-size: var(--font-size-2xl);
+    margin-bottom: var(--tablet-spacing-lg);
+  }
+  .brand-body {
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--tablet-spacing-md);
+  }
+}
+
+/* Desktop typography */
+@media (min-width: 1024px) {
+  .brand-heading {
+    font-size: var(--font-size-3xl);
+    margin-bottom: var(--desktop-spacing-xl);
+  }
+  .brand-body {
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--desktop-spacing-md);
+  }
+}
+
+/* Clean Layout Grid System */
+.clean-grid {
+  display: grid;
+  width: 100%;
+  gap: var(--mobile-spacing-md);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .clean-grid {
+    gap: var(--tablet-spacing-lg);
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .clean-grid {
+    gap: var(--desktop-spacing-xl);
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  }
+}
+
+/* Prevent Content Overflow */
+.overflow-safe {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+}
+
+/* Brand-Consistent Focus States */
+.focus-ring:focus {
+  outline: 2px solid var(--respiro-dark);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
 /* Define the glassmorphism effect */
 .glassmorphism-card {
   background: rgba(255, 255, 255, 0.1);
@@ -75,4 +297,43 @@
 /* Enhanced CTA button glow effect */
 .hover\:glow-effect:hover {
   box-shadow: 0 0 20px rgba(77, 182, 172, 0.4);
+}
+
+/* Responsive Navigation Utilities */
+.mobile-nav {
+  display: block;
+}
+
+.desktop-nav {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .mobile-nav {
+    display: none;
+  }
+  
+  .desktop-nav {
+    display: block;
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .brand-button {
+    border: 2px solid var(--respiro-text);
+  }
+  
+  .no-overlap-element {
+    border-width: 2px;
+  }
 }

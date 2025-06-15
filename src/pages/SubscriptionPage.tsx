@@ -13,11 +13,15 @@ import CheckoutFlow from '@/components/subscription/CheckoutFlow';
 import { useSubscriptionContext } from '@/hooks/useSubscriptionContext';
 import { useNavigationHistory } from '@/context/NavigationHistoryProvider';
 import { toast } from 'sonner';
+import { BrandConsistentContainer } from '@/components/responsive/BrandConsistentContainer';
+import { TouchFriendlyButton } from '@/components/responsive/TouchFriendlyButton';
+import { useDeviceDetection } from '@/hooks/useDeviceDetection';
 
 const SubscriptionPage = () => {
   const { user, isLoading } = useAuth();
   const { isPremium, tierName } = useSubscriptionContext();
   const { canGoBack, goBack } = useNavigationHistory();
+  const { deviceType, brandSpacing } = useDeviceDetection();
   const [showCheckout, setShowCheckout] = useState(false);
   
   // Redirect if not logged in
@@ -56,37 +60,52 @@ const SubscriptionPage = () => {
     <div className="min-h-screen flex flex-col">
       <Header />
       
-      <main className="flex-grow container max-w-4xl mx-auto px-4 py-8">
-        {canGoBack && (
-          <div className="mb-6">
-            <Button variant="ghost" onClick={goBack}>
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Previous Page
-            </Button>
-          </div>
-        )}
-        
-        {showCheckout ? (
-          <CheckoutFlow 
-            onCancel={handleCheckoutCancel} 
-            onComplete={handleCheckoutComplete} 
-          />
-        ) : (
-          <>
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold mb-2">Subscription Options</h1>
-              <p className="text-muted-foreground">
-                Choose the plan that fits your meditation journey
-              </p>
+      <main className="flex-grow">
+        <BrandConsistentContainer 
+          maxWidth="2xl" 
+          spacing={deviceType === 'mobile' ? 'normal' : 'loose'}
+          className="py-8"
+        >
+          {canGoBack && (
+            <div className={`mb-6 ${deviceType === 'mobile' ? 'mb-4' : 'mb-8'}`}>
+              <TouchFriendlyButton variant="ghost" onClick={goBack}>
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Previous Page
+              </TouchFriendlyButton>
             </div>
-            
-            <SubscriptionPlanComparison onSelectPremium={handleSelectPremium} />
-            
-            <div className="mt-12">
-              <SubscriptionFAQs />
-            </div>
-          </>
-        )}
+          )}
+          
+          {showCheckout ? (
+            <CheckoutFlow 
+              onCancel={handleCheckoutCancel} 
+              onComplete={handleCheckoutComplete} 
+            />
+          ) : (
+            <>
+              <div className={`mb-8 text-center ${deviceType === 'mobile' ? 'mb-6' : 'mb-12'}`}>
+                <h1 className={`font-bold mb-2 brand-heading ${
+                  deviceType === 'mobile' ? 'text-2xl' : 
+                  deviceType === 'tablet' ? 'text-3xl' : 'text-4xl'
+                }`}>
+                  Subscription Options
+                </h1>
+                <p className={`text-muted-foreground brand-body ${
+                  deviceType === 'mobile' ? 'text-sm px-4' : 'text-base max-w-2xl mx-auto'
+                }`}>
+                  Choose the plan that fits your meditation journey
+                </p>
+              </div>
+              
+              <div className={deviceType === 'mobile' ? 'mb-8' : 'mb-12'}>
+                <SubscriptionPlanComparison onSelectPremium={handleSelectPremium} />
+              </div>
+              
+              <div className={deviceType === 'mobile' ? 'mt-8' : 'mt-16'}>
+                <SubscriptionFAQs />
+              </div>
+            </>
+          )}
+        </BrandConsistentContainer>
       </main>
       
       <Footer />
