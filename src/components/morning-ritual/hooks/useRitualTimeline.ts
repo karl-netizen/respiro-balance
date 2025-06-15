@@ -3,7 +3,7 @@ import { useState, useCallback, useMemo } from 'react';
 import { MorningRitual } from '@/context/types';
 import { useUserPreferences } from '@/context';
 import { useNotifications } from '@/context/NotificationsProvider';
-import { RitualFilters } from '../types';
+import { RitualFilters } from '../RitualFilter';
 
 export const useRitualTimeline = () => {
   const { preferences, updatePreferences } = useUserPreferences();
@@ -31,8 +31,8 @@ export const useRitualTimeline = () => {
     });
   }, [rituals]);
 
-  const handleFilterChange = useCallback((newFilters: Partial<RitualFilters>) => {
-    setFilters(prev => ({ ...prev, ...newFilters }));
+  const handleFilterChange = useCallback((newFilters: RitualFilters) => {
+    setFilters(newFilters);
   }, []);
 
   const resetFilters = useCallback(() => {

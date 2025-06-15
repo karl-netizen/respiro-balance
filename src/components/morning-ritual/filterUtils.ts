@@ -23,8 +23,13 @@ export const filterRituals = (rituals: MorningRitual[], filters: RitualFilters):
       return false;
     }
     
+    // Filter by priority
+    if (filters.priority !== "all" && ritual.priority !== filters.priority) {
+      return false;
+    }
+    
     // Filter by time range
-    if (filters.timeRange) {
+    if (filters.timeRange && typeof filters.timeRange === 'object') {
       const ritualTime = ritual.timeOfDay;
       const ritualTimeMinutes = convertTimeToMinutes(ritualTime);
       const startTimeMinutes = convertTimeToMinutes(filters.timeRange.start);
@@ -57,6 +62,7 @@ export const convertTimeToMinutes = (timeString: string): number => {
 // Default filter values
 export const defaultFilters: RitualFilters = {
   status: "all",
-  timeRange: null,
+  priority: "all",
+  timeRange: "all",
   tags: []
 };

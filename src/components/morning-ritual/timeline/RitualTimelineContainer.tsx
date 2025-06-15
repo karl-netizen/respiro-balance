@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { MorningRitual } from "@/context/types";
 import { useRitualTimeline } from "../hooks/useRitualTimeline";
+import { RitualFilters } from "../RitualFilter";
 import RitualTimelineContent from "./RitualTimelineContent";
 import RitualTimelineModals from "./RitualTimelineModals";
 
@@ -27,6 +28,14 @@ const RitualTimelineContainer = () => {
     setSelectedRitualForCompletion(ritual);
   };
 
+  const handleFilterChangeWrapper = (newFilters: RitualFilters) => {
+    handleFilterChange(newFilters);
+  };
+
+  const handleDeleteRitual = (ritual: MorningRitual) => {
+    deleteRitual(ritual);
+  };
+
   return (
     <>
       <RitualTimelineContent
@@ -36,9 +45,9 @@ const RitualTimelineContainer = () => {
         availableTags={availableTags}
         isLoading={isLoading}
         onComplete={handleAdvancedComplete}
-        onDelete={deleteRitual}
+        onDelete={handleDeleteRitual}
         onUpdate={updateRitual}
-        onFilterChange={handleFilterChange}
+        onFilterChange={handleFilterChangeWrapper}
         onResetFilters={resetFilters}
         onShowAnalytics={() => setShowAnalytics(true)}
         onShowNotificationSettings={() => setShowNotificationSettings(true)}
