@@ -1,5 +1,5 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -18,9 +18,19 @@ import { useFocus } from '@/context/FocusProvider';
 import BackButton from '@/components/header/BackButton';
 
 const FocusModePage = () => {
-  const [activeTab, setActiveTab] = useState('timer');
+  const [searchParams] = useSearchParams();
+  const initialTab = searchParams.get('tab') || 'timer';
+  const [activeTab, setActiveTab] = useState(initialTab);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const { timerState, startSession, remaining, stats } = useFocus();
+  
+  // Update activeTab when URL changes
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (tab) {
+      setActiveTab(tab);
+    }
+  }, [searchParams]);
   
   // Mock data for trend analysis
   const trendData = [

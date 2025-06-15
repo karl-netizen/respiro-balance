@@ -96,7 +96,7 @@ const DashboardQuickAccess: React.FC = () => {
               <Button 
                 variant="outline" 
                 className="h-20 flex flex-col items-center justify-center"
-                onClick={() => navigate('/focus?mode=analytics')}
+                onClick={() => navigate('/focus?tab=analytics')}
               >
                 <TrendingUp className="h-6 w-6 mb-2 text-green-500" />
                 <span>Focus Analytics</span>
