@@ -22,20 +22,20 @@ const BREAKPOINTS = {
 
 export const useDeviceDetection = (): DeviceInfo => {
   const [deviceInfo, setDeviceInfo] = useState<DeviceInfo>(() => {
-    // Initialize with current window dimensions if available
     if (typeof window !== 'undefined') {
       const width = window.innerWidth;
       const height = window.innerHeight;
       
-      const isMobile = width < BREAKPOINTS.md;
-      const isTablet = width >= BREAKPOINTS.md && width < BREAKPOINTS.lg;
-      const isDesktop = width >= BREAKPOINTS.lg;
+      // Simplified logic - focus on width-based detection
+      const isMobile = width < 768;
+      const isTablet = width >= 768 && width < 1024;
+      const isDesktop = width >= 1024;
       
       let screenSize: DeviceInfo['screenSize'] = 'sm';
-      if (width >= BREAKPOINTS['2xl']) screenSize = '2xl';
-      else if (width >= BREAKPOINTS.xl) screenSize = 'xl';
-      else if (width >= BREAKPOINTS.lg) screenSize = 'lg';
-      else if (width >= BREAKPOINTS.md) screenSize = 'md';
+      if (width >= 1536) screenSize = '2xl';
+      else if (width >= 1280) screenSize = 'xl';
+      else if (width >= 1024) screenSize = 'lg';
+      else if (width >= 768) screenSize = 'md';
       else screenSize = 'sm';
       
       const orientation: 'portrait' | 'landscape' = height > width ? 'portrait' : 'landscape';
@@ -61,7 +61,6 @@ export const useDeviceDetection = (): DeviceInfo => {
       };
     }
     
-    // Fallback for SSR
     return {
       isMobile: false,
       isTablet: false,
@@ -79,35 +78,29 @@ export const useDeviceDetection = (): DeviceInfo => {
       const width = window.innerWidth;
       const height = window.innerHeight;
       
-      console.log('Device detection - Window dimensions:', { width, height });
+      console.log('Device detection update - Width:', width, 'Height:', height);
       
-      // Determine device type based on width
-      const isMobile = width < BREAKPOINTS.md; // < 768px
-      const isTablet = width >= BREAKPOINTS.md && width < BREAKPOINTS.lg; // 768px - 1023px
-      const isDesktop = width >= BREAKPOINTS.lg; // >= 1024px
+      // Simplified detection logic
+      const isMobile = width < 768;
+      const isTablet = width >= 768 && width < 1024;
+      const isDesktop = width >= 1024;
 
-      console.log('Device detection - Device types:', { isMobile, isTablet, isDesktop });
+      console.log('Device types:', { isMobile, isTablet, isDesktop, width });
       
-      // Determine screen size
       let screenSize: DeviceInfo['screenSize'] = 'sm';
-      if (width >= BREAKPOINTS['2xl']) screenSize = '2xl';
-      else if (width >= BREAKPOINTS.xl) screenSize = 'xl';
-      else if (width >= BREAKPOINTS.lg) screenSize = 'lg';
-      else if (width >= BREAKPOINTS.md) screenSize = 'md';
+      if (width >= 1536) screenSize = '2xl';
+      else if (width >= 1280) screenSize = 'xl';
+      else if (width >= 1024) screenSize = 'lg';
+      else if (width >= 768) screenSize = 'md';
       else screenSize = 'sm';
 
-      // Determine orientation - properly typed
       const orientation: 'portrait' | 'landscape' = height > width ? 'portrait' : 'landscape';
-
-      // Check touch capability
       const touchCapable = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
-      // Determine device type for cleaner logic
       let deviceType: DeviceInfo['deviceType'] = 'desktop';
       if (isMobile) deviceType = 'mobile';
       else if (isTablet) deviceType = 'tablet';
 
-      // Determine brand spacing scale
       let brandSpacing: DeviceInfo['brandSpacing'] = 'desktop';
       if (isMobile) brandSpacing = 'mobile';
       else if (isTablet) brandSpacing = 'tablet';
@@ -123,15 +116,11 @@ export const useDeviceDetection = (): DeviceInfo => {
         deviceType,
       };
 
-      console.log('Device detection - Final device info:', newDeviceInfo);
-
+      console.log('Final device info:', newDeviceInfo);
       setDeviceInfo(newDeviceInfo);
     };
 
-    // Initial check
     updateDeviceInfo();
-
-    // Add resize listener
     window.addEventListener('resize', updateDeviceInfo);
     window.addEventListener('orientationchange', updateDeviceInfo);
 

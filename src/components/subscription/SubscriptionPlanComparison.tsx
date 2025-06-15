@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { SubscriptionCard } from './SubscriptionCard';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -5,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import { NoOverlapGrid } from '@/components/responsive/NoOverlapGrid';
-import { useDeviceDetection } from '@/hooks/useDeviceDetection';
 
 interface SubscriptionPlanComparisonProps {
   onSelectPremium?: () => void;
@@ -15,15 +15,12 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
   onSelectPremium
 }) => {
   const { user } = useAuth();
-  const { deviceType } = useDeviceDetection();
   const { 
     isPremium, 
     subscriptionData, 
     startPremiumCheckout, 
     manageSubscription 
   } = useSubscription();
-  
-  console.log('SubscriptionPlanComparison - Device type:', deviceType);
   
   const handleSubscribe = async (tier: 'free' | 'premium' | 'premium-plus') => {
     if (!user && tier !== 'free') {
@@ -34,17 +31,14 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
     }
     
     try {
-      // Handle free plan
       if (tier === 'free') {
         toast.success("Free plan selected!", {
           description: "Welcome to Respiro Balance"
         });
-        // Navigate to onboarding or dashboard
         window.location.href = '/onboarding';
         return;
       }
       
-      // Handle premium plan
       if (tier === 'premium') {
         if (onSelectPremium) {
           onSelectPremium();
@@ -60,7 +54,6 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
         return;
       }
       
-      // Handle premium plus (coming soon)
       if (tier === 'premium-plus') {
         toast.info("Premium Plus Available Soon", {
           description: "Premium Plus features will be available soon. Contact us for early access."
@@ -91,26 +84,14 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
     }
   };
 
-  // Determine current user's tier
   const currentTier = isPremium ? (subscriptionData?.tier || 'premium') : 'free';
-
-  // Grid configuration based on device type - force desktop to use 3 columns
-  const gridColumns = {
-    mobile: 1,
-    tablet: 2,
-    desktop: 3,
-  };
-
-  const gridGap = deviceType === 'mobile' ? 'md' : deviceType === 'tablet' ? 'lg' : 'xl';
-
-  console.log('Grid configuration:', { gridColumns, gridGap, deviceType });
 
   return (
     <div>
       <NoOverlapGrid
-        columns={gridColumns}
-        gap={gridGap}
-        className="max-w-6xl mx-auto"
+        columns={{ mobile: 1, tablet: 2, desktop: 3 }}
+        gap="lg"
+        className="max-w-7xl mx-auto"
       >
         {/* Free Plan */}
         <SubscriptionCard
@@ -181,10 +162,8 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
         />
       </NoOverlapGrid>
       
-      <div className={`text-center ${deviceType === 'mobile' ? 'mt-8' : 'mt-16'}`}>
-        <p className={`text-sm text-muted-foreground mx-auto text-gray-700 dark:text-gray-300 ${
-          deviceType === 'mobile' ? 'px-4' : 'max-w-2xl'
-        }`}>
+      <div className="text-center mt-12">
+        <p className="text-sm text-muted-foreground max-w-2xl mx-auto text-gray-700 dark:text-gray-300">
           All plans include access to our mobile app and web platform. Premium plans
           can be canceled at any time. For enterprise solutions or custom
           pricing, please contact our sales team.
