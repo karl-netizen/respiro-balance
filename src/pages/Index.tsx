@@ -52,40 +52,40 @@ const Index = () => {
             
             <div className="grid md:grid-cols-3 gap-10">
               {/* Benefit 1 */}
-              <div className="glassmorphism-card p-6 rounded-xl flex flex-col items-center text-center bg-white/10 backdrop-blur-sm border border-white/20 hover:scale-105 hover:shadow-xl transition-all duration-300">
-                <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mb-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="glassmorphism-card p-6 rounded-xl flex flex-col items-center text-center bg-respiro-light/60 backdrop-blur-sm border border-respiro/30 hover:scale-105 hover:shadow-xl hover:shadow-respiro/25 transition-all duration-300 group">
+                <div className="w-16 h-16 rounded-full bg-respiro/20 flex items-center justify-center mb-4 group-hover:bg-respiro/30 transition-colors duration-300">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-respiro-dark" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <h3 className="text-xl font-bold mb-2 text-foreground">Save Time</h3>
-                <p className="text-foreground/70">
+                <h3 className="text-xl font-bold mb-2 text-respiro-text group-hover:text-respiro-dark transition-colors duration-300">Save Time</h3>
+                <p className="text-respiro-text/80">
                   Short, effective meditation and breathing sessions designed to fit into your busy workday.
                 </p>
               </div>
               
               {/* Benefit 2 */}
-              <div className="glassmorphism-card p-6 rounded-xl flex flex-col items-center text-center bg-white/10 backdrop-blur-sm border border-white/20 hover:scale-105 hover:shadow-xl transition-all duration-300">
-                <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mb-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="glassmorphism-card p-6 rounded-xl flex flex-col items-center text-center bg-respiro-light/60 backdrop-blur-sm border border-respiro/30 hover:scale-105 hover:shadow-xl hover:shadow-respiro/25 transition-all duration-300 group">
+                <div className="w-16 h-16 rounded-full bg-respiro/20 flex items-center justify-center mb-4 group-hover:bg-respiro/30 transition-colors duration-300">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-respiro-dark" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                   </svg>
                 </div>
-                <h3 className="text-xl font-bold mb-2 text-foreground">Reduce Stress</h3>
-                <p className="text-foreground/70">
+                <h3 className="text-xl font-bold mb-2 text-respiro-text group-hover:text-respiro-dark transition-colors duration-300">Reduce Stress</h3>
+                <p className="text-respiro-text/80">
                   Scientifically proven breathing techniques to lower anxiety and improve focus during work hours.
                 </p>
               </div>
               
               {/* Benefit 3 */}
-              <div className="glassmorphism-card p-6 rounded-xl flex flex-col items-center text-center bg-white/10 backdrop-blur-sm border border-white/20 hover:scale-105 hover:shadow-xl transition-all duration-300">
-                <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mb-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="glassmorphism-card p-6 rounded-xl flex flex-col items-center text-center bg-respiro-light/60 backdrop-blur-sm border border-respiro/30 hover:scale-105 hover:shadow-xl hover:shadow-respiro/25 transition-all duration-300 group">
+                <div className="w-16 h-16 rounded-full bg-respiro/20 flex items-center justify-center mb-4 group-hover:bg-respiro/30 transition-colors duration-300">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-respiro-dark" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
                 </div>
-                <h3 className="text-xl font-bold mb-2 text-foreground">Boost Productivity</h3>
-                <p className="text-foreground/70">
+                <h3 className="text-xl font-bold mb-2 text-respiro-text group-hover:text-respiro-dark transition-colors duration-300">Boost Productivity</h3>
+                <p className="text-respiro-text/80">
                   Enhance your concentration and energy levels with regular mindfulness practices.
                 </p>
               </div>
