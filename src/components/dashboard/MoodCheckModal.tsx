@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Smile, Frown, Meh, Heart, Zap, Cloud, X } from 'lucide-react';
+import { Smile, Frown, Meh, Heart, Zap, Cloud } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { getMoodCheckForToday } from '@/utils/moodCheckUtils';
 
@@ -110,23 +110,13 @@ const MoodCheckModal: React.FC<MoodCheckModalProps> = ({ open, onMoodSelect }) =
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="w-full max-w-2xl max-h-[95vh] bg-white border-2 border-gray-200 shadow-2xl p-0 flex flex-col overflow-hidden">
         {/* Header */}
-        <DialogHeader className="p-6 pb-4 border-b border-gray-100 flex-shrink-0 relative">
+        <DialogHeader className="p-6 pb-4 border-b border-gray-100 flex-shrink-0">
           <DialogTitle className="text-2xl font-bold text-gray-900 text-center">
             How are you feeling today?
           </DialogTitle>
           <p className="text-base text-gray-700 mt-2 text-center">
             Your mood helps us recommend the perfect activities for you
           </p>
-          
-          {/* Close button */}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => handleClose(false)}
-            className="absolute top-4 right-4 h-8 w-8 p-0 hover:bg-gray-100 rounded-full"
-          >
-            <X className="h-4 w-4 text-gray-600" />
-          </Button>
         </DialogHeader>
 
         {/* Scrollable content area */}
