@@ -45,7 +45,7 @@ const PricingTiers = () => {
         
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {/* Free Tier */}
-          <Card className="flex flex-col border-border shadow-md hover:shadow-lg transition-all duration-200 bg-white dark:bg-gray-800">
+          <Card className="flex flex-col border-border shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 bg-white dark:bg-gray-800">
             <CardHeader>
               <CardTitle className="text-xl text-gray-900 dark:text-white">Free</CardTitle>
               <div className="mt-4">
@@ -68,7 +68,7 @@ const PricingTiers = () => {
             <CardFooter>
               <Button 
                 variant="outline" 
-                className="w-full text-white bg-respiro-dark border-respiro-dark hover:bg-respiro-darker font-medium"
+                className="w-full text-white bg-respiro-dark border-respiro-dark hover:bg-respiro-darker font-medium transition-all duration-200 hover:scale-105"
                 onClick={handleGetStarted}
                 disabled={isLoading}
               >
@@ -85,7 +85,7 @@ const PricingTiers = () => {
           </Card>
           
           {/* Premium Tier */}
-          <Card className="flex flex-col relative border-respiro-dark before:absolute before:inset-0 before:-z-10 before:rounded-lg before:bg-respiro-dark/5 shadow-md hover:shadow-lg transition-all duration-200 bg-white dark:bg-gray-800">
+          <Card className="flex flex-col relative border-respiro-dark before:absolute before:inset-0 before:-z-10 before:rounded-lg before:bg-respiro-dark/5 shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 bg-white dark:bg-gray-800">
             <div className="absolute top-0 right-0 transform translate-x-1/4 -translate-y-1/3">
               <div className="bg-respiro-dark text-white text-xs font-medium px-3 py-1 rounded-full">
                 Most Popular
@@ -113,7 +113,7 @@ const PricingTiers = () => {
             </CardContent>
             <CardFooter>
               <PaymentButton 
-                className="w-full bg-respiro-dark hover:bg-respiro-darker text-white font-medium"
+                className="w-full bg-respiro-dark hover:bg-respiro-darker text-white font-medium transition-all duration-200 hover:scale-105"
                 openInNewTab={false}
               >
                 Upgrade to Premium
@@ -122,7 +122,7 @@ const PricingTiers = () => {
           </Card>
           
           {/* Premium Plus Tier */}
-          <Card className="flex flex-col border-border shadow-md hover:shadow-lg transition-all duration-200 bg-white dark:bg-gray-800">
+          <Card className="flex flex-col border-border shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 bg-white dark:bg-gray-800">
             <CardHeader>
               <CardTitle className="text-xl text-gray-900 dark:text-white">Premium Plus</CardTitle>
               <div className="mt-4">
@@ -146,7 +146,7 @@ const PricingTiers = () => {
             <CardFooter>
               <Button 
                 variant="outline" 
-                className="w-full text-white bg-respiro-dark border-respiro-dark hover:bg-respiro-darker font-medium"
+                className="w-full text-white bg-respiro-dark border-respiro-dark hover:bg-respiro-darker font-medium transition-all duration-200 hover:scale-105"
                 onClick={() => {
                   toast.info("Premium Plus Available Soon", {
                     description: "Premium Plus features will be available soon. Contact us for early access."

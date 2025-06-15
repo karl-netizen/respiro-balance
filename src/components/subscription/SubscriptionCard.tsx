@@ -48,7 +48,7 @@ export const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
   };
 
   return (
-    <Card className={`flex flex-col border-border shadow-md hover:shadow-lg transition-all duration-200 bg-white dark:bg-gray-800 ${
+    <Card className={`flex flex-col border-border shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 bg-white dark:bg-gray-800 ${
       highlighted ? 'relative border-respiro-dark before:absolute before:inset-0 before:-z-10 before:rounded-lg before:bg-respiro-dark/5' : ''
     } ${isCurrentPlan ? 'ring-2 ring-respiro-dark ring-opacity-50' : ''}`}>
       {highlighted && (
@@ -112,14 +112,14 @@ export const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
           <Button 
             onClick={onManage} 
             variant="outline" 
-            className="w-full text-white bg-respiro-dark border-respiro-dark hover:bg-respiro-darker font-medium"
+            className="w-full text-white bg-respiro-dark border-respiro-dark hover:bg-respiro-darker font-medium transition-all duration-200 hover:scale-105"
           >
             Manage Subscription
           </Button>
         ) : (
           <Button 
             onClick={onSubscribe} 
-            className={`w-full font-medium ${
+            className={`w-full font-medium transition-all duration-200 hover:scale-105 ${
               highlighted 
                 ? 'bg-respiro-dark hover:bg-respiro-darker text-white' 
                 : 'text-white bg-respiro-dark border-respiro-dark hover:bg-respiro-darker'
