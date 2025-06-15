@@ -24,17 +24,17 @@ export const NoOverlapGrid: React.FC<NoOverlapGridProps> = ({
 }) => {
   const { deviceType, brandSpacing } = useDeviceDetection();
 
+  console.log('NoOverlapGrid - Device type:', deviceType, 'Brand spacing:', brandSpacing);
+
   const getColumnsClass = () => {
-    switch (deviceType) {
-      case 'mobile':
-        return `grid-cols-${columns.mobile || 1}`;
-      case 'tablet':
-        return `md:grid-cols-${columns.tablet || 2}`;
-      case 'desktop':
-        return `lg:grid-cols-${columns.desktop || 3}`;
-      default:
-        return 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3';
-    }
+    // Use CSS classes that work with Tailwind's responsive design
+    const mobileColumns = `grid-cols-${columns.mobile || 1}`;
+    const tabletColumns = `md:grid-cols-${columns.tablet || 2}`;
+    const desktopColumns = `lg:grid-cols-${columns.desktop || 3}`;
+    
+    console.log('Grid columns classes:', { mobileColumns, tabletColumns, desktopColumns });
+    
+    return `${mobileColumns} ${tabletColumns} ${desktopColumns}`;
   };
 
   const getGapClass = () => {
@@ -59,7 +59,9 @@ export const NoOverlapGrid: React.FC<NoOverlapGridProps> = ({
       },
     };
 
-    return gapSizes[brandSpacing][gap];
+    const gapClass = gapSizes[brandSpacing][gap];
+    console.log('Grid gap class:', gapClass);
+    return gapClass;
   };
 
   return (

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { SubscriptionCard } from './SubscriptionCard';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -23,6 +22,8 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
     startPremiumCheckout, 
     manageSubscription 
   } = useSubscription();
+  
+  console.log('SubscriptionPlanComparison - Device type:', deviceType);
   
   const handleSubscribe = async (tier: 'free' | 'premium' | 'premium-plus') => {
     if (!user && tier !== 'free') {
@@ -93,7 +94,7 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
   // Determine current user's tier
   const currentTier = isPremium ? (subscriptionData?.tier || 'premium') : 'free';
 
-  // Grid configuration based on device type
+  // Grid configuration based on device type - force desktop to use 3 columns
   const gridColumns = {
     mobile: 1,
     tablet: 2,
@@ -101,6 +102,8 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
   };
 
   const gridGap = deviceType === 'mobile' ? 'md' : deviceType === 'tablet' ? 'lg' : 'xl';
+
+  console.log('Grid configuration:', { gridColumns, gridGap, deviceType });
 
   return (
     <div>

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -23,6 +22,8 @@ const SubscriptionPage = () => {
   const { canGoBack, goBack } = useNavigationHistory();
   const { deviceType, brandSpacing } = useDeviceDetection();
   const [showCheckout, setShowCheckout] = useState(false);
+  
+  console.log('SubscriptionPage - Device type:', deviceType, 'Brand spacing:', brandSpacing);
   
   // Redirect if not logged in
   if (!isLoading && !user) {
