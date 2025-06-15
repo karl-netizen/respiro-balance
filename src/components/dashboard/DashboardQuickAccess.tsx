@@ -40,7 +40,7 @@ const DashboardQuickAccess: React.FC = () => {
                 className="h-20 flex flex-col items-center justify-center"
                 onClick={() => navigate('/meditation?tab=guided')}
               >
-                <Brain className="h-6 w-6 mb-2" />
+                <Brain className="h-6 w-6 mb-2 text-blue-500" />
                 <span>Guided Meditation</span>
               </Button>
               <Button 
@@ -48,7 +48,7 @@ const DashboardQuickAccess: React.FC = () => {
                 className="h-20 flex flex-col items-center justify-center"
                 onClick={() => navigate('/meditation?tab=quick-breaks')}
               >
-                <Zap className="h-6 w-6 mb-2" />
+                <Zap className="h-6 w-6 mb-2 text-green-500" />
                 <span>Quick Break</span>
               </Button>
               <Button 
@@ -56,7 +56,7 @@ const DashboardQuickAccess: React.FC = () => {
                 className="h-20 flex flex-col items-center justify-center"
                 onClick={() => navigate('/meditation?tab=sleep')}
               >
-                <Activity className="h-6 w-6 mb-2" />
+                <Activity className="h-6 w-6 mb-2 text-indigo-500" />
                 <span>Sleep Meditation</span>
               </Button>
             </div>
@@ -69,7 +69,7 @@ const DashboardQuickAccess: React.FC = () => {
                 className="h-20 flex flex-col items-center justify-center"
                 onClick={() => navigate('/breathing?type=box')}
               >
-                <Activity className="h-6 w-6 mb-2" />
+                <Activity className="h-6 w-6 mb-2 text-blue-500" />
                 <span>Box Breathing</span>
               </Button>
               <Button 
@@ -77,7 +77,7 @@ const DashboardQuickAccess: React.FC = () => {
                 className="h-20 flex flex-col items-center justify-center"
                 onClick={() => navigate('/breathing?type=4-7-8')}
               >
-                <Heart className="h-6 w-6 mb-2" />
+                <Heart className="h-6 w-6 mb-2 text-red-500" />
                 <span>4-7-8 Technique</span>
               </Button>
             </div>
@@ -90,7 +90,7 @@ const DashboardQuickAccess: React.FC = () => {
                 className="h-20 flex flex-col items-center justify-center"
                 onClick={() => navigate('/focus')}
               >
-                <Target className="h-6 w-6 mb-2" />
+                <Target className="h-6 w-6 mb-2 text-purple-500" />
                 <span>Pomodoro Timer</span>
               </Button>
               <Button 
@@ -98,7 +98,7 @@ const DashboardQuickAccess: React.FC = () => {
                 className="h-20 flex flex-col items-center justify-center"
                 onClick={() => navigate('/focus?mode=analytics')}
               >
-                <TrendingUp className="h-6 w-6 mb-2" />
+                <TrendingUp className="h-6 w-6 mb-2 text-green-500" />
                 <span>Focus Analytics</span>
               </Button>
             </div>
@@ -111,7 +111,7 @@ const DashboardQuickAccess: React.FC = () => {
                 className="h-20 flex flex-col items-center justify-center"
                 onClick={() => navigate('/morning-ritual')}
               >
-                <Calendar className="h-6 w-6 mb-2" />
+                <Calendar className="h-6 w-6 mb-2 text-orange-500" />
                 <span>Morning Ritual</span>
               </Button>
               <Button 
@@ -119,7 +119,7 @@ const DashboardQuickAccess: React.FC = () => {
                 className="h-20 flex flex-col items-center justify-center"
                 onClick={() => navigate('/morning-ritual?mode=create')}
               >
-                <Clock className="h-6 w-6 mb-2" />
+                <Clock className="h-6 w-6 mb-2 text-purple-500" />
                 <span>Create New Ritual</span>
               </Button>
             </div>

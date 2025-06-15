@@ -18,12 +18,12 @@ const MoodTracker: React.FC<MoodTrackerProps> = ({
   const [selectedMood, setSelectedMood] = useState<string | null>(currentMood);
 
   const moods = [
-    { id: 'happy', label: 'Happy', icon: <Smile className="h-5 w-5" />, color: 'bg-green-100 text-green-800' },
-    { id: 'calm', label: 'Calm', icon: <Heart className="h-5 w-5" />, color: 'bg-blue-100 text-blue-800' },
-    { id: 'energetic', label: 'Energetic', icon: <Zap className="h-5 w-5" />, color: 'bg-yellow-100 text-yellow-800' },
-    { id: 'neutral', label: 'Neutral', icon: <Meh className="h-5 w-5" />, color: 'bg-gray-100 text-gray-800' },
-    { id: 'tired', label: 'Tired', icon: <Cloud className="h-5 w-5" />, color: 'bg-purple-100 text-purple-800' },
-    { id: 'stressed', label: 'Stressed', icon: <Frown className="h-5 w-5" />, color: 'bg-red-100 text-red-800' }
+    { id: 'happy', label: 'Happy', icon: <Smile className="h-5 w-5 text-green-500" />, color: 'bg-green-100 text-green-800' },
+    { id: 'calm', label: 'Calm', icon: <Heart className="h-5 w-5 text-blue-500" />, color: 'bg-blue-100 text-blue-800' },
+    { id: 'energetic', label: 'Energetic', icon: <Zap className="h-5 w-5 text-yellow-500" />, color: 'bg-yellow-100 text-yellow-800' },
+    { id: 'neutral', label: 'Neutral', icon: <Meh className="h-5 w-5 text-gray-500" />, color: 'bg-gray-100 text-gray-800' },
+    { id: 'tired', label: 'Tired', icon: <Cloud className="h-5 w-5 text-purple-500" />, color: 'bg-purple-100 text-purple-800' },
+    { id: 'stressed', label: 'Stressed', icon: <Frown className="h-5 w-5 text-red-500" />, color: 'bg-red-100 text-red-800' }
   ];
 
   const handleMoodSelect = (moodId: string) => {
