@@ -11,11 +11,13 @@ import SubscriptionPlanComparison from '@/components/subscription/SubscriptionPl
 import SubscriptionFAQs from '@/components/subscription/SubscriptionFAQs';
 import CheckoutFlow from '@/components/subscription/CheckoutFlow';
 import { useSubscriptionContext } from '@/hooks/useSubscriptionContext';
+import { useNavigationHistory } from '@/context/NavigationHistoryProvider';
 import { toast } from 'sonner';
 
 const SubscriptionPage = () => {
   const { user, isLoading } = useAuth();
   const { isPremium, tierName } = useSubscriptionContext();
+  const { canGoBack, goBack } = useNavigationHistory();
   const [showCheckout, setShowCheckout] = useState(false);
   
   // Redirect if not logged in
@@ -55,6 +57,15 @@ const SubscriptionPage = () => {
       <Header />
       
       <main className="flex-grow container max-w-4xl mx-auto px-4 py-8">
+        {canGoBack && (
+          <div className="mb-6">
+            <Button variant="ghost" onClick={goBack}>
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Previous Page
+            </Button>
+          </div>
+        )}
+        
         {showCheckout ? (
           <CheckoutFlow 
             onCancel={handleCheckoutCancel} 
