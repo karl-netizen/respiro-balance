@@ -46,11 +46,11 @@ function App() {
   
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <UserPreferencesProvider>
-          <SubscriptionProvider>
-            <NotificationsProvider>
-              <Router>
+      <Router>
+        <AuthProvider>
+          <UserPreferencesProvider>
+            <SubscriptionProvider>
+              <NotificationsProvider>
                 <Toaster />
                 <Routes>
                   <Route path="/" element={<Index />} />
@@ -81,11 +81,11 @@ function App() {
                   <Route path="/devices" element={<BiofeedbackDashboard />} />
                   <Route path="/biometric-data" element={<BiofeedbackDashboard />} />
                 </Routes>
-              </Router>
-            </NotificationsProvider>
-          </SubscriptionProvider>
-        </UserPreferencesProvider>
-      </AuthProvider>
+              </NotificationsProvider>
+            </SubscriptionProvider>
+          </UserPreferencesProvider>
+        </AuthProvider>
+      </Router>
     </QueryClientProvider>
   );
 }
