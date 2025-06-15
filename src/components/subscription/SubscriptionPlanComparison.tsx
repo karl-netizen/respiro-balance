@@ -85,11 +85,9 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
 
   const currentTier = isPremium ? (subscriptionData?.tier || 'premium') : 'free';
 
-  console.log('Screen width in component:', window.innerWidth);
-
   return (
     <div className="w-full">
-      {/* Use standard CSS Grid with explicit responsive classes */}
+      {/* Simple responsive grid using standard Tailwind classes */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 max-w-7xl mx-auto">
         {/* Free Plan */}
         <SubscriptionCard

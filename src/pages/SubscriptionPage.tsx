@@ -13,8 +13,6 @@ import CheckoutFlow from '@/components/subscription/CheckoutFlow';
 import { useSubscriptionContext } from '@/hooks/useSubscriptionContext';
 import { useNavigationHistory } from '@/context/NavigationHistoryProvider';
 import { toast } from 'sonner';
-import { BrandConsistentContainer } from '@/components/responsive/BrandConsistentContainer';
-import { TouchFriendlyButton } from '@/components/responsive/TouchFriendlyButton';
 
 const SubscriptionPage = () => {
   const { user, isLoading } = useAuth();
@@ -53,17 +51,13 @@ const SubscriptionPage = () => {
       <Header />
       
       <main className="flex-grow">
-        <BrandConsistentContainer 
-          maxWidth="2xl" 
-          spacing="loose"
-          className="py-8"
-        >
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 max-w-7xl">
           {canGoBack && (
             <div className="mb-8">
-              <TouchFriendlyButton variant="ghost" onClick={goBack}>
-                <ArrowLeft className="mr-2 h-4 w-4" />
+              <Button variant="ghost" onClick={goBack} className="flex items-center gap-2">
+                <ArrowLeft className="h-4 w-4" />
                 Previous Page
-              </TouchFriendlyButton>
+              </Button>
             </div>
           )}
           
@@ -75,10 +69,10 @@ const SubscriptionPage = () => {
           ) : (
             <>
               <div className="mb-12 text-center">
-                <h1 className="text-4xl font-bold mb-4 brand-heading">
+                <h1 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900 dark:text-white">
                   Subscription Options
                 </h1>
-                <p className="text-lg text-muted-foreground brand-body max-w-2xl mx-auto">
+                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                   Choose the plan that fits your meditation journey
                 </p>
               </div>
@@ -92,7 +86,7 @@ const SubscriptionPage = () => {
               </div>
             </>
           )}
-        </BrandConsistentContainer>
+        </div>
       </main>
       
       <Footer />
