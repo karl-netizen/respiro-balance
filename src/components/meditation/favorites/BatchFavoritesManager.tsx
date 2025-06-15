@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -84,7 +83,7 @@ const BatchFavoritesManager: React.FC<BatchFavoritesManagerProps> = ({
     return (
       <Card>
         <CardContent className="p-8 text-center">
-          <Heart className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+          <Heart className="h-12 w-12 mx-auto mb-4 text-red-500" />
           <h3 className="text-lg font-medium mb-2">No Favorites Yet</h3>
           <p className="text-muted-foreground">
             Heart sessions you love to quickly find them here.
@@ -186,7 +185,7 @@ const BatchFavoritesManager: React.FC<BatchFavoritesManagerProps> = ({
                     onToggleFavorite(session);
                   }}
                 >
-                  <Heart className="h-4 w-4 fill-current" />
+                  <Heart className="h-4 w-4 text-red-500 fill-current" />
                 </Button>
               )}
 

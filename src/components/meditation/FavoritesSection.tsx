@@ -26,7 +26,7 @@ const FavoritesSection: React.FC<FavoritesSectionProps> = ({
     <Card className="mt-6">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Heart className="h-5 w-5 fill-red-500 text-red-500" />
+          <Heart className="h-5 w-5 text-red-500 fill-current" />
           Favorites
         </CardTitle>
       </CardHeader>
@@ -40,7 +40,7 @@ const FavoritesSection: React.FC<FavoritesSectionProps> = ({
                 onClick={() => onSelectSession(session)}
               >
                 <div className="bg-primary/10 rounded-md p-2">
-                  <Heart className="h-4 w-4 text-primary fill-red-500" />
+                  <Heart className="h-4 w-4 text-red-500 fill-current" />
                 </div>
                 <div className="flex-1">
                   <h4 className="text-sm font-medium">{session.title}</h4>

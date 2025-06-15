@@ -26,7 +26,7 @@ const SessionInfo: React.FC<SessionInfoProps> = ({
           <span className="text-sm text-gray-300">{session.duration} min</span>
         </div>
         <Button variant="outline" size="sm" onClick={onToggleFavorite} className="border-gray-700 text-white hover:bg-gray-800 hover:text-respiro-light">
-          <Heart className="h-4 w-4 mr-1" />
+          <Heart className="h-4 w-4 mr-1 text-red-500" />
           Favorite
         </Button>
         <Button variant="outline" size="sm" onClick={onShareSession} className="border-gray-700 text-white hover:bg-gray-800 hover:text-respiro-light">

@@ -103,7 +103,7 @@ const SocialFeedCard: React.FC<SocialFeedCardProps> = ({
                 post.user_liked ? 'text-red-500' : 'text-muted-foreground'
               }`}
             >
-              <Heart className={`h-4 w-4 ${post.user_liked ? 'fill-current' : ''}`} />
+              <Heart className={`h-4 w-4 text-red-500 ${post.user_liked ? 'fill-current' : ''}`} />
               <span>{post.likes_count}</span>
             </Button>
             

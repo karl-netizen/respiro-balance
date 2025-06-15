@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { MeditationSession } from '@/types/meditation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -52,7 +51,7 @@ const SessionCard: React.FC<SessionCardProps> = ({
               }}
               className={`${isFavorite ? 'text-red-500' : 'text-respiro-dark'} hover:text-red-500 hover:scale-110 transition-all duration-200`}
             >
-              <Heart className={`h-4 w-4 ${isFavorite ? 'fill-current' : ''}`} />
+              <Heart className={`h-4 w-4 text-red-500 ${isFavorite ? 'fill-current' : ''}`} />
             </Button>
           </div>
         </div>

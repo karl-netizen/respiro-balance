@@ -38,7 +38,7 @@ const MobileMenuUserActions = ({ toggleMenu }: MobileMenuUserActionsProps) => {
           className="flex items-center gap-2 text-white hover:text-respiro-light py-2 button-transition"
           onClick={toggleMenu}
         >
-          <Crown className="h-4 w-4" />
+          <Crown className="h-4 w-4 text-yellow-500" />
           <span>Manage Subscription</span>
         </Link>
       ) : (
@@ -47,7 +47,7 @@ const MobileMenuUserActions = ({ toggleMenu }: MobileMenuUserActionsProps) => {
           className="flex items-center gap-2 text-white hover:text-respiro-light py-2 button-transition"
           onClick={toggleMenu}
         >
-          <Crown className="h-4 w-4" />
+          <Crown className="h-4 w-4 text-yellow-500" />
           <span>Upgrade to Premium</span>
         </Link>
       )}

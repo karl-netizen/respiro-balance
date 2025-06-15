@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -55,7 +54,7 @@ const MeditationSessionCard: React.FC<MeditationSessionCardProps> = ({
                 onToggleFavorite();
               }}
             >
-              <Heart className={`h-4 w-4 transition-colors duration-200 ${isFavorite ? 'fill-red-500 text-red-500' : 'text-respiro-dark hover:text-red-500'}`} />
+              <Heart className={`h-4 w-4 text-red-500 transition-colors duration-200 ${isFavorite ? 'fill-current' : ''}`} />
               <span className="sr-only">Toggle favorite</span>
             </Button>
           </div>

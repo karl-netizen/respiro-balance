@@ -7,14 +7,14 @@ interface RecommendationIconProps {
 }
 
 export const RecommendationIcon: React.FC<RecommendationIconProps> = ({ type }) => {
-  const iconProps = { className: "h-4 w-4 text-respiro-dark" };
+  const iconProps = { className: "h-4 w-4" };
   
   switch (type) {
-    case 'meditation': return <Brain {...iconProps} />;
-    case 'breathing': return <Heart {...iconProps} />;
-    case 'focus': return <Zap {...iconProps} />;
-    case 'ritual': return <Clock {...iconProps} />;
-    case 'social': return <Users {...iconProps} />;
-    default: return <TrendingUp {...iconProps} />;
+    case 'meditation': return <Brain {...iconProps} className="h-4 w-4 text-blue-500" />;
+    case 'breathing': return <Heart {...iconProps} className="h-4 w-4 text-red-500" />;
+    case 'focus': return <Zap {...iconProps} className="h-4 w-4 text-green-500" />;
+    case 'ritual': return <Clock {...iconProps} className="h-4 w-4 text-purple-500" />;
+    case 'social': return <Users {...iconProps} className="h-4 w-4 text-respiro-dark" />;
+    default: return <TrendingUp {...iconProps} className="h-4 w-4 text-respiro-dark" />;
   }
 };
