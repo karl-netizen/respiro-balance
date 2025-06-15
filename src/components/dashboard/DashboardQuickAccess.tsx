@@ -67,7 +67,7 @@ const DashboardQuickAccess: React.FC = () => {
               <Button 
                 variant="outline" 
                 className="h-20 flex flex-col items-center justify-center"
-                onClick={() => navigate('/breathing?type=box')}
+                onClick={() => navigate('/breathe?tab=exercises&technique=box')}
               >
                 <Activity className="h-6 w-6 mb-2 text-blue-500" />
                 <span>Box Breathing</span>
@@ -75,7 +75,7 @@ const DashboardQuickAccess: React.FC = () => {
               <Button 
                 variant="outline" 
                 className="h-20 flex flex-col items-center justify-center"
-                onClick={() => navigate('/breathing?type=4-7-8')}
+                onClick={() => navigate('/breathe?tab=exercises&technique=478')}
               >
                 <Heart className="h-6 w-6 mb-2 text-red-500" />
                 <span>4-7-8 Technique</span>
