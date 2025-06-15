@@ -21,18 +21,8 @@ export const NoOverlapGrid: React.FC<NoOverlapGridProps> = ({
   gap = 'md',
   minItemHeight,
 }) => {
+  console.log('NoOverlapGrid render - screen width:', window.innerWidth);
   console.log('NoOverlapGrid render - columns config:', columns);
-
-  // Use standard Tailwind responsive classes - no custom logic
-  const getGridClasses = () => {
-    const mobileCol = `grid-cols-${columns.mobile || 1}`;
-    const tabletCol = `md:grid-cols-${columns.tablet || 2}`;
-    const desktopCol = `lg:grid-cols-${columns.desktop || 3}`;
-    
-    console.log('Grid classes:', { mobileCol, tabletCol, desktopCol });
-    
-    return `${mobileCol} ${tabletCol} ${desktopCol}`;
-  };
 
   const getGapClass = () => {
     const gapMap = {
@@ -44,13 +34,19 @@ export const NoOverlapGrid: React.FC<NoOverlapGridProps> = ({
     return gapMap[gap];
   };
 
+  // Use explicit Tailwind classes for better reliability
+  const gridCols = `grid-cols-${columns.mobile} md:grid-cols-${columns.tablet} lg:grid-cols-${columns.desktop}`;
+  
+  console.log('Grid classes applied:', gridCols, getGapClass());
+
   return (
     <div
       className={cn(
         'grid w-full',
-        getGridClasses(),
+        // Explicit grid column classes
+        'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
         getGapClass(),
-        'auto-rows-fr',
+        'items-stretch',
         className
       )}
       style={{
@@ -60,7 +56,7 @@ export const NoOverlapGrid: React.FC<NoOverlapGridProps> = ({
       {React.Children.map(children, (child, index) => (
         <div
           key={index}
-          className="relative overflow-hidden"
+          className="w-full h-full"
           style={{
             minHeight: minItemHeight || 'auto',
           }}

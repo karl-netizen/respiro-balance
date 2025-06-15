@@ -5,7 +5,6 @@ import { useSubscription } from '@/hooks/useSubscription';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
-import { NoOverlapGrid } from '@/components/responsive/NoOverlapGrid';
 
 interface SubscriptionPlanComparisonProps {
   onSelectPremium?: () => void;
@@ -86,13 +85,12 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
 
   const currentTier = isPremium ? (subscriptionData?.tier || 'premium') : 'free';
 
+  console.log('Screen width in component:', window.innerWidth);
+
   return (
-    <div>
-      <NoOverlapGrid
-        columns={{ mobile: 1, tablet: 2, desktop: 3 }}
-        gap="lg"
-        className="max-w-7xl mx-auto"
-      >
+    <div className="w-full">
+      {/* Use standard CSS Grid with explicit responsive classes */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 max-w-7xl mx-auto">
         {/* Free Plan */}
         <SubscriptionCard
           title="Free"
@@ -160,7 +158,7 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
           onSubscribe={() => handleSubscribe('premium-plus')}
           onManage={handleManageSubscription}
         />
-      </NoOverlapGrid>
+      </div>
       
       <div className="text-center mt-12">
         <p className="text-sm text-muted-foreground max-w-2xl mx-auto text-gray-700 dark:text-gray-300">
