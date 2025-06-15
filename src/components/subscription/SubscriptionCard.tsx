@@ -102,19 +102,15 @@ export const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
           <Button 
             onClick={onManage} 
             variant="outline" 
-            className="w-full hover:bg-primary hover:text-primary-foreground transition-colors"
+            className="w-full border-2 border-gray-300 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors"
           >
             Manage Subscription
           </Button>
         ) : (
           <Button 
             onClick={onSubscribe} 
-            variant={highlighted ? "default" : "outline"} 
-            className={`w-full transition-colors ${
-              highlighted 
-                ? 'bg-primary hover:bg-primary/90' 
-                : 'hover:bg-primary hover:text-primary-foreground hover:border-primary'
-            }`}
+            variant="outline"
+            className="w-full border-2 border-gray-300 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors"
           >
             {isActive ? 'Change Plan' : 'Subscribe'}
           </Button>
