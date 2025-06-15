@@ -48,7 +48,7 @@ export const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
   };
 
   return (
-    <Card className={`flex flex-col border-border shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 hover:bg-gray-50/80 dark:hover:bg-gray-700/80 bg-white dark:bg-gray-800 ${
+    <Card className={`flex flex-col border-border shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 bg-white hover:bg-gray-50/80 dark:bg-gray-800 dark:hover:bg-gray-700/80 ${
       highlighted ? 'relative border-respiro-dark before:absolute before:inset-0 before:-z-10 before:rounded-lg before:bg-respiro-dark/5' : ''
     } ${isCurrentPlan ? 'ring-2 ring-respiro-dark ring-opacity-50' : ''}`}>
       {highlighted && (

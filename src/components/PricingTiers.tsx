@@ -45,7 +45,7 @@ const PricingTiers = () => {
         
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {/* Free Tier */}
-          <Card className="flex flex-col border-border shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 hover:bg-gray-50/80 dark:hover:bg-gray-700/80 bg-white dark:bg-gray-800">
+          <Card className="flex flex-col border-border shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 bg-white hover:bg-gray-50/80 dark:bg-gray-800 dark:hover:bg-gray-700/80">
             <CardHeader>
               <CardTitle className="text-xl text-gray-900 dark:text-white">Free</CardTitle>
               <div className="mt-4">
@@ -85,7 +85,7 @@ const PricingTiers = () => {
           </Card>
           
           {/* Premium Tier */}
-          <Card className="flex flex-col relative border-respiro-dark before:absolute before:inset-0 before:-z-10 before:rounded-lg before:bg-respiro-dark/5 shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 hover:bg-gray-50/80 dark:hover:bg-gray-700/80 bg-white dark:bg-gray-800">
+          <Card className="flex flex-col relative border-respiro-dark before:absolute before:inset-0 before:-z-10 before:rounded-lg before:bg-respiro-dark/5 shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 bg-white hover:bg-gray-50/80 dark:bg-gray-800 dark:hover:bg-gray-700/80">
             <div className="absolute top-0 right-0 transform translate-x-1/4 -translate-y-1/3">
               <div className="bg-respiro-dark text-white text-xs font-medium px-3 py-1 rounded-full">
                 Most Popular
@@ -122,7 +122,7 @@ const PricingTiers = () => {
           </Card>
           
           {/* Premium Plus Tier */}
-          <Card className="flex flex-col border-border shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 hover:bg-gray-50/80 dark:hover:bg-gray-700/80 bg-white dark:bg-gray-800">
+          <Card className="flex flex-col border-border shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 bg-white hover:bg-gray-50/80 dark:bg-gray-800 dark:hover:bg-gray-700/80">
             <CardHeader>
               <CardTitle className="text-xl text-gray-900 dark:text-white">Premium Plus</CardTitle>
               <div className="mt-4">
