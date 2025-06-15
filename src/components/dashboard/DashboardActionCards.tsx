@@ -29,9 +29,9 @@ const DashboardActionCards: React.FC<DashboardActionCardsProps> = ({
       action: () => navigate('/breathing?type=box')
     },
     {
-      label: 'Focus Session',
-      description: 'Enhance productivity',
-      action: () => navigate('/focus')
+      label: 'Quick Break',
+      description: 'Short meditation session',
+      action: () => navigate('/meditation?tab=quick')
     },
     {
       label: 'View Progress',

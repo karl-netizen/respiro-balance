@@ -46,7 +46,7 @@ const DashboardQuickAccess: React.FC = () => {
               <Button 
                 variant="outline" 
                 className="h-20 flex flex-col items-center justify-center"
-                onClick={() => navigate('/meditation?tab=quick-breaks')}
+                onClick={() => navigate('/meditation?tab=quick')}
               >
                 <Zap className="h-6 w-6 mb-2 text-green-500" />
                 <span>Quick Break</span>
