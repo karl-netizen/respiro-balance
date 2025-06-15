@@ -108,10 +108,10 @@ const MoodCheckModal: React.FC<MoodCheckModalProps> = ({ open, onMoodSelect }) =
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="w-full max-w-2xl max-h-[95vh] bg-white border-2 border-gray-200 shadow-2xl p-0 flex flex-col overflow-hidden">
-        {/* Header with close button */}
-        <div className="flex items-center justify-between p-6 pb-4 border-b border-gray-100 flex-shrink-0">
-          <div className="text-center flex-1">
+      <DialogContent className="w-full max-w-2xl max-h-[95vh] bg-white border-2 border-gray-200 shadow-2xl p-0 flex flex-col overflow-hidden relative">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 pb-4 border-b border-gray-100 flex-shrink-0 relative">
+          <div className="text-center flex-1 pr-8">
             <DialogTitle className="text-2xl font-bold text-gray-900">
               How are you feeling today?
             </DialogTitle>
@@ -119,13 +119,15 @@ const MoodCheckModal: React.FC<MoodCheckModalProps> = ({ open, onMoodSelect }) =
               Your mood helps us recommend the perfect activities for you
             </p>
           </div>
+          
+          {/* Close button positioned absolutely */}
           <Button
             variant="ghost"
             size="sm"
             onClick={() => handleClose(false)}
-            className="absolute top-4 right-4 h-8 w-8 p-0 hover:bg-gray-100 z-10"
+            className="absolute top-4 right-4 h-8 w-8 p-0 hover:bg-gray-100 rounded-full z-20"
           >
-            <X className="h-4 w-4" />
+            <X className="h-4 w-4 text-gray-600" />
           </Button>
         </div>
 
