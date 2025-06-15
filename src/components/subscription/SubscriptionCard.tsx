@@ -48,7 +48,9 @@ export const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
   };
 
   return (
-    <Card className={`flex flex-col h-full ${highlighted ? 'border-primary shadow-lg' : ''}`}>
+    <Card className={`flex flex-col h-full transition-all duration-300 hover:shadow-lg hover:scale-105 hover:border-primary/50 cursor-pointer ${
+      highlighted ? 'border-primary shadow-lg scale-105' : 'hover:border-2'
+    } ${isCurrentPlan ? 'ring-2 ring-primary ring-opacity-50' : ''}`}>
       <CardHeader className={`${highlighted ? 'bg-primary/5' : ''}`}>
         <div className="flex justify-between items-center mb-2">
           <h3 className="text-xl font-bold">{title}</h3>
@@ -100,7 +102,7 @@ export const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
           <Button 
             onClick={onManage} 
             variant="outline" 
-            className="w-full"
+            className="w-full hover:bg-primary hover:text-primary-foreground transition-colors"
           >
             Manage Subscription
           </Button>
@@ -108,7 +110,11 @@ export const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
           <Button 
             onClick={onSubscribe} 
             variant={highlighted ? "default" : "outline"} 
-            className="w-full"
+            className={`w-full transition-colors ${
+              highlighted 
+                ? 'bg-primary hover:bg-primary/90' 
+                : 'hover:bg-primary hover:text-primary-foreground hover:border-primary'
+            }`}
           >
             {isActive ? 'Change Plan' : 'Subscribe'}
           </Button>
