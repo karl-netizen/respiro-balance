@@ -32,10 +32,10 @@ export const FocusSettingsDialog: React.FC<FocusSettingsDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-xl">
+      <DialogContent className="sm:max-w-[425px] bg-white border border-gray-200 shadow-xl">
         <DialogHeader>
-          <DialogTitle className="text-gray-900 dark:text-gray-100">Focus Settings</DialogTitle>
-          <DialogDescription className="text-gray-600 dark:text-gray-400">
+          <DialogTitle className="text-gray-900">Focus Settings</DialogTitle>
+          <DialogDescription className="text-gray-600">
             Customize your focus session parameters
           </DialogDescription>
         </DialogHeader>
@@ -43,7 +43,7 @@ export const FocusSettingsDialog: React.FC<FocusSettingsDialogProps> = ({
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="workDuration" className="text-gray-700 dark:text-gray-300">Work duration (min)</Label>
+              <Label htmlFor="workDuration" className="text-gray-700">Work duration (min)</Label>
               <Input
                 id="workDuration"
                 type="number"
@@ -55,12 +55,12 @@ export const FocusSettingsDialog: React.FC<FocusSettingsDialogProps> = ({
                     updateSettings({ workDuration: minutes * 60 });
                   }
                 }}
-                className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
+                className="bg-white border-gray-300 text-gray-900"
               />
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="breakDuration" className="text-gray-700 dark:text-gray-300">Break duration (min)</Label>
+              <Label htmlFor="breakDuration" className="text-gray-700">Break duration (min)</Label>
               <Input
                 id="breakDuration"
                 type="number"
@@ -72,14 +72,14 @@ export const FocusSettingsDialog: React.FC<FocusSettingsDialogProps> = ({
                     updateSettings({ breakDuration: minutes * 60 });
                   }
                 }}
-                className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
+                className="bg-white border-gray-300 text-gray-900"
               />
             </div>
           </div>
           
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="longBreakDuration" className="text-gray-700 dark:text-gray-300">Long break (min)</Label>
+              <Label htmlFor="longBreakDuration" className="text-gray-700">Long break (min)</Label>
               <Input
                 id="longBreakDuration"
                 type="number"
@@ -91,27 +91,27 @@ export const FocusSettingsDialog: React.FC<FocusSettingsDialogProps> = ({
                     updateSettings({ longBreakDuration: minutes * 60 });
                   }
                 }}
-                className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
+                className="bg-white border-gray-300 text-gray-900"
               />
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="longBreakAfterIntervals" className="text-gray-700 dark:text-gray-300">Intervals before long break</Label>
+              <Label htmlFor="longBreakAfterIntervals" className="text-gray-700">Intervals before long break</Label>
               <Input
                 id="longBreakAfterIntervals"
                 type="number"
                 min="1"
                 value={settings.longBreakAfterIntervals}
                 onChange={handleNumberChange('longBreakAfterIntervals')}
-                className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
+                className="bg-white border-gray-300 text-gray-900"
               />
             </div>
           </div>
           
-          <Separator className="my-2 bg-gray-200 dark:bg-gray-700" />
+          <Separator className="my-2 bg-gray-200" />
           
           <div className="flex items-center justify-between">
-            <Label htmlFor="autoStartBreaks" className="text-gray-700 dark:text-gray-300">Auto-start breaks</Label>
+            <Label htmlFor="autoStartBreaks" className="text-gray-700">Auto-start breaks</Label>
             <Switch
               id="autoStartBreaks"
               checked={settings.autoStartBreaks}
@@ -120,7 +120,7 @@ export const FocusSettingsDialog: React.FC<FocusSettingsDialogProps> = ({
           </div>
           
           <div className="flex items-center justify-between">
-            <Label htmlFor="autoStartWork" className="text-gray-700 dark:text-gray-300">Auto-start work intervals</Label>
+            <Label htmlFor="autoStartWork" className="text-gray-700">Auto-start work intervals</Label>
             <Switch
               id="autoStartWork"
               checked={settings.autoStartWork}
@@ -129,7 +129,7 @@ export const FocusSettingsDialog: React.FC<FocusSettingsDialogProps> = ({
           </div>
           
           <div className="flex items-center justify-between">
-            <Label htmlFor="enableSounds" className="text-gray-700 dark:text-gray-300">Enable sounds</Label>
+            <Label htmlFor="enableSounds" className="text-gray-700">Enable sounds</Label>
             <Switch
               id="enableSounds"
               checked={settings.enableSounds}
@@ -138,7 +138,7 @@ export const FocusSettingsDialog: React.FC<FocusSettingsDialogProps> = ({
           </div>
           
           <div className="flex items-center justify-between">
-            <Label htmlFor="enableNotifications" className="text-gray-700 dark:text-gray-300">Enable notifications</Label>
+            <Label htmlFor="enableNotifications" className="text-gray-700">Enable notifications</Label>
             <Switch
               id="enableNotifications"
               checked={settings.enableNotifications}
@@ -147,7 +147,7 @@ export const FocusSettingsDialog: React.FC<FocusSettingsDialogProps> = ({
           </div>
           
           <div className="flex items-center justify-between">
-            <Label htmlFor="blockNotifications" className="text-gray-700 dark:text-gray-300">
+            <Label htmlFor="blockNotifications" className="text-gray-700">
               Block other notifications during focus
             </Label>
             <Switch
@@ -162,7 +162,7 @@ export const FocusSettingsDialog: React.FC<FocusSettingsDialogProps> = ({
           <Button 
             variant="outline" 
             onClick={() => onOpenChange(false)}
-            className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700"
+            className="bg-white border-gray-300 text-gray-900 hover:bg-gray-50"
           >
             Close
           </Button>
