@@ -84,37 +84,37 @@ const MoodCheckModal: React.FC<MoodCheckModalProps> = ({ open, onMoodSelect }) =
 
   return (
     <Dialog open={open} onOpenChange={() => {}}>
-      <DialogContent className="sm:max-w-2xl max-h-[90vh] bg-white border-2 border-gray-200 shadow-2xl flex flex-col">
-        <DialogHeader className="text-center space-y-4 pb-2 flex-shrink-0">
-          <DialogTitle className="text-3xl font-bold text-gray-900">
+      <DialogContent className="sm:max-w-2xl max-h-[85vh] bg-white border-2 border-gray-200 shadow-2xl flex flex-col p-0">
+        <DialogHeader className="text-center space-y-3 p-6 pb-4 flex-shrink-0">
+          <DialogTitle className="text-2xl font-bold text-gray-900">
             How are you feeling today?
           </DialogTitle>
-          <p className="text-lg text-gray-700">
+          <p className="text-base text-gray-700">
             Your mood helps us recommend the perfect activities for you
           </p>
         </DialogHeader>
 
-        <div className="flex-1 overflow-y-auto space-y-6 mt-6">
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="flex-1 overflow-y-auto px-6 space-y-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {moods.map((mood) => (
               <Card
                 key={mood.id}
-                className={`p-6 cursor-pointer transition-all duration-200 border-2 ${
+                className={`p-4 cursor-pointer transition-all duration-200 border-2 ${
                   selectedMood === mood.id 
                     ? `${mood.selectedColor} ring-2 ring-primary ring-offset-2 shadow-lg` 
                     : `${mood.color} hover:shadow-md`
                 }`}
                 onClick={() => handleMoodSelect(mood.id)}
               >
-                <div className="flex flex-col items-center text-center space-y-3">
+                <div className="flex flex-col items-center text-center space-y-2">
                   <div className={selectedMood === mood.id ? mood.textColor : 'text-gray-600'}>
                     {mood.icon}
                   </div>
                   <div>
-                    <h3 className={`font-semibold text-lg ${selectedMood === mood.id ? mood.textColor : 'text-gray-800'}`}>
+                    <h3 className={`font-semibold text-base ${selectedMood === mood.id ? mood.textColor : 'text-gray-800'}`}>
                       {mood.label}
                     </h3>
-                    <p className={`text-sm ${selectedMood === mood.id ? mood.textColor : 'text-gray-600'}`}>
+                    <p className={`text-xs ${selectedMood === mood.id ? mood.textColor : 'text-gray-600'}`}>
                       {mood.description}
                     </p>
                   </div>
@@ -124,15 +124,15 @@ const MoodCheckModal: React.FC<MoodCheckModalProps> = ({ open, onMoodSelect }) =
           </div>
 
           {selectedMood && selectedMoodData && (
-            <div className="text-center p-4 bg-primary/10 rounded-lg border border-primary/20">
-              <p className="text-primary font-medium text-base">
+            <div className="text-center p-3 bg-primary/10 rounded-lg border border-primary/20 mb-4">
+              <p className="text-primary font-medium text-sm">
                 Perfect! Based on feeling {selectedMoodData.label.toLowerCase()}, we'll recommend activities to help you make the most of your day.
               </p>
             </div>
           )}
         </div>
 
-        <div className="flex justify-center pt-4 pb-2 flex-shrink-0 border-t border-gray-100 mt-4">
+        <div className="flex justify-center p-6 pt-4 flex-shrink-0 border-t border-gray-100">
           <Button 
             onClick={handleContinue}
             disabled={!selectedMood}
