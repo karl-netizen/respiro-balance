@@ -38,7 +38,7 @@ export const useDeviceDetection = (): DeviceInfo => {
       else if (width >= BREAKPOINTS.md) screenSize = 'md';
       else screenSize = 'sm';
       
-      const orientation = height > width ? 'portrait' : 'landscape';
+      const orientation: 'portrait' | 'landscape' = height > width ? 'portrait' : 'landscape';
       const touchCapable = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
       
       let deviceType: DeviceInfo['deviceType'] = 'desktop';
@@ -96,8 +96,8 @@ export const useDeviceDetection = (): DeviceInfo => {
       else if (width >= BREAKPOINTS.md) screenSize = 'md';
       else screenSize = 'sm';
 
-      // Determine orientation
-      const orientation = height > width ? 'portrait' : 'landscape';
+      // Determine orientation - properly typed
+      const orientation: 'portrait' | 'landscape' = height > width ? 'portrait' : 'landscape';
 
       // Check touch capability
       const touchCapable = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
@@ -112,7 +112,7 @@ export const useDeviceDetection = (): DeviceInfo => {
       if (isMobile) brandSpacing = 'mobile';
       else if (isTablet) brandSpacing = 'tablet';
 
-      const newDeviceInfo = {
+      const newDeviceInfo: DeviceInfo = {
         isMobile,
         isTablet,
         isDesktop,
