@@ -20,7 +20,7 @@ const MeditationSessionCard: React.FC<MeditationSessionCardProps> = ({
   onToggleFavorite
 }) => {
   const getCategoryIcon = (category: string) => {
-    const iconProps = { className: "h-8 w-8 text-primary mb-3" };
+    const iconProps = { className: "h-8 w-8 text-respiro-dark mb-3" };
     switch (category.toLowerCase()) {
       case 'guided': return <Brain {...iconProps} />;
       case 'quick': return <Zap {...iconProps} />;
@@ -45,7 +45,7 @@ const MeditationSessionCard: React.FC<MeditationSessionCardProps> = ({
         <div className="flex flex-col items-center text-center">
           {getCategoryIcon(session.category)}
           <div className="flex justify-between items-start w-full">
-            <CardTitle className="text-lg group-hover:text-primary transition-colors duration-300">{session.title}</CardTitle>
+            <CardTitle className="text-lg group-hover:text-respiro-dark transition-colors duration-300">{session.title}</CardTitle>
             <Button 
               variant="ghost" 
               size="icon" 
@@ -55,16 +55,16 @@ const MeditationSessionCard: React.FC<MeditationSessionCardProps> = ({
                 onToggleFavorite();
               }}
             >
-              <Heart className={`h-4 w-4 transition-colors duration-200 ${isFavorite ? 'fill-red-500 text-red-500' : 'hover:text-red-500'}`} />
+              <Heart className={`h-4 w-4 transition-colors duration-200 ${isFavorite ? 'fill-red-500 text-red-500' : 'text-respiro-dark hover:text-red-500'}`} />
               <span className="sr-only">Toggle favorite</span>
             </Button>
           </div>
         </div>
         <div className="flex gap-2 items-center mt-1 justify-center">
-          <Badge variant="outline" className="text-xs group-hover:border-primary transition-colors duration-300">
+          <Badge variant="outline" className="text-xs group-hover:border-respiro-dark transition-colors duration-300">
             {session.category}
           </Badge>
-          <Badge variant="outline" className="text-xs group-hover:border-primary transition-colors duration-300">
+          <Badge variant="outline" className="text-xs group-hover:border-respiro-dark transition-colors duration-300">
             {session.level || session.difficulty || 'Beginner'}
           </Badge>
         </div>
@@ -77,7 +77,7 @@ const MeditationSessionCard: React.FC<MeditationSessionCardProps> = ({
         
         <div className="flex items-center justify-between text-sm text-muted-foreground">
           <div className="flex items-center gap-1">
-            <Clock className="h-3 w-3" />
+            <Clock className="h-3 w-3 text-respiro-dark" />
             <span>{session.duration} min</span>
           </div>
           {session.rating && (
@@ -91,7 +91,7 @@ const MeditationSessionCard: React.FC<MeditationSessionCardProps> = ({
       
       <CardFooter className="p-2 border-t">
         <Button 
-          className="w-full hover:bg-primary/90 transition-colors duration-300" 
+          className="w-full bg-respiro-dark hover:bg-respiro-darker text-white transition-colors duration-300" 
           variant="ghost" 
           onClick={onSelect}
         >

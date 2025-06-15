@@ -25,7 +25,7 @@ export const useMeditationUtils = () => {
   };
 
   const getCategoryIcon = (category: string) => {
-    const iconProps = { className: "h-5 w-5" };
+    const iconProps = { className: "h-5 w-5 text-respiro-dark" };
     switch (category) {
       case 'Mindfulness': return <Compass {...iconProps} />;
       case 'Relaxation': return <Leaf {...iconProps} />;
