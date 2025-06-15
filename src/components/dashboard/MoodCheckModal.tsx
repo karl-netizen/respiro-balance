@@ -95,16 +95,20 @@ const MoodCheckModal: React.FC<MoodCheckModalProps> = ({ open, onMoodSelect }) =
     }
   };
 
-  const handleClose = () => {
-    console.log('Modal close clicked');
-    onMoodSelect('neutral');
+  const handleClose = (open: boolean) => {
+    if (!open) {
+      console.log('Modal close clicked');
+      onMoodSelect('neutral');
+    }
   };
 
   const selectedMoodData = moods.find(m => m.id === selectedMood);
 
+  if (!open) return null;
+
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="w-full max-w-2xl h-[600px] max-h-[90vh] bg-white border-2 border-gray-200 shadow-2xl p-0 flex flex-col">
+      <DialogContent className="w-full max-w-2xl max-h-[95vh] bg-white border-2 border-gray-200 shadow-2xl p-0 flex flex-col overflow-hidden">
         {/* Header with close button */}
         <div className="flex items-center justify-between p-6 pb-4 border-b border-gray-100 flex-shrink-0">
           <div className="text-center flex-1">
@@ -118,8 +122,8 @@ const MoodCheckModal: React.FC<MoodCheckModalProps> = ({ open, onMoodSelect }) =
           <Button
             variant="ghost"
             size="sm"
-            onClick={handleClose}
-            className="absolute top-4 right-4 h-8 w-8 p-0 hover:bg-gray-100"
+            onClick={() => handleClose(false)}
+            className="absolute top-4 right-4 h-8 w-8 p-0 hover:bg-gray-100 z-10"
           >
             <X className="h-4 w-4" />
           </Button>
@@ -165,13 +169,13 @@ const MoodCheckModal: React.FC<MoodCheckModalProps> = ({ open, onMoodSelect }) =
         </div>
 
         {/* Fixed bottom section with high contrast button */}
-        <div className="border-t border-gray-100 p-6 bg-white flex-shrink-0">
+        <div className="border-t border-gray-100 p-4 bg-white flex-shrink-0">
           <div className="flex justify-center">
             <Button 
               onClick={handleContinue}
               disabled={!selectedMood}
               size="lg"
-              className="w-full max-w-md py-4 text-lg font-bold bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-300 shadow-lg"
+              className="w-full max-w-sm py-3 text-lg font-bold bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-300 shadow-lg transition-colors"
             >
               Continue to Dashboard
             </Button>
