@@ -26,13 +26,13 @@ const SessionCard: React.FC<SessionCardProps> = ({
   formatDuration
 }) => {
   const getCategoryIcon = (category: string) => {
-    const iconProps = { className: "h-6 w-6 text-respiro-dark mb-2" };
+    const baseIconProps = { className: "h-6 w-6 mb-2" };
     switch (category.toLowerCase()) {
-      case 'guided': return <Brain {...iconProps} />;
-      case 'quick': return <Zap {...iconProps} />;
-      case 'deep': return <Target {...iconProps} />;
-      case 'sleep': return <Moon {...iconProps} />;
-      default: return <Brain {...iconProps} />;
+      case 'guided': return <Brain {...baseIconProps} className="h-6 w-6 mb-2 text-blue-500" />;
+      case 'quick': return <Zap {...baseIconProps} className="h-6 w-6 mb-2 text-green-500" />;
+      case 'deep': return <Target {...baseIconProps} className="h-6 w-6 mb-2 text-purple-500" />;
+      case 'sleep': return <Moon {...baseIconProps} className="h-6 w-6 mb-2 text-indigo-500" />;
+      default: return <Brain {...baseIconProps} className="h-6 w-6 mb-2 text-blue-500" />;
     }
   };
 

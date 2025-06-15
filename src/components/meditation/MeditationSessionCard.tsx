@@ -20,13 +20,13 @@ const MeditationSessionCard: React.FC<MeditationSessionCardProps> = ({
   onToggleFavorite
 }) => {
   const getCategoryIcon = (category: string) => {
-    const iconProps = { className: "h-8 w-8 text-respiro-dark mb-3" };
+    const baseIconProps = { className: "h-8 w-8 mb-3" };
     switch (category.toLowerCase()) {
-      case 'guided': return <Brain {...iconProps} />;
-      case 'quick': return <Zap {...iconProps} />;
-      case 'deep': return <Target {...iconProps} />;
-      case 'sleep': return <Moon {...iconProps} />;
-      default: return <Brain {...iconProps} />;
+      case 'guided': return <Brain {...baseIconProps} className="h-8 w-8 mb-3 text-blue-500" />;
+      case 'quick': return <Zap {...baseIconProps} className="h-8 w-8 mb-3 text-green-500" />;
+      case 'deep': return <Target {...baseIconProps} className="h-8 w-8 mb-3 text-purple-500" />;
+      case 'sleep': return <Moon {...baseIconProps} className="h-8 w-8 mb-3 text-indigo-500" />;
+      default: return <Brain {...baseIconProps} className="h-8 w-8 mb-3 text-blue-500" />;
     }
   };
 

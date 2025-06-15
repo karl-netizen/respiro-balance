@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,8 +16,8 @@ const BalanceMeterCard = () => {
         <div className="flex items-center justify-between">
           <CardTitle className="text-xl">Balance Meter</CardTitle>
           <div className="flex space-x-2">
-            <Briefcase className="h-5 w-5 text-primary" />
-            <Home className="h-5 w-5 text-primary" />
+            <Briefcase className="h-5 w-5 text-blue-500" />
+            <Home className="h-5 w-5 text-green-500" />
           </div>
         </div>
         <CardDescription>
