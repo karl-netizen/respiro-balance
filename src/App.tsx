@@ -30,6 +30,13 @@ import EnhancedMeditationPage from './pages/EnhancedMeditationPage';
 import Progress from './pages/Progress';
 import WorkLifeBalance from './pages/WorkLifeBalance';
 import BiofeedbackDashboard from './pages/BiofeedbackDashboard';
+import AboutPage from './pages/AboutPage';
+import ContactPage from './pages/ContactPage';
+import BlogPage from './pages/BlogPage';
+import TermsPage from './pages/TermsPage';
+import PrivacyPage from './pages/PrivacyPage';
+import HelpPage from './pages/HelpPage';
+import FAQ from './pages/FAQ';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -80,6 +87,13 @@ function App() {
                   <Route path="/biofeedback" element={<BiofeedbackDashboard />} />
                   <Route path="/devices" element={<BiofeedbackDashboard />} />
                   <Route path="/biometric-data" element={<BiofeedbackDashboard />} />
+                  <Route path="/about" element={<AboutPage />} />
+                  <Route path="/contact" element={<ContactPage />} />
+                  <Route path="/blog" element={<BlogPage />} />
+                  <Route path="/terms" element={<TermsPage />} />
+                  <Route path="/privacy" element={<PrivacyPage />} />
+                  <Route path="/help" element={<HelpPage />} />
+                  <Route path="/faq" element={<FAQ />} />
                 </Routes>
               </NotificationsProvider>
             </SubscriptionProvider>
