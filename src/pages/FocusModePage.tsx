@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Target, Clock, TrendingUp, Calendar, BarChart3, Settings, Zap } from 'lucide-react';
+import { Target, Clock, TrendingUp, Calendar, BarChart3, Settings, Zap, Play } from 'lucide-react';
 import { ProductivityMetrics } from '@/components/focus-mode/analytics/ProductivityMetrics';
 import { TrendAnalysis } from '@/components/focus-mode/analytics/TrendAnalysis';
 import { InsightsGenerator } from '@/components/focus-mode/analytics/InsightsGenerator';
@@ -12,9 +12,14 @@ import { CalendarIntegration } from '@/components/focus-mode/calendar/CalendarIn
 import { FocusScheduler } from '@/components/focus-mode/calendar/FocusScheduler';
 import { FocusTimer } from '@/components/focus-mode/FocusTimer';
 import { FocusHistory } from '@/components/focus-mode/FocusHistory';
+import { FocusControls } from '@/components/focus-mode/FocusControls';
+import { FocusSettingsDialog } from '@/components/focus-mode/FocusSettingsDialog';
+import { useFocus } from '@/context/FocusProvider';
 
 const FocusModePage = () => {
   const [activeTab, setActiveTab] = useState('timer');
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const { timerState, startSession, remaining, stats } = useFocus();
   
   // Mock data for trend analysis
   const trendData = [
@@ -39,6 +44,14 @@ const FocusModePage = () => {
     }
   ];
 
+  const formatTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const isActive = timerState !== 'idle' && timerState !== 'completed';
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto p-6">
@@ -58,7 +71,11 @@ const FocusModePage = () => {
                 <Target className="h-3 w-3" />
                 Focus Score: 85
               </Badge>
-              <Button variant="outline" size="sm">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setSettingsOpen(true)}
+              >
                 <Settings className="h-4 w-4 mr-2" />
                 Focus Mode Settings
               </Button>
@@ -85,7 +102,7 @@ const FocusModePage = () => {
                 <Target className="h-5 w-5 text-green-500" />
                 <div>
                   <p className="text-sm text-muted-foreground">Sessions</p>
-                  <p className="text-2xl font-bold">6</p>
+                  <p className="text-2xl font-bold">{stats?.totalSessions || 6}</p>
                 </div>
               </div>
             </CardContent>
@@ -96,7 +113,7 @@ const FocusModePage = () => {
                 <TrendingUp className="h-5 w-5 text-purple-500" />
                 <div>
                   <p className="text-sm text-muted-foreground">Streak</p>
-                  <p className="text-2xl font-bold">12 days</p>
+                  <p className="text-2xl font-bold">{stats?.currentStreak || 12} days</p>
                 </div>
               </div>
             </CardContent>
@@ -147,8 +164,45 @@ const FocusModePage = () => {
                     Focus Mode Timer
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <FocusTimer />
+                <CardContent className="space-y-6">
+                  {/* Timer Display */}
+                  <div className="text-center">
+                    <div className="text-6xl font-mono font-bold mb-4">
+                      {formatTime(remaining || 1500)}
+                    </div>
+                    <p className="text-muted-foreground">
+                      {timerState === 'idle' && 'Ready to start your focus session'}
+                      {timerState === 'work' && 'Focus time - Stay concentrated!'}
+                      {timerState === 'break' && 'Break time - Rest and recharge'}
+                      {timerState === 'long-break' && 'Long break - Take a longer rest'}
+                      {timerState === 'paused' && 'Session paused'}
+                      {timerState === 'completed' && 'Session completed!'}
+                    </p>
+                  </div>
+
+                  {/* Start Session Button when idle */}
+                  {timerState === 'idle' && (
+                    <div className="text-center">
+                      <Button 
+                        onClick={startSession}
+                        size="lg"
+                        className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3"
+                      >
+                        <Play className="h-5 w-5 mr-2" />
+                        Start Focus Session
+                      </Button>
+                    </div>
+                  )}
+
+                  {/* Focus Controls when active */}
+                  {isActive && (
+                    <FocusControls />
+                  )}
+
+                  {/* Original Focus Timer Component */}
+                  <div className="mt-6">
+                    <FocusTimer />
+                  </div>
                 </CardContent>
               </Card>
             </div>
@@ -181,6 +235,12 @@ const FocusModePage = () => {
             />
           </TabsContent>
         </Tabs>
+
+        {/* Settings Dialog */}
+        <FocusSettingsDialog 
+          open={settingsOpen} 
+          onOpenChange={setSettingsOpen} 
+        />
       </div>
     </div>
   );
