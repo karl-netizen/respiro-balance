@@ -26,7 +26,9 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
       id: notif.id,
       title: notif.title,
       message: notif.message,
-      type: notif.type as 'achievement' | 'reminder' | 'update' | 'general',
+      type: notif.type === 'onboarding-guide' || notif.type === 'step-complete' || notif.type === 'milestone' 
+        ? 'general' as const
+        : notif.type as 'achievement' | 'reminder' | 'update' | 'general',
       read: notif.read,
       createdAt: notif.createdAt
     }))
@@ -47,9 +49,7 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const combinedMarkAllAsRead = () => {
     ritualNotifications.markAllAsRead();
-    allNotifications
-      .filter(n => n.type.startsWith('onboarding') || n.type === 'milestone' || n.type === 'step-complete')
-      .forEach(n => onboardingNotifications.markAsRead(n.id));
+    onboardingNotifications.notifications.forEach(n => onboardingNotifications.markAsRead(n.id));
   };
 
   const notificationsService = {
