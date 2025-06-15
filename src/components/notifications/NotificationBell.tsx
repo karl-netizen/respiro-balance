@@ -9,8 +9,27 @@ import { useOnClickOutside } from "@/hooks/useOnClickOutside";
 
 export function NotificationBell() {
   const [isOpen, setIsOpen] = useState(false);
-  const { notifications, unreadCount, markAllAsRead } = useNotifications();
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Get notifications with error handling
+  let notifications = [];
+  let unreadCount = 0;
+  let markAllAsRead = () => {};
+  
+  try {
+    const notificationContext = useNotifications();
+    notifications = notificationContext?.notifications || [];
+    unreadCount = notificationContext?.unreadCount || 0;
+    markAllAsRead = notificationContext?.markAllAsRead || (() => {});
+    
+    console.log('Notifications context:', { 
+      notifications: notifications.length, 
+      unreadCount,
+      hasMarkAllAsRead: typeof markAllAsRead === 'function'
+    });
+  } catch (error) {
+    console.error('Error accessing notifications context:', error);
+  }
   
   // Close dropdown when clicking outside
   useOnClickOutside(containerRef, () => setIsOpen(false));
@@ -31,6 +50,7 @@ export function NotificationBell() {
   
   const handleToggle = () => {
     console.log('Notification bell clicked, current state:', isOpen);
+    console.log('Available notifications:', notifications);
     setIsOpen(!isOpen);
   };
   
@@ -56,7 +76,7 @@ export function NotificationBell() {
       
       {isOpen && (
         <NotificationDropdown 
-          notifications={notifications as any[]}
+          notifications={notifications}
           markAllAsRead={markAllAsRead}
           onClose={() => setIsOpen(false)}
         />

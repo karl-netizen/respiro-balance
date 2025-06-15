@@ -21,11 +21,39 @@ interface NotificationDropdownProps {
 }
 
 const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
-  notifications,
+  notifications = [],
   markAllAsRead,
   onClose
 }) => {
-  const unreadCount = notifications.filter(n => !n.read).length;
+  console.log('NotificationDropdown rendering with:', { 
+    notificationsCount: notifications.length,
+    notifications: notifications.slice(0, 3) // Log first 3 for debugging
+  });
+
+  // Safely filter notifications
+  const unreadCount = Array.isArray(notifications) 
+    ? notifications.filter(n => n && !n.read).length 
+    : 0;
+
+  const handleMarkAllAsRead = () => {
+    try {
+      if (typeof markAllAsRead === 'function') {
+        markAllAsRead();
+      }
+    } catch (error) {
+      console.error('Error marking all as read:', error);
+    }
+  };
+
+  const handleClose = () => {
+    try {
+      if (typeof onClose === 'function') {
+        onClose();
+      }
+    } catch (error) {
+      console.error('Error closing dropdown:', error);
+    }
+  };
 
   return (
     <div className="absolute right-0 top-full mt-2 w-80 bg-white dark:bg-gray-800 border rounded-lg shadow-lg z-[100]">
@@ -37,43 +65,54 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
               {unreadCount} new
             </Badge>
           )}
-          <Button variant="ghost" size="sm" onClick={onClose}>
+          <Button variant="ghost" size="sm" onClick={handleClose}>
             <X className="h-4 w-4" />
           </Button>
         </div>
       </div>
       
       <ScrollArea className="max-h-96">
-        {notifications.length === 0 ? (
+        {!Array.isArray(notifications) || notifications.length === 0 ? (
           <div className="p-4 text-center text-muted-foreground">
             <Bell className="h-8 w-8 mx-auto mb-2 opacity-50" />
             <p>No notifications yet</p>
           </div>
         ) : (
           <div className="p-2">
-            {notifications.map((notification) => (
-              <div
-                key={notification.id}
-                className={`p-3 rounded-md mb-2 ${
-                  notification.read ? 'bg-gray-50 dark:bg-gray-700' : 'bg-blue-50 dark:bg-blue-900/20'
-                }`}
-              >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <h4 className="font-medium text-sm">{notification.title}</h4>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {notification.message}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-2">
-                      {notification.createdAt.toLocaleDateString()}
-                    </p>
+            {notifications.map((notification) => {
+              // Safely handle each notification
+              if (!notification || !notification.id) {
+                return null;
+              }
+
+              const createdAt = notification.createdAt instanceof Date 
+                ? notification.createdAt 
+                : new Date(notification.createdAt || Date.now());
+
+              return (
+                <div
+                  key={notification.id}
+                  className={`p-3 rounded-md mb-2 ${
+                    notification.read ? 'bg-gray-50 dark:bg-gray-700' : 'bg-blue-50 dark:bg-blue-900/20'
+                  }`}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h4 className="font-medium text-sm">{notification.title || 'Notification'}</h4>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {notification.message || 'No message'}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-2">
+                        {createdAt.toLocaleDateString()}
+                      </p>
+                    </div>
+                    {!notification.read && (
+                      <div className="w-2 h-2 bg-blue-500 rounded-full ml-2 flex-shrink-0" />
+                    )}
                   </div>
-                  {!notification.read && (
-                    <div className="w-2 h-2 bg-blue-500 rounded-full ml-2 flex-shrink-0" />
-                  )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </ScrollArea>
@@ -83,8 +122,8 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
           <Button 
             variant="outline" 
             size="sm" 
-            onClick={markAllAsRead}
-            className="w-full"
+            onClick={handleMarkAllAsRead}
+            className="w-full border-2 border-gray-300 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors"
           >
             <Check className="h-4 w-4 mr-2" />
             Mark all as read
