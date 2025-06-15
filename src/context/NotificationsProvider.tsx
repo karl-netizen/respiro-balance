@@ -1,6 +1,7 @@
 
 import React, { createContext, useContext } from 'react';
 import { Notification, useRitualNotifications } from '@/hooks/useRitualNotifications';
+import { useOnboardingNotifications } from '@/hooks/useOnboardingNotifications';
 
 interface NotificationsContextType {
   notifications: Notification[];
@@ -15,7 +16,51 @@ interface NotificationsContextType {
 const NotificationsContext = createContext<NotificationsContextType | undefined>(undefined);
 
 export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const notificationsService = useRitualNotifications();
+  const ritualNotifications = useRitualNotifications();
+  const onboardingNotifications = useOnboardingNotifications();
+  
+  // Combine both notification types
+  const allNotifications = [
+    ...ritualNotifications.notifications,
+    ...onboardingNotifications.notifications.map(notif => ({
+      id: notif.id,
+      title: notif.title,
+      message: notif.message,
+      type: notif.type as 'achievement' | 'reminder' | 'update' | 'general',
+      read: notif.read,
+      createdAt: notif.createdAt
+    }))
+  ];
+
+  const combinedUnreadCount = allNotifications.filter(n => !n.read).length;
+
+  const combinedMarkAsRead = (notificationId: string) => {
+    // Try to mark in ritual notifications first
+    const ritualNotif = ritualNotifications.notifications.find(n => n.id === notificationId);
+    if (ritualNotif) {
+      ritualNotifications.markAsRead(notificationId);
+    } else {
+      // Mark in onboarding notifications
+      onboardingNotifications.markAsRead(notificationId);
+    }
+  };
+
+  const combinedMarkAllAsRead = () => {
+    ritualNotifications.markAllAsRead();
+    allNotifications
+      .filter(n => n.type.startsWith('onboarding') || n.type === 'milestone' || n.type === 'step-complete')
+      .forEach(n => onboardingNotifications.markAsRead(n.id));
+  };
+
+  const notificationsService = {
+    notifications: allNotifications,
+    unreadCount: combinedUnreadCount,
+    markAsRead: combinedMarkAsRead,
+    markAllAsRead: combinedMarkAllAsRead,
+    clearNotification: ritualNotifications.clearNotification,
+    clearAllNotifications: ritualNotifications.clearAllNotifications,
+    addStreakAchievementNotification: ritualNotifications.addStreakAchievementNotification
+  };
   
   return (
     <NotificationsContext.Provider value={notificationsService}>

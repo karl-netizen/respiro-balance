@@ -1,9 +1,10 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Bell, Check, X } from "lucide-react";
+import { Bell, Check, X, BookOpen } from "lucide-react";
+import OnboardingGuideNotification from "./OnboardingGuideNotification";
 
 interface Notification {
   id: string;
@@ -25,12 +26,13 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
   markAllAsRead,
   onClose
 }) => {
+  const [showOnboardingGuide, setShowOnboardingGuide] = useState(false);
+  
   console.log('NotificationDropdown rendering with:', { 
     notificationsCount: notifications.length,
-    notifications: notifications.slice(0, 3) // Log first 3 for debugging
+    notifications: notifications.slice(0, 3)
   });
 
-  // Safely filter notifications
   const unreadCount = Array.isArray(notifications) 
     ? notifications.filter(n => n && !n.read).length 
     : 0;
@@ -55,6 +57,30 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
     }
   };
 
+  const handleShowOnboardingGuide = () => {
+    setShowOnboardingGuide(true);
+  };
+
+  const handleCloseOnboardingGuide = () => {
+    setShowOnboardingGuide(false);
+  };
+
+  if (showOnboardingGuide) {
+    return (
+      <div className="absolute right-0 top-full mt-2 w-96 bg-white dark:bg-gray-800 border rounded-lg shadow-lg z-[100]">
+        <div className="flex items-center justify-between p-4 border-b">
+          <h3 className="font-semibold">Getting Started Guide</h3>
+          <Button variant="ghost" size="sm" onClick={handleCloseOnboardingGuide}>
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
+        <div className="p-4">
+          <OnboardingGuideNotification onClose={handleCloseOnboardingGuide} />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="absolute right-0 top-full mt-2 w-80 bg-white dark:bg-gray-800 border rounded-lg shadow-lg z-[100]">
       <div className="flex items-center justify-between p-4 border-b">
@@ -70,17 +96,30 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
           </Button>
         </div>
       </div>
+
+      {/* Getting Started Guide Button */}
+      <div className="p-3 border-b bg-gradient-to-r from-primary/5 to-blue-50">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleShowOnboardingGuide}
+          className="w-full justify-start gap-2 border-primary/20 hover:bg-primary/10"
+        >
+          <BookOpen className="h-4 w-4 text-primary" />
+          <span className="text-primary font-medium">Getting Started Guide</span>
+        </Button>
+      </div>
       
       <ScrollArea className="max-h-96">
         {!Array.isArray(notifications) || notifications.length === 0 ? (
           <div className="p-4 text-center text-muted-foreground">
             <Bell className="h-8 w-8 mx-auto mb-2 opacity-50" />
             <p>No notifications yet</p>
+            <p className="text-xs mt-1">Check out the Getting Started Guide above!</p>
           </div>
         ) : (
           <div className="p-2">
             {notifications.map((notification) => {
-              // Safely handle each notification
               if (!notification || !notification.id) {
                 return null;
               }
