@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, TrendingUp, Activity, Brain } from 'lucide-react';
+import { ArrowRight, TrendingUp, Activity, Brain, Play, Target } from 'lucide-react';
 import { crossModuleNavigation } from '@/services/CrossModuleNavigationService';
 import { useNavigate } from 'react-router-dom';
 
@@ -26,6 +26,46 @@ export const CrossModuleActions: React.FC<CrossModuleActionsProps> = ({
 
   const getActionsForModule = () => {
     switch (currentModule) {
+      case 'dashboard':
+        return [
+          {
+            label: 'Start Meditation',
+            icon: <Brain className="h-4 w-4" />,
+            action: () => crossModuleNavigation.navigateWithContext('/meditation?tab=guided', {
+              sourceModule: 'dashboard',
+              recommendationReason: 'Begin your mindfulness journey'
+            }),
+            description: 'Start a guided meditation session'
+          },
+          {
+            label: 'Breathing Exercise',
+            icon: <Activity className="h-4 w-4" />,
+            action: () => crossModuleNavigation.navigateWithContext('/breathing?type=box', {
+              sourceModule: 'dashboard',
+              recommendationReason: 'Quick stress relief with breathing'
+            }),
+            description: 'Begin a breathing exercise'
+          },
+          {
+            label: 'Focus Session',
+            icon: <Target className="h-4 w-4" />,
+            action: () => crossModuleNavigation.navigateWithContext('/focus', {
+              sourceModule: 'dashboard',
+              recommendationReason: 'Enhance productivity with focused work'
+            }),
+            description: 'Start a focused work session'
+          },
+          {
+            label: 'View Progress',
+            icon: <TrendingUp className="h-4 w-4" />,
+            action: () => crossModuleNavigation.navigateWithContext('/progress?tab=overview', {
+              sourceModule: 'dashboard',
+              recommendationReason: 'Track your wellness journey'
+            }),
+            description: 'See your wellness analytics'
+          }
+        ];
+      
       case 'meditation':
         return [
           {
@@ -126,7 +166,7 @@ export const CrossModuleActions: React.FC<CrossModuleActionsProps> = ({
             variant="outline"
             size="sm"
             onClick={action.action}
-            className="flex items-center gap-2 justify-start h-auto p-3"
+            className="flex items-center gap-2 justify-start h-auto p-3 hover:bg-accent transition-colors"
           >
             <div className="flex items-center gap-2 flex-1">
               {action.icon}

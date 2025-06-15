@@ -22,6 +22,7 @@ const Dashboard: React.FC = () => {
     weeklyProgress,
     progressPercentage,
     welcomeMessage,
+    userName,
     handleMoodSelect
   } = useDashboardData();
 

@@ -1,6 +1,8 @@
 
 import React from 'react';
-import { DashboardStats, DashboardActionCards } from '@/components/dashboard';
+import DashboardActionCards from './DashboardActionCards';
+import WeeklyProgressCard from './WeeklyProgressCard';
+import { SmartRecommendations } from '@/components/shared/smart-recommendations/SmartRecommendations';
 
 interface DashboardMainContentProps {
   weeklyProgress: number;
@@ -18,19 +20,32 @@ const DashboardMainContent: React.FC<DashboardMainContentProps> = ({
   onMoodSelect
 }) => {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      {/* Weekly Progress */}
-      <DashboardStats 
-        weeklyProgress={weeklyProgress}
-        weeklyGoal={weeklyGoal}
-        progressPercentage={progressPercentage}
-      />
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+      {/* Left Column - Progress */}
+      <div className="lg:col-span-1">
+        <WeeklyProgressCard
+          weeklyProgress={weeklyProgress}
+          weeklyGoal={weeklyGoal}
+          progressPercentage={progressPercentage}
+        />
+      </div>
 
-      {/* Mood Tracker and Quick Actions */}
-      <DashboardActionCards 
-        currentMood={currentMood}
-        onMoodSelect={onMoodSelect}
-      />
+      {/* Middle Column - Actions */}
+      <div className="lg:col-span-1 space-y-6">
+        <DashboardActionCards
+          currentMood={currentMood}
+          onMoodSelect={onMoodSelect}
+        />
+      </div>
+
+      {/* Right Column - Smart Recommendations */}
+      <div className="lg:col-span-1">
+        <SmartRecommendations 
+          maxRecommendations={3}
+          showOnlyHighPriority={false}
+          compact={false}
+        />
+      </div>
     </div>
   );
 };

@@ -29,9 +29,38 @@ export const useDashboardData = () => {
     return () => clearInterval(timer);
   }, []);
 
+  const getUserName = () => {
+    if (!user) return 'there';
+    
+    // Try multiple metadata fields
+    const metadata = user.user_metadata;
+    
+    // Check for full_name first
+    if (metadata?.full_name) {
+      return metadata.full_name.split(' ')[0];
+    }
+    
+    // Check for first_name
+    if (metadata?.first_name) {
+      return metadata.first_name;
+    }
+    
+    // Check for name
+    if (metadata?.name) {
+      return metadata.name.split(' ')[0];
+    }
+    
+    // Fallback to email username
+    if (user.email) {
+      return user.email.split('@')[0];
+    }
+    
+    return 'there';
+  };
+
   const getWelcomeMessage = () => {
     const hour = currentTime.getHours();
-    const name = user?.user_metadata?.full_name?.split(' ')[0] || 'there';
+    const name = getUserName();
     
     if (hour < 12) return `Good morning, ${name}!`;
     if (hour < 17) return `Good afternoon, ${name}!`;
@@ -73,6 +102,7 @@ export const useDashboardData = () => {
     weeklyProgress: stableStats.weeklyProgress,
     progressPercentage: stableStats.progressPercentage,
     welcomeMessage: getWelcomeMessage(),
+    userName: getUserName(),
     handleMoodSelect
   };
 };
