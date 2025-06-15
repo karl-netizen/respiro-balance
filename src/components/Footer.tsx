@@ -1,20 +1,8 @@
 
 import { Link } from "react-router-dom";
-import { useUserPreferences } from "@/context";
 import { HelpCircle } from "lucide-react";
 
 const Footer = () => {
-  // Add error handling for the useUserPreferences hook
-  let preferences = null;
-  
-  try {
-    const { preferences: userPrefs } = useUserPreferences();
-    preferences = userPrefs;
-  } catch (error) {
-    console.warn('UserPreferences not available in Footer, using defaults');
-    preferences = {}; // Provide default empty preferences
-  }
-
   const currentYear = new Date().getFullYear();
   
   return (
@@ -26,11 +14,6 @@ const Footer = () => {
             <p className="text-sm text-foreground/70">
               Your daily companion for mindfulness, meditation, and work-life balance.
             </p>
-            {preferences?.businessAttribution && (
-              <p className="text-xs text-foreground/60">
-                Brought to you by {preferences.businessAttribution}
-              </p>
-            )}
           </div>
           
           <div>
