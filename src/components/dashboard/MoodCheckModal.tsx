@@ -84,8 +84,8 @@ const MoodCheckModal: React.FC<MoodCheckModalProps> = ({ open, onMoodSelect }) =
 
   return (
     <Dialog open={open} onOpenChange={() => {}}>
-      <DialogContent className="sm:max-w-2xl bg-white border-2 border-gray-200 shadow-2xl">
-        <DialogHeader className="text-center space-y-4 pb-2">
+      <DialogContent className="sm:max-w-2xl max-h-[90vh] bg-white border-2 border-gray-200 shadow-2xl flex flex-col">
+        <DialogHeader className="text-center space-y-4 pb-2 flex-shrink-0">
           <DialogTitle className="text-3xl font-bold text-gray-900">
             How are you feeling today?
           </DialogTitle>
@@ -94,7 +94,7 @@ const MoodCheckModal: React.FC<MoodCheckModalProps> = ({ open, onMoodSelect }) =
           </p>
         </DialogHeader>
 
-        <div className="space-y-6 mt-6">
+        <div className="flex-1 overflow-y-auto space-y-6 mt-6">
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {moods.map((mood) => (
               <Card
@@ -130,17 +130,17 @@ const MoodCheckModal: React.FC<MoodCheckModalProps> = ({ open, onMoodSelect }) =
               </p>
             </div>
           )}
+        </div>
 
-          <div className="flex justify-center pt-4">
-            <Button 
-              onClick={handleContinue}
-              disabled={!selectedMood}
-              size="lg"
-              className="px-8 py-3 text-lg font-semibold bg-primary hover:bg-primary/90 text-white disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Continue to Dashboard
-            </Button>
-          </div>
+        <div className="flex justify-center pt-4 pb-2 flex-shrink-0 border-t border-gray-100 mt-4">
+          <Button 
+            onClick={handleContinue}
+            disabled={!selectedMood}
+            size="lg"
+            className="px-8 py-3 text-lg font-semibold bg-primary hover:bg-primary/90 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Continue to Dashboard
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
