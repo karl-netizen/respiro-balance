@@ -58,6 +58,7 @@ const Dashboard: React.FC = () => {
         progressPercentage={progressPercentage}
         currentMood={currentMood}
         onMoodSelect={handleMoodSelect}
+        currentStreak={currentStreak}
       />
 
       {/* Quick Access Tabs */}

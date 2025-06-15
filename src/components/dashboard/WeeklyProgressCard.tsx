@@ -1,11 +1,17 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { MeditationStats } from '@/components/progress/types/meditationStats';
 import { Progress } from '@/components/ui/progress';
 import { CheckCircle2, Circle } from 'lucide-react';
 
+export interface WeeklyProgressData {
+  weeklyCompleted: number;
+  weeklyGoal: number;
+  streak: number;
+}
+
 export interface WeeklyProgressCardProps {
-  progress: MeditationStats;
+  progress: WeeklyProgressData;
 }
 
 const WeeklyProgressCard: React.FC<WeeklyProgressCardProps> = ({ progress }) => {
@@ -14,14 +20,17 @@ const WeeklyProgressCard: React.FC<WeeklyProgressCardProps> = ({ progress }) => 
   // Calculate completion percentage
   const completionPercentage = Math.round((progress.weeklyCompleted / progress.weeklyGoal) * 100);
   
-  // Generate mock data for the week if not provided
+  // Generate stable week data based on completed sessions
   const generateWeekData = () => {
     const today = new Date().getDay(); // 0 is Sunday, 1 is Monday, etc.
     const adjustedToday = today === 0 ? 6 : today - 1; // Convert to 0 = Monday, 6 = Sunday
     
+    // Create stable completed days based on weeklyCompleted count
+    const completedDays = Math.min(progress.weeklyCompleted, 7);
+    
     return daysOfWeek.map((day, index) => ({
       day,
-      completed: index < adjustedToday ? Math.random() > 0.3 : false,
+      completed: index < completedDays,
       today: index === adjustedToday
     }));
   };
