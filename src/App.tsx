@@ -3,8 +3,8 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
-import { AuthProvider } from './context/AuthProvider';
 import { UserPreferencesProvider } from './context/UserPreferencesProvider';
+import { AuthProvider } from './context/AuthProvider';
 import { SubscriptionProvider } from './context/SubscriptionProvider';
 import { NotificationsProvider } from './context/NotificationsProvider';
 import Dashboard from './pages/Dashboard';
@@ -46,9 +46,9 @@ function App() {
   
   return (
     <QueryClientProvider client={queryClient}>
-      <Router>
-        <AuthProvider>
-          <UserPreferencesProvider>
+      <UserPreferencesProvider>
+        <Router>
+          <AuthProvider>
             <SubscriptionProvider>
               <NotificationsProvider>
                 <Toaster />
@@ -83,9 +83,9 @@ function App() {
                 </Routes>
               </NotificationsProvider>
             </SubscriptionProvider>
-          </UserPreferencesProvider>
-        </AuthProvider>
-      </Router>
+          </AuthProvider>
+        </Router>
+      </UserPreferencesProvider>
     </QueryClientProvider>
   );
 }
