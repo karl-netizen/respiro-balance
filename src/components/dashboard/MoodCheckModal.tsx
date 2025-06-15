@@ -108,28 +108,26 @@ const MoodCheckModal: React.FC<MoodCheckModalProps> = ({ open, onMoodSelect }) =
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="w-full max-w-2xl max-h-[95vh] bg-white border-2 border-gray-200 shadow-2xl p-0 flex flex-col overflow-hidden relative">
+      <DialogContent className="w-full max-w-2xl max-h-[95vh] bg-white border-2 border-gray-200 shadow-2xl p-0 flex flex-col overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 pb-4 border-b border-gray-100 flex-shrink-0 relative">
-          <div className="text-center flex-1 pr-8">
-            <DialogTitle className="text-2xl font-bold text-gray-900">
-              How are you feeling today?
-            </DialogTitle>
-            <p className="text-base text-gray-700 mt-2">
-              Your mood helps us recommend the perfect activities for you
-            </p>
-          </div>
+        <DialogHeader className="p-6 pb-4 border-b border-gray-100 flex-shrink-0 relative">
+          <DialogTitle className="text-2xl font-bold text-gray-900 text-center">
+            How are you feeling today?
+          </DialogTitle>
+          <p className="text-base text-gray-700 mt-2 text-center">
+            Your mood helps us recommend the perfect activities for you
+          </p>
           
-          {/* Close button positioned absolutely */}
+          {/* Close button */}
           <Button
             variant="ghost"
             size="sm"
             onClick={() => handleClose(false)}
-            className="absolute top-4 right-4 h-8 w-8 p-0 hover:bg-gray-100 rounded-full z-20"
+            className="absolute top-4 right-4 h-8 w-8 p-0 hover:bg-gray-100 rounded-full"
           >
             <X className="h-4 w-4 text-gray-600" />
           </Button>
-        </div>
+        </DialogHeader>
 
         {/* Scrollable content area */}
         <div className="flex-1 overflow-y-auto px-6 py-4 min-h-0">
@@ -170,7 +168,7 @@ const MoodCheckModal: React.FC<MoodCheckModalProps> = ({ open, onMoodSelect }) =
           )}
         </div>
 
-        {/* Fixed bottom section with high contrast button */}
+        {/* Fixed bottom section with button */}
         <div className="border-t border-gray-100 p-4 bg-white flex-shrink-0">
           <div className="flex justify-center">
             <Button 
