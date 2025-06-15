@@ -18,7 +18,8 @@ const MoodCheckModal: React.FC<MoodCheckModalProps> = ({ open, onMoodSelect }) =
       id: 'happy', 
       label: 'Happy', 
       icon: <Smile className="h-8 w-8" />, 
-      color: 'bg-green-100 hover:bg-green-200 border-green-300',
+      color: 'bg-green-50 hover:bg-green-100 border-green-200',
+      selectedColor: 'bg-green-100 border-green-400',
       textColor: 'text-green-800',
       description: 'Feeling positive and upbeat'
     },
@@ -26,7 +27,8 @@ const MoodCheckModal: React.FC<MoodCheckModalProps> = ({ open, onMoodSelect }) =
       id: 'calm', 
       label: 'Calm', 
       icon: <Heart className="h-8 w-8" />, 
-      color: 'bg-blue-100 hover:bg-blue-200 border-blue-300',
+      color: 'bg-blue-50 hover:bg-blue-100 border-blue-200',
+      selectedColor: 'bg-blue-100 border-blue-400',
       textColor: 'text-blue-800',
       description: 'Peaceful and relaxed'
     },
@@ -34,7 +36,8 @@ const MoodCheckModal: React.FC<MoodCheckModalProps> = ({ open, onMoodSelect }) =
       id: 'energetic', 
       label: 'Energetic', 
       icon: <Zap className="h-8 w-8" />, 
-      color: 'bg-yellow-100 hover:bg-yellow-200 border-yellow-300',
+      color: 'bg-yellow-50 hover:bg-yellow-100 border-yellow-200',
+      selectedColor: 'bg-yellow-100 border-yellow-400',
       textColor: 'text-yellow-800',
       description: 'Full of energy and motivation'
     },
@@ -42,7 +45,8 @@ const MoodCheckModal: React.FC<MoodCheckModalProps> = ({ open, onMoodSelect }) =
       id: 'neutral', 
       label: 'Neutral', 
       icon: <Meh className="h-8 w-8" />, 
-      color: 'bg-gray-100 hover:bg-gray-200 border-gray-300',
+      color: 'bg-gray-50 hover:bg-gray-100 border-gray-200',
+      selectedColor: 'bg-gray-100 border-gray-400',
       textColor: 'text-gray-800',
       description: 'Neither good nor bad'
     },
@@ -50,7 +54,8 @@ const MoodCheckModal: React.FC<MoodCheckModalProps> = ({ open, onMoodSelect }) =
       id: 'tired', 
       label: 'Tired', 
       icon: <Cloud className="h-8 w-8" />, 
-      color: 'bg-purple-100 hover:bg-purple-200 border-purple-300',
+      color: 'bg-purple-50 hover:bg-purple-100 border-purple-200',
+      selectedColor: 'bg-purple-100 border-purple-400',
       textColor: 'text-purple-800',
       description: 'Feeling low energy'
     },
@@ -58,7 +63,8 @@ const MoodCheckModal: React.FC<MoodCheckModalProps> = ({ open, onMoodSelect }) =
       id: 'stressed', 
       label: 'Stressed', 
       icon: <Frown className="h-8 w-8" />, 
-      color: 'bg-red-100 hover:bg-red-200 border-red-300',
+      color: 'bg-red-50 hover:bg-red-100 border-red-200',
+      selectedColor: 'bg-red-100 border-red-400',
       textColor: 'text-red-800',
       description: 'Feeling overwhelmed or anxious'
     }
@@ -78,12 +84,12 @@ const MoodCheckModal: React.FC<MoodCheckModalProps> = ({ open, onMoodSelect }) =
 
   return (
     <Dialog open={open} onOpenChange={() => {}}>
-      <DialogContent className="sm:max-w-2xl" closeDisabled>
-        <DialogHeader className="text-center space-y-4">
-          <DialogTitle className="text-3xl font-bold text-primary">
+      <DialogContent className="sm:max-w-2xl bg-white border-2 border-gray-200 shadow-2xl">
+        <DialogHeader className="text-center space-y-4 pb-2">
+          <DialogTitle className="text-3xl font-bold text-gray-900">
             How are you feeling today?
           </DialogTitle>
-          <p className="text-lg text-muted-foreground">
+          <p className="text-lg text-gray-700">
             Your mood helps us recommend the perfect activities for you
           </p>
         </DialogHeader>
@@ -95,8 +101,8 @@ const MoodCheckModal: React.FC<MoodCheckModalProps> = ({ open, onMoodSelect }) =
                 key={mood.id}
                 className={`p-6 cursor-pointer transition-all duration-200 border-2 ${
                   selectedMood === mood.id 
-                    ? mood.color + ' ring-2 ring-primary ring-offset-2' 
-                    : 'hover:shadow-md border-gray-200'
+                    ? `${mood.selectedColor} ring-2 ring-primary ring-offset-2 shadow-lg` 
+                    : `${mood.color} hover:shadow-md`
                 }`}
                 onClick={() => handleMoodSelect(mood.id)}
               >
@@ -105,7 +111,7 @@ const MoodCheckModal: React.FC<MoodCheckModalProps> = ({ open, onMoodSelect }) =
                     {mood.icon}
                   </div>
                   <div>
-                    <h3 className={`font-semibold ${selectedMood === mood.id ? mood.textColor : 'text-gray-800'}`}>
+                    <h3 className={`font-semibold text-lg ${selectedMood === mood.id ? mood.textColor : 'text-gray-800'}`}>
                       {mood.label}
                     </h3>
                     <p className={`text-sm ${selectedMood === mood.id ? mood.textColor : 'text-gray-600'}`}>
@@ -118,8 +124,8 @@ const MoodCheckModal: React.FC<MoodCheckModalProps> = ({ open, onMoodSelect }) =
           </div>
 
           {selectedMood && selectedMoodData && (
-            <div className="text-center p-4 bg-primary/5 rounded-lg border">
-              <p className="text-primary font-medium">
+            <div className="text-center p-4 bg-primary/10 rounded-lg border border-primary/20">
+              <p className="text-primary font-medium text-base">
                 Perfect! Based on feeling {selectedMoodData.label.toLowerCase()}, we'll recommend activities to help you make the most of your day.
               </p>
             </div>
@@ -130,7 +136,7 @@ const MoodCheckModal: React.FC<MoodCheckModalProps> = ({ open, onMoodSelect }) =
               onClick={handleContinue}
               disabled={!selectedMood}
               size="lg"
-              className="px-8 py-3 text-lg"
+              className="px-8 py-3 text-lg font-semibold bg-primary hover:bg-primary/90 text-white disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Continue to Dashboard
             </Button>
