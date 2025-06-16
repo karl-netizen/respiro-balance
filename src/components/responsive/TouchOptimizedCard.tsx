@@ -48,8 +48,9 @@ export const TouchOptimizedCard: React.FC<TouchOptimizedCardProps> = ({
       className={cn(
         getTouchOptimizedClasses(),
         'transition-all duration-200 ease-in-out',
+        'border-respiro-default/20 bg-white/60 backdrop-blur-sm',
         touchCapable && onClick && 'active:scale-95',
-        onClick && 'cursor-pointer hover:shadow-md',
+        onClick && 'cursor-pointer hover:shadow-md hover:shadow-respiro-default/20 hover:border-respiro-default/40',
         className
       )}
       onClick={handleClick}

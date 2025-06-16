@@ -29,10 +29,8 @@ const Header = () => {
       window.scrollTo({top: 0, behavior: 'smooth'});
     } else {
       console.log("Navigating to homepage");
-      // Navigate to landing page, then scroll to top
       navigate("/landing");
       
-      // Use a longer delay to ensure navigation completes
       setTimeout(() => {
         console.log("Scrolling to top after navigation");
         window.scrollTo({top: 0, behavior: 'smooth'});
@@ -45,20 +43,20 @@ const Header = () => {
       className={cn(
         "sticky top-0 z-50 w-full transition-colors duration-300",
         isTransparent
-          ? "bg-transparent"
-          : "bg-background border-b shadow-sm"
+          ? "bg-white/80 backdrop-blur-md border-b border-respiro-default/20"
+          : "bg-white border-b border-respiro-default/30 shadow-sm"
       )}
     >
       <div className="container flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-4">
           <BackButton />
           <button
-            className="flex items-center text-xl font-bold tracking-tight hover:text-primary transition-colors"
+            className="flex items-center text-xl font-bold tracking-tight hover:text-respiro-dark transition-colors"
             aria-label="Home"
             onClick={handleLogoClick}
           >
             <Circle 
-              className="mr-2 text-respiro-dark fill-respiro-dark" 
+              className="mr-2 text-respiro-dark fill-respiro-default" 
               size={24} 
             />
             <span className="text-respiro-dark">Respiro Balance</span>
@@ -72,7 +70,7 @@ const Header = () => {
           <AccountSection />
           
           <button
-            className="p-2 rounded-md lg:hidden"
+            className="p-2 rounded-md lg:hidden text-respiro-dark hover:bg-respiro-light/50 transition-colors"
             onClick={toggleMobileMenu}
             aria-controls="mobile-menu"
             aria-expanded={mobileMenuOpen}

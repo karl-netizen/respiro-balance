@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ResponsiveContainer } from 'recharts';
+import { ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
 
 interface ResponsiveChartProps {
   children: React.ReactElement;
@@ -23,5 +23,10 @@ export const ResponsiveChart: React.FC<ResponsiveChartProps> = ({
     </div>
   );
 };
+
+// Export the recharts components for use in other files
+export const ResponsiveXAxis = XAxis;
+export const ResponsiveYAxis = YAxis;
+export const ResponsiveTooltip = Tooltip;
 
 export default ResponsiveChart;
