@@ -1,80 +1,95 @@
 
 import React from 'react';
-import { HeartPulse, Brain, Gauge, Sparkles } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Heart, Brain, Activity, Zap } from 'lucide-react';
 
-export interface BiometricSummaryProps {
-  data: {
+interface BiometricSummaryProps {
+  data?: {
     heartRate?: number;
     hrv?: number;
     stress?: number;
     coherence?: number;
+    focusScore?: number;
+    calmScore?: number;
   };
   loading?: boolean;
 }
 
-export const BiometricSummary: React.FC<BiometricSummaryProps> = ({ 
-  data, 
-  loading = false 
-}) => {
-  const { heartRate, hrv, stress, coherence } = data;
-
+export const BiometricSummary: React.FC<BiometricSummaryProps> = ({ data, loading }) => {
   if (loading) {
     return (
-      <div className="mt-4 space-y-4">
-        <Skeleton className="h-16 w-full" />
-        <Skeleton className="h-16 w-full" />
-        <Skeleton className="h-16 w-full" />
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {[...Array(4)].map((_, i) => (
+          <Card key={i}>
+            <CardContent className="p-4">
+              <div className="animate-pulse">
+                <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                <div className="h-8 bg-gray-200 rounded"></div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
     );
   }
 
+  if (!data) return null;
+
+  const metrics = [
+    {
+      label: 'Heart Rate',
+      value: data.heartRate || 0,
+      unit: 'bpm',
+      icon: Heart,
+      color: 'text-red-500'
+    },
+    {
+      label: 'HRV',
+      value: data.hrv || 0,
+      unit: 'ms',
+      icon: Activity,
+      color: 'text-blue-500'
+    },
+    {
+      label: 'Stress',
+      value: data.stress || 0,
+      unit: '%',
+      icon: Brain,
+      color: 'text-orange-500',
+      showProgress: true
+    },
+    {
+      label: 'Coherence',
+      value: data.coherence ? Math.round(data.coherence * 100) : 0,
+      unit: '%',
+      icon: Zap,
+      color: 'text-green-500',
+      showProgress: true
+    }
+  ];
+
   return (
-    <div className="mt-4 space-y-3">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <HeartPulse className="h-5 w-5 text-red-500" />
-          <span className="text-sm font-medium">Heart Rate</span>
-        </div>
-        <span className="text-xl font-bold">{heartRate || '--'} <span className="text-sm text-muted-foreground">BPM</span></span>
-      </div>
-
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <Gauge className="h-5 w-5 text-amber-500" />
-          <span className="text-sm font-medium">HRV</span>
-        </div>
-        <span className="text-xl font-bold">{hrv || '--'} <span className="text-sm text-muted-foreground">ms</span></span>
-      </div>
-
-      {stress !== undefined && (
-        <div className="space-y-1">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Brain className="h-5 w-5 text-purple-500" />
-              <span className="text-sm font-medium">Stress Level</span>
-            </div>
-            <span className="font-medium">{Math.round(stress * 100)}%</span>
-          </div>
-          <Progress value={stress * 100} className="h-2" />
-        </div>
-      )}
-
-      {coherence !== undefined && (
-        <div className="space-y-1">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Sparkles className="h-5 w-5 text-blue-500" />
-              <span className="text-sm font-medium">Coherence</span>
-            </div>
-            <span className="font-medium">{Math.round(coherence * 100)}%</span>
-          </div>
-          <Progress value={coherence * 100} className="h-2" />
-        </div>
-      )}
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {metrics.map((metric) => {
+        const Icon = metric.icon;
+        return (
+          <Card key={metric.label}>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <Icon className={`h-4 w-4 ${metric.color}`} />
+                <span className="text-sm font-medium">{metric.label}</span>
+              </div>
+              <div className="text-2xl font-bold">
+                {metric.value}{metric.unit}
+              </div>
+              {metric.showProgress && (
+                <Progress value={metric.value} className="h-2 mt-2" />
+              )}
+            </CardContent>
+          </Card>
+        );
+      })}
     </div>
   );
 };
-
-export default BiometricSummary;

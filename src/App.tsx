@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
@@ -39,6 +38,8 @@ import TermsPage from './pages/TermsPage';
 import PrivacyPage from './pages/PrivacyPage';
 import HelpPage from './pages/HelpPage';
 import FAQ from './pages/FAQ';
+import OfflineIndicator from '@/components/common/OfflineIndicator';
+import { useNotifications } from '@/hooks/useNotifications';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -97,11 +98,18 @@ class ErrorBoundary extends React.Component {
 }
 
 function App() {
+  const { requestPermission } = useNotifications();
+
   console.log('App component rendering...');
   console.log('React version check:', !!React);
   console.log('Current URL:', window.location.href);
   console.log('Current pathname:', window.location.pathname);
   
+  useEffect(() => {
+    // Initialize notifications on app load
+    requestPermission();
+  }, []);
+
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
@@ -150,6 +158,7 @@ function App() {
                           <Route path="/help" element={<HelpPage />} />
                           <Route path="/faq" element={<FAQ />} />
                         </Routes>
+                        <OfflineIndicator />
                       </div>
                     </FocusProvider>
                   </NotificationsProvider>

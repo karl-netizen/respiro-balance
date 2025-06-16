@@ -1,62 +1,52 @@
 
-// Define types for biofeedback functionality
 export interface DeviceInfo {
   id: string;
   name: string;
+  type: string;
   connected: boolean;
-  deviceType?: string;
   batteryLevel?: number;
+  signalStrength?: number;
 }
 
 export interface BiometricData {
-  heartRate?: number;
+  id: string;
+  user_id: string;
+  device_id: string;
+  timestamp: string;
+  heart_rate?: number;
   hrv?: number;
-  stress?: number;
+  respiratory_rate?: number;
+  stress_score?: number;
+  focus_score?: number;
+  calm_score?: number;
   coherence?: number;
-  timestamp?: number;
-}
-
-export interface BiofeedbackHookReturn {
-  isMonitoring: boolean;
-  startMonitoring: () => Promise<boolean>;
-  stopMonitoring: () => void;
-  connectedDevice: DeviceInfo | null;
-  scanForDevices: () => Promise<void>;
-  connectToDevice: (deviceId: string) => Promise<void>;
-  disconnectDevice: (deviceId: string) => Promise<void>;
-  devices: DeviceInfo[];
-  biometricData: BiometricData;
-  isScanning: boolean;
-  error: Error | null;
+  device_source: string;
+  raw_data?: any;
 }
 
 export interface SensorReading {
-  type: string;
   value: number;
-  timestamp: number;
+  timestamp: string;
+  quality: 'excellent' | 'good' | 'fair' | 'poor';
 }
 
 export interface Device {
   id: string;
   name: string;
+  type: 'heart_rate' | 'stress' | 'breathing' | 'eeg';
   connected: boolean;
-  services: string[];
-  characteristics: string[];
+  characteristics?: BluetoothRemoteGATTCharacteristic[];
 }
 
 export interface DeviceConnectionOptions {
-  filters: Array<{
-    services?: string[];
-    name?: string;
-    namePrefix?: string;
-  }>;
-  optionalServices: string[];
+  timeout?: number;
+  autoReconnect?: boolean;
+  callback?: (device: Device) => void;
 }
 
 export interface SimulationOptions {
-  interval: number;
-  heartRateMin: number;
-  heartRateMax: number;
-  hrvMin: number;
-  hrvMax: number;
+  enabled: boolean;
+  heartRateRange: [number, number];
+  stressRange: [number, number];
+  updateInterval: number;
 }

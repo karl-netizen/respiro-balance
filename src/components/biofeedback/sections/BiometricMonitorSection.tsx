@@ -1,134 +1,109 @@
 
-import React, { useState } from "react";
-import { Heart } from "lucide-react";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { HeartRateTab, StressTab } from "../tabs";
-import BiofeedbackCard from "../cards/BiofeedbackCard";
-import BiofeedbackDisplay from "../BiofeedbackDisplay";
-import { useDeviceDetection } from "@/hooks/useDeviceDetection";
-
-export interface BiometricData {
-  id: string;
-  user_id: string;
-  current: number;
-  resting?: number;
-  history: number[];
-}
+import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { Heart, Activity, Brain, Zap } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 interface BiometricMonitorSectionProps {
-  heartRate: number;
-  restingHeartRate: number;
-  stress: number;
-  isSimulating: boolean;
+  heartRate?: number;
+  restingHeartRate?: number;
+  stress?: number;
+  isSimulating?: boolean;
 }
 
 const BiometricMonitorSection: React.FC<BiometricMonitorSectionProps> = ({
-  heartRate,
-  restingHeartRate,
-  stress,
-  isSimulating
+  heartRate = 0,
+  restingHeartRate = 60,
+  stress = 0,
+  isSimulating = false
 }) => {
-  const [activeTab, setActiveTab] = useState("heart-rate");
-  const [isMonitoring, setIsMonitoring] = useState(false);
-  const { deviceType } = useDeviceDetection();
-
-  // Create mock biometric data for tabs
-  const mockHeartRateData: BiometricData = {
-    id: "hr-1",
-    user_id: "user-1",
-    current: heartRate,
-    resting: restingHeartRate,
-    history: [65, 68, 72, 70, 75, 78, 76]
-  };
-  
-  const mockStressData: BiometricData = {
-    id: "stress-1",
-    user_id: "user-1",
-    current: stress,
-    history: [25, 30, 28, 35, 40, 32, 28]
+  const getHeartRateStatus = () => {
+    if (heartRate < 60) return { color: 'blue', label: 'Low' };
+    if (heartRate > 100) return { color: 'red', label: 'High' };
+    return { color: 'green', label: 'Normal' };
   };
 
-  const startMonitoring = async (): Promise<boolean> => {
-    setIsMonitoring(true);
-    return true;
+  const getStressStatus = () => {
+    if (stress < 30) return { color: 'green', label: 'Low' };
+    if (stress > 70) return { color: 'red', label: 'High' };
+    return { color: 'yellow', label: 'Moderate' };
   };
 
-  const stopMonitoring = () => {
-    setIsMonitoring(false);
-  };
-
-  // Mobile-optimized spacing and layout
-  const getMobileSpacing = () => {
-    switch (deviceType) {
-      case 'mobile':
-        return 'space-y-3';
-      case 'tablet':
-        return 'space-y-4';
-      default:
-        return 'space-y-6';
-    }
-  };
+  const heartRateStatus = getHeartRateStatus();
+  const stressStatus = getStressStatus();
 
   return (
-    <BiofeedbackCard
-      title="Biofeedback Monitor"
-      description={`${isSimulating ? 'Simulation Mode' : 'Live Data'}`}
-      icon={<Heart className="h-5 w-5" />}
-    >
-      <div className={getMobileSpacing()}>
-        {/* Mobile-optimized tabs with touch-friendly design */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <div className="w-full overflow-x-auto -mx-2 px-2 sm:mx-0 sm:px-0">
-            <TabsList className="grid w-full grid-cols-2 mb-4 sm:mb-6 min-w-[280px] sm:min-w-0">
-              <TabsTrigger 
-                value="heart-rate" 
-                className="text-xs sm:text-sm py-2 sm:py-3 min-h-[44px] sm:min-h-auto"
-              >
-                Heart Rate
-              </TabsTrigger>
-              <TabsTrigger 
-                value="stress"
-                className="text-xs sm:text-sm py-2 sm:py-3 min-h-[44px] sm:min-h-auto"
-              >
-                Stress Level
-              </TabsTrigger>
-            </TabsList>
-          </div>
-          
-          <TabsContent value="heart-rate" className={getMobileSpacing()}>
-            <div className="w-full overflow-hidden">
-              <BiofeedbackDisplay
-                partialData={mockHeartRateData}
-                isMonitoring={isMonitoring}
-                onStartMonitoring={startMonitoring}
-                onStopMonitoring={stopMonitoring}
-              />
-            </div>
-            <div className="w-full overflow-x-auto">
-              <div className="min-w-[320px] sm:min-w-0">
-                <HeartRateTab biometricData={mockHeartRateData} />
+    <div className="space-y-4">
+      {isSimulating && (
+        <div className="flex items-center justify-center mb-4">
+          <Badge variant="outline" className="text-blue-600 border-blue-200">
+            <Activity className="h-3 w-3 mr-1" />
+            Simulation Mode
+          </Badge>
+        </div>
+      )}
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <Heart className="h-4 w-4 text-red-500" />
+                <span className="text-sm font-medium">Heart Rate</span>
               </div>
+              <Badge variant={heartRateStatus.color === 'green' ? 'default' : 'destructive'}>
+                {heartRateStatus.label}
+              </Badge>
             </div>
-          </TabsContent>
-          
-          <TabsContent value="stress" className={getMobileSpacing()}>
-            <div className="w-full overflow-hidden">
-              <BiofeedbackDisplay
-                partialData={mockStressData}
-                isMonitoring={isMonitoring}
-                onStartMonitoring={startMonitoring}
-                onStopMonitoring={stopMonitoring}
-              />
+            <div className="text-2xl font-bold">{heartRate}</div>
+            <div className="text-xs text-muted-foreground">bpm</div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <Activity className="h-4 w-4 text-blue-500" />
+              <span className="text-sm font-medium">Resting HR</span>
             </div>
-            <div className="w-full overflow-x-auto">
-              <div className="min-w-[320px] sm:min-w-0">
-                <StressTab biometricData={mockStressData} />
+            <div className="text-2xl font-bold">{restingHeartRate}</div>
+            <div className="text-xs text-muted-foreground">bpm</div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <Brain className="h-4 w-4 text-orange-500" />
+                <span className="text-sm font-medium">Stress</span>
               </div>
+              <Badge variant={stressStatus.color === 'green' ? 'default' : 'destructive'}>
+                {stressStatus.label}
+              </Badge>
             </div>
-          </TabsContent>
-        </Tabs>
+            <div className="text-2xl font-bold">{stress}%</div>
+            <Progress value={stress} className="h-2 mt-2" />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <Zap className="h-4 w-4 text-green-500" />
+              <span className="text-sm font-medium">HRV Zone</span>
+            </div>
+            <div className="text-2xl font-bold">
+              {heartRate > restingHeartRate ? 'Active' : 'Recovery'}
+            </div>
+            <div className="text-xs text-muted-foreground">
+              {heartRate > restingHeartRate ? 'In training zone' : 'Optimal for recovery'}
+            </div>
+          </CardContent>
+        </Card>
       </div>
-    </BiofeedbackCard>
+    </div>
   );
 };
 
