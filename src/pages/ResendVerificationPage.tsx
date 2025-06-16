@@ -6,6 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { MobileForm, MobileFormField } from "@/components/ui/mobile-form";
+import { TouchFriendlyButton } from "@/components/responsive/TouchFriendlyButton";
 import { useAuth } from "@/hooks/useAuth";
 import { SuccessMessage } from "@/components/auth";
 import { toast } from "sonner";
@@ -62,35 +64,32 @@ const ResendVerificationPage = () => {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-6">
+        <MobileForm onSubmit={handleSubmit(onSubmit)} spacing="normal">
           {error && (
             <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
               {error}
             </div>
           )}
 
-          <div>
-            <Label htmlFor="email">Email</Label>
+          <MobileFormField label="Email" error={errors.email?.message} required>
             <Input
               id="email"
               type="email"
               autoComplete="email"
+              preventZoom={true}
               {...register("email")}
-              className="mt-1"
             />
-            {errors.email && (
-              <p className="mt-1 text-sm text-destructive">{errors.email.message}</p>
-            )}
-          </div>
+          </MobileFormField>
 
-          <Button
+          <TouchFriendlyButton
             type="submit"
             disabled={loading}
             className="w-full bg-primary text-white hover:bg-primary/90"
+            spacing="relaxed"
           >
             {loading ? "Sending..." : "Resend Verification Email"}
-          </Button>
-        </form>
+          </TouchFriendlyButton>
+        </MobileForm>
       </div>
     </div>
   );

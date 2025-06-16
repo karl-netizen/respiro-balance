@@ -7,6 +7,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { MobileForm, MobileFormField } from "@/components/ui/mobile-form";
+import { TouchFriendlyButton } from "@/components/responsive/TouchFriendlyButton";
 import { signUpWithEmail } from "@/lib/authActions";
 import { toast } from "sonner";
 
@@ -73,7 +75,7 @@ const SignupPage = () => {
             We've sent you a confirmation link. Please check your email to complete your registration.
           </p>
           <Link to="/login">
-            <Button className="mt-4">Back to Login</Button>
+            <TouchFriendlyButton className="mt-4">Back to Login</TouchFriendlyButton>
           </Link>
         </div>
       </div>
@@ -88,92 +90,74 @@ const SignupPage = () => {
           <p className="mt-2 text-lg text-muted-foreground">Sign up for Respiro Balance</p>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-6">
+        <MobileForm onSubmit={handleSubmit(onSubmit)} spacing="normal">
           {error && (
             <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
               {error}
             </div>
           )}
 
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="firstName">First Name</Label>
-              <Input
-                id="firstName"
-                type="text"
-                autoComplete="given-name"
-                {...register("firstName")}
-                className="mt-1"
-              />
-              {errors.firstName && (
-                <p className="mt-1 text-sm text-destructive">{errors.firstName.message}</p>
-              )}
-            </div>
+          <MobileFormField label="First Name" error={errors.firstName?.message} required>
+            <Input
+              id="firstName"
+              type="text"
+              autoComplete="given-name"
+              preventZoom={true}
+              {...register("firstName")}
+            />
+          </MobileFormField>
 
-            <div>
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                autoComplete="email"
-                {...register("email")}
-                className="mt-1"
-              />
-              {errors.email && (
-                <p className="mt-1 text-sm text-destructive">{errors.email.message}</p>
-              )}
-            </div>
+          <MobileFormField label="Email" error={errors.email?.message} required>
+            <Input
+              id="email"
+              type="email"
+              autoComplete="email"
+              preventZoom={true}
+              {...register("email")}
+            />
+          </MobileFormField>
 
-            <div>
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                autoComplete="new-password"
-                {...register("password")}
-                className="mt-1"
-              />
-              {errors.password && (
-                <p className="mt-1 text-sm text-destructive">{errors.password.message}</p>
-              )}
-            </div>
+          <MobileFormField label="Password" error={errors.password?.message} required>
+            <Input
+              id="password"
+              type="password"
+              autoComplete="new-password"
+              preventZoom={true}
+              {...register("password")}
+            />
+          </MobileFormField>
 
-            <div>
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                autoComplete="new-password"
-                {...register("confirmPassword")}
-                className="mt-1"
-              />
-              {errors.confirmPassword && (
-                <p className="mt-1 text-sm text-destructive">{errors.confirmPassword.message}</p>
-              )}
-            </div>
-          </div>
+          <MobileFormField label="Confirm Password" error={errors.confirmPassword?.message} required>
+            <Input
+              id="confirmPassword"
+              type="password"
+              autoComplete="new-password"
+              preventZoom={true}
+              {...register("confirmPassword")}
+            />
+          </MobileFormField>
 
-          <Button
+          <TouchFriendlyButton
             type="submit"
             disabled={loading}
             className="w-full bg-primary text-white hover:bg-primary/90"
+            spacing="relaxed"
           >
             {loading ? "Creating account..." : "Create account"}
-          </Button>
+          </TouchFriendlyButton>
 
-          <div className="text-center text-sm">
+          <div className="text-center text-sm mt-6">
             <p>
               Already have an account?{" "}
-              <Link to="/login" className="font-medium text-primary hover:text-primary/90">
+              <Link to="/login" className="font-medium text-primary hover:text-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded touch-manipulation">
                 Sign in
               </Link>
             </p>
           </div>
-        </form>
+        </MobileForm>
       </div>
     </div>
   );
 };
 
 export default SignupPage;
-

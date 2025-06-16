@@ -4,10 +4,12 @@ import { cn } from "@/lib/utils"
 import { useDeviceDetection } from "@/hooks/useDeviceDetection"
 
 export interface TextareaProps
-  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {}
+  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+  preventZoom?: boolean;
+}
 
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ className, ...props }, ref) => {
+  ({ className, preventZoom = true, ...props }, ref) => {
     const { deviceType, touchCapable } = useDeviceDetection();
     
     // Mobile-optimized textarea styling
@@ -27,14 +29,20 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         classes += 'touch-manipulation ';
       }
       
+      // Prevent zoom on iOS
+      if (preventZoom && touchCapable && deviceType === 'mobile') {
+        classes += 'text-base '; // Force 16px font size to prevent zoom
+      }
+      
       return classes;
     };
 
     return (
       <textarea
         className={cn(
-          "flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+          "flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none transition-all duration-200",
           getMobileClasses(),
+          touchCapable && "active:scale-[0.99]", // Subtle touch feedback
           className
         )}
         ref={ref}
