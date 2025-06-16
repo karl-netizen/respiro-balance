@@ -4,6 +4,7 @@ import { useFocus } from '@/context/FocusProvider';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Clock } from 'lucide-react';
+import { useDeviceDetection } from '@/hooks/useDeviceDetection';
 
 export const FocusTimer: React.FC = () => {
   const { 
@@ -13,6 +14,8 @@ export const FocusTimer: React.FC = () => {
     currentInterval,
     settings
   } = useFocus();
+  
+  const { deviceType } = useDeviceDetection();
   
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -50,28 +53,55 @@ export const FocusTimer: React.FC = () => {
     }
   };
 
+  // Responsive sizing based on device type
+  const getCircleSize = () => {
+    switch (deviceType) {
+      case 'mobile':
+        return 'w-24 h-24 sm:w-32 sm:h-32';
+      case 'tablet':
+        return 'w-32 h-32 md:w-40 md:h-40';
+      default:
+        return 'w-48 h-48';
+    }
+  };
+
+  const getTextSize = () => {
+    switch (deviceType) {
+      case 'mobile':
+        return 'text-lg sm:text-xl';
+      case 'tablet':
+        return 'text-xl md:text-2xl';
+      default:
+        return 'text-2xl sm:text-5xl';
+    }
+  };
+
+  const getContainerPadding = () => {
+    return deviceType === 'mobile' ? 'py-4 sm:py-6' : 'py-6 sm:py-10';
+  };
+
   return (
-    <div className="space-y-4 sm:space-y-6 px-2 sm:px-0">
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-0">
-        <Badge variant="outline" className={`${getStateColor()} border-none px-2 sm:px-3 py-1 text-sm`}>
+    <div className="space-y-3 sm:space-y-4 md:space-y-6 px-2 sm:px-4">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4">
+        <Badge variant="outline" className={`${getStateColor()} border-none px-3 py-1.5 text-sm font-medium`}>
           {getStateLabel()}
         </Badge>
         
-        <Badge variant="outline" className="bg-muted text-muted-foreground border-none px-2 sm:px-3 py-1 text-xs sm:text-sm">
+        <Badge variant="outline" className="bg-muted text-muted-foreground border-none px-3 py-1.5 text-xs sm:text-sm">
           Interval {currentInterval} {timerState === 'long-break' && `(Long Break)`}
         </Badge>
       </div>
       
-      <div className="text-center py-6 sm:py-10">
-        <div className="relative mx-auto w-32 h-32 sm:w-48 sm:h-48 rounded-full flex items-center justify-center border-4 sm:border-8 border-muted">
-          <div className="text-2xl sm:text-5xl font-mono font-bold">
+      <div className={`text-center ${getContainerPadding()}`}>
+        <div className={`relative mx-auto ${getCircleSize()} rounded-full flex items-center justify-center border-4 sm:border-6 md:border-8 border-muted`}>
+          <div className={`${getTextSize()} font-mono font-bold text-center leading-tight`}>
             {formatTime(remaining)}
           </div>
           <div className="absolute inset-0">
             <svg className="w-full h-full" viewBox="0 0 100 100">
               <circle
                 className="text-muted stroke-current"
-                strokeWidth="8"
+                strokeWidth="6"
                 stroke="currentColor"
                 fill="transparent"
                 r="42"
@@ -87,8 +117,8 @@ export const FocusTimer: React.FC = () => {
                     : timerState === 'long-break'
                     ? 'text-blue-500'
                     : 'text-muted-foreground'
-                } stroke-current`}
-                strokeWidth="8"
+                } stroke-current transition-all duration-300`}
+                strokeWidth="6"
                 strokeDasharray={`${2 * Math.PI * 42 * progress / 100} ${2 * Math.PI * 42}`}
                 strokeLinecap="round"
                 stroke="currentColor"
@@ -106,9 +136,9 @@ export const FocusTimer: React.FC = () => {
       <div className="space-y-2">
         <Progress
           value={progress}
-          className="h-2"
+          className="h-2 sm:h-3"
         />
-        <div className="flex flex-col sm:flex-row justify-between text-xs text-muted-foreground gap-1 sm:gap-0">
+        <div className="flex flex-col sm:flex-row justify-between text-xs sm:text-sm text-muted-foreground gap-1">
           <span className="text-center sm:text-left">
             {timerState === 'work' && `${settings.workDuration} min work`}
             {timerState === 'break' && `${settings.breakDuration} min break`}

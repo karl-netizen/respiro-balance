@@ -1,7 +1,8 @@
 
 import React from 'react';
-import { Button } from '@/components/ui/button';
+import { TouchFriendlyButton } from '@/components/responsive/TouchFriendlyButton';
 import { Play, Pause } from 'lucide-react';
+import { useDeviceDetection } from '@/hooks/useDeviceDetection';
 
 interface BiofeedbackControlsProps {
   isMonitoring: boolean;
@@ -15,6 +16,7 @@ export const BiofeedbackControls: React.FC<BiofeedbackControlsProps> = ({
   onStopMonitoring 
 }) => {
   const [isStarting, setIsStarting] = React.useState(false);
+  const { deviceType } = useDeviceDetection();
 
   const handleStartMonitoring = async () => {
     setIsStarting(true);
@@ -25,26 +27,46 @@ export const BiofeedbackControls: React.FC<BiofeedbackControlsProps> = ({
     }
   };
 
+  // Mobile-optimized button sizing
+  const getButtonSize = () => {
+    switch (deviceType) {
+      case 'mobile':
+        return 'default';
+      case 'tablet':
+        return 'lg';
+      default:
+        return 'default';
+    }
+  };
+
+  const getButtonClasses = () => {
+    return deviceType === 'mobile' 
+      ? 'w-full sm:w-auto px-6 py-3 text-base' 
+      : 'px-4 py-2';
+  };
+
   return (
     <div className="flex justify-center my-4">
       {isMonitoring ? (
-        <Button 
+        <TouchFriendlyButton 
           variant="outline" 
           onClick={onStopMonitoring}
-          className="flex items-center gap-2"
+          size={getButtonSize()}
+          className={`flex items-center gap-2 ${getButtonClasses()}`}
         >
           <Pause className="h-4 w-4" />
           Stop Monitoring
-        </Button>
+        </TouchFriendlyButton>
       ) : (
-        <Button 
+        <TouchFriendlyButton 
           onClick={handleStartMonitoring}
           disabled={isStarting}
-          className="flex items-center gap-2"
+          size={getButtonSize()}
+          className={`flex items-center gap-2 ${getButtonClasses()}`}
         >
           <Play className="h-4 w-4" />
           {isStarting ? 'Starting...' : 'Start Monitoring'}
-        </Button>
+        </TouchFriendlyButton>
       )}
     </div>
   );

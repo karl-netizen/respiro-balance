@@ -3,6 +3,7 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
+import { useDeviceDetection } from "@/hooks/useDeviceDetection";
 import { 
   Home, Gauge, LineChart, Settings, BookOpen, Heart, 
   Clock, Sunrise, Briefcase
@@ -16,6 +17,7 @@ interface MobileMenuLinksProps {
 const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
   const { user } = useAuth();
   const location = useLocation();
+  const { deviceType } = useDeviceDetection();
   
   const isActive = (path: string) => {
     if (path === '/landing' || path === '/') {
@@ -24,32 +26,50 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
     return location.pathname === path || location.pathname.startsWith(path + '/');
   }
 
+  // Mobile-optimized link styling
+  const getLinkClasses = (isActiveLink: boolean) => {
+    const baseClasses = "flex items-center gap-3 text-white hover:text-respiro-light button-transition rounded-md";
+    const paddingClasses = deviceType === 'mobile' 
+      ? 'py-3 px-3 min-h-[48px]' 
+      : 'py-2 px-2 min-h-[44px]';
+    const activeClasses = isActiveLink ? 'text-respiro-light font-medium bg-gray-800' : '';
+    
+    return cn(baseClasses, paddingClasses, activeClasses);
+  };
+
+  const getIconSize = () => {
+    return deviceType === 'mobile' ? 'h-5 w-5' : 'h-4 w-4';
+  };
+
+  const getTextSize = () => {
+    return deviceType === 'mobile' ? 'text-base' : 'text-sm';
+  };
+
   return (
-    <div className="flex-1 overflow-auto py-2 space-y-2 z-50">
+    <div className="flex-1 overflow-auto py-2 space-y-1 z-50">
       <Link
         to="/landing"
-        className={cn("flex items-center gap-2 text-white hover:text-respiro-light py-2 button-transition", 
-                     (isActive('/landing') || isActive('/')) && "text-respiro-light font-medium")}
+        className={getLinkClasses(isActive('/landing') || isActive('/'))}
         onClick={toggleMenu}
       >
-        <Home className="h-4 w-4" />
-        <span>Home</span>
+        <Home className={getIconSize()} />
+        <span className={getTextSize()}>Home</span>
       </Link>
       
       {user && (
         <Link
           to="/dashboard"
-          className={cn("flex items-center gap-2 text-white hover:text-respiro-light py-2 button-transition", isActive('/dashboard') && "text-respiro-light font-medium")}
+          className={getLinkClasses(isActive('/dashboard'))}
           onClick={toggleMenu}
         >
-          <Gauge className="h-4 w-4" />
-          <span>Dashboard</span>
+          <Gauge className={getIconSize()} />
+          <span className={getTextSize()}>Dashboard</span>
         </Link>
       )}
 
       <MobileDropdown
         title="Meditate"
-        icon={<BookOpen className="h-4 w-4" />}
+        icon={<BookOpen className={getIconSize()} />}
         items={[
           {
             label: "Guided Meditation",
@@ -69,11 +89,12 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
           }
         ]}
         toggleMainMenu={toggleMenu}
+        className="touch-manipulation"
       />
 
       <MobileDropdown
         title="Breathe"
-        icon={<Heart className="h-4 w-4" />}
+        icon={<Heart className={getIconSize()} />}
         items={[
           {
             label: "Breathing Exercises",
@@ -101,11 +122,12 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
           }
         ]}
         toggleMainMenu={toggleMenu}
+        className="touch-manipulation"
       />
       
       <MobileDropdown
         title="Work-Life Balance"
-        icon={<Briefcase className="h-4 w-4" />}
+        icon={<Briefcase className={getIconSize()} />}
         items={[
           {
             label: "Balance Tools",
@@ -121,42 +143,43 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
           }
         ]}
         toggleMainMenu={toggleMenu}
+        className="touch-manipulation"
       />
       
       <Link
         to="/morning-ritual"
-        className={cn("flex items-center gap-2 text-white hover:text-respiro-light py-2 button-transition", isActive('/morning-ritual') && "text-respiro-light font-medium")}
+        className={getLinkClasses(isActive('/morning-ritual'))}
         onClick={toggleMenu}
       >
-        <Sunrise className="h-4 w-4" />
-        <span>Morning Ritual</span>
+        <Sunrise className={getIconSize()} />
+        <span className={getTextSize()}>Morning Ritual</span>
       </Link>
 
       <Link
         to="/progress"
-        className={cn("flex items-center gap-2 text-white hover:text-respiro-light py-2 button-transition", isActive('/progress') && "text-respiro-light font-medium")}
+        className={getLinkClasses(isActive('/progress'))}
         onClick={toggleMenu}
       >
-        <LineChart className="h-4 w-4" />
-        <span>Progress</span>
+        <LineChart className={getIconSize()} />
+        <span className={getTextSize()}>Progress</span>
       </Link>
       
       <Link
         to="/account"
-        className={cn("flex items-center gap-2 text-white hover:text-respiro-light py-2 button-transition", isActive('/account') && "text-respiro-light font-medium")}
+        className={getLinkClasses(isActive('/account'))}
         onClick={toggleMenu}
       >
-        <Settings className="h-4 w-4" />
-        <span>Account</span>
+        <Settings className={getIconSize()} />
+        <span className={getTextSize()}>Account</span>
       </Link>
       
       <Link
         to="/landing#pricing"
-        className={cn("flex items-center gap-2 text-white hover:text-respiro-light py-2 button-transition", location.hash === '#pricing' && "text-respiro-light font-medium")}
+        className={getLinkClasses(location.hash === '#pricing')}
         onClick={toggleMenu}
       >
-        <Clock className="h-4 w-4" />
-        <span>Pricing</span>
+        <Clock className={getIconSize()} />
+        <span className={getTextSize()}>Pricing</span>
       </Link>
     </div>
   );
