@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Heart, ArrowRight } from 'lucide-react';
 import { TouchFriendlyButton } from '@/components/responsive/TouchFriendlyButton';
@@ -17,7 +17,8 @@ const DashboardActionCards: React.FC<DashboardActionCardsProps> = ({
 }) => {
   const navigate = useNavigate();
 
-  const quickActions = [
+  // Memoize quick actions to prevent recreation on every render
+  const quickActions = useMemo(() => [
     {
       label: 'Start Meditation',
       description: 'Begin a guided session',
@@ -38,7 +39,12 @@ const DashboardActionCards: React.FC<DashboardActionCardsProps> = ({
       description: 'Track your journey',
       action: () => navigate('/progress?tab=overview')
     }
-  ];
+  ], [navigate]);
+
+  // Use useCallback to memoize action handlers
+  const handleAction = useCallback((actionFn: () => void) => {
+    actionFn();
+  }, []);
 
   return (
     <div className="space-y-4">
@@ -67,7 +73,7 @@ const DashboardActionCards: React.FC<DashboardActionCardsProps> = ({
                 key={index}
                 variant="outline"
                 size="sm"
-                onClick={action.action}
+                onClick={() => handleAction(action.action)}
                 className="flex items-center gap-2 justify-start h-auto p-3 hover:bg-accent transition-colors"
                 hapticFeedback={true}
               >
@@ -85,4 +91,4 @@ const DashboardActionCards: React.FC<DashboardActionCardsProps> = ({
   );
 };
 
-export default DashboardActionCards;
+export default React.memo(DashboardActionCards);

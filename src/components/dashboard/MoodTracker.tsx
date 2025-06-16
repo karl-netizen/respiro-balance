@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Smile, Frown, Meh, Heart, Zap, Cloud } from 'lucide-react';
@@ -18,7 +18,8 @@ const MoodTracker: React.FC<MoodTrackerProps> = ({
 }) => {
   const [selectedMood, setSelectedMood] = useState<string | null>(currentMood);
 
-  const moods = [
+  // Memoize moods array to prevent recreation
+  const moods = useMemo(() => [
     { 
       id: 'happy', 
       label: 'Happy', 
@@ -61,13 +62,20 @@ const MoodTracker: React.FC<MoodTrackerProps> = ({
       color: 'bg-red-100 text-red-800 hover:bg-red-200',
       description: 'Feeling overwhelmed or anxious'
     }
-  ];
+  ], [compact]);
 
-  const handleMoodSelect = (moodId: string) => {
+  // Use useCallback to memoize mood selection handler
+  const handleMoodSelect = useCallback((moodId: string) => {
     setSelectedMood(moodId);
     TimeAwarenessService.recordMood(moodId);
     onMoodSelect(moodId);
-  };
+  }, [onMoodSelect]);
+
+  // Memoize the selected mood data
+  const selectedMoodData = useMemo(() => 
+    moods.find(m => m.id === selectedMood),
+    [moods, selectedMood]
+  );
 
   return (
     <div className="space-y-4">
@@ -95,10 +103,10 @@ const MoodTracker: React.FC<MoodTrackerProps> = ({
         ))}
       </div>
       
-      {selectedMood && (
+      {selectedMoodData && (
         <div className="text-center">
-          <Badge variant="outline" className={moods.find(m => m.id === selectedMood)?.color.replace('hover:bg-', 'bg-')}>
-            Current mood: {moods.find(m => m.id === selectedMood)?.label}
+          <Badge variant="outline" className={selectedMoodData.color.replace('hover:bg-', 'bg-')}>
+            Current mood: {selectedMoodData.label}
           </Badge>
           {!compact && (
             <p className="text-sm text-muted-foreground mt-2">
@@ -111,4 +119,4 @@ const MoodTracker: React.FC<MoodTrackerProps> = ({
   );
 };
 
-export default MoodTracker;
+export default React.memo(MoodTracker);

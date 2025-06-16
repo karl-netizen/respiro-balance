@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserPreferences } from '@/context';
 import { useMeditationStats } from '@/components/progress/useMeditationStats';
@@ -12,14 +12,16 @@ export const useDashboardData = () => {
   const { meditationStats } = useMeditationStats();
   const { currentPeriod } = useTimeAwareness();
   
-  // Initialize real-time sync
-  useRealTimeSync({
+  // Initialize real-time sync with memoized config
+  const syncConfig = useMemo(() => ({
     enableBiometricSync: true,
     enableSessionSync: true,
     enableProgressSync: true,
     enableSocialSync: true,
     syncInterval: 30000
-  });
+  }), []);
+  
+  useRealTimeSync(syncConfig);
 
   const [currentTime, setCurrentTime] = useState(new Date());
 
@@ -28,43 +30,39 @@ export const useDashboardData = () => {
     return () => clearInterval(timer);
   }, []);
 
-  const getUserName = () => {
+  // Memoize user name calculation
+  const userName = useMemo(() => {
     if (!user) return 'there';
     
-    // Try multiple metadata fields
     const metadata = user.user_metadata;
     
-    // Check for full_name first
     if (metadata?.full_name) {
       return metadata.full_name.split(' ')[0];
     }
     
-    // Check for first_name
     if (metadata?.first_name) {
       return metadata.first_name;
     }
     
-    // Check for name
     if (metadata?.name) {
       return metadata.name.split(' ')[0];
     }
     
-    // Fallback to email username
     if (user.email) {
       return user.email.split('@')[0];
     }
     
     return 'there';
-  };
+  }, [user?.user_metadata, user?.email]);
 
-  const getWelcomeMessage = () => {
+  // Memoize welcome message calculation
+  const welcomeMessage = useMemo(() => {
     const hour = currentTime.getHours();
-    const name = getUserName();
     
-    if (hour < 12) return `Good morning, ${name}!`;
-    if (hour < 17) return `Good afternoon, ${name}!`;
-    return `Good evening, ${name}!`;
-  };
+    if (hour < 12) return `Good morning, ${userName}!`;
+    if (hour < 17) return `Good afternoon, ${userName}!`;
+    return `Good evening, ${userName}!`;
+  }, [currentTime, userName]);
 
   // Memoize the calculated stats to prevent constant re-renders
   const stableStats = useMemo(() => {
@@ -87,12 +85,13 @@ export const useDashboardData = () => {
     preferences?.preferred_session_duration
   ]);
 
-  const handleMoodSelect = (mood: string) => {
+  // Use useCallback for event handlers to prevent unnecessary re-renders
+  const handleMoodSelect = useCallback((mood: string) => {
     console.log('handleMoodSelect called with:', mood);
     // This function is now just for compatibility, actual mood state is managed in Dashboard
-  };
+  }, []);
 
-  return {
+  return useMemo(() => ({
     user,
     currentPeriod,
     meditationStats,
@@ -100,8 +99,19 @@ export const useDashboardData = () => {
     weeklyGoal: stableStats.weeklyGoal,
     weeklyProgress: stableStats.weeklyProgress,
     progressPercentage: stableStats.progressPercentage,
-    welcomeMessage: getWelcomeMessage(),
-    userName: getUserName(),
+    welcomeMessage,
+    userName,
     handleMoodSelect
-  };
+  }), [
+    user,
+    currentPeriod,
+    meditationStats,
+    stableStats.currentStreak,
+    stableStats.weeklyGoal,
+    stableStats.weeklyProgress,
+    stableStats.progressPercentage,
+    welcomeMessage,
+    userName,
+    handleMoodSelect
+  ]);
 };

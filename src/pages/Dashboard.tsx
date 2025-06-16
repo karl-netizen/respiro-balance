@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   DashboardWelcome, 
@@ -11,7 +11,7 @@ import MoodCheckModal from '@/components/dashboard/MoodCheckModal';
 import MoodDashboardHeader from '@/components/dashboard/MoodDashboardHeader';
 import { useDashboardData } from '@/components/dashboard/hooks/useDashboardData';
 import { generateQuickStats } from '@/components/dashboard/utils/dashboardUtils';
-import { getMoodCheckForToday, setMoodCheckForToday, hasMoodCheckForToday } from '@/utils/moodCheckUtils';
+import { getMoodCheckForToday, setMoodCheckForToday } from '@/utils/moodCheckUtils';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -46,29 +46,29 @@ const Dashboard: React.FC = () => {
     }
   }, [user, handleMoodSelect]);
 
-  if (!user) {
-    navigate('/login');
-    return null;
-  }
-
-  const quickStats = generateQuickStats(
-    currentStreak,
-    weeklyProgress,
-    weeklyGoal,
-    meditationStats
+  // Memoize quick stats to prevent recalculation
+  const quickStats = useMemo(() => 
+    generateQuickStats(currentStreak, weeklyProgress, weeklyGoal, meditationStats),
+    [currentStreak, weeklyProgress, weeklyGoal, meditationStats]
   );
 
-  const handleMoodModalSelect = (mood: string) => {
+  // Use useCallback for event handlers
+  const handleMoodModalSelect = useCallback((mood: string) => {
     console.log('Mood selected from modal:', mood);
     setMoodCheckForToday(mood);
     setDailyMood(mood);
     handleMoodSelect(mood);
     setShowMoodModal(false);
-  };
+  }, [handleMoodSelect]);
 
-  const handleMoodChange = () => {
+  const handleMoodChange = useCallback(() => {
     setShowMoodModal(true);
-  };
+  }, []);
+
+  if (!user) {
+    navigate('/login');
+    return null;
+  }
 
   // Use dailyMood as the primary source of truth
   const effectiveMood = dailyMood;
@@ -120,4 +120,4 @@ const Dashboard: React.FC = () => {
   );
 };
 
-export default Dashboard;
+export default React.memo(Dashboard);

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TouchFriendlyButton } from '@/components/responsive/TouchFriendlyButton';
@@ -17,6 +17,24 @@ import { useNavigate } from 'react-router-dom';
 
 const DashboardQuickAccess: React.FC = () => {
   const navigate = useNavigate();
+
+  // Memoize navigation handlers to prevent recreation
+  const navigationHandlers = useMemo(() => ({
+    guidedMeditation: () => navigate('/meditation?tab=guided'),
+    quickBreak: () => navigate('/meditation?tab=quick'),
+    sleepMeditation: () => navigate('/meditation?tab=sleep'),
+    boxBreathing: () => navigate('/breathe?tab=exercises&technique=box'),
+    technique478: () => navigate('/breathe?tab=exercises&technique=478'),
+    focusTimer: () => navigate('/focus'),
+    focusAnalytics: () => navigate('/focus?tab=analytics'),
+    morningRitual: () => navigate('/morning-ritual'),
+    createRitual: () => navigate('/morning-ritual?mode=create')
+  }), [navigate]);
+
+  // Use useCallback for tab button clicks
+  const handleNavigation = useCallback((handler: () => void) => {
+    handler();
+  }, []);
 
   return (
     <Card>
@@ -38,7 +56,7 @@ const DashboardQuickAccess: React.FC = () => {
               <TouchFriendlyButton 
                 variant="outline" 
                 className="h-20 flex flex-col items-center justify-center"
-                onClick={() => navigate('/meditation?tab=guided')}
+                onClick={() => handleNavigation(navigationHandlers.guidedMeditation)}
                 hapticFeedback={true}
               >
                 <Brain className="h-6 w-6 mb-2 text-blue-500" />
@@ -47,7 +65,7 @@ const DashboardQuickAccess: React.FC = () => {
               <TouchFriendlyButton 
                 variant="outline" 
                 className="h-20 flex flex-col items-center justify-center"
-                onClick={() => navigate('/meditation?tab=quick')}
+                onClick={() => handleNavigation(navigationHandlers.quickBreak)}
                 hapticFeedback={true}
               >
                 <Zap className="h-6 w-6 mb-2 text-green-500" />
@@ -56,7 +74,7 @@ const DashboardQuickAccess: React.FC = () => {
               <TouchFriendlyButton 
                 variant="outline" 
                 className="h-20 flex flex-col items-center justify-center"
-                onClick={() => navigate('/meditation?tab=sleep')}
+                onClick={() => handleNavigation(navigationHandlers.sleepMeditation)}
                 hapticFeedback={true}
               >
                 <Activity className="h-6 w-6 mb-2 text-indigo-500" />
@@ -70,7 +88,7 @@ const DashboardQuickAccess: React.FC = () => {
               <TouchFriendlyButton 
                 variant="outline" 
                 className="h-20 flex flex-col items-center justify-center"
-                onClick={() => navigate('/breathe?tab=exercises&technique=box')}
+                onClick={() => handleNavigation(navigationHandlers.boxBreathing)}
                 hapticFeedback={true}
               >
                 <Activity className="h-6 w-6 mb-2 text-blue-500" />
@@ -79,7 +97,7 @@ const DashboardQuickAccess: React.FC = () => {
               <TouchFriendlyButton 
                 variant="outline" 
                 className="h-20 flex flex-col items-center justify-center"
-                onClick={() => navigate('/breathe?tab=exercises&technique=478')}
+                onClick={() => handleNavigation(navigationHandlers.technique478)}
                 hapticFeedback={true}
               >
                 <Heart className="h-6 w-6 mb-2 text-red-500" />
@@ -93,7 +111,7 @@ const DashboardQuickAccess: React.FC = () => {
               <TouchFriendlyButton 
                 variant="outline" 
                 className="h-20 flex flex-col items-center justify-center"
-                onClick={() => navigate('/focus')}
+                onClick={() => handleNavigation(navigationHandlers.focusTimer)}
                 hapticFeedback={true}
               >
                 <Target className="h-6 w-6 mb-2 text-purple-500" />
@@ -102,7 +120,7 @@ const DashboardQuickAccess: React.FC = () => {
               <TouchFriendlyButton 
                 variant="outline" 
                 className="h-20 flex flex-col items-center justify-center"
-                onClick={() => navigate('/focus?tab=analytics')}
+                onClick={() => handleNavigation(navigationHandlers.focusAnalytics)}
                 hapticFeedback={true}
               >
                 <TrendingUp className="h-6 w-6 mb-2 text-green-500" />
@@ -116,7 +134,7 @@ const DashboardQuickAccess: React.FC = () => {
               <TouchFriendlyButton 
                 variant="outline" 
                 className="h-20 flex flex-col items-center justify-center"
-                onClick={() => navigate('/morning-ritual')}
+                onClick={() => handleNavigation(navigationHandlers.morningRitual)}
                 hapticFeedback={true}
               >
                 <Calendar className="h-6 w-6 mb-2 text-orange-500" />
@@ -125,7 +143,7 @@ const DashboardQuickAccess: React.FC = () => {
               <TouchFriendlyButton 
                 variant="outline" 
                 className="h-20 flex flex-col items-center justify-center"
-                onClick={() => navigate('/morning-ritual?mode=create')}
+                onClick={() => handleNavigation(navigationHandlers.createRitual)}
                 hapticFeedback={true}
               >
                 <Clock className="h-6 w-6 mb-2 text-purple-500" />
@@ -139,4 +157,4 @@ const DashboardQuickAccess: React.FC = () => {
   );
 };
 
-export default DashboardQuickAccess;
+export default React.memo(DashboardQuickAccess);

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import DashboardActionCards from './DashboardActionCards';
 import WeeklyProgressCard, { WeeklyProgressData } from './WeeklyProgressCard';
 import MoodBasedRecommendations from './MoodBasedRecommendations';
@@ -21,12 +21,12 @@ const DashboardMainContent: React.FC<DashboardMainContentProps> = ({
   onMoodSelect,
   currentStreak
 }) => {
-  // Create progress object to match WeeklyProgressCard interface
-  const progressData: WeeklyProgressData = {
+  // Memoize progress object to prevent WeeklyProgressCard re-renders
+  const progressData: WeeklyProgressData = useMemo(() => ({
     weeklyCompleted: weeklyProgress,
     weeklyGoal: weeklyGoal,
     streak: currentStreak
-  };
+  }), [weeklyProgress, weeklyGoal, currentStreak]);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6">
@@ -68,4 +68,4 @@ const DashboardMainContent: React.FC<DashboardMainContentProps> = ({
   );
 };
 
-export default DashboardMainContent;
+export default React.memo(DashboardMainContent);

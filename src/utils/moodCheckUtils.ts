@@ -7,6 +7,9 @@ export interface DailyMoodCheck {
 
 const MOOD_CHECK_KEY = 'daily_mood_check';
 
+// Debounce function to prevent excessive localStorage writes
+let moodDebounceTimeout: NodeJS.Timeout | null = null;
+
 export const getMoodCheckForToday = (): string | null => {
   const today = new Date().toDateString();
   const stored = localStorage.getItem(MOOD_CHECK_KEY);
@@ -22,14 +25,22 @@ export const getMoodCheckForToday = (): string | null => {
 };
 
 export const setMoodCheckForToday = (mood: string): void => {
-  const today = new Date().toDateString();
-  const moodCheck: DailyMoodCheck = {
-    date: today,
-    mood,
-    timestamp: Date.now()
-  };
+  // Clear existing timeout
+  if (moodDebounceTimeout) {
+    clearTimeout(moodDebounceTimeout);
+  }
   
-  localStorage.setItem(MOOD_CHECK_KEY, JSON.stringify(moodCheck));
+  // Debounce the mood setting to prevent rapid updates
+  moodDebounceTimeout = setTimeout(() => {
+    const today = new Date().toDateString();
+    const moodCheck: DailyMoodCheck = {
+      date: today,
+      mood,
+      timestamp: Date.now()
+    };
+    
+    localStorage.setItem(MOOD_CHECK_KEY, JSON.stringify(moodCheck));
+  }, 300); // 300ms debounce
 };
 
 export const hasMoodCheckForToday = (): boolean => {
@@ -38,4 +49,10 @@ export const hasMoodCheckForToday = (): boolean => {
 
 export const clearMoodCheck = (): void => {
   localStorage.removeItem(MOOD_CHECK_KEY);
+  
+  // Clear any pending debounced writes
+  if (moodDebounceTimeout) {
+    clearTimeout(moodDebounceTimeout);
+    moodDebounceTimeout = null;
+  }
 };
