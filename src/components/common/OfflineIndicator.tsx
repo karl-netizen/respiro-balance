@@ -2,7 +2,7 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { WifiOff, Wifi, Sync, Cloud } from 'lucide-react';
+import { WifiOff, Wifi, RotateCcw, Cloud } from 'lucide-react';
 import { useOfflineSync } from '@/hooks/useOfflineSync';
 
 const OfflineIndicator: React.FC = () => {
@@ -42,7 +42,7 @@ const OfflineIndicator: React.FC = () => {
                   className="h-8"
                 >
                   {isSyncing ? (
-                    <Sync className="h-3 w-3 animate-spin" />
+                    <RotateCcw className="h-3 w-3 animate-spin" />
                   ) : (
                     <Cloud className="h-3 w-3" />
                   )}

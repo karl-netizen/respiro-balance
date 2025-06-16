@@ -1,103 +1,106 @@
 
 import { useState, useEffect } from 'react';
-import { useAuth } from '@/hooks/useAuth';
-import { useDeviceManagement } from './useDeviceManagement';
+import { DeviceInfo, BiofeedbackHookReturn, BiometricReadings } from './types';
 import { useSimulation } from './useSimulation';
-import { useBiometricData } from './useBiometricData';
-import { BiofeedbackHookReturn } from './types';
 
 export const useBiofeedback = (): BiofeedbackHookReturn => {
-  const { user } = useAuth();
-  const { 
-    devices, 
-    isScanning, 
-    isConnecting, 
-    scanForDevices: scanDevices, 
-    stopScan: stopDeviceScan,
-    connectDevice: connectDeviceToSystem,
-    disconnectDevice: disconnectDeviceFromSystem
-  } = useDeviceManagement();
+  const [devices, setDevices] = useState<DeviceInfo[]>([]);
+  const [isScanning, setIsScanning] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
   
-  const {
-    isSimulating,
-    startSimulation,
-    stopSimulation,
-    simulatedData
-  } = useSimulation();
-  
-  const {
-    heartRate: deviceHeartRate,
-    stress: deviceStress,
-    restingHeartRate: deviceRestingHeartRate,
-    startDataReading
-  } = useBiometricData();
+  const { isSimulating, simulatedData, startSimulation, stopSimulation } = useSimulation();
 
-  // Initialize simulation mode if no real devices are available
-  useEffect(() => {
-    const initializeDeviceState = async () => {
-      const hasWebBluetooth = 'bluetooth' in navigator;
-      
-      if (!hasWebBluetooth) {
-        console.log('Web Bluetooth API not available, enabling simulation mode');
-        startSimulation();
-      }
-    };
-    
-    initializeDeviceState();
-    
-    return () => {
-      // Clean up simulation
-      stopSimulation();
-    };
-  }, []);
+  // Extract current readings from simulated data
+  const heartRate = simulatedData.heartRate;
+  const stress = simulatedData.stress;
+  const restingHeartRate = simulatedData.restingHeartRate;
 
-  // Scan for available Bluetooth devices (wrapper)
-  const scanForDevices = async (deviceType?: string, options?: any): Promise<boolean> => {
-    return scanDevices(deviceType, { ...options, isSimulationMode: isSimulating });
-  };
-
-  // Stop ongoing scan
-  const stopScan = async (deviceType?: string, callback?: () => void): Promise<void> => {
-    return stopDeviceScan(deviceType, callback);
-  };
-
-  // Connect to a specific device (wrapper)
   const connectDevice = async (deviceId: string, options?: any): Promise<boolean> => {
-    const success = await connectDeviceToSystem(deviceId, options);
-    if (success) {
-      // If this is the first connected device, start reading data
-      startDataReading(deviceId);
+    setIsConnecting(true);
+    try {
+      // Simulate device connection
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      setDevices(prev => prev.map(device => 
+        device.id === deviceId 
+          ? { ...device, connected: true }
+          : device
+      ));
+      
+      startSimulation();
+      return true;
+    } catch (error) {
+      console.error('Failed to connect device:', error);
+      return false;
+    } finally {
+      setIsConnecting(false);
     }
-    return success;
   };
 
-  // Disconnect from a device (wrapper)
   const disconnectDevice = async (deviceId: string, options?: any): Promise<boolean> => {
-    return disconnectDeviceFromSystem(deviceId, options);
+    try {
+      setDevices(prev => prev.map(device => 
+        device.id === deviceId 
+          ? { ...device, connected: false }
+          : device
+      ));
+      
+      stopSimulation();
+      return true;
+    } catch (error) {
+      console.error('Failed to disconnect device:', error);
+      return false;
+    }
   };
 
-  // Get the appropriate heart rate value (from device or simulation)
-  const getCurrentHeartRate = () => {
-    return isSimulating ? simulatedData.heartRate : deviceHeartRate;
+  const scanForDevices = async (deviceType?: string, options?: any): Promise<boolean> => {
+    setIsScanning(true);
+    try {
+      // Simulate device scanning
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      
+      // Add mock devices
+      const mockDevices: DeviceInfo[] = [
+        {
+          id: 'device-1',
+          name: 'Respiro HR Monitor',
+          type: 'heart_rate',
+          connected: false,
+          batteryLevel: 85,
+          signalStrength: -45
+        },
+        {
+          id: 'device-2',
+          name: 'Stress Monitor Pro',
+          type: 'stress',
+          connected: false,
+          batteryLevel: 67,
+          signalStrength: -52
+        }
+      ];
+      
+      setDevices(mockDevices);
+      return true;
+    } catch (error) {
+      console.error('Failed to scan for devices:', error);
+      return false;
+    } finally {
+      setIsScanning(false);
+    }
   };
-  
-  // Get the appropriate stress value (from device or simulation)
-  const getCurrentStress = () => {
-    return isSimulating ? simulatedData.stress : deviceStress;
-  };
-  
-  // Get the appropriate resting heart rate value (from device or simulation)
-  const getCurrentRestingHeartRate = () => {
-    return isSimulating ? simulatedData.restingHeartRate : deviceRestingHeartRate;
+
+  const stopScan = async (deviceType?: string, callback?: () => void): Promise<void> => {
+    setIsScanning(false);
+    if (callback) callback();
   };
 
   return {
     devices,
     isScanning,
     isConnecting,
-    heartRate: getCurrentHeartRate(),
-    stress: getCurrentStress(),
-    restingHeartRate: getCurrentRestingHeartRate(),
+    heartRate,
+    stress,
+    restingHeartRate,
     connectDevice,
     disconnectDevice,
     scanForDevices,
@@ -105,6 +108,3 @@ export const useBiofeedback = (): BiofeedbackHookReturn => {
     isSimulating
   };
 };
-
-// Export the BiofeedbackHookReturn type for re-export in other files
-export type { BiofeedbackHookReturn };

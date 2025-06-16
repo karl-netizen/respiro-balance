@@ -1,6 +1,6 @@
 
-export { default as BiofeedbackControls } from './BiofeedbackControls';
-export { default as ConnectionPrompt } from './ConnectionPrompt';
-export { default as DataConverter } from './DataConverter';
-export { default as TabsContainer } from './TabsContainer';
-export { default as BiometricSummary } from './BiometricSummary';
+export { BiofeedbackControls } from './BiofeedbackControls';
+export { ConnectionPrompt } from './ConnectionPrompt';
+export { DataConverter } from './DataConverter';
+export { TabsContainer } from './TabsContainer';
+export { BiometricSummary } from './BiometricSummary';

@@ -11,6 +11,7 @@ export const useSimulation = () => {
     coherence: 0.8,
     focusScore: 75,
     calmScore: 70,
+    restingHeartRate: 60,
     timestamp: new Date().toISOString()
   });
   
@@ -26,6 +27,7 @@ export const useSimulation = () => {
     const coherence = Math.max(0.1, Math.min(1.0, 0.8 + Math.sin(Date.now() / 8000) * 0.3));
     const focusScore = Math.round(75 + Math.sin(Date.now() / 12000) * 20);
     const calmScore = Math.round(70 + Math.cos(Date.now() / 14000) * 25);
+    const restingHeartRate = 60;
 
     return {
       heartRate,
@@ -34,6 +36,7 @@ export const useSimulation = () => {
       coherence: Math.round(coherence * 100) / 100,
       focusScore: Math.max(0, Math.min(100, focusScore)),
       calmScore: Math.max(0, Math.min(100, calmScore)),
+      restingHeartRate,
       timestamp: new Date().toISOString()
     };
   };

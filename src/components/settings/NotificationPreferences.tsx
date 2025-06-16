@@ -19,8 +19,8 @@ const NotificationPreferences: React.FC = () => {
 
   const handleToggle = (key: string, value: boolean) => {
     updatePreferences({
-      notification_settings: {
-        ...preferences.notification_settings,
+      notificationSettings: {
+        ...preferences.notificationSettings,
         [key]: value
       }
     });
@@ -112,8 +112,8 @@ const NotificationPreferences: React.FC = () => {
                 </div>
               </div>
               <Switch
-                checked={preferences.notification_settings?.session_reminders || false}
-                onCheckedChange={(checked) => handleToggle('session_reminders', checked)}
+                checked={preferences.notificationSettings?.sessionReminders || false}
+                onCheckedChange={(checked) => handleToggle('sessionReminders', checked)}
                 disabled={permissionStatus !== 'granted'}
               />
             </div>
@@ -129,8 +129,8 @@ const NotificationPreferences: React.FC = () => {
                 </div>
               </div>
               <Switch
-                checked={preferences.notification_settings?.streak_alerts || false}
-                onCheckedChange={(checked) => handleToggle('streak_alerts', checked)}
+                checked={preferences.notificationSettings?.streakAlerts || false}
+                onCheckedChange={(checked) => handleToggle('streakAlerts', checked)}
                 disabled={permissionStatus !== 'granted'}
               />
             </div>
@@ -146,8 +146,8 @@ const NotificationPreferences: React.FC = () => {
                 </div>
               </div>
               <Switch
-                checked={preferences.notification_settings?.achievement_notifications || false}
-                onCheckedChange={(checked) => handleToggle('achievement_notifications', checked)}
+                checked={preferences.notificationSettings?.achievementNotifications || false}
+                onCheckedChange={(checked) => handleToggle('achievementNotifications', checked)}
                 disabled={permissionStatus !== 'granted'}
               />
             </div>
@@ -163,8 +163,8 @@ const NotificationPreferences: React.FC = () => {
                 </div>
               </div>
               <Switch
-                checked={preferences.notification_settings?.weekly_summary || false}
-                onCheckedChange={(checked) => handleToggle('weekly_summary', checked)}
+                checked={preferences.notificationSettings?.weeklySummary || false}
+                onCheckedChange={(checked) => handleToggle('weeklySummary', checked)}
                 disabled={permissionStatus !== 'granted'}
               />
             </div>

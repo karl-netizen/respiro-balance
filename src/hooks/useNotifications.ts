@@ -23,7 +23,7 @@ export const useNotifications = () => {
   }, []);
 
   useEffect(() => {
-    if (user && permissionStatus === 'granted' && preferences.notification_settings) {
+    if (user && permissionStatus === 'granted' && preferences.notificationSettings) {
       // Schedule intelligent reminders based on user preferences
       notificationService.scheduleIntelligentReminders(user.id, preferences);
     }

@@ -13,5 +13,5 @@ export { default as BiofeedbackLayout } from './layout/BiofeedbackLayout';
 export { default as DeviceSection } from './sections/DeviceSection';
 export { default as BiometricMonitorSection } from './sections/BiometricMonitorSection';
 
-// Make sure to also export types if needed
-export type { BiometricData } from './sections/BiometricMonitorSection';
+// Export types from the correct location
+export type { BiometricData } from '../hooks/biofeedback/types';

@@ -70,8 +70,7 @@ export class NotificationService {
         badge: '/badge-72x72.png',
         tag: notification.type,
         data: notification.data,
-        requireInteraction: notification.type === 'achievement',
-        actions: this.getNotificationActions(notification.type)
+        requireInteraction: notification.type === 'achievement'
       });
     } else {
       new Notification(notification.title, {
@@ -83,31 +82,12 @@ export class NotificationService {
     }
   }
 
-  private getNotificationActions(type: string) {
-    switch (type) {
-      case 'reminder':
-        return [
-          { action: 'start', title: 'Start Now', icon: '/images/play.png' },
-          { action: 'later', title: 'Remind Later', icon: '/images/clock.png' }
-        ];
-      case 'achievement':
-        return [
-          { action: 'view', title: 'View Progress', icon: '/images/trophy.png' },
-          { action: 'share', title: 'Share', icon: '/images/share.png' }
-        ];
-      default:
-        return [
-          { action: 'open', title: 'Open App', icon: '/images/app.png' }
-        ];
-    }
-  }
-
   async scheduleIntelligentReminders(userId: string, preferences: UserPreferences) {
     const currentHour = new Date().getHours();
     const notifications: PushNotificationData[] = [];
 
     // Morning meditation reminder
-    if (preferences.notification_settings?.session_reminders) {
+    if (preferences.notificationSettings?.sessionReminders) {
       const morningTime = new Date();
       morningTime.setHours(8, 0, 0, 0);
       if (morningTime > new Date()) {
@@ -119,14 +99,14 @@ export class NotificationService {
         message: 'Start your day with a peaceful meditation session',
         type: 'reminder',
         scheduledFor: morningTime.toISOString(),
-        data: { suggestedDuration: preferences.preferred_session_duration }
+        data: { suggestedDuration: preferences.preferredSessionDuration }
       });
     }
 
     // Workday break reminders
-    if (preferences.work_days?.includes(this.getCurrentDayName().toLowerCase())) {
+    if (preferences.workDays?.includes(this.getCurrentDayName().toLowerCase())) {
       const breakTime = new Date();
-      const [workHours, workMinutes] = (preferences.work_start_time || '09:00').split(':');
+      const [workHours, workMinutes] = (preferences.workStartTime || '09:00').split(':');
       breakTime.setHours(parseInt(workHours) + 2, parseInt(workMinutes), 0, 0);
 
       if (breakTime > new Date()) {
@@ -141,7 +121,7 @@ export class NotificationService {
     }
 
     // Evening reflection reminder
-    if (preferences.notification_settings?.weekly_summary) {
+    if (preferences.notificationSettings?.weeklySummary) {
       const eveningTime = new Date();
       eveningTime.setHours(20, 0, 0, 0);
       if (eveningTime > new Date()) {
