@@ -51,17 +51,17 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-        <AuthProvider>
-          <UserPreferencesProvider>
-            <SubscriptionProvider>
-              <FocusProvider>
-                <NotificationsProvider>
-                  <NavigationHistoryProvider>
-                    <div className="min-h-screen bg-background text-foreground w-full">
-                      <SkipNavigation />
-                      <AriaLiveRegion />
-                      
-                      <Router>
+        <Router>
+          <AuthProvider>
+            <UserPreferencesProvider>
+              <SubscriptionProvider>
+                <FocusProvider>
+                  <NotificationsProvider>
+                    <NavigationHistoryProvider>
+                      <div className="min-h-screen bg-background text-foreground w-full">
+                        <SkipNavigation />
+                        <AriaLiveRegion />
+                        
                         <main id="main-content" className="w-full">
                           <Routes>
                             <Route path="/" element={<Navigate to="/landing" replace />} />
@@ -87,17 +87,17 @@ function App() {
                             <Route path="/payment/cancel" element={<PaymentCancelPage />} />
                           </Routes>
                         </main>
-                      </Router>
 
-                      <OfflineIndicator />
-                      <Toaster />
-                    </div>
-                  </NavigationHistoryProvider>
-                </NotificationsProvider>
-              </FocusProvider>
-            </SubscriptionProvider>
-          </UserPreferencesProvider>
-        </AuthProvider>
+                        <OfflineIndicator />
+                        <Toaster />
+                      </div>
+                    </NavigationHistoryProvider>
+                  </NotificationsProvider>
+                </FocusProvider>
+              </SubscriptionProvider>
+            </UserPreferencesProvider>
+          </AuthProvider>
+        </Router>
       </ThemeProvider>
     </QueryClientProvider>
   )
