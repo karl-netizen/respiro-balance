@@ -2,89 +2,86 @@
 import React, { Suspense, lazy, ErrorInfo, ReactNode } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Loader2, AlertTriangle } from 'lucide-react';
+import { MobileErrorBoundary } from '@/components/ui/mobile-error-boundary';
+import { MobileLoadingState } from '@/components/ui/mobile-loading-states';
+import { OfflineIndicator } from '@/components/ui/offline-indicator';
+import { FocusManager } from '@/components/accessibility/FocusManager';
+import { ScreenReaderAnnouncements } from '@/components/accessibility/ScreenReaderAnnouncements';
+import { usePerformanceOptimization } from '@/hooks/usePerformanceOptimization';
 
-// Lazy load heavy components
-const BiofeedbackAnalytics = lazy(() => import('@/components/analytics/BiofeedbackAnalytics'));
-const LazyMeditationPlayer = lazy(() => import('./LazyMeditationPlayer'));
-
-// Simple error boundary component
-interface ErrorBoundaryState {
-  hasError: boolean;
-  error?: Error;
-}
-
-class SimpleErrorBoundary extends React.Component<
-  { children: ReactNode; fallback: React.ComponentType<{ error: Error; resetErrorBoundary: () => void }> },
-  ErrorBoundaryState
-> {
-  constructor(props: any) {
-    super(props);
-    this.state = { hasError: false };
-  }
-
-  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
-    return { hasError: true, error };
-  }
-
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('Error caught by boundary:', error, errorInfo);
-  }
-
-  resetError = () => {
-    this.setState({ hasError: false, error: undefined });
-  };
-
-  render() {
-    if (this.state.hasError && this.state.error) {
-      const FallbackComponent = this.props.fallback;
-      return <FallbackComponent error={this.state.error} resetErrorBoundary={this.resetError} />;
-    }
-
-    return this.props.children;
-  }
-}
-
-// Error fallback component
-const ErrorFallback: React.FC<{ error: Error; resetErrorBoundary: () => void }> = ({
-  error,
-  resetErrorBoundary
-}) => (
-  <Card className="border-red-200">
-    <CardContent className="p-6 text-center">
-      <AlertTriangle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-      <h3 className="text-lg font-semibold mb-2">Something went wrong</h3>
-      <p className="text-sm text-muted-foreground mb-4">{error.message}</p>
-      <button
-        onClick={resetErrorBoundary}
-        className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
-      >
-        Try again
-      </button>
-    </CardContent>
-  </Card>
+// Lazy load heavy components with performance considerations
+const BiofeedbackAnalytics = lazy(() => 
+  import('@/components/analytics/BiofeedbackAnalytics').then(module => ({
+    default: module.default
+  }))
 );
 
-// Global loading fallback
-const GlobalLoader: React.FC = () => (
-  <div className="flex items-center justify-center min-h-[200px]">
-    <div className="text-center">
-      <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
-      <p className="text-sm text-muted-foreground">Loading component...</p>
+const LazyMeditationPlayer = lazy(() => 
+  import('./LazyMeditationPlayer').then(module => ({
+    default: module.default
+  }))
+);
+
+// Performance-aware loading component
+const PerformanceAwareLoader: React.FC<{ variant?: string }> = ({ variant = 'default' }) => {
+  const { isLowPerformanceDevice, deviceType } = usePerformanceOptimization();
+  
+  if (isLowPerformanceDevice) {
+    return <MobileLoadingState variant="spinner" title="Loading..." />;
+  }
+  
+  return (
+    <div className="flex items-center justify-center min-h-[200px]">
+      <div className="text-center">
+        <Loader2 className={`h-8 w-8 animate-spin mx-auto mb-4 text-primary ${deviceType === 'mobile' ? 'h-6 w-6' : ''}`} />
+        <p className={`text-muted-foreground ${deviceType === 'mobile' ? 'text-sm' : 'text-base'}`}>
+          Loading component...
+        </p>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 interface PerformanceOptimizedAppProps {
   children: React.ReactNode;
+  enableOfflineIndicator?: boolean;
+  enableFocusManagement?: boolean;
 }
 
-const PerformanceOptimizedApp: React.FC<PerformanceOptimizedAppProps> = ({ children }) => {
+const PerformanceOptimizedApp: React.FC<PerformanceOptimizedAppProps> = ({ 
+  children,
+  enableOfflineIndicator = true,
+  enableFocusManagement = true
+}) => {
+  const { getLoadingStrategy } = usePerformanceOptimization();
+  const loadingStrategy = getLoadingStrategy();
+
+  const AppContent = () => (
+    <>
+      {enableOfflineIndicator && <OfflineIndicator />}
+      <ScreenReaderAnnouncements />
+      {enableFocusManagement ? (
+        <FocusManager autoFocus={false} restoreFocus={true}>
+          {children}
+        </FocusManager>
+      ) : (
+        children
+      )}
+    </>
+  );
+
   return (
-    <SimpleErrorBoundary fallback={ErrorFallback}>
-      <Suspense fallback={<GlobalLoader />}>
-        {children}
+    <MobileErrorBoundary>
+      <Suspense 
+        fallback={
+          <PerformanceAwareLoader 
+            variant={loadingStrategy === 'progressive' ? 'dashboard' : 'spinner'} 
+          />
+        }
+      >
+        <AppContent />
       </Suspense>
-    </SimpleErrorBoundary>
+    </MobileErrorBoundary>
   );
 };
 

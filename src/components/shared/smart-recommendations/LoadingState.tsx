@@ -2,6 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Brain } from 'lucide-react';
+import { MobileSkeleton } from '@/components/ui/mobile-skeleton';
 
 interface LoadingStateProps {
   compact?: boolean;
@@ -19,9 +20,9 @@ export const LoadingState: React.FC<LoadingStateProps> = ({ compact = false }) =
       <CardContent>
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="animate-pulse">
-              <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-              <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+            <div key={i}>
+              <MobileSkeleton variant="text" className="w-3/4 mb-2" />
+              <MobileSkeleton variant="text" className="w-1/2" />
             </div>
           ))}
         </div>
