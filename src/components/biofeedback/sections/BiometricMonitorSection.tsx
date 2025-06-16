@@ -5,6 +5,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { HeartRateTab, StressTab } from "../tabs";
 import BiofeedbackCard from "../cards/BiofeedbackCard";
 import BiofeedbackDisplay from "../BiofeedbackDisplay";
+import { useDeviceDetection } from "@/hooks/useDeviceDetection";
 
 export interface BiometricData {
   id: string;
@@ -29,6 +30,7 @@ const BiometricMonitorSection: React.FC<BiometricMonitorSectionProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState("heart-rate");
   const [isMonitoring, setIsMonitoring] = useState(false);
+  const { deviceType } = useDeviceDetection();
 
   // Create mock biometric data for tabs
   const mockHeartRateData: BiometricData = {
@@ -55,38 +57,77 @@ const BiometricMonitorSection: React.FC<BiometricMonitorSectionProps> = ({
     setIsMonitoring(false);
   };
 
+  // Mobile-optimized spacing and layout
+  const getMobileSpacing = () => {
+    switch (deviceType) {
+      case 'mobile':
+        return 'space-y-3';
+      case 'tablet':
+        return 'space-y-4';
+      default:
+        return 'space-y-6';
+    }
+  };
+
   return (
     <BiofeedbackCard
       title="Biofeedback Monitor"
       description={`${isSimulating ? 'Simulation Mode' : 'Live Data'}`}
       icon={<Heart className="h-5 w-5" />}
     >
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 mb-6">
-          <TabsTrigger value="heart-rate">Heart Rate</TabsTrigger>
-          <TabsTrigger value="stress">Stress Level</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="heart-rate" className="space-y-4">
-          <BiofeedbackDisplay
-            partialData={mockHeartRateData}
-            isMonitoring={isMonitoring}
-            onStartMonitoring={startMonitoring}
-            onStopMonitoring={stopMonitoring}
-          />
-          <HeartRateTab biometricData={mockHeartRateData} />
-        </TabsContent>
-        
-        <TabsContent value="stress" className="space-y-4">
-          <BiofeedbackDisplay
-            partialData={mockStressData}
-            isMonitoring={isMonitoring}
-            onStartMonitoring={startMonitoring}
-            onStopMonitoring={stopMonitoring}
-          />
-          <StressTab biometricData={mockStressData} />
-        </TabsContent>
-      </Tabs>
+      <div className={getMobileSpacing()}>
+        {/* Mobile-optimized tabs with touch-friendly design */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <div className="w-full overflow-x-auto -mx-2 px-2 sm:mx-0 sm:px-0">
+            <TabsList className="grid w-full grid-cols-2 mb-4 sm:mb-6 min-w-[280px] sm:min-w-0">
+              <TabsTrigger 
+                value="heart-rate" 
+                className="text-xs sm:text-sm py-2 sm:py-3 min-h-[44px] sm:min-h-auto"
+              >
+                Heart Rate
+              </TabsTrigger>
+              <TabsTrigger 
+                value="stress"
+                className="text-xs sm:text-sm py-2 sm:py-3 min-h-[44px] sm:min-h-auto"
+              >
+                Stress Level
+              </TabsTrigger>
+            </TabsList>
+          </div>
+          
+          <TabsContent value="heart-rate" className={getMobileSpacing()}>
+            <div className="w-full overflow-hidden">
+              <BiofeedbackDisplay
+                partialData={mockHeartRateData}
+                isMonitoring={isMonitoring}
+                onStartMonitoring={startMonitoring}
+                onStopMonitoring={stopMonitoring}
+              />
+            </div>
+            <div className="w-full overflow-x-auto">
+              <div className="min-w-[320px] sm:min-w-0">
+                <HeartRateTab biometricData={mockHeartRateData} />
+              </div>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="stress" className={getMobileSpacing()}>
+            <div className="w-full overflow-hidden">
+              <BiofeedbackDisplay
+                partialData={mockStressData}
+                isMonitoring={isMonitoring}
+                onStartMonitoring={startMonitoring}
+                onStopMonitoring={stopMonitoring}
+              />
+            </div>
+            <div className="w-full overflow-x-auto">
+              <div className="min-w-[320px] sm:min-w-0">
+                <StressTab biometricData={mockStressData} />
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
     </BiofeedbackCard>
   );
 };
