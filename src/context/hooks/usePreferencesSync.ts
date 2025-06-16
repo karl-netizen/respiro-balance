@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { UserPreferences } from '../types';
 import defaultPreferences from '../defaultPreferences';
 import { isSupabaseConfigured } from '@/lib/supabase';
+import { useCleanupEffect } from '@/hooks/useCleanupEffect';
 
 export const usePreferencesSync = (
   user: any,
@@ -13,11 +14,8 @@ export const usePreferencesSync = (
   const [preferences, setPreferences] = useState<UserPreferences>(defaultPreferences);
   const [initialized, setInitialized] = useState(false);
 
-  // On mount and when user or supabasePreferences changes:
-  // 1. First try to load from Supabase if configured
-  // 2. Otherwise, check localStorage
-  // 3. Fall back to default preferences
-  useEffect(() => {
+  // Use cleanup effect for proper memory management
+  useCleanupEffect(() => {
     const loadPreferences = async () => {
       // If Supabase is configured and we have user and preferences
       if (isSupabaseConfigured() && user && supabasePreferences && !isLoading) {
@@ -33,35 +31,20 @@ export const usePreferencesSync = (
         const savedPreferences = localStorage.getItem("userPreferences");
         if (savedPreferences) {
           try {
-            // Parse the saved preferences and ensure all required properties exist
             const parsedPrefs = JSON.parse(savedPreferences);
             
-            // Make sure connectedDevices exists to prevent "undefined.includes()" errors
-            if (!parsedPrefs.connectedDevices) {
-              parsedPrefs.connectedDevices = [];
-            }
+            // Ensure all required arrays exist
+            const sanitizedPrefs = {
+              ...defaultPreferences,
+              ...parsedPrefs,
+              connectedDevices: parsedPrefs.connectedDevices || [],
+              metricsOfInterest: parsedPrefs.metricsOfInterest || defaultPreferences.metricsOfInterest,
+              focusChallenges: parsedPrefs.focusChallenges || defaultPreferences.focusChallenges,
+              workDays: parsedPrefs.workDays || defaultPreferences.workDays,
+              meditationGoals: parsedPrefs.meditationGoals || defaultPreferences.meditationGoals,
+            };
             
-            // Make sure metricsOfInterest exists
-            if (!parsedPrefs.metricsOfInterest) {
-              parsedPrefs.metricsOfInterest = defaultPreferences.metricsOfInterest;
-            }
-            
-            // Make sure focusChallenges exists
-            if (!parsedPrefs.focusChallenges) {
-              parsedPrefs.focusChallenges = defaultPreferences.focusChallenges;
-            }
-            
-            // Make sure workDays exists
-            if (!parsedPrefs.workDays) {
-              parsedPrefs.workDays = defaultPreferences.workDays;
-            }
-            
-            // Make sure meditationGoals exists
-            if (!parsedPrefs.meditationGoals) {
-              parsedPrefs.meditationGoals = defaultPreferences.meditationGoals;
-            }
-            
-            setPreferences(parsedPrefs);
+            setPreferences(sanitizedPrefs);
           } catch (error) {
             console.error("Error parsing saved preferences:", error);
             setPreferences(defaultPreferences);
@@ -79,11 +62,15 @@ export const usePreferencesSync = (
     if (!initialized || user) {
       loadPreferences();
     }
+    
+    // Return cleanup function
+    return () => {
+      setInitialized(false);
+    };
   }, [user, supabasePreferences, isLoading, initialized]);
 
-  // Save preferences - to both Supabase (if available) and localStorage
+  // Save preferences with proper cleanup
   const updatePreferences = (newPreferences: Partial<UserPreferences>) => {
-    // Update local state
     setPreferences(prevPreferences => {
       const updatedPreferences = {
         ...prevPreferences,
@@ -91,11 +78,19 @@ export const usePreferencesSync = (
       };
       
       // Save to localStorage as backup
-      localStorage.setItem("userPreferences", JSON.stringify(updatedPreferences));
+      try {
+        localStorage.setItem("userPreferences", JSON.stringify(updatedPreferences));
+      } catch (error) {
+        console.error("Error saving preferences to localStorage:", error);
+      }
       
       // If Supabase is configured and we have a user, also save there
       if (isSupabaseConfigured() && user) {
-        updateSupabasePreferences(updatedPreferences);
+        try {
+          updateSupabasePreferences(updatedPreferences);
+        } catch (error) {
+          console.error("Error saving preferences to Supabase:", error);
+        }
       }
       
       return updatedPreferences;
@@ -104,11 +99,20 @@ export const usePreferencesSync = (
 
   const resetPreferences = () => {
     setPreferences(defaultPreferences);
-    localStorage.removeItem("userPreferences");
+    
+    try {
+      localStorage.removeItem("userPreferences");
+    } catch (error) {
+      console.error("Error removing preferences from localStorage:", error);
+    }
     
     // If Supabase is configured and we have a user, also reset there
     if (isSupabaseConfigured() && user) {
-      updateSupabasePreferences(defaultPreferences);
+      try {
+        updateSupabasePreferences(defaultPreferences);
+      } catch (error) {
+        console.error("Error resetting preferences in Supabase:", error);
+      }
     }
   };
 

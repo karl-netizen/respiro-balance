@@ -1,18 +1,25 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from "@/components/ui/button";
 import { useUserPreferences } from "@/context";
 import { useAuth } from "@/hooks/useAuth";
 import OnboardingWizard from "@/components/onboarding/OnboardingWizard";
+import { useCleanupEffect } from "@/hooks/useCleanupEffect";
 
 const OnboardingPage = () => {
   const navigate = useNavigate();
   const { preferences } = useUserPreferences();
   const { user, isLoading } = useAuth();
   
-  // Allow onboarding to proceed for any user (logged in or not)
-  // This is important for our demo flow where users can try before registering
+  // Use cleanup effect for proper navigation handling
+  useCleanupEffect(() => {
+    // Only redirect authenticated users to dashboard if onboarding is complete
+    if (preferences.hasCompletedOnboarding && !window.location.search.includes('resume=true')) {
+      if (user) {
+        navigate('/dashboard');
+      }
+    }
+  }, [preferences.hasCompletedOnboarding, user, navigate]);
   
   // Show loading state while checking authentication
   if (isLoading) {
@@ -24,15 +31,6 @@ const OnboardingPage = () => {
         </div>
       </div>
     );
-  }
-  
-  // If user has completed onboarding and there's no resume intent, redirect to dashboard
-  if (preferences.hasCompletedOnboarding && !window.location.search.includes('resume=true')) {
-    // Only redirect authenticated users to dashboard
-    if (user) {
-      navigate('/dashboard');
-      return null;
-    }
   }
   
   return (

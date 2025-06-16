@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { onboardingNotificationService } from '@/services/OnboardingNotificationService';
+import { onboardingGuideService } from '@/services/onboarding/OnboardingGuideService';
 
 export interface OnboardingNotification {
   id: string;
@@ -17,7 +17,7 @@ export function useOnboardingNotifications() {
   
   useEffect(() => {
     // Check if user should see the onboarding guide
-    if (onboardingNotificationService.shouldShowOnboardingGuide()) {
+    if (onboardingGuideService.shouldShowOnboardingGuide()) {
       const guideNotification: OnboardingNotification = {
         id: 'getting-started-guide',
         title: 'Getting Started Guide',

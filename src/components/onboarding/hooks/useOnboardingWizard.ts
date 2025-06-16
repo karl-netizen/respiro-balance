@@ -1,11 +1,12 @@
 
-import { useState, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUserPreferences } from "@/context";
 import { toast } from "sonner";
 import { onboardingSteps } from "../config/onboardingSteps";
 import { useAuth } from "@/hooks/useAuth";
 import { UserPreferences } from "@/context/types";
+import { useCleanupEffect } from "@/hooks/useCleanupEffect";
 
 export const useOnboardingWizard = () => {
   const { preferences, updatePreferences } = useUserPreferences();
@@ -16,11 +17,9 @@ export const useOnboardingWizard = () => {
   
   const totalSteps = onboardingSteps.length;
 
-  // Add effect to reinitialize preferences for onboarding if needed
-  useEffect(() => {
-    // Check if we need to prepare preferences for onboarding
+  // Use cleanup effect for initialization
+  useCleanupEffect(() => {
     if (!preferences.hasCompletedOnboarding && open) {
-      // Ensure all required arrays are initialized
       const requiredArrays = {
         workDays: preferences.workDays || [],
         focusChallenges: preferences.focusChallenges || [],
@@ -31,7 +30,6 @@ export const useOnboardingWizard = () => {
         timeChallenges: preferences.timeChallenges || []
       };
       
-      // Update preferences if any arrays need initialization
       const needsUpdate = Object.entries(requiredArrays).some(
         ([key, value]) => !Array.isArray(preferences[key]) || preferences[key].length === 0
       );
@@ -42,41 +40,36 @@ export const useOnboardingWizard = () => {
     }
   }, [preferences, open, updatePreferences]);
 
-  // Track analytics for onboarding progress
-  useEffect(() => {
+  // Track analytics with cleanup
+  useCleanupEffect(() => {
     if (open && currentStep > 0) {
-      // Save the current step to allow resuming later
       updatePreferences({ lastOnboardingStep: currentStep });
-      
-      // In a real app, we might track analytics here
       console.log(`Onboarding step ${currentStep + 1}/${totalSteps} completed`);
     }
   }, [currentStep, totalSteps, open, updatePreferences]);
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (currentStep < totalSteps - 1) {
       setCurrentStep(currentStep + 1);
     } else {
       completeOnboarding();
     }
-  };
+  }, [currentStep, totalSteps]);
 
-  const handleBack = () => {
+  const handleBack = useCallback(() => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
     }
-  };
+  }, [currentStep]);
 
-  const completeOnboarding = () => {
-    // Generate personalized recommendations based on user preferences
+  const completeOnboarding = useCallback(() => {
     const personalizedSettings = generatePersonalizedSettings(preferences);
     
-    // Update preferences with completion status and personalized settings
     updatePreferences({ 
       ...personalizedSettings,
       hasCompletedOnboarding: true,
       lastOnboardingCompleted: new Date().toISOString(),
-      lastOnboardingStep: null // Clear the step as we've completed onboarding
+      lastOnboardingStep: null
     });
     
     setOpen(false);
@@ -84,12 +77,10 @@ export const useOnboardingWizard = () => {
       description: "Your personalized settings have been saved."
     });
     
-    // Navigate to dashboard when onboarding completes
     navigate('/dashboard');
-  };
+  }, [preferences, updatePreferences, navigate]);
 
-  const skipOnboarding = () => {
-    // Save the current step in case the user wants to resume later
+  const skipOnboarding = useCallback(() => {
     updatePreferences({ 
       lastOnboardingStep: currentStep,
       hasCompletedOnboarding: true,
@@ -101,19 +92,16 @@ export const useOnboardingWizard = () => {
       description: "You can resume onboarding anytime from your account settings."
     });
     
-    // Navigate to dashboard when onboarding is skipped
     navigate('/dashboard');
-  };
+  }, [currentStep, updatePreferences, navigate]);
 
-  const resumeOnboarding = () => {
+  const resumeOnboarding = useCallback(() => {
     updatePreferences({ hasCompletedOnboarding: false });
     setOpen(true);
     navigate('/onboarding');
-  };
+  }, [updatePreferences, navigate]);
 
-  // Generate personalized settings based on user's onboarding responses
-  const generatePersonalizedSettings = (userPreferences: any): Partial<UserPreferences> => {
-    // This function analyzes user preferences and generates personalized recommendations
+  const generatePersonalizedSettings = useCallback((userPreferences: any): Partial<UserPreferences> => {
     const personalizedSettings: Partial<UserPreferences> = {
       recommendedSessionDuration: undefined,
       recommendedMeditationTime: undefined,
@@ -129,17 +117,16 @@ export const useOnboardingWizard = () => {
       personalizedSettings.recommendedSessionDuration = 15;
     }
 
-    // Recommend optimal meditation time based on energy pattern and work schedule
+    // Recommend optimal meditation time based on energy pattern
     if (userPreferences.energyPattern === 'morning') {
       personalizedSettings.recommendedMeditationTime = '06:00';
     } else if (userPreferences.energyPattern === 'evening') {
       personalizedSettings.recommendedMeditationTime = '19:00';
     } else {
-      // Default to lunchtime for midday energy or undefined patterns
       personalizedSettings.recommendedMeditationTime = userPreferences.lunchTime || '12:00';
     }
 
-    // Recommend focus techniques based on reported challenges
+    // Recommend focus techniques based on challenges
     personalizedSettings.recommendedTechniques = [];
     
     if (userPreferences.focusChallenges && userPreferences.focusChallenges.length > 0) {
@@ -152,7 +139,7 @@ export const useOnboardingWizard = () => {
     }
 
     return personalizedSettings;
-  };
+  }, []);
 
   return {
     open,
