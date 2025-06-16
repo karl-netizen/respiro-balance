@@ -27,20 +27,20 @@ const MetricCard = memo<{
   trend?: string;
   color: string;
 }>(({ icon, label, value, unit, trend, color }) => (
-  <Card>
-    <CardContent className="p-4">
-      <div className="flex items-center gap-3">
-        <div className={`p-2 rounded-lg ${color}`}>
+  <Card className="touch-manipulation">
+    <CardContent className="p-3 sm:p-4">
+      <div className="flex items-center gap-2 sm:gap-3">
+        <div className={`p-1.5 sm:p-2 rounded-lg ${color} flex-shrink-0`}>
           {icon}
         </div>
-        <div className="flex-1">
-          <p className="text-sm text-muted-foreground">{label}</p>
-          <p className="text-xl font-bold">
+        <div className="flex-1 min-w-0">
+          <p className="text-xs sm:text-sm text-muted-foreground truncate">{label}</p>
+          <p className="text-lg sm:text-xl font-bold">
             {value}
-            {unit && <span className="text-sm font-normal text-muted-foreground ml-1">{unit}</span>}
+            {unit && <span className="text-xs sm:text-sm font-normal text-muted-foreground ml-1">{unit}</span>}
           </p>
           {trend && (
-            <p className="text-xs text-green-600">{trend}</p>
+            <p className="text-xs text-green-600 truncate">{trend}</p>
           )}
         </div>
       </div>
@@ -58,7 +58,7 @@ const OptimizedBiofeedbackDisplay: React.FC<OptimizedBiofeedbackDisplayProps> = 
   // Memoize the metrics calculation to avoid recalculation on every render
   const metrics = useMemo(() => [
     {
-      icon: <Heart className="h-5 w-5 text-white" />,
+      icon: <Heart className="h-4 w-4 sm:h-5 sm:w-5 text-white" />,
       label: 'Heart Rate',
       value: data.heartRate?.toString() || '--',
       unit: 'BPM',
@@ -66,7 +66,7 @@ const OptimizedBiofeedbackDisplay: React.FC<OptimizedBiofeedbackDisplayProps> = 
       color: 'bg-red-500'
     },
     {
-      icon: <Activity className="h-5 w-5 text-white" />,
+      icon: <Activity className="h-4 w-4 sm:h-5 sm:w-5 text-white" />,
       label: 'HRV',
       value: data.hrv?.toString() || '--',
       unit: 'ms',
@@ -74,7 +74,7 @@ const OptimizedBiofeedbackDisplay: React.FC<OptimizedBiofeedbackDisplayProps> = 
       color: 'bg-blue-500'
     },
     {
-      icon: <Brain className="h-5 w-5 text-white" />,
+      icon: <Brain className="h-4 w-4 sm:h-5 sm:w-5 text-white" />,
       label: 'Stress Level',
       value: data.stress?.toString() || '--',
       unit: '/100',
@@ -82,7 +82,7 @@ const OptimizedBiofeedbackDisplay: React.FC<OptimizedBiofeedbackDisplayProps> = 
       color: 'bg-orange-500'
     },
     {
-      icon: <Zap className="h-5 w-5 text-white" />,
+      icon: <Zap className="h-4 w-4 sm:h-5 sm:w-5 text-white" />,
       label: 'Focus Score',
       value: data.focus?.toString() || '--',
       unit: '%',
@@ -93,15 +93,15 @@ const OptimizedBiofeedbackDisplay: React.FC<OptimizedBiofeedbackDisplayProps> = 
 
   if (isLoading) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Biometric Data</CardTitle>
+      <Card className="touch-manipulation">
+        <CardHeader className="pb-3 sm:pb-6">
+          <CardTitle className="text-sm sm:text-base">Biometric Data</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <CardContent className="px-3 sm:px-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             {[1, 2, 3, 4].map((i) => (
               <div key={i} className="animate-pulse">
-                <div className="bg-gray-200 h-20 rounded-lg"></div>
+                <div className="bg-gray-200 h-16 sm:h-20 rounded-lg"></div>
               </div>
             ))}
           </div>
@@ -111,17 +111,17 @@ const OptimizedBiofeedbackDisplay: React.FC<OptimizedBiofeedbackDisplayProps> = 
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Real-time Biometric Data</CardTitle>
+    <Card className="touch-manipulation">
+      <CardHeader className="pb-3 sm:pb-6">
+        <CardTitle className="text-sm sm:text-base">Real-time Biometric Data</CardTitle>
         {data.timestamp && (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-xs sm:text-sm text-muted-foreground">
             Last updated: {new Date(data.timestamp).toLocaleTimeString()}
           </p>
         )}
       </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <CardContent className="px-3 sm:px-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {metrics.map((metric, index) => (
             <MetricCard key={index} {...metric} />
           ))}

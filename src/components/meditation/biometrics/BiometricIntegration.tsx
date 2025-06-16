@@ -17,6 +17,7 @@ interface BiometricData {
 
 export const BiometricIntegration: React.FC = () => {
   const [isConnected, setIsConnected] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [currentData, setCurrentData] = useState<BiometricData>({
     heartRate: 72,
     hrv: 45,
@@ -32,6 +33,17 @@ export const BiometricIntegration: React.FC = () => {
     { heartRate: 70, hrv: 48, stressLevel: 22, focusLevel: 78, timestamp: '10:15' },
     { heartRate: 72, hrv: 45, stressLevel: 25, focusLevel: 78, timestamp: '10:20' }
   ]);
+
+  // Check if mobile viewport
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const handleConnect = () => {
     setIsConnected(!isConnected);
@@ -49,17 +61,23 @@ export const BiometricIntegration: React.FC = () => {
     return 'text-red-500';
   };
 
+  // Mobile-optimized chart height
+  const chartHeight = isMobile ? 200 : 300;
+  
+  // Simplified data for mobile
+  const displayData = isMobile ? historicalData.slice(-3) : historicalData;
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Connection Status */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
+        <CardHeader className="pb-3 sm:pb-6">
+          <CardTitle className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0 text-sm sm:text-base">
             <div className="flex items-center gap-2">
-              <Bluetooth className="h-5 w-5" />
+              <Bluetooth className="h-4 w-4 sm:h-5 sm:w-5" />
               Device Connection
             </div>
-            <Badge variant={isConnected ? "default" : "outline"}>
+            <Badge variant={isConnected ? "default" : "outline"} className="w-fit">
               {isConnected ? (
                 <><Wifi className="h-3 w-3 mr-1" /> Connected</>
               ) : (
@@ -68,8 +86,8 @@ export const BiometricIntegration: React.FC = () => {
             </Badge>
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between">
+        <CardContent className="px-4 sm:px-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="space-y-1">
               <p className="text-sm font-medium">
                 {isConnected ? 'Heart Rate Monitor' : 'No devices connected'}
@@ -78,7 +96,11 @@ export const BiometricIntegration: React.FC = () => {
                 {isConnected ? 'Polar H10 - Battery: 85%' : 'Connect a heart rate monitor for biometric feedback'}
               </p>
             </div>
-            <Button onClick={handleConnect} variant={isConnected ? "outline" : "default"}>
+            <Button 
+              onClick={handleConnect} 
+              variant={isConnected ? "outline" : "default"}
+              className="w-full sm:w-auto min-h-[44px]"
+            >
               {isConnected ? 'Disconnect' : 'Connect Device'}
             </Button>
           </div>
@@ -87,36 +109,36 @@ export const BiometricIntegration: React.FC = () => {
 
       {/* Real-time Metrics */}
       {isConnected && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <Card>
-            <CardContent className="p-4">
+            <CardContent className="p-3 sm:p-4">
               <div className="flex items-center gap-2 mb-2">
                 <Heart className="h-4 w-4 text-red-500" />
-                <span className="text-sm font-medium">Heart Rate</span>
+                <span className="text-xs sm:text-sm font-medium">Heart Rate</span>
               </div>
-              <div className="text-2xl font-bold">{currentData.heartRate}</div>
+              <div className="text-xl sm:text-2xl font-bold">{currentData.heartRate}</div>
               <div className="text-xs text-muted-foreground">bpm</div>
             </CardContent>
           </Card>
 
           <Card>
-            <CardContent className="p-4">
+            <CardContent className="p-3 sm:p-4">
               <div className="flex items-center gap-2 mb-2">
                 <Activity className="h-4 w-4 text-blue-500" />
-                <span className="text-sm font-medium">HRV</span>
+                <span className="text-xs sm:text-sm font-medium">HRV</span>
               </div>
-              <div className="text-2xl font-bold">{currentData.hrv}</div>
+              <div className="text-xl sm:text-2xl font-bold">{currentData.hrv}</div>
               <div className="text-xs text-muted-foreground">ms</div>
             </CardContent>
           </Card>
 
           <Card>
-            <CardContent className="p-4">
+            <CardContent className="p-3 sm:p-4">
               <div className="flex items-center gap-2 mb-2">
                 <Brain className="h-4 w-4 text-orange-500" />
-                <span className="text-sm font-medium">Stress Level</span>
+                <span className="text-xs sm:text-sm font-medium">Stress</span>
               </div>
-              <div className={`text-2xl font-bold ${getStressColor(currentData.stressLevel)}`}>
+              <div className={`text-xl sm:text-2xl font-bold ${getStressColor(currentData.stressLevel)}`}>
                 {currentData.stressLevel}%
               </div>
               <Progress value={currentData.stressLevel} className="h-1 mt-2" />
@@ -124,12 +146,12 @@ export const BiometricIntegration: React.FC = () => {
           </Card>
 
           <Card>
-            <CardContent className="p-4">
+            <CardContent className="p-3 sm:p-4">
               <div className="flex items-center gap-2 mb-2">
                 <Brain className="h-4 w-4 text-green-500" />
-                <span className="text-sm font-medium">Focus Level</span>
+                <span className="text-xs sm:text-sm font-medium">Focus</span>
               </div>
-              <div className={`text-2xl font-bold ${getFocusColor(currentData.focusLevel)}`}>
+              <div className={`text-xl sm:text-2xl font-bold ${getFocusColor(currentData.focusLevel)}`}>
                 {currentData.focusLevel}%
               </div>
               <Progress value={currentData.focusLevel} className="h-1 mt-2" />
@@ -141,37 +163,60 @@ export const BiometricIntegration: React.FC = () => {
       {/* Historical Chart */}
       {isConnected && (
         <Card>
-          <CardHeader>
-            <CardTitle>Session Biometrics</CardTitle>
+          <CardHeader className="pb-3 sm:pb-6">
+            <CardTitle className="text-sm sm:text-base">Session Biometrics</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="h-[300px]">
+          <CardContent className="px-2 sm:px-6">
+            <div style={{ height: chartHeight }} className="w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={historicalData}>
+                <LineChart 
+                  data={displayData}
+                  margin={{ 
+                    top: 5, 
+                    right: isMobile ? 5 : 30, 
+                    left: isMobile ? 5 : 20, 
+                    bottom: isMobile ? 20 : 5 
+                  }}
+                >
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="timestamp" fontSize={12} />
-                  <YAxis fontSize={12} />
-                  <Tooltip />
+                  <XAxis 
+                    dataKey="timestamp" 
+                    fontSize={isMobile ? 10 : 12}
+                    tick={{ fontSize: isMobile ? 10 : 12 }}
+                  />
+                  <YAxis 
+                    fontSize={isMobile ? 10 : 12}
+                    tick={{ fontSize: isMobile ? 10 : 12 }}
+                  />
+                  <Tooltip 
+                    contentStyle={{
+                      fontSize: isMobile ? '12px' : '14px',
+                      padding: isMobile ? '8px' : '12px'
+                    }}
+                  />
                   <Line 
                     type="monotone" 
                     dataKey="heartRate" 
                     stroke="#ef4444" 
-                    strokeWidth={2}
+                    strokeWidth={isMobile ? 1.5 : 2}
                     name="Heart Rate"
+                    dot={false}
                   />
                   <Line 
                     type="monotone" 
                     dataKey="stressLevel" 
                     stroke="#f97316" 
-                    strokeWidth={2}
+                    strokeWidth={isMobile ? 1.5 : 2}
                     name="Stress Level"
+                    dot={false}
                   />
                   <Line 
                     type="monotone" 
                     dataKey="focusLevel" 
                     stroke="#22c55e" 
-                    strokeWidth={2}
+                    strokeWidth={isMobile ? 1.5 : 2}
                     name="Focus Level"
+                    dot={false}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -183,26 +228,26 @@ export const BiometricIntegration: React.FC = () => {
       {/* Insights */}
       {isConnected && (
         <Card>
-          <CardHeader>
-            <CardTitle>Biometric Insights</CardTitle>
+          <CardHeader className="pb-3 sm:pb-6">
+            <CardTitle className="text-sm sm:text-base">Biometric Insights</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
+          <CardContent className="px-4 sm:px-6">
+            <div className="space-y-3 sm:space-y-4">
               <div className="flex items-start gap-3 p-3 bg-green-50 rounded-lg border border-green-200">
-                <Heart className="h-5 w-5 text-green-600 mt-0.5" />
+                <Heart className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="font-medium text-green-800">Excellent Heart Rate Variability</p>
-                  <p className="text-sm text-green-700">
+                  <p className="font-medium text-green-800 text-sm sm:text-base">Excellent Heart Rate Variability</p>
+                  <p className="text-xs sm:text-sm text-green-700">
                     Your HRV of {currentData.hrv}ms indicates good recovery and readiness for meditation.
                   </p>
                 </div>
               </div>
               
               <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                <Brain className="h-5 w-5 text-blue-600 mt-0.5" />
+                <Brain className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="font-medium text-blue-800">Optimal Focus State</p>
-                  <p className="text-sm text-blue-700">
+                  <p className="font-medium text-blue-800 text-sm sm:text-base">Optimal Focus State</p>
+                  <p className="text-xs sm:text-sm text-blue-700">
                     Your current focus level of {currentData.focusLevel}% is ideal for deep meditation practice.
                   </p>
                 </div>
