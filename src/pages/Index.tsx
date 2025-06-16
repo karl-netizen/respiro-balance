@@ -7,6 +7,7 @@ import PricingTiers from "@/components/PricingTiers";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
+import { Clock, Shield, Zap } from "lucide-react";
 
 const Index = () => {
   console.log('Index page rendering...');
@@ -40,23 +41,21 @@ const Index = () => {
         <Header />
         <Hero />
         
-        {/* Benefits Section */}
-        <section className="py-20 px-6 bg-secondary/10" id="benefits">
+        {/* Benefits Section with restored branding colors */}
+        <section className="py-20 px-6 bg-respiro-light/20" id="benefits">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">Why Choose Respiro Balance</h2>
-              <p className="text-foreground/70 max-w-2xl mx-auto">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 text-respiro-text">Why Choose Respiro Balance</h2>
+              <p className="text-respiro-text/70 max-w-2xl mx-auto">
                 Our app brings mindfulness, meditation, and work-life balance together in one seamless experience.
               </p>
             </div>
             
             <div className="grid md:grid-cols-3 gap-10">
               {/* Benefit 1 */}
-              <div className="glassmorphism-card p-6 rounded-xl flex flex-col items-center text-center bg-respiro-light/60 backdrop-blur-sm border border-respiro/30 hover:scale-105 hover:shadow-xl hover:shadow-respiro/25 transition-all duration-300 group">
-                <div className="w-16 h-16 rounded-full bg-respiro/20 flex items-center justify-center mb-4 group-hover:bg-respiro/30 transition-colors duration-300">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-respiro-dark" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
+              <div className="glassmorphism-card p-6 rounded-xl flex flex-col items-center text-center bg-white/60 backdrop-blur-sm border border-respiro-default/30 hover:scale-105 hover:shadow-xl hover:shadow-respiro-default/25 transition-all duration-300 group">
+                <div className="w-16 h-16 rounded-full bg-respiro-light/80 flex items-center justify-center mb-4 group-hover:bg-respiro-default/20 transition-colors duration-300">
+                  <Clock className="h-8 w-8 text-respiro-dark" />
                 </div>
                 <h3 className="text-xl font-bold mb-2 text-respiro-text group-hover:text-respiro-dark transition-colors duration-300">Save Time</h3>
                 <p className="text-respiro-text/80">
@@ -65,11 +64,9 @@ const Index = () => {
               </div>
               
               {/* Benefit 2 */}
-              <div className="glassmorphism-card p-6 rounded-xl flex flex-col items-center text-center bg-respiro-light/60 backdrop-blur-sm border border-respiro/30 hover:scale-105 hover:shadow-xl hover:shadow-respiro/25 transition-all duration-300 group">
-                <div className="w-16 h-16 rounded-full bg-respiro/20 flex items-center justify-center mb-4 group-hover:bg-respiro/30 transition-colors duration-300">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-respiro-dark" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                  </svg>
+              <div className="glassmorphism-card p-6 rounded-xl flex flex-col items-center text-center bg-white/60 backdrop-blur-sm border border-respiro-default/30 hover:scale-105 hover:shadow-xl hover:shadow-respiro-default/25 transition-all duration-300 group">
+                <div className="w-16 h-16 rounded-full bg-respiro-light/80 flex items-center justify-center mb-4 group-hover:bg-respiro-default/20 transition-colors duration-300">
+                  <Shield className="h-8 w-8 text-respiro-dark" />
                 </div>
                 <h3 className="text-xl font-bold mb-2 text-respiro-text group-hover:text-respiro-dark transition-colors duration-300">Reduce Stress</h3>
                 <p className="text-respiro-text/80">
@@ -78,11 +75,9 @@ const Index = () => {
               </div>
               
               {/* Benefit 3 */}
-              <div className="glassmorphism-card p-6 rounded-xl flex flex-col items-center text-center bg-respiro-light/60 backdrop-blur-sm border border-respiro/30 hover:scale-105 hover:shadow-xl hover:shadow-respiro/25 transition-all duration-300 group">
-                <div className="w-16 h-16 rounded-full bg-respiro/20 flex items-center justify-center mb-4 group-hover:bg-respiro/30 transition-colors duration-300">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-respiro-dark" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
+              <div className="glassmorphism-card p-6 rounded-xl flex flex-col items-center text-center bg-white/60 backdrop-blur-sm border border-respiro-default/30 hover:scale-105 hover:shadow-xl hover:shadow-respiro-default/25 transition-all duration-300 group">
+                <div className="w-16 h-16 rounded-full bg-respiro-light/80 flex items-center justify-center mb-4 group-hover:bg-respiro-default/20 transition-colors duration-300">
+                  <Zap className="h-8 w-8 text-respiro-dark" />
                 </div>
                 <h3 className="text-xl font-bold mb-2 text-respiro-text group-hover:text-respiro-dark transition-colors duration-300">Boost Productivity</h3>
                 <p className="text-respiro-text/80">
@@ -94,7 +89,7 @@ const Index = () => {
             <div className="text-center mt-16">
               <Button 
                 size="lg" 
-                className="bg-primary text-white hover:bg-primary/90 transition-transform hover:scale-105"
+                className="bg-respiro-dark hover:bg-respiro-darker text-white transition-transform hover:scale-105 shadow-lg hover:shadow-xl hover:shadow-respiro-default/30"
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
                 onClick={handleGetStarted}
@@ -105,7 +100,7 @@ const Index = () => {
               >
                 Get Started Now
               </Button>
-              <p className="mt-4 text-sm text-foreground/70">
+              <p className="mt-4 text-sm text-respiro-text/70">
                 No credit card required. Start with our free plan.
               </p>
             </div>
