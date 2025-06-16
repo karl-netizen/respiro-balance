@@ -5,7 +5,7 @@ import { useDeviceDetection } from '@/hooks/useDeviceDetection';
 import usePerformanceOptimization from '@/hooks/usePerformanceOptimization';
 
 interface ResponsiveChartProps {
-  children: React.ReactNode;
+  children: React.ReactElement;
   height?: number;
   className?: string;
 }

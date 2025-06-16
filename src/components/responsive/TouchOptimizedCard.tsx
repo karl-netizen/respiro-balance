@@ -1,10 +1,10 @@
 
 import React from 'react';
-import { Card, CardProps } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { useDeviceDetection } from '@/hooks/useDeviceDetection';
 
-interface TouchOptimizedCardProps extends CardProps {
+interface TouchOptimizedCardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   minTouchTarget?: boolean;
   hapticFeedback?: boolean;

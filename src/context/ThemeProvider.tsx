@@ -4,6 +4,8 @@ type Theme = 'light' | 'dark' | 'system';
 
 interface ThemeProviderProps {
   children: React.ReactNode;
+  defaultTheme?: Theme;
+  storageKey?: string;
 }
 
 interface ThemeContextType {
@@ -21,18 +23,22 @@ export const useTheme = (): ThemeContextType => {
   return context;
 };
 
-export const ThemeProvider = ({ children }: ThemeProviderProps) => {
+export const ThemeProvider = ({ 
+  children, 
+  defaultTheme = 'system',
+  storageKey = 'vite-ui-theme'
+}: ThemeProviderProps) => {
   const [theme, setTheme] = useState<Theme>(() => {
     // Try to get the theme from localStorage
-    const storedTheme = localStorage.getItem('theme') as Theme | null;
+    const storedTheme = localStorage.getItem(storageKey) as Theme | null;
     
     // If the theme exists in localStorage and is a valid theme, use it
     if (storedTheme && ['light', 'dark', 'system'].includes(storedTheme)) {
       return storedTheme;
     }
     
-    // Otherwise, use system preference
-    return 'system';
+    // Otherwise, use defaultTheme
+    return defaultTheme;
   });
 
   // Apply theme effect
@@ -51,8 +57,8 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     }
     
     // Save to localStorage
-    localStorage.setItem('theme', theme);
-  }, [theme]);
+    localStorage.setItem(storageKey, theme);
+  }, [theme, storageKey]);
   
   // Add a listener for system theme changes
   useEffect(() => {
