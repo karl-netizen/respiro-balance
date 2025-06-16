@@ -12,7 +12,7 @@
   --respiro-darker: #00695C;
   --respiro-text: #263238;
 
-  /* Brand-Consistent Spacing Scale - maintain ratios across devices */
+  /* Brand-consistent spacing scale - maintain ratios across devices */
   --spacing-xs: 0.25rem;    /* 4px */
   --spacing-sm: 0.5rem;     /* 8px */
   --spacing-md: 1rem;       /* 16px */
@@ -55,6 +55,111 @@
   --font-size-2xl: 1.5rem;
   --font-size-3xl: 1.875rem;
   --font-size-4xl: 2.25rem;
+
+  /* Shadcn variables with brand colors */
+  --background: 0 0% 100%;
+  --foreground: 210 40% 15%;
+  --card: 0 0% 100%;
+  --card-foreground: 210 40% 15%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 210 40% 15%;
+  --primary: 174 44% 51%;  /* respiro-default */
+  --primary-foreground: 0 0% 100%;
+  --secondary: 174 100% 94%;  /* respiro-light */
+  --secondary-foreground: 210 40% 15%;
+  --muted: 210 40% 98%;
+  --muted-foreground: 215 16% 47%;
+  --accent: 174 67% 27%;  /* respiro-dark */
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 174 100% 94%;
+  --input: 174 100% 94%;
+  --ring: 174 44% 51%;
+}
+
+.dark {
+  --background: 210 40% 5%;
+  --foreground: 0 0% 95%;
+  --card: 210 40% 8%;
+  --card-foreground: 0 0% 95%;
+  --popover: 210 40% 8%;
+  --popover-foreground: 0 0% 95%;
+  --primary: 174 44% 51%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 174 67% 15%;
+  --secondary-foreground: 0 0% 95%;
+  --muted: 210 40% 15%;
+  --muted-foreground: 215 16% 65%;
+  --accent: 174 67% 27%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 62% 30%;
+  --destructive-foreground: 0 0% 95%;
+  --border: 210 40% 20%;
+  --input: 210 40% 20%;
+  --ring: 174 44% 51%;
+}
+
+/* Dropdowns with brand colors and proper backgrounds */
+[data-radix-popper-content-wrapper] {
+  z-index: 9999 !important;
+}
+
+.dropdown-content,
+[role="menu"],
+[data-state="open"][data-side] {
+  background: white !important;
+  border: 2px solid var(--respiro-default) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 10px 25px rgba(77, 182, 172, 0.15) !important;
+  z-index: 9999 !important;
+}
+
+.dark .dropdown-content,
+.dark [role="menu"],
+.dark [data-state="open"][data-side] {
+  background: hsl(var(--card)) !important;
+  border-color: var(--respiro-dark) !important;
+}
+
+/* Menu items with brand colors */
+[role="menuitem"],
+.dropdown-item {
+  color: var(--respiro-text) !important;
+  padding: 8px 16px !important;
+  transition: all 0.2s ease !important;
+}
+
+[role="menuitem"]:hover,
+.dropdown-item:hover {
+  background-color: var(--respiro-light) !important;
+  color: var(--respiro-dark) !important;
+}
+
+.dark [role="menuitem"]:hover,
+.dark .dropdown-item:hover {
+  background-color: var(--respiro-dark) !important;
+  color: white !important;
+}
+
+/* Cards with brand colors */
+.brand-card {
+  background: white;
+  border: 2px solid var(--respiro-light);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(77, 182, 172, 0.1);
+  transition: all 0.3s ease;
+}
+
+.brand-card:hover {
+  border-color: var(--respiro-default);
+  box-shadow: 0 8px 30px rgba(77, 182, 172, 0.2);
+  transform: translateY(-2px);
+}
+
+.dark .brand-card {
+  background: hsl(var(--card));
+  border-color: var(--respiro-dark);
 }
 
 /* Mobile-First Responsive Base Styles */
@@ -237,19 +342,43 @@
 
 /* Styles for the respiro theme */
 .bg-respiro-dark {
-  background-color: #4DB6AC;  /* Changed from dark gray/black to green */
+  background-color: #00897B !important;
 }
 
 .bg-respiro-darker {
-  background-color: #00897B;  /* Changed from darker gray/black to darker green */
+  background-color: #00695C !important;
+}
+
+.bg-respiro-default {
+  background-color: #4DB6AC !important;
+}
+
+.bg-respiro-light {
+  background-color: #E0F2F1 !important;
 }
 
 .text-respiro-light {
   color: #E0F2F1;
 }
 
+.text-respiro-dark {
+  color: #00897B;
+}
+
+.text-respiro-default {
+  color: #4DB6AC;
+}
+
 .border-respiro-light {
-  border-color: #CBD5E0;
+  border-color: #E0F2F1;
+}
+
+.border-respiro-default {
+  border-color: #4DB6AC;
+}
+
+.border-respiro-dark {
+  border-color: #00897B;
 }
 
 /* Dark mode text improvements */

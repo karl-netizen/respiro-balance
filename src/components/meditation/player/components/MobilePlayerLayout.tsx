@@ -47,13 +47,13 @@ export const MobilePlayerLayout: React.FC<MobilePlayerLayoutProps> = ({
   if (deviceType === 'mobile') {
     return (
       <div className="w-full max-w-md mx-auto">
-        <Card className="bg-gradient-to-br from-primary/10 to-secondary/10 border-2">
+        <Card className="bg-gradient-to-br from-respiro-light/20 to-respiro-default/20 border-2 border-respiro-default shadow-lg">
           <CardContent className="p-6 space-y-6">
             {/* Session info */}
             <div className="text-center space-y-2">
-              <h3 className="text-xl font-bold text-foreground">{title}</h3>
+              <h3 className="text-xl font-bold text-respiro-dark">{title}</h3>
               {description && (
-                <p className="text-sm text-muted-foreground">{description}</p>
+                <p className="text-sm text-respiro-text/80">{description}</p>
               )}
             </div>
 
@@ -88,14 +88,14 @@ export const MobilePlayerLayout: React.FC<MobilePlayerLayoutProps> = ({
 
   // Desktop layout
   return (
-    <Card className="w-full">
+    <Card className="w-full border-2 border-respiro-default shadow-lg">
       <CardContent className="p-6">
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-lg font-semibold">{title}</h3>
+              <h3 className="text-lg font-semibold text-respiro-dark">{title}</h3>
               {description && (
-                <p className="text-sm text-muted-foreground">{description}</p>
+                <p className="text-sm text-respiro-text/80">{description}</p>
               )}
             </div>
           </div>

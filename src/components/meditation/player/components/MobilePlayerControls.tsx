@@ -41,7 +41,7 @@ export const MobilePlayerControls: React.FC<MobilePlayerControlsProps> = ({
           variant="outline"
           size={buttonSize}
           onClick={onSkipBack}
-          className="rounded-full"
+          className="rounded-full border-respiro-default text-respiro-dark hover:bg-respiro-light hover:border-respiro-dark"
           hapticFeedback={true}
           aria-label="Skip backward 10 seconds"
         >
@@ -50,7 +50,7 @@ export const MobilePlayerControls: React.FC<MobilePlayerControlsProps> = ({
 
         <TouchFriendlyButton
           variant="default"
-          className={`${playButtonSize} rounded-full bg-primary hover:bg-primary/90`}
+          className={`${playButtonSize} rounded-full bg-respiro-dark hover:bg-respiro-darker text-white`}
           onClick={onPlayPause}
           hapticFeedback={true}
           aria-label={isPlaying ? "Pause" : "Play"}
@@ -66,7 +66,7 @@ export const MobilePlayerControls: React.FC<MobilePlayerControlsProps> = ({
           variant="outline"
           size={buttonSize}
           onClick={onSkipForward}
-          className="rounded-full"
+          className="rounded-full border-respiro-default text-respiro-dark hover:bg-respiro-light hover:border-respiro-dark"
           hapticFeedback={true}
           aria-label="Skip forward 30 seconds"
         >
@@ -80,6 +80,7 @@ export const MobilePlayerControls: React.FC<MobilePlayerControlsProps> = ({
           variant="ghost"
           size="sm"
           onClick={onToggleMute}
+          className="text-respiro-dark hover:bg-respiro-light"
           hapticFeedback={true}
           aria-label={isMuted ? "Unmute" : "Mute"}
         >
@@ -95,12 +96,12 @@ export const MobilePlayerControls: React.FC<MobilePlayerControlsProps> = ({
           min={0}
           max={100}
           step={1}
-          className="flex-1"
+          className="flex-1 [&>span:first-child]:bg-respiro-light [&_[role=slider]]:bg-respiro-dark [&_[role=slider]]:border-respiro-default"
           onValueChange={onVolumeChange}
           aria-label="Volume"
         />
         
-        <span className="text-xs text-muted-foreground w-8 text-right">
+        <span className="text-xs text-respiro-text/70 w-8 text-right font-medium">
           {isMuted ? 0 : volume}%
         </span>
       </div>

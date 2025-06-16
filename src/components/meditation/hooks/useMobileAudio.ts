@@ -32,7 +32,8 @@ export const useMobileAudio = ({
     
     // iOS/Safari specific settings
     audio.preload = 'metadata';
-    audio.playsInline = true;
+    // Type assertion for mobile-specific properties
+    (audio as any).playsInline = true;
     
     const handleLoadedMetadata = () => {
       setDuration(audio.duration);

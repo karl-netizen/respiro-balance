@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { MeditationSession } from '@/types/meditation';
@@ -5,6 +6,9 @@ import SessionCompletionDialog from './SessionCompletionDialog';
 import { useEnhancedSessionPlayer } from './hooks/useEnhancedSessionPlayer';
 import { useMobileGestures } from './hooks/useMobileGestures';
 import { MobilePlayerLayout } from './player/components/MobilePlayerLayout';
+import { ProgressDisplay } from './player/components/ProgressDisplay';
+import { SessionControls } from './player/components/SessionControls';
+import { PausedActions } from './player/components/PausedActions';
 import { useDeviceDetection } from '@/hooks/useDeviceDetection';
 
 interface EnhancedSessionPlayerProps {
@@ -113,13 +117,13 @@ const EnhancedSessionPlayer: React.FC<EnhancedSessionPlayerProps> = ({
               <div className="flex space-x-2 mt-4">
                 <button 
                   onClick={handlePlayPause}
-                  className="flex-1 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium"
+                  className="flex-1 py-2 bg-respiro-dark text-white rounded-md text-sm font-medium hover:bg-respiro-darker transition-colors"
                 >
                   Resume
                 </button>
                 <button 
                   onClick={handleSessionComplete}
-                  className="flex-1 py-2 bg-secondary text-secondary-foreground rounded-md text-sm font-medium"
+                  className="flex-1 py-2 bg-respiro-light text-respiro-dark rounded-md text-sm font-medium hover:bg-respiro-default hover:text-white transition-colors"
                 >
                   End Session
                 </button>
@@ -144,14 +148,14 @@ const EnhancedSessionPlayer: React.FC<EnhancedSessionPlayerProps> = ({
     );
   }
 
-  // Desktop layout (keep existing code)
+  // Desktop layout with brand colors
   return (
     <>
-      <Card className="w-full bg-respiro-dark text-white border-4 border-white shadow-xl overflow-hidden">
+      <Card className="w-full bg-respiro-dark text-white border-4 border-respiro-light shadow-xl overflow-hidden">
         <CardContent className="pt-6 space-y-4 bg-respiro-dark">
-          <div className="py-4 px-4 bg-respiro-dark rounded-md border-4 border-white">
+          <div className="py-4 px-4 bg-respiro-dark rounded-md border-4 border-respiro-light">
             <h3 className="text-2xl font-bold text-white mb-2 text-center">{session.title}</h3>
-            <p className="text-white text-lg text-center">{session.description}</p>
+            <p className="text-respiro-light text-lg text-center">{session.description}</p>
           </div>
           
           <ProgressDisplay 
@@ -182,7 +186,7 @@ const EnhancedSessionPlayer: React.FC<EnhancedSessionPlayerProps> = ({
             <div className="text-center mt-6 pb-6">
               <button 
                 onClick={handlePlayPause} 
-                className="px-10 py-6 bg-white text-respiro-dark rounded-full font-bold text-2xl hover:bg-gray-200 transition-colors shadow-xl border-4 border-white"
+                className="px-10 py-6 bg-respiro-light text-respiro-dark rounded-full font-bold text-2xl hover:bg-white hover:text-respiro-darker transition-colors shadow-xl border-4 border-respiro-light"
               >
                 Begin Here
               </button>

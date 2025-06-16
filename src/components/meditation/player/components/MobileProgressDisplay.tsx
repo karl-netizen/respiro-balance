@@ -32,10 +32,10 @@ export const MobileProgressDisplay: React.FC<MobileProgressDisplayProps> = ({
       <div className={`flex items-center justify-between ${
         deviceType === 'mobile' ? 'text-lg font-semibold' : 'text-base'
       }`}>
-        <span className="text-foreground">
+        <span className="text-respiro-dark font-medium">
           {formatTime(currentTime)}
         </span>
-        <span className="text-muted-foreground">
+        <span className="text-respiro-text/70">
           {formatTime(duration)}
         </span>
       </div>
@@ -50,8 +50,8 @@ export const MobileProgressDisplay: React.FC<MobileProgressDisplayProps> = ({
           onValueChange={handleSeek}
           className={`w-full ${
             deviceType === 'mobile' 
-              ? '[&>span:first-child]:h-3 [&_[role=slider]]:h-6 [&_[role=slider]]:w-6' 
-              : ''
+              ? '[&>span:first-child]:h-3 [&_[role=slider]]:h-6 [&_[role=slider]]:w-6 [&>span:first-child]:bg-respiro-light [&_[role=slider]]:bg-respiro-dark [&_[role=slider]]:border-respiro-default' 
+              : '[&>span:first-child]:bg-respiro-light [&_[role=slider]]:bg-respiro-dark'
           }`}
           aria-label="Seek position"
         />
@@ -60,7 +60,7 @@ export const MobileProgressDisplay: React.FC<MobileProgressDisplayProps> = ({
       {/* Progress percentage for mobile */}
       {deviceType === 'mobile' && (
         <div className="text-center">
-          <span className="text-sm text-muted-foreground">
+          <span className="text-sm text-respiro-text/70 font-medium">
             {Math.round(progress)}% complete
           </span>
         </div>
