@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Button } from '@/components/ui/button';
+import { TouchFriendlyButton } from '@/components/responsive/TouchFriendlyButton';
 import { BarChart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -37,12 +37,12 @@ const DashboardStats: React.FC<DashboardStatsProps> = ({
             <Progress value={progressPercentage} className="h-2" />
           </div>
           <div className="text-center">
-            <Button 
+            <TouchFriendlyButton 
               className="w-full" 
               onClick={() => navigate('/progress')}
             >
               View Detailed Progress
-            </Button>
+            </TouchFriendlyButton>
           </div>
         </div>
       </CardContent>

@@ -3,7 +3,7 @@ import React from 'react';
 import { useSocialFeed } from '@/hooks/social/useSocialFeed';
 import CreatePostCard from './CreatePostCard';
 import SocialFeedCard from './SocialFeedCard';
-import { Button } from '@/components/ui/button';
+import { TouchFriendlyButton } from '@/components/responsive/TouchFriendlyButton';
 import { RefreshCw } from 'lucide-react';
 
 const SocialFeedTab: React.FC = () => {
@@ -31,16 +31,17 @@ const SocialFeedTab: React.FC = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">Community Feed</h2>
-        <Button
+        <TouchFriendlyButton
           variant="outline"
           size="sm"
           onClick={refreshFeed}
           disabled={refreshing}
           className="flex items-center space-x-2"
+          hapticFeedback={true}
         >
           <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
           <span>Refresh</span>
-        </Button>
+        </TouchFriendlyButton>
       </div>
 
       <CreatePostCard onCreatePost={createPost} isLoading={isLoading} />

@@ -2,7 +2,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { Button } from "@/components/ui/button";
+import { TouchFriendlyButton } from "@/components/responsive/TouchFriendlyButton";
 import SubscriptionBadge from "@/components/subscription/SubscriptionBadge";
 import ProfileAvatarUpload from "@/components/profile/ProfileAvatarUpload";
 
@@ -30,16 +30,16 @@ const MobileMenuHeader = ({ toggleMenu }: MobileMenuHeaderProps) => {
   if (!loading) {
     return (
       <div className="py-4 space-y-3">
-        <Button asChild variant="default" className="w-full bg-respiro-dark hover:bg-respiro-darker text-white">
+        <TouchFriendlyButton asChild variant="default" className="w-full bg-respiro-dark hover:bg-respiro-darker text-white">
           <Link to="/login" onClick={toggleMenu}>
             Log in
           </Link>
-        </Button>
-        <Button asChild variant="outline" className="w-full border-white/30 text-white hover:bg-white/10">
+        </TouchFriendlyButton>
+        <TouchFriendlyButton asChild variant="outline" className="w-full border-white/30 text-white hover:bg-white/10">
           <Link to="/register" onClick={toggleMenu}>
             Sign up
           </Link>
-        </Button>
+        </TouchFriendlyButton>
       </div>
     );
   }

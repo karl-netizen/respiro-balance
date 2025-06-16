@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Button } from '@/components/ui/button';
+import { TouchFriendlyButton } from '@/components/responsive/TouchFriendlyButton';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { MoreHorizontal, Edit, Trash2, Play } from 'lucide-react';
 
@@ -20,21 +20,22 @@ const RitualActions: React.FC<RitualActionsProps> = ({
   return (
     <div className="flex items-center space-x-2">
       {!isCompletedToday && (
-        <Button
+        <TouchFriendlyButton
           size="sm"
           onClick={onComplete}
           className="bg-green-500 hover:bg-green-600"
+          hapticFeedback={true}
         >
           <Play className="h-4 w-4 mr-1" />
           Complete
-        </Button>
+        </TouchFriendlyButton>
       )}
       
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="sm">
+          <TouchFriendlyButton variant="ghost" size="sm" hapticFeedback={true}>
             <MoreHorizontal className="h-4 w-4" />
-          </Button>
+          </TouchFriendlyButton>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem onClick={onEdit}>

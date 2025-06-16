@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Button } from '@/components/ui/button';
+import { TouchFriendlyButton } from '@/components/responsive/TouchFriendlyButton';
 
 export interface PausedActionsProps {
   show: boolean;
@@ -19,19 +19,21 @@ export const PausedActions: React.FC<PausedActionsProps> = ({
     <div className="absolute inset-0 bg-black/40 backdrop-blur-sm flex flex-col items-center justify-center space-y-4 z-10">
       <h3 className="text-white text-xl font-medium">Session Paused</h3>
       <div className="flex space-x-4">
-        <Button 
+        <TouchFriendlyButton 
           onClick={onResume}
           className="bg-white text-gray-900 hover:bg-gray-200"
+          hapticFeedback={true}
         >
           Resume
-        </Button>
-        <Button 
+        </TouchFriendlyButton>
+        <TouchFriendlyButton 
           variant="outline"
           onClick={onEndSession}
           className="border-white text-white hover:bg-white/20"
+          hapticFeedback={true}
         >
           End Session
-        </Button>
+        </TouchFriendlyButton>
       </div>
     </div>
   );

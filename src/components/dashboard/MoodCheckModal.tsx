@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
+import { TouchFriendlyButton } from '@/components/responsive/TouchFriendlyButton';
 import { Smile, Frown, Meh, Heart, Zap, Cloud } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { getMoodCheckForToday } from '@/utils/moodCheckUtils';
@@ -161,14 +161,15 @@ const MoodCheckModal: React.FC<MoodCheckModalProps> = ({ open, onMoodSelect }) =
         {/* Fixed bottom section with button */}
         <div className="border-t border-gray-100 p-3 sm:p-4 bg-white flex-shrink-0">
           <div className="flex justify-center">
-            <Button 
+            <TouchFriendlyButton 
               onClick={handleContinue}
               disabled={!selectedMood}
               size="lg"
               className="w-full max-w-sm py-3 text-base sm:text-lg font-bold bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-300 shadow-lg transition-colors min-h-[44px]"
+              hapticFeedback={true}
             >
               Continue to Dashboard
-            </Button>
+            </TouchFriendlyButton>
           </div>
         </div>
       </DialogContent>

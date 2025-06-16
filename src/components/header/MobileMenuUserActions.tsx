@@ -3,7 +3,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useSubscriptionContext } from "@/hooks/useSubscriptionContext";
-import { Button } from "@/components/ui/button";
+import { TouchFriendlyButton } from "@/components/responsive/TouchFriendlyButton";
 import { User, Crown, LogOut } from "lucide-react";
 
 interface MobileMenuUserActionsProps {
@@ -52,14 +52,15 @@ const MobileMenuUserActions = ({ toggleMenu }: MobileMenuUserActionsProps) => {
         </Link>
       )}
       
-      <Button
+      <TouchFriendlyButton
         variant="ghost"
         className="w-full justify-start p-2 text-white hover:bg-red-600/20 hover:text-red-400"
         onClick={handleSignOut}
+        hapticFeedback={true}
       >
         <LogOut className="h-4 w-4 mr-2" />
         <span>Log out</span>
-      </Button>
+      </TouchFriendlyButton>
     </div>
   );
 };

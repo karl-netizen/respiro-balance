@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Button } from '@/components/ui/button';
+import { TouchFriendlyButton } from '@/components/responsive/TouchFriendlyButton';
 import { Pause, Play, SkipBack, Volume2, VolumeX } from 'lucide-react';
 import { Slider } from '@/components/ui/slider';
 
@@ -25,40 +25,43 @@ const SessionControls: React.FC<SessionControlsProps> = ({
 }) => {
   return (
     <div className="flex items-center justify-center space-x-4">
-      <Button 
+      <TouchFriendlyButton 
         variant="outline" 
         size="icon"
         onClick={onReset}
         className="bg-background text-foreground hover:bg-accent"
+        hapticFeedback={true}
       >
         <SkipBack className="h-4 w-4" />
-      </Button>
+      </TouchFriendlyButton>
       
-      <Button 
+      <TouchFriendlyButton 
         size="icon" 
         className="h-12 w-12 rounded-full bg-primary text-primary-foreground hover:bg-primary/90" 
         onClick={onPlayPause}
+        hapticFeedback={true}
       >
         {isPlaying ? (
           <Pause className="h-6 w-6" />
         ) : (
           <Play className="h-6 w-6 ml-1" />
         )}
-      </Button>
+      </TouchFriendlyButton>
       
       <div className="flex items-center space-x-2">
-        <Button
+        <TouchFriendlyButton
           variant="ghost"
           size="icon"
           onClick={onMuteToggle}
           className="text-foreground hover:bg-accent hover:text-accent-foreground"
+          hapticFeedback={true}
         >
           {isMuted ? (
             <VolumeX className="h-4 w-4" />
           ) : (
             <Volume2 className="h-4 w-4" />
           )}
-        </Button>
+        </TouchFriendlyButton>
         
         <Slider
           value={[volume]}

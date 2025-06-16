@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Pause, Play, SkipBack, SkipForward } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { TouchFriendlyButton } from '@/components/responsive/TouchFriendlyButton';
 import ProgressDisplay from './ProgressDisplay';
 import { MeditationSession } from '@/types/meditation';
 
@@ -80,37 +80,40 @@ export const PlayerCore: React.FC<PlayerCoreProps> = ({
       
       {/* Playback controls */}
       <div className="flex justify-center items-center space-x-4">
-        <Button 
+        <TouchFriendlyButton 
           variant="outline" 
           size="icon"
           onClick={onSeekBackward}
           aria-label="Seek backward"
+          hapticFeedback={true}
         >
           <SkipBack className="h-5 w-5" />
-        </Button>
+        </TouchFriendlyButton>
         
-        <Button 
+        <TouchFriendlyButton 
           variant="default" 
           size="icon"
           className="h-12 w-12 rounded-full"
           onClick={handlePlayPause}
           aria-label={isPlaying ? "Pause" : "Play"}
+          hapticFeedback={true}
         >
           {isPlaying ? (
             <Pause className="h-6 w-6" />
           ) : (
             <Play className="h-6 w-6 ml-1" />
           )}
-        </Button>
+        </TouchFriendlyButton>
         
-        <Button 
+        <TouchFriendlyButton 
           variant="outline" 
           size="icon"
           onClick={onSeekForward}
           aria-label="Seek forward"
+          hapticFeedback={true}
         >
           <SkipForward className="h-5 w-5" />
-        </Button>
+        </TouchFriendlyButton>
       </div>
     </div>
   );

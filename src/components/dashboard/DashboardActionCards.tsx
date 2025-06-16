@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Heart, ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { TouchFriendlyButton } from '@/components/responsive/TouchFriendlyButton';
 import MoodTracker from './MoodTracker';
 import { useNavigate } from 'react-router-dom';
 
@@ -63,19 +63,20 @@ const DashboardActionCards: React.FC<DashboardActionCardsProps> = ({
         <CardContent>
           <div className="grid gap-2">
             {quickActions.map((action, index) => (
-              <Button
+              <TouchFriendlyButton
                 key={index}
                 variant="outline"
                 size="sm"
                 onClick={action.action}
                 className="flex items-center gap-2 justify-start h-auto p-3 hover:bg-accent transition-colors"
+                hapticFeedback={true}
               >
                 <div className="text-left flex-1">
                   <div className="font-medium text-sm">{action.label}</div>
                   <div className="text-xs text-muted-foreground">{action.description}</div>
                 </div>
                 <ArrowRight className="h-3 w-3 text-muted-foreground" />
-              </Button>
+              </TouchFriendlyButton>
             ))}
           </div>
         </CardContent>

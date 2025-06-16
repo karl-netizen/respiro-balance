@@ -33,6 +33,7 @@ export const ResponsiveNavigation: React.FC<ResponsiveNavigationProps> = ({
             className
           )}
           aria-label="Toggle menu"
+          hapticFeedback={true}
         >
           <Menu className="h-5 w-5" />
         </TouchFriendlyButton>
@@ -53,6 +54,7 @@ export const ResponsiveNavigation: React.FC<ResponsiveNavigationProps> = ({
           onClick={toggleMenu}
           className="lg:hidden relative z-50 brand-button"
           aria-label="Toggle menu"
+          hapticFeedback={true}
         >
           <Menu className="h-5 w-5" />
         </TouchFriendlyButton>

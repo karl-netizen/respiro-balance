@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Button } from '@/components/ui/button';
+import { TouchFriendlyButton } from '@/components/responsive/TouchFriendlyButton';
 import { Slider } from '@/components/ui/slider';
 import { 
   Play, 
@@ -35,48 +35,52 @@ export const SessionControls: React.FC<SessionControlsProps> = ({
   return (
     <div className="flex flex-col space-y-4">
       <div className="flex items-center justify-center space-x-4">
-        <Button
+        <TouchFriendlyButton
           variant="ghost"
           size="sm"
           onClick={onSkipBack}
           className="rounded-full"
+          hapticFeedback={true}
         >
           <SkipBack className="w-5 h-5" />
-        </Button>
-        <Button
+        </TouchFriendlyButton>
+        <TouchFriendlyButton
           variant="default"
           size="lg"
           onClick={onPlayPause}
           className="rounded-full w-14 h-14 flex items-center justify-center"
+          hapticFeedback={true}
         >
           {isPlaying ? (
             <Pause className="w-6 h-6" />
           ) : (
             <Play className="w-6 h-6 ml-1" />
           )}
-        </Button>
-        <Button
+        </TouchFriendlyButton>
+        <TouchFriendlyButton
           variant="ghost"
           size="sm"
           onClick={onSkipForward}
           className="rounded-full"
+          hapticFeedback={true}
         >
           <SkipForward className="w-5 h-5" />
-        </Button>
+        </TouchFriendlyButton>
       </div>
       <div className="flex items-center space-x-2">
-        <Button
+        <TouchFriendlyButton
           variant="ghost"
           size="sm"
           onClick={onToggleMute}
           className="rounded-full"
+          hapticFeedback={true}
         >
           {isMuted ? (
             <VolumeX className="w-4 h-4" />
           ) : (
             <Volume2 className="w-4 h-4" />
           )}
-        </Button>
+        </TouchFriendlyButton>
         <Slider
           value={[volume]}
           min={0}

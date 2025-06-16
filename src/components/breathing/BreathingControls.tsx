@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Button } from "@/components/ui/button";
+import { TouchFriendlyButton } from "@/components/responsive/TouchFriendlyButton";
 import { Play, Pause, Volume2, Volume, Wind } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
@@ -67,37 +67,40 @@ const BreathingControls: React.FC<BreathingControlsProps> = ({
             </SelectContent>
           </Select>
           
-          <Button
+          <TouchFriendlyButton
             variant="ghost"
             size="icon"
             className="rounded-full"
             onClick={onToggleVoice}
+            hapticFeedback={true}
           >
             {voiceEnabled ? 
               <Volume2 className="h-5 w-5 text-primary" /> : 
               <Volume className="h-5 w-5 text-muted-foreground" />
             }
-          </Button>
+          </TouchFriendlyButton>
         </div>
         
         <div className="flex justify-center mt-2">
           {!isActive ? (
-            <Button 
+            <TouchFriendlyButton 
               size="lg" 
               className="w-full py-6 text-lg"
               onClick={handleStart}
+              hapticFeedback={true}
             >
               <Play className="mr-2 h-5 w-5" /> Start Breathing
-            </Button>
+            </TouchFriendlyButton>
           ) : (
-            <Button 
+            <TouchFriendlyButton 
               variant="destructive"
               size="lg"
               className="w-full py-6 text-lg"
               onClick={onStop}
+              hapticFeedback={true}
             >
               <Pause className="mr-2 h-5 w-5" /> Stop
-            </Button>
+            </TouchFriendlyButton>
           )}
         </div>
       </div>
