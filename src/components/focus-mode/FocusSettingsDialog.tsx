@@ -25,18 +25,18 @@ export const FocusSettingsDialog: React.FC<FocusSettingsDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-xl">
+      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-[425px] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-xl">
         <DialogHeader>
-          <DialogTitle className="text-gray-900 dark:text-gray-100">Focus Settings</DialogTitle>
-          <DialogDescription className="text-gray-600 dark:text-gray-400">
+          <DialogTitle className="text-gray-900 dark:text-gray-100 text-lg sm:text-xl">Focus Settings</DialogTitle>
+          <DialogDescription className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
             Customize your focus session parameters
           </DialogDescription>
         </DialogHeader>
         
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-2 gap-4">
+        <div className="grid gap-4 py-4 max-h-[60vh] overflow-y-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="workDuration" className="text-gray-700 dark:text-gray-300">Work duration (min)</Label>
+              <Label htmlFor="workDuration" className="text-gray-700 dark:text-gray-300 text-sm">Work duration (min)</Label>
               <Input
                 id="workDuration"
                 type="number"
@@ -48,12 +48,12 @@ export const FocusSettingsDialog: React.FC<FocusSettingsDialogProps> = ({
                     updateSettings({ workDuration: minutes * 60 });
                   }
                 }}
-                className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
+                className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 h-12"
               />
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="breakDuration" className="text-gray-700 dark:text-gray-300">Break duration (min)</Label>
+              <Label htmlFor="breakDuration" className="text-gray-700 dark:text-gray-300 text-sm">Break duration (min)</Label>
               <Input
                 id="breakDuration"
                 type="number"
@@ -65,14 +65,14 @@ export const FocusSettingsDialog: React.FC<FocusSettingsDialogProps> = ({
                     updateSettings({ breakDuration: minutes * 60 });
                   }
                 }}
-                className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
+                className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 h-12"
               />
             </div>
           </div>
           
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="longBreakDuration" className="text-gray-700 dark:text-gray-300">Long break (min)</Label>
+              <Label htmlFor="longBreakDuration" className="text-gray-700 dark:text-gray-300 text-sm">Long break (min)</Label>
               <Input
                 id="longBreakDuration"
                 type="number"
@@ -84,12 +84,12 @@ export const FocusSettingsDialog: React.FC<FocusSettingsDialogProps> = ({
                     updateSettings({ longBreakDuration: minutes * 60 });
                   }
                 }}
-                className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
+                className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 h-12"
               />
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="longBreakAfterIntervals" className="text-gray-700 dark:text-gray-300">Intervals before long break</Label>
+              <Label htmlFor="longBreakAfterIntervals" className="text-gray-700 dark:text-gray-300 text-sm">Intervals before long break</Label>
               <Input
                 id="longBreakAfterIntervals"
                 type="number"
@@ -101,7 +101,7 @@ export const FocusSettingsDialog: React.FC<FocusSettingsDialogProps> = ({
                     updateSettings({ longBreakAfterIntervals: value });
                   }
                 }}
-                className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
+                className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 h-12"
               />
             </div>
           </div>
@@ -109,8 +109,8 @@ export const FocusSettingsDialog: React.FC<FocusSettingsDialogProps> = ({
           <Separator className="my-4 bg-gray-200 dark:bg-gray-700" />
           
           <div className="space-y-4">
-            <div className="flex items-center justify-between py-2">
-              <Label htmlFor="autoStartBreaks" className="text-gray-700 dark:text-gray-300 font-medium">
+            <div className="flex items-center justify-between py-2 min-h-[44px]">
+              <Label htmlFor="autoStartBreaks" className="text-gray-700 dark:text-gray-300 font-medium text-sm">
                 Auto-start breaks
               </Label>
               <Switch
@@ -121,8 +121,8 @@ export const FocusSettingsDialog: React.FC<FocusSettingsDialogProps> = ({
               />
             </div>
             
-            <div className="flex items-center justify-between py-2">
-              <Label htmlFor="autoStartWork" className="text-gray-700 dark:text-gray-300 font-medium">
+            <div className="flex items-center justify-between py-2 min-h-[44px]">
+              <Label htmlFor="autoStartWork" className="text-gray-700 dark:text-gray-300 font-medium text-sm">
                 Auto-start work intervals
               </Label>
               <Switch
@@ -133,8 +133,8 @@ export const FocusSettingsDialog: React.FC<FocusSettingsDialogProps> = ({
               />
             </div>
             
-            <div className="flex items-center justify-between py-2">
-              <Label htmlFor="enableSounds" className="text-gray-700 dark:text-gray-300 font-medium">
+            <div className="flex items-center justify-between py-2 min-h-[44px]">
+              <Label htmlFor="enableSounds" className="text-gray-700 dark:text-gray-300 font-medium text-sm">
                 Enable sounds
               </Label>
               <Switch
@@ -145,8 +145,8 @@ export const FocusSettingsDialog: React.FC<FocusSettingsDialogProps> = ({
               />
             </div>
             
-            <div className="flex items-center justify-between py-2">
-              <Label htmlFor="enableNotifications" className="text-gray-700 dark:text-gray-300 font-medium">
+            <div className="flex items-center justify-between py-2 min-h-[44px]">
+              <Label htmlFor="enableNotifications" className="text-gray-700 dark:text-gray-300 font-medium text-sm">
                 Enable notifications
               </Label>
               <Switch
@@ -156,29 +156,7 @@ export const FocusSettingsDialog: React.FC<FocusSettingsDialogProps> = ({
                 className="data-[state=checked]:bg-orange-500"
               />
             </div>
-            
-            <div className="flex items-center justify-between py-2">
-              <Label htmlFor="blockNotifications" className="text-gray-700 dark:text-gray-300 font-medium">
-                Block other notifications during focus
-              </Label>
-              <Switch
-                id="blockNotifications"
-                checked={settings.blockNotifications || false}
-                onCheckedChange={handleSwitchChange('blockNotifications')}
-                className="data-[state=checked]:bg-orange-500"
-              />
-            </div>
           </div>
-        </div>
-        
-        <div className="flex justify-end pt-4">
-          <Button 
-            variant="outline" 
-            onClick={() => onOpenChange(false)}
-            className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700"
-          >
-            Close
-          </Button>
         </div>
       </DialogContent>
     </Dialog>

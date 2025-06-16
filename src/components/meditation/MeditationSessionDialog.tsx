@@ -49,16 +49,16 @@ export const MeditationSessionDialog: React.FC<MeditationSessionDialogProps> = (
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-md bg-respiro-dark border-4 border-white text-white">
+      <DialogContent className="sm:max-w-md bg-respiro-dark border-4 border-white text-white max-w-[calc(100vw-2rem)]">
         <DialogHeader>
-          <DialogTitle className="text-white text-xl">{session.title}</DialogTitle>
-          <DialogDescription className="text-gray-300">
+          <DialogTitle className="text-white text-lg sm:text-xl">{session.title}</DialogTitle>
+          <DialogDescription className="text-gray-300 text-sm sm:text-base">
             {session.duration} minutes • {session.category}
           </DialogDescription>
         </DialogHeader>
         
-        <div className="mt-4">
-          <div className="relative w-full h-48 mb-4 bg-respiro-dark rounded-md overflow-hidden border-2 border-white">
+        <div className="space-y-4">
+          <div className="relative w-full h-32 sm:h-48 bg-respiro-dark rounded-md overflow-hidden border-2 border-white">
             {session.image_url && (
               <img
                 src={session.image_url}
@@ -68,33 +68,33 @@ export const MeditationSessionDialog: React.FC<MeditationSessionDialogProps> = (
               />
             )}
             <div className={`absolute inset-0 flex items-center justify-center ${session.image_url ? 'hidden' : ''}`}>
-              <div className="text-6xl">{session.icon || '🧘'}</div>
+              <div className="text-4xl sm:text-6xl">{session.icon || '🧘'}</div>
             </div>
           </div>
           
-          <div className="flex flex-wrap gap-2 mb-3">
-            <Badge variant="outline" className="bg-respiro-darker border-2 border-white text-white">
+          <div className="flex flex-wrap gap-2">
+            <Badge variant="outline" className="bg-respiro-darker border-2 border-white text-white text-xs">
               {session.duration} min
             </Badge>
-            <Badge variant="outline" className="bg-respiro-darker border-2 border-white text-white capitalize">
+            <Badge variant="outline" className="bg-respiro-darker border-2 border-white text-white capitalize text-xs">
               {session.category}
             </Badge>
             
             {session.instructor && (
-              <Badge variant="outline" className="bg-respiro-darker border-2 border-white text-white">
+              <Badge variant="outline" className="bg-respiro-darker border-2 border-white text-white text-xs">
                 {session.instructor}
               </Badge>
             )}
           </div>
           
-          <p className="text-md text-white">
+          <p className="text-sm sm:text-base text-white leading-relaxed">
             {session.description}
           </p>
           
           {session.tags && session.tags.length > 0 && (
-            <div className="flex flex-wrap gap-1 mt-3">
+            <div className="flex flex-wrap gap-1">
               {session.tags.map((tag, i) => (
-                <Badge key={i} variant="secondary" className="text-sm bg-respiro-darker text-white border border-white">
+                <Badge key={i} variant="secondary" className="text-xs bg-respiro-darker text-white border border-white">
                   {tag}
                 </Badge>
               ))}
@@ -102,11 +102,11 @@ export const MeditationSessionDialog: React.FC<MeditationSessionDialogProps> = (
           )}
         </div>
         
-        <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:gap-0 mt-4">
+        <DialogFooter className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
           <Button 
             variant="outline" 
             onClick={onToggleFavorite} 
-            className="sm:mr-auto flex items-center gap-1 bg-respiro-darker text-white border-2 border-white hover:bg-respiro-dark"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 bg-respiro-darker text-white border-2 border-white hover:bg-respiro-dark min-h-[44px]"
           >
             <Heart className={`h-4 w-4 ${isFavorite ? 'fill-rose-500 text-rose-500' : 'text-white'}`} />
             {isFavorite ? 'Favorited' : 'Favorite'}
@@ -114,9 +114,9 @@ export const MeditationSessionDialog: React.FC<MeditationSessionDialogProps> = (
           
           <Button 
             onClick={() => onStart(session)} 
-            className="w-full sm:w-auto bg-white text-respiro-dark hover:bg-gray-200 font-bold text-lg border-2 border-white"
+            className="w-full sm:w-auto bg-white text-respiro-dark hover:bg-gray-200 font-bold text-base sm:text-lg border-2 border-white min-h-[44px]"
           >
-            <Play className="h-5 w-5 mr-2" />
+            <Play className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
             Begin Meditation
           </Button>
         </DialogFooter>

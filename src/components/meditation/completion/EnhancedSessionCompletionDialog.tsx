@@ -41,38 +41,38 @@ const EnhancedSessionCompletionDialog: React.FC<EnhancedSessionCompletionDialogP
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-center">Session Complete! 🧘‍♀️</DialogTitle>
+          <DialogTitle className="text-center text-lg sm:text-xl">Session Complete! 🧘‍♀️</DialogTitle>
         </DialogHeader>
         
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* Session Summary */}
           <Card>
-            <CardContent className="p-4">
+            <CardContent className="p-3 sm:p-4">
               <div className="text-center space-y-2">
-                <h3 className="font-medium">{session.title}</h3>
-                <p className="text-sm text-muted-foreground">{session.instructor}</p>
+                <h3 className="font-medium text-sm sm:text-base">{session.title}</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground">{session.instructor}</p>
                 <div className="flex justify-center space-x-2">
-                  <Badge variant="outline">{session.category}</Badge>
-                  <Badge variant="outline">{formatDuration(session.duration)}</Badge>
+                  <Badge variant="outline" className="text-xs">{session.category}</Badge>
+                  <Badge variant="outline" className="text-xs">{formatDuration(session.duration)}</Badge>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Completion Stats */}
-          <div className="grid grid-cols-3 gap-4 text-center">
+          <div className="grid grid-cols-3 gap-2 sm:gap-4 text-center">
             <div>
-              <div className="text-2xl font-bold text-primary">+{session.duration}</div>
+              <div className="text-lg sm:text-2xl font-bold text-primary">+{session.duration}</div>
               <div className="text-xs text-muted-foreground">Minutes</div>
             </div>
             <div>
-              <div className="text-2xl font-bold text-primary">+1</div>
+              <div className="text-lg sm:text-2xl font-bold text-primary">+1</div>
               <div className="text-xs text-muted-foreground">Session</div>
             </div>
             <div>
-              <div className="text-2xl font-bold text-primary">🏆</div>
+              <div className="text-lg sm:text-2xl font-bold text-primary">🏆</div>
               <div className="text-xs text-muted-foreground">Achievement</div>
             </div>
           </div>
@@ -87,10 +87,10 @@ const EnhancedSessionCompletionDialog: React.FC<EnhancedSessionCompletionDialogP
                   onClick={() => setRating(star)}
                   onMouseEnter={() => setHoveredStar(star)}
                   onMouseLeave={() => setHoveredStar(0)}
-                  className="p-1 hover:scale-110 transition-transform"
+                  className="p-1 hover:scale-110 transition-transform min-h-[44px] min-w-[44px] flex items-center justify-center"
                 >
                   <Star
-                    className={`h-8 w-8 ${
+                    className={`h-6 w-6 sm:h-8 sm:w-8 ${
                       star <= (hoveredStar || rating)
                         ? 'fill-yellow-400 text-yellow-400'
                         : 'text-muted-foreground'
@@ -111,39 +111,42 @@ const EnhancedSessionCompletionDialog: React.FC<EnhancedSessionCompletionDialogP
               placeholder="How did this session make you feel? Any insights or reflections to share?"
               value={comments}
               onChange={(e) => setComments(e.target.value)}
-              className="min-h-[80px]"
+              className="min-h-[60px] sm:min-h-[80px] text-sm"
             />
           </div>
 
           {/* Quick Actions */}
           <div className="grid grid-cols-3 gap-2">
-            <Button variant="outline" size="sm" className="flex items-center">
-              <Heart className="h-4 w-4 mr-1" />
-              Favorite
+            <Button variant="outline" size="sm" className="flex items-center text-xs h-10">
+              <Heart className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+              <span className="hidden sm:inline">Favorite</span>
+              <span className="sm:hidden">♥</span>
             </Button>
-            <Button variant="outline" size="sm" className="flex items-center">
-              <Share2 className="h-4 w-4 mr-1" />
-              Share
+            <Button variant="outline" size="sm" className="flex items-center text-xs h-10">
+              <Share2 className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+              <span className="hidden sm:inline">Share</span>
+              <span className="sm:hidden">↗</span>
             </Button>
-            <Button variant="outline" size="sm" className="flex items-center">
-              <BookOpen className="h-4 w-4 mr-1" />
-              Journal
+            <Button variant="outline" size="sm" className="flex items-center text-xs h-10">
+              <BookOpen className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+              <span className="hidden sm:inline">Journal</span>
+              <span className="sm:hidden">📔</span>
             </Button>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex space-x-3">
-            <Button variant="outline" onClick={handleSkip} className="flex-1">
+          <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-3">
+            <Button variant="outline" onClick={handleSkip} className="flex-1 min-h-[44px]">
               Skip
             </Button>
-            <Button onClick={handleSubmit} className="flex-1">
+            <Button onClick={handleSubmit} className="flex-1 min-h-[44px]">
               Submit Feedback
             </Button>
           </div>
 
           {/* Encouragement Message */}
           <div className="text-center p-3 bg-primary/5 rounded-lg">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-xs sm:text-sm text-muted-foreground">
               Great job on completing your meditation! Your mindfulness journey continues to grow stronger with each session.
             </p>
           </div>

@@ -49,17 +49,19 @@ const RitualEditDialog: React.FC<RitualEditDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>Edit Ritual</DialogTitle>
+      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader className="pb-4 border-b">
+          <DialogTitle className="text-lg sm:text-xl">Edit Ritual</DialogTitle>
         </DialogHeader>
         
-        <RitualFormContent
-          form={form}
-          onSubmit={handleSubmit}
-          isSubmitting={isSubmitting}
-          submitLabel="Update Ritual"
-        />
+        <div className="py-4">
+          <RitualFormContent
+            form={form}
+            onSubmit={handleSubmit}
+            isSubmitting={isSubmitting}
+            submitLabel="Update Ritual"
+          />
+        </div>
       </DialogContent>
     </Dialog>
   );

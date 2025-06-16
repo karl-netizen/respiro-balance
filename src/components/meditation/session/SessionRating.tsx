@@ -27,26 +27,26 @@ const SessionRating: React.FC<SessionRatingProps> = ({
 }) => {
   return (
     <Dialog open={showDialog} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Rate your meditation experience</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-lg sm:text-xl">Rate your meditation experience</DialogTitle>
+          <DialogDescription className="text-sm sm:text-base">
             How was your meditation session? Your feedback helps us improve.
           </DialogDescription>
         </DialogHeader>
         
         <div className="py-4 flex flex-col space-y-6">
-          <div className="flex justify-center space-x-1">
+          <div className="flex justify-center space-x-1 sm:space-x-2">
             {[1, 2, 3, 4, 5].map((star) => (
               <button
                 key={star}
                 type="button"
-                className="focus:outline-none"
+                className="focus:outline-none p-1 min-h-[44px] min-w-[44px] flex items-center justify-center"
                 onClick={() => onRatingChange(star)}
               >
                 <Star
                   className={cn(
-                    "w-8 h-8 transition-all",
+                    "w-6 h-6 sm:w-8 sm:h-8 transition-all",
                     rating >= star
                       ? "fill-yellow-400 text-yellow-400"
                       : "text-muted-foreground"
@@ -60,13 +60,13 @@ const SessionRating: React.FC<SessionRatingProps> = ({
             placeholder="Share your thoughts about this session (optional)"
             value={notes}
             onChange={(e) => onNotesChange(e.target.value)}
-            className="min-h-[100px]"
+            className="min-h-[80px] sm:min-h-[100px] text-sm sm:text-base"
           />
         </div>
         
-        <DialogFooter>
+        <DialogFooter className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
           <Button 
-            className="bg-primary text-white hover:bg-primary/90"
+            className="w-full bg-primary text-white hover:bg-primary/90 min-h-[44px]"
             onClick={onSubmit}
           >
             Submit

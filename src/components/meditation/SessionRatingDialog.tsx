@@ -33,27 +33,31 @@ const SessionRatingDialog: React.FC<SessionRatingDialogProps> = ({
   
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Rate your experience</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-lg sm:text-xl">Rate your experience</DialogTitle>
+          <DialogDescription className="text-sm sm:text-base">
             How was your meditation session: {sessionTitle}?
           </DialogDescription>
         </DialogHeader>
         
-        <div className="flex justify-center my-6">
+        <div className="flex justify-center my-4 sm:my-6">
           {[1, 2, 3, 4, 5].map((star) => (
-            <Star
+            <button
               key={star}
-              className={`h-8 w-8 cursor-pointer transition-all ${
-                (hoveredRating || rating) >= star
-                  ? "text-yellow-400 fill-yellow-400"
-                  : "text-gray-300"
-              }`}
-              onClick={() => setRating(star)}
-              onMouseEnter={() => setHoveredRating(star)}
-              onMouseLeave={() => setHoveredRating(0)}
-            />
+              className="p-1 min-h-[44px] min-w-[44px] flex items-center justify-center"
+            >
+              <Star
+                className={`h-6 w-6 sm:h-8 sm:w-8 cursor-pointer transition-all ${
+                  (hoveredRating || rating) >= star
+                    ? "text-yellow-400 fill-yellow-400"
+                    : "text-gray-300"
+                }`}
+                onClick={() => setRating(star)}
+                onMouseEnter={() => setHoveredRating(star)}
+                onMouseLeave={() => setHoveredRating(0)}
+              />
+            </button>
           ))}
         </div>
         
@@ -61,12 +65,16 @@ const SessionRatingDialog: React.FC<SessionRatingDialogProps> = ({
           placeholder="Share your thoughts about this session (optional)"
           value={feedback}
           onChange={(e) => setFeedback(e.target.value)}
-          className="min-h-[100px]"
+          className="min-h-[80px] sm:min-h-[100px] text-sm sm:text-base"
         />
         
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose}>Cancel</Button>
-          <Button onClick={handleSubmit} disabled={rating === 0}>Submit</Button>
+        <DialogFooter className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
+          <Button variant="outline" onClick={onClose} className="w-full sm:w-auto min-h-[44px]">
+            Cancel
+          </Button>
+          <Button onClick={handleSubmit} disabled={rating === 0} className="w-full sm:w-auto min-h-[44px]">
+            Submit
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

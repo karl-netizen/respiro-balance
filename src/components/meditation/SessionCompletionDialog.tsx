@@ -64,16 +64,16 @@ const SessionCompletionDialog: React.FC<SessionCompletionDialogProps> = ({
   const renderStatsView = () => (
     <>
       <DialogHeader>
-        <DialogTitle className="text-center text-xl">Session Completed!</DialogTitle>
-        <DialogDescription className="text-center">
+        <DialogTitle className="text-center text-lg sm:text-xl">Session Completed!</DialogTitle>
+        <DialogDescription className="text-center text-sm sm:text-base">
           Great job completing your meditation session
         </DialogDescription>
       </DialogHeader>
       
-      <div className="py-6 space-y-6">
+      <div className="py-4 sm:py-6 space-y-4 sm:space-y-6">
         <div className="flex justify-center mb-2">
-          <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center">
-            <ThumbsUp className="h-10 w-10 text-primary" />
+          <div className="w-16 h-16 sm:w-24 sm:h-24 bg-primary/10 rounded-full flex items-center justify-center">
+            <ThumbsUp className="h-8 w-8 sm:h-10 sm:w-10 text-primary" />
           </div>
         </div>
         
@@ -96,14 +96,16 @@ const SessionCompletionDialog: React.FC<SessionCompletionDialogProps> = ({
           
           <div className="text-center pt-2">
             <p className="text-sm text-muted-foreground">Session Duration</p>
-            <p className="text-xl font-mono">{formatTime(timeCompleted)}</p>
+            <p className="text-lg sm:text-xl font-mono">{formatTime(timeCompleted)}</p>
           </div>
         </div>
       </div>
       
-      <DialogFooter className="flex flex-col gap-2 sm:gap-0">
-        <Button onClick={handleNextStep} className="w-full">Share Your Feedback</Button>
-        <Button variant="ghost" onClick={handleSkipFeedback} className="w-full">
+      <DialogFooter className="flex flex-col space-y-2">
+        <Button onClick={handleNextStep} className="w-full min-h-[44px]">
+          Share Your Feedback
+        </Button>
+        <Button variant="ghost" onClick={handleSkipFeedback} className="w-full min-h-[44px]">
           Skip & Continue
         </Button>
       </DialogFooter>
@@ -113,24 +115,24 @@ const SessionCompletionDialog: React.FC<SessionCompletionDialogProps> = ({
   const renderFeedbackView = () => (
     <>
       <DialogHeader>
-        <DialogTitle>How was your meditation?</DialogTitle>
-        <DialogDescription>
+        <DialogTitle className="text-lg sm:text-xl">How was your meditation?</DialogTitle>
+        <DialogDescription className="text-sm sm:text-base">
           Your feedback helps us improve your experience
         </DialogDescription>
       </DialogHeader>
       
-      <div className="py-4 space-y-6">
-        <div className="flex justify-center space-x-2">
+      <div className="py-4 space-y-4 sm:space-y-6">
+        <div className="flex justify-center space-x-1 sm:space-x-2">
           {[1, 2, 3, 4, 5].map((star) => (
             <button
               key={star}
               type="button"
-              className="focus:outline-none"
+              className="focus:outline-none p-1 min-h-[44px] min-w-[44px] flex items-center justify-center"
               onClick={() => setRating(star)}
             >
               <Star
                 className={cn(
-                  "w-8 h-8 transition-all",
+                  "w-6 h-6 sm:w-8 sm:h-8 transition-all",
                   rating >= star
                     ? "fill-yellow-400 text-yellow-400"
                     : "text-muted-foreground"
@@ -144,15 +146,15 @@ const SessionCompletionDialog: React.FC<SessionCompletionDialogProps> = ({
           placeholder="Share your thoughts about this session (optional)"
           value={comment}
           onChange={(e) => setComment(e.target.value)}
-          className="min-h-[120px]"
+          className="min-h-[80px] sm:min-h-[120px] text-sm sm:text-base"
         />
       </div>
       
-      <DialogFooter className="flex flex-col gap-2 sm:gap-0">
-        <Button onClick={handleSubmitFeedback} disabled={rating === 0} className="w-full">
+      <DialogFooter className="flex flex-col space-y-2">
+        <Button onClick={handleSubmitFeedback} disabled={rating === 0} className="w-full min-h-[44px]">
           Submit Feedback
         </Button>
-        <Button variant="ghost" onClick={() => setStep('stats')} className="w-full">
+        <Button variant="ghost" onClick={() => setStep('stats')} className="w-full min-h-[44px]">
           Back
         </Button>
       </DialogFooter>
@@ -161,7 +163,7 @@ const SessionCompletionDialog: React.FC<SessionCompletionDialogProps> = ({
   
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-md">
         {step === 'stats' ? renderStatsView() : renderFeedbackView()}
       </DialogContent>
     </Dialog>
