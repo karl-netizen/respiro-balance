@@ -1,19 +1,28 @@
-import * as React from "react"
 
+import * as React from "react"
 import { cn } from "@/lib/utils"
+import { MobileTable } from "./mobile-table"
+import { useDeviceDetection } from "@/hooks/useDeviceDetection"
 
 const Table = React.forwardRef<
   HTMLTableElement,
   React.HTMLAttributes<HTMLTableElement>
->(({ className, ...props }, ref) => (
-  <div className="relative w-full overflow-auto">
-    <table
-      ref={ref}
-      className={cn("w-full caption-bottom text-sm", className)}
-      {...props}
-    />
-  </div>
-))
+>(({ className, ...props }, ref) => {
+  const { deviceType } = useDeviceDetection();
+  
+  // For mobile, we'll let individual components decide how to handle tables
+  // This maintains backward compatibility while allowing opt-in mobile optimization
+  
+  return (
+    <div className="relative w-full overflow-auto">
+      <table
+        ref={ref}
+        className={cn("w-full caption-bottom text-sm", className)}
+        {...props}
+      />
+    </div>
+  )
+})
 Table.displayName = "Table"
 
 const TableHeader = React.forwardRef<
@@ -114,4 +123,5 @@ export {
   TableRow,
   TableCell,
   TableCaption,
+  MobileTable,
 }

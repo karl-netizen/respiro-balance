@@ -1,12 +1,11 @@
-
 import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { MeditationSession } from '@/types/meditation';
 import SessionCompletionDialog from './SessionCompletionDialog';
 import { useEnhancedSessionPlayer } from './hooks/useEnhancedSessionPlayer';
-import ProgressDisplay from './player/components/ProgressDisplay';
-import SessionControls from './player/components/SessionControls';
-import PausedActions from './player/components/PausedActions';
+import { useMobileGestures } from './hooks/useMobileGestures';
+import { MobilePlayerLayout } from './player/components/MobilePlayerLayout';
+import { useDeviceDetection } from '@/hooks/useDeviceDetection';
 
 interface EnhancedSessionPlayerProps {
   session: MeditationSession;
@@ -28,6 +27,8 @@ const EnhancedSessionPlayer: React.FC<EnhancedSessionPlayerProps> = ({
   onAudioTimeUpdate,
   biometricData = {}
 }) => {
+  const { deviceType } = useDeviceDetection();
+  
   const {
     isPlaying,
     currentTime,
@@ -59,7 +60,91 @@ const EnhancedSessionPlayer: React.FC<EnhancedSessionPlayerProps> = ({
     onAudioTimeUpdate,
     biometricData
   });
-  
+
+  // Mobile gesture controls
+  const gestureRef = useMobileGestures({
+    onTap: handlePlayPause,
+    onSwipeLeft: handleSkipForward,
+    onSwipeRight: handleSkipBack,
+    enabled: deviceType === 'mobile' && sessionStarted
+  });
+
+  const handleSkipBack10 = () => {
+    const newTime = Math.max(0, currentTime - 10);
+    handleSeek([newTime]);
+  };
+
+  const handleSkipForward30 = () => {
+    const newTime = Math.min(duration, currentTime + 30);
+    handleSeek([newTime]);
+  };
+
+  if (deviceType === 'mobile') {
+    return (
+      <>
+        <div ref={gestureRef} className="w-full">
+          <MobilePlayerLayout
+            title={session.title}
+            description={session.description}
+            isPlaying={isPlaying}
+            currentTime={currentTime}
+            duration={duration}
+            volume={volume}
+            isMuted={isMuted}
+            progress={progress}
+            onPlayPause={handlePlayPause}
+            onSkipBack={handleSkipBack10}
+            onSkipForward={handleSkipForward30}
+            onToggleMute={handleToggleMute}
+            onVolumeChange={handleVolumeChange}
+            onSeek={handleSeek}
+            formatTime={formatTime}
+          >
+            {/* Mobile-specific additional content */}
+            {!sessionStarted && (
+              <div className="text-center mt-4">
+                <p className="text-sm text-muted-foreground mb-4">
+                  Tap to play • Swipe left/right to skip
+                </p>
+              </div>
+            )}
+            
+            {sessionStarted && !sessionCompleted && !isPlaying && (
+              <div className="flex space-x-2 mt-4">
+                <button 
+                  onClick={handlePlayPause}
+                  className="flex-1 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium"
+                >
+                  Resume
+                </button>
+                <button 
+                  onClick={handleSessionComplete}
+                  className="flex-1 py-2 bg-secondary text-secondary-foreground rounded-md text-sm font-medium"
+                >
+                  End Session
+                </button>
+              </div>
+            )}
+          </MobilePlayerLayout>
+        </div>
+        
+        <SessionCompletionDialog
+          isOpen={showCompletionDialog}
+          onClose={() => setShowCompletionDialog(false)}
+          session={session}
+          meditationStats={{
+            focusScore,
+            calmScore,
+            timeCompleted: currentTime
+          }}
+          onSubmitFeedback={handleFeedbackSubmit}
+          onContinue={handleContinue}
+        />
+      </>
+    );
+  }
+
+  // Desktop layout (keep existing code)
   return (
     <>
       <Card className="w-full bg-respiro-dark text-white border-4 border-white shadow-xl overflow-hidden">
