@@ -23,12 +23,18 @@ const MonthlyTrendsSection: React.FC<MonthlyTrendsSectionProps> = ({ meditationS
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Monthly Meditation Trends</CardTitle>
-          <CardDescription>See how your meditation practice evolves over time</CardDescription>
+          <CardTitle className="text-lg sm:text-xl">Monthly Meditation Trends</CardTitle>
+          <CardDescription className="text-sm sm:text-base">See how your meditation practice evolves over time</CardDescription>
         </CardHeader>
-        <CardContent>
-          <ChartSection sessionData={sessionData} />
-          <StatsSection meditationStats={meditationStats} />
+        <CardContent className="p-3 sm:p-6">
+          <div className="w-full overflow-x-auto">
+            <div className="min-w-[600px] sm:min-w-0">
+              <ChartSection sessionData={sessionData} />
+            </div>
+          </div>
+          <div className="mt-4 sm:mt-6">
+            <StatsSection meditationStats={meditationStats} />
+          </div>
         </CardContent>
       </Card>
     </div>

@@ -29,14 +29,14 @@ const DashboardMainContent: React.FC<DashboardMainContentProps> = ({
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-      {/* Left Column - Progress */}
-      <div className="lg:col-span-1">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6">
+      {/* Progress Card - Always first on mobile */}
+      <div className="lg:col-span-1 order-1">
         <WeeklyProgressCard progress={progressData} />
       </div>
 
-      {/* Middle Column - Mood-Based Recommendations or Actions */}
-      <div className="lg:col-span-1">
+      {/* Mood-Based Recommendations or Actions */}
+      <div className="lg:col-span-1 order-2 lg:order-2">
         {currentMood ? (
           <MoodBasedRecommendations currentMood={currentMood} />
         ) : (
@@ -47,8 +47,8 @@ const DashboardMainContent: React.FC<DashboardMainContentProps> = ({
         )}
       </div>
 
-      {/* Right Column - Actions (when mood-based recs are shown) or Smart Recommendations */}
-      <div className="lg:col-span-1">
+      {/* Action Cards - Last on mobile */}
+      <div className="lg:col-span-1 order-3">
         {currentMood ? (
           <DashboardActionCards
             currentMood={currentMood}
