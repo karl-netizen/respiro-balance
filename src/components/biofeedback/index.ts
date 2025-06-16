@@ -14,4 +14,4 @@ export { default as DeviceSection } from './sections/DeviceSection';
 export { default as BiometricMonitorSection } from './sections/BiometricMonitorSection';
 
 // Export types from the correct location
-export type { BiometricData } from '../hooks/biofeedback/types';
+export type { BiometricData } from '../../hooks/biofeedback/types';

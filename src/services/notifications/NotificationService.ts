@@ -104,7 +104,8 @@ export class NotificationService {
     }
 
     // Workday break reminders
-    if (preferences.workDays?.includes(this.getCurrentDayName().toLowerCase())) {
+    const currentDay = this.getCurrentDayName().toLowerCase();
+    if (preferences.workDays?.includes(currentDay as any)) {
       const breakTime = new Date();
       const [workHours, workMinutes] = (preferences.workStartTime || '09:00').split(':');
       breakTime.setHours(parseInt(workHours) + 2, parseInt(workMinutes), 0, 0);

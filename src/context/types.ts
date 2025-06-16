@@ -1,4 +1,3 @@
-
 import type { MorningRitual as MorningRitualType } from '@/components/morning-ritual/types';
 
 // Use unified Bluetooth types
@@ -67,10 +66,11 @@ export type TimeManagementStyle = 'pomodoro' | 'timeblocking' | 'deadline' | 'fl
 export type SubscriptionTier = 'free' | 'premium' | 'team' | 'enterprise' | 'coach';
 
 export interface NotificationSettings {
-  sessionReminders: boolean;
-  achievementNotifications: boolean;
-  streakAlerts: boolean;
-  weeklyNotifications: boolean;
+  sessionReminders?: boolean;
+  achievementNotifications?: boolean;
+  streakAlerts?: boolean;
+  weeklyNotifications?: boolean;
+  weeklySummary?: boolean;
 }
 
 export interface UserLocation {
