@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { TouchFriendlyButton } from "@/components/responsive/TouchFriendlyButton";
 import { Switch } from "@/components/ui/switch";
 import { Battery, Target, Clock } from "lucide-react";
 import { useUserPreferences } from "@/context";
@@ -41,24 +41,24 @@ const FocusModeCard = () => {
 
   return (
     <Card className="bg-white/80 backdrop-blur-sm hover:shadow-lg transition-all duration-300">
-      <CardHeader>
+      <CardHeader className="p-4 sm:p-6 pb-3 sm:pb-4">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-xl">Focus Mode</CardTitle>
-          <Target className="h-5 w-5 text-primary" />
+          <CardTitle className="text-lg sm:text-xl">Focus Mode</CardTitle>
+          <Target className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
         </div>
-        <CardDescription>
+        <CardDescription className="text-sm">
           {preferences.hasCompletedOnboarding && preferences.morningExercise
             ? `Optimized for your ${formatTime(preferences.exerciseTime)} workout`
             : "Dedicated time for deep work with minimal distractions"}
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <span className="font-medium">Focus Timer</span>
-            <div className="flex items-center space-x-4">
-              <Clock className="h-4 w-4 text-primary" />
-              <span className="text-sm">{getTimeDisplay()}</span>
+      <CardContent className="p-4 sm:p-6 pt-0">
+        <div className="space-y-3 sm:space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <span className="font-medium text-sm sm:text-base">Focus Timer</span>
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              <Clock className="h-3 w-3 sm:h-4 sm:w-4 text-primary flex-shrink-0" />
+              <span className="text-xs sm:text-sm">{getTimeDisplay()}</span>
             </div>
           </div>
           
@@ -75,7 +75,7 @@ const FocusModeCard = () => {
             />
           )}
           
-          <div className="text-sm text-muted-foreground">
+          <div className="text-xs sm:text-sm text-muted-foreground">
             {isActive
               ? timerState === 'work'
                 ? "Focus mode is active. Concentrate on your current task."
@@ -98,21 +98,21 @@ const FocusModeCard = () => {
             />
             <label
               htmlFor="focusMode"
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              className="text-xs sm:text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
               {isActive ? "Focus mode active" : "Enable focus mode"}
             </label>
           </div>
         </div>
       </CardContent>
-      <CardFooter>
-        <Button
+      <CardFooter className="p-4 sm:p-6 pt-0">
+        <TouchFriendlyButton
           variant={isActive ? "default" : "outline"}
           className="w-full"
           onClick={handleFocusClick}
         >
           {isActive ? "View Focus Session" : "Start Focus Session"}
-        </Button>
+        </TouchFriendlyButton>
       </CardFooter>
     </Card>
   );

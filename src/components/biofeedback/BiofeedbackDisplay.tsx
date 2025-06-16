@@ -25,7 +25,7 @@ export const BiofeedbackDisplay: React.FC<BiofeedbackDisplayProps> = ({
   return (
     <DataConverter partialData={partialData}>
       {(completeData) => (
-        <div className="bg-background rounded-lg p-4 shadow-md">
+        <div className="bg-background rounded-lg p-3 sm:p-4 shadow-md space-y-4 sm:space-y-6">
           <BiofeedbackControls 
             isMonitoring={isMonitoring} 
             onStartMonitoring={async () => {
@@ -36,10 +36,12 @@ export const BiofeedbackDisplay: React.FC<BiofeedbackDisplayProps> = ({
           />
           
           {completeData ? (
-            <>
+            <div className="space-y-4 sm:space-y-6">
               <BiometricSummary data={completeData} />
-              <TabsContainer data={completeData} />
-            </>
+              <div className="w-full overflow-x-auto">
+                <TabsContainer data={completeData} />
+              </div>
+            </div>
           ) : (
             <ConnectionPrompt isMonitoring={isMonitoring} />
           )}

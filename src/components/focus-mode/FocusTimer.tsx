@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useFocus } from '@/context/FocusProvider';
 import { Progress } from '@/components/ui/progress';
@@ -50,20 +51,20 @@ export const FocusTimer: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <Badge variant="outline" className={`${getStateColor()} border-none px-3 py-1`}>
+    <div className="space-y-4 sm:space-y-6 px-2 sm:px-0">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-0">
+        <Badge variant="outline" className={`${getStateColor()} border-none px-2 sm:px-3 py-1 text-sm`}>
           {getStateLabel()}
         </Badge>
         
-        <Badge variant="outline" className="bg-muted text-muted-foreground border-none px-3 py-1">
+        <Badge variant="outline" className="bg-muted text-muted-foreground border-none px-2 sm:px-3 py-1 text-xs sm:text-sm">
           Interval {currentInterval} {timerState === 'long-break' && `(Long Break)`}
         </Badge>
       </div>
       
-      <div className="text-center py-10">
-        <div className="relative mx-auto w-48 h-48 rounded-full flex items-center justify-center border-8 border-muted">
-          <div className="text-5xl font-mono font-bold">
+      <div className="text-center py-6 sm:py-10">
+        <div className="relative mx-auto w-32 h-32 sm:w-48 sm:h-48 rounded-full flex items-center justify-center border-4 sm:border-8 border-muted">
+          <div className="text-2xl sm:text-5xl font-mono font-bold">
             {formatTime(remaining)}
           </div>
           <div className="absolute inset-0">
@@ -107,13 +108,13 @@ export const FocusTimer: React.FC = () => {
           value={progress}
           className="h-2"
         />
-        <div className="flex justify-between text-xs text-muted-foreground">
-          <span>
+        <div className="flex flex-col sm:flex-row justify-between text-xs text-muted-foreground gap-1 sm:gap-0">
+          <span className="text-center sm:text-left">
             {timerState === 'work' && `${settings.workDuration} min work`}
             {timerState === 'break' && `${settings.breakDuration} min break`}
             {timerState === 'long-break' && `${settings.longBreakDuration} min break`}
           </span>
-          <span className="flex items-center gap-1">
+          <span className="flex items-center justify-center sm:justify-end gap-1">
             <Clock className="h-3 w-3" />
             {formatTime(remaining)} remaining
           </span>

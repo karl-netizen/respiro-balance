@@ -1,10 +1,10 @@
 
 import React from 'react';
-import { Card, CardProps } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { useDeviceDetection } from '@/hooks/useDeviceDetection';
 
-interface MobileOptimizedCardProps extends CardProps {
+interface MobileOptimizedCardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   touchFriendly?: boolean;
   compactOnMobile?: boolean;
