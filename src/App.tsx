@@ -1,4 +1,3 @@
-
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from '@/components/ui/sonner'
@@ -9,6 +8,7 @@ import { SubscriptionProvider } from '@/context/SubscriptionProvider'
 import { FocusProvider } from '@/context/FocusProvider'
 import { NotificationsProvider } from '@/context/NotificationsProvider'
 import { NavigationHistoryProvider } from '@/context/NavigationHistoryProvider'
+import { OfflineStorageProvider } from '@/components/meditation/offline/OfflineStorageProvider'
 import SkipNavigation from '@/components/accessibility/SkipNavigation'
 import OfflineIndicator from '@/components/common/OfflineIndicator'
 import AriaLiveRegion from '@/components/accessibility/AriaLiveRegion'
@@ -60,42 +60,44 @@ function App() {
                 <FocusProvider>
                   <NotificationsProvider>
                     <NavigationHistoryProvider>
-                      <div className="min-h-screen bg-background text-foreground w-full">
-                        <SkipNavigation />
-                        <AriaLiveRegion />
-                        
-                        <main id="main-content" className="w-full">
-                          <Routes>
-                            <Route path="/" element={<Navigate to="/landing" replace />} />
-                            <Route path="/landing" element={<LandingPage />} />
-                            <Route path="/login" element={<LoginPage />} />
-                            <Route path="/signup" element={<SignupPage />} />
-                            <Route path="/reset-password" element={<ResetPasswordPage />} />
-                            <Route path="/dashboard" element={<DashboardPage />} />
-                            <Route path="/meditation" element={<MeditationPage />} />
-                            <Route path="/meditate" element={<Meditate />} />
-                            <Route path="/meditate/session/:id" element={<MeditationSessionPage />} />
-                            <Route path="/meditation/session/:id" element={<MeditationSessionPage />} />
-                            <Route path="/offline-downloads" element={<OfflineDownloadsPage />} />
-                            <Route path="/breathe" element={<BreathePageRoute />} />
-                            <Route path="/progress" element={<ProgressPage />} />
-                            <Route path="/biofeedback" element={<BiofeedbackPage />} />
-                            <Route path="/focus" element={<FocusPage />} />
-                            <Route path="/morning-ritual" element={<MorningRitualPage />} />
-                            <Route path="/social" element={<SocialPage />} />
-                            <Route path="/settings" element={<SettingsPage />} />
-                            <Route path="/profile" element={<ProfilePage />} />
-                            <Route path="/onboarding" element={<OnboardingPage />} />
-                            <Route path="/work-life-balance" element={<WorkLifeBalancePage />} />
-                            <Route path="/work-life-balance/break-settings" element={<BreakSettingsPage />} />
-                            <Route path="/payment/success" element={<PaymentSuccessPage />} />
-                            <Route path="/payment/cancel" element={<PaymentCancelPage />} />
-                          </Routes>
-                        </main>
+                      <OfflineStorageProvider>
+                        <div className="min-h-screen bg-background text-foreground w-full">
+                          <SkipNavigation />
+                          <AriaLiveRegion />
+                          
+                          <main id="main-content" className="w-full">
+                            <Routes>
+                              <Route path="/" element={<Navigate to="/landing" replace />} />
+                              <Route path="/landing" element={<LandingPage />} />
+                              <Route path="/login" element={<LoginPage />} />
+                              <Route path="/signup" element={<SignupPage />} />
+                              <Route path="/reset-password" element={<ResetPasswordPage />} />
+                              <Route path="/dashboard" element={<DashboardPage />} />
+                              <Route path="/meditation" element={<MeditationPage />} />
+                              <Route path="/meditate" element={<Meditate />} />
+                              <Route path="/meditate/session/:id" element={<MeditationSessionPage />} />
+                              <Route path="/meditation/session/:id" element={<MeditationSessionPage />} />
+                              <Route path="/offline-downloads" element={<OfflineDownloadsPage />} />
+                              <Route path="/breathe" element={<BreathePageRoute />} />
+                              <Route path="/progress" element={<ProgressPage />} />
+                              <Route path="/biofeedback" element={<BiofeedbackPage />} />
+                              <Route path="/focus" element={<FocusPage />} />
+                              <Route path="/morning-ritual" element={<MorningRitualPage />} />
+                              <Route path="/social" element={<SocialPage />} />
+                              <Route path="/settings" element={<SettingsPage />} />
+                              <Route path="/profile" element={<ProfilePage />} />
+                              <Route path="/onboarding" element={<OnboardingPage />} />
+                              <Route path="/work-life-balance" element={<WorkLifeBalancePage />} />
+                              <Route path="/work-life-balance/break-settings" element={<BreakSettingsPage />} />
+                              <Route path="/payment/success" element={<PaymentSuccessPage />} />
+                              <Route path="/payment/cancel" element={<PaymentCancelPage />} />
+                            </Routes>
+                          </main>
 
-                        <OfflineIndicator />
-                        <Toaster />
-                      </div>
+                          <OfflineIndicator />
+                          <Toaster />
+                        </div>
+                      </OfflineStorageProvider>
                     </NavigationHistoryProvider>
                   </NotificationsProvider>
                 </FocusProvider>

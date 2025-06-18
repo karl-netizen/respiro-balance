@@ -18,3 +18,15 @@ export const initializeAudioBucket = async (): Promise<boolean> => {
   // Mock implementation for demo
   return true;
 };
+
+export const uploadMeditationAudio = async (file: File): Promise<string> => {
+  // Mock implementation for demo
+  console.log('Mock uploading audio file:', file.name);
+  return `audio_${Date.now()}.mp3`;
+};
+
+export const deleteMeditationAudio = async (filename: string): Promise<boolean> => {
+  // Mock implementation for demo
+  console.log('Mock deleting audio file:', filename);
+  return true;
+};
