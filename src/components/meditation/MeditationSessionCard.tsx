@@ -86,7 +86,7 @@ const MeditationSessionCard: React.FC<MeditationSessionCardProps> = ({
                 {session.title}
               </h3>
               {isDownloaded && (
-                <Badge variant="secondary" className="text-xs">
+                <Badge variant="secondary" className="text-xs" data-guide="offline-badge">
                   <Check className="h-3 w-3 mr-1" />
                   Downloaded
                 </Badge>
@@ -127,6 +127,7 @@ const MeditationSessionCard: React.FC<MeditationSessionCardProps> = ({
             onClick={onPlay}
             className="flex-1 h-9"
             size="sm"
+            data-guide="play-button"
           >
             Play
           </Button>
@@ -137,6 +138,7 @@ const MeditationSessionCard: React.FC<MeditationSessionCardProps> = ({
               size="sm"
               onClick={handleDownload}
               className="px-3"
+              data-guide="download-button"
             >
               <Download className="h-4 w-4" />
             </Button>

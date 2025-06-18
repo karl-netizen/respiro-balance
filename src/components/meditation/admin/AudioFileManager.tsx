@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -26,7 +25,14 @@ const AudioFileManager: React.FC = () => {
   const loadAudioFiles = async () => {
     try {
       const files = await fetchMeditationAudioFiles();
-      setAudioFiles(files);
+      // Transform string[] to AudioFile[] with mock data
+      const audioFileObjects: AudioFile[] = files.map((filename, index) => ({
+        name: filename,
+        size: 1024 * 1024 * (index + 1), // Mock file size
+        url: `/audio/${filename}`,
+        uploadedAt: new Date().toISOString()
+      }));
+      setAudioFiles(audioFileObjects);
     } catch (error) {
       console.error('Error loading audio files:', error);
     }
