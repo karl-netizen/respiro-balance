@@ -9,6 +9,10 @@ const MeditationFilterExample = () => {
   const [sessions] = useState<MeditationSession[]>(meditationSessions);
   const [filteredSessions, setFilteredSessions] = useState<MeditationSession[]>(sessions);
   
+  const handlePlay = (session: MeditationSession) => {
+    console.log('Playing session:', session.title);
+  };
+  
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-6">Meditation Library</h1>
@@ -24,9 +28,7 @@ const MeditationFilterExample = () => {
           <MeditationSessionCard 
             key={session.id} 
             session={session}
-            onSelect={() => {}}
-            onToggleFavorite={() => {}}
-            isFavorite={false}
+            onPlay={() => handlePlay(session)}
           />
         ))}
       </div>
