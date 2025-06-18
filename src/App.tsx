@@ -1,3 +1,4 @@
+
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from '@/components/ui/sonner'
@@ -53,14 +54,14 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-        <Router>
-          <AuthProvider>
-            <UserPreferencesProvider>
-              <SubscriptionProvider>
-                <FocusProvider>
-                  <NotificationsProvider>
-                    <NavigationHistoryProvider>
-                      <OfflineStorageProvider>
+        <AuthProvider>
+          <UserPreferencesProvider>
+            <SubscriptionProvider>
+              <FocusProvider>
+                <NotificationsProvider>
+                  <NavigationHistoryProvider>
+                    <OfflineStorageProvider>
+                      <Router>
                         <div className="min-h-screen bg-background text-foreground w-full">
                           <SkipNavigation />
                           <AriaLiveRegion />
@@ -97,14 +98,14 @@ function App() {
                           <OfflineIndicator />
                           <Toaster />
                         </div>
-                      </OfflineStorageProvider>
-                    </NavigationHistoryProvider>
-                  </NotificationsProvider>
-                </FocusProvider>
-              </SubscriptionProvider>
-            </UserPreferencesProvider>
-          </AuthProvider>
-        </Router>
+                      </Router>
+                    </OfflineStorageProvider>
+                  </NavigationHistoryProvider>
+                </NotificationsProvider>
+              </FocusProvider>
+            </SubscriptionProvider>
+          </UserPreferencesProvider>
+        </AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>
   )

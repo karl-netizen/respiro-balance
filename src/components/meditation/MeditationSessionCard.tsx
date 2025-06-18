@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Clock, User, Download, Check } from 'lucide-react';
 import { MeditationSession } from '@/types/meditation';
-import { useOfflineStorage } from './offline/OfflineStorageProvider';
+import { useOfflineStorageSafe } from '@/hooks/useOfflineStorageSafe';
 import { DownloadProgressIndicator } from './offline/DownloadProgressIndicator';
 
 interface MeditationSessionCardProps {
@@ -19,22 +19,31 @@ const MeditationSessionCard: React.FC<MeditationSessionCardProps> = ({
   onPlay,
   className = ""
 }) => {
-  const { isSessionDownloaded, downloadSession } = useOfflineStorage();
+  const { isSessionDownloaded, downloadSession, isAvailable } = useOfflineStorageSafe();
   const [isDownloaded, setIsDownloaded] = React.useState(false);
   const [isDownloading, setIsDownloading] = React.useState(false);
   const [downloadProgress, setDownloadProgress] = React.useState(0);
 
   React.useEffect(() => {
-    checkDownloadStatus();
-  }, [session.id]);
+    if (isAvailable) {
+      checkDownloadStatus();
+    }
+  }, [session.id, isAvailable]);
 
   const checkDownloadStatus = async () => {
-    const downloaded = await isSessionDownloaded(session.id);
-    setIsDownloaded(downloaded);
+    if (!isAvailable) return;
+    
+    try {
+      const downloaded = await isSessionDownloaded(session.id);
+      setIsDownloaded(downloaded);
+    } catch (error) {
+      console.error('Error checking download status:', error);
+      setIsDownloaded(false);
+    }
   };
 
   const handleDownload = async () => {
-    if (!session.audio_url) return;
+    if (!session.audio_url || !isAvailable) return;
     
     setIsDownloading(true);
     setDownloadProgress(0);
@@ -64,6 +73,8 @@ const MeditationSessionCard: React.FC<MeditationSessionCardProps> = ({
       setDownloadProgress(0);
     }
   };
+
+  const showDownloadButton = isAvailable && !isDownloaded && !isDownloading && session.audio_url;
 
   return (
     <Card className={`hover:shadow-lg transition-all duration-300 ${className}`}>
@@ -120,7 +131,7 @@ const MeditationSessionCard: React.FC<MeditationSessionCardProps> = ({
             Play
           </Button>
           
-          {!isDownloaded && !isDownloading && session.audio_url && (
+          {showDownloadButton && (
             <Button
               variant="outline"
               size="sm"
