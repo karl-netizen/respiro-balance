@@ -1,102 +1,137 @@
+
 import React from 'react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Clock, Heart, Star, Brain, Zap, Target, Moon } from "lucide-react";
+import { Clock, User, Download, Check } from 'lucide-react';
 import { MeditationSession } from '@/types/meditation';
+import { useOfflineStorage } from './offline/OfflineStorageProvider';
+import { DownloadProgressIndicator } from './offline/DownloadProgressIndicator';
 
 interface MeditationSessionCardProps {
   session: MeditationSession;
-  onSelect: () => void;
-  isFavorite: boolean;
-  onToggleFavorite: () => void;
+  onPlay: () => void;
+  className?: string;
 }
 
 const MeditationSessionCard: React.FC<MeditationSessionCardProps> = ({
   session,
-  onSelect,
-  isFavorite,
-  onToggleFavorite
+  onPlay,
+  className = ""
 }) => {
-  const getCategoryIcon = (category: string) => {
-    const baseIconProps = { className: "h-8 w-8 mb-3" };
-    switch (category.toLowerCase()) {
-      case 'guided': return <Brain {...baseIconProps} className="h-8 w-8 mb-3 text-blue-500" />;
-      case 'quick': return <Zap {...baseIconProps} className="h-8 w-8 mb-3 text-green-500" />;
-      case 'deep': return <Target {...baseIconProps} className="h-8 w-8 mb-3 text-purple-500" />;
-      case 'sleep': return <Moon {...baseIconProps} className="h-8 w-8 mb-3 text-indigo-500" />;
-      default: return <Brain {...baseIconProps} className="h-8 w-8 mb-3 text-blue-500" />;
+  const { isSessionDownloaded, downloadSession } = useOfflineStorage();
+  const [isDownloaded, setIsDownloaded] = React.useState(false);
+  const [isDownloading, setIsDownloading] = React.useState(false);
+  const [downloadProgress, setDownloadProgress] = React.useState(0);
+
+  React.useEffect(() => {
+    checkDownloadStatus();
+  }, [session.id]);
+
+  const checkDownloadStatus = async () => {
+    const downloaded = await isSessionDownloaded(session.id);
+    setIsDownloaded(downloaded);
+  };
+
+  const handleDownload = async () => {
+    if (!session.audio_url) return;
+    
+    setIsDownloading(true);
+    setDownloadProgress(0);
+
+    // Simulate progress for better UX
+    const progressInterval = setInterval(() => {
+      setDownloadProgress(prev => {
+        if (prev >= 90) {
+          clearInterval(progressInterval);
+          return prev;
+        }
+        return prev + 10;
+      });
+    }, 200);
+
+    try {
+      const success = await downloadSession(session.id, session.audio_url, session);
+      if (success) {
+        setDownloadProgress(100);
+        setIsDownloaded(true);
+      }
+    } catch (error) {
+      console.error('Download failed:', error);
+    } finally {
+      clearInterval(progressInterval);
+      setIsDownloading(false);
+      setDownloadProgress(0);
     }
   };
 
   return (
-    <Card className="overflow-hidden hover:shadow-lg hover:scale-105 transition-all duration-300 cursor-pointer group">
-      <div 
-        className="h-32 bg-secondary/50 flex items-center justify-center"
-        style={session.image_url ? { backgroundImage: `url(${session.image_url})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
-      >
-        {!session.image_url && (
-          <div className="text-4xl">{session.icon || '🧘'}</div>
-        )}
-      </div>
-      
-      <CardHeader className="p-4 pb-2">
-        <div className="flex flex-col items-center text-center">
-          {getCategoryIcon(session.category)}
-          <div className="flex justify-between items-start w-full">
-            <CardTitle className="text-lg group-hover:text-respiro-dark transition-colors duration-300">{session.title}</CardTitle>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="h-8 w-8 hover:scale-110 transition-transform duration-200" 
-              onClick={(e) => {
-                e.stopPropagation();
-                onToggleFavorite();
-              }}
-            >
-              <Heart className={`h-4 w-4 text-red-500 transition-colors duration-200 ${isFavorite ? 'fill-current' : ''}`} />
-              <span className="sr-only">Toggle favorite</span>
-            </Button>
-          </div>
-        </div>
-        <div className="flex gap-2 items-center mt-1 justify-center">
-          <Badge variant="outline" className="text-xs group-hover:border-respiro-dark transition-colors duration-300">
-            {session.category}
-          </Badge>
-          <Badge variant="outline" className="text-xs group-hover:border-respiro-dark transition-colors duration-300">
-            {session.level || session.difficulty || 'Beginner'}
-          </Badge>
-        </div>
-      </CardHeader>
-      
-      <CardContent className="p-4 pt-0">
-        <CardDescription className="line-clamp-2 mb-3 h-10 text-center">
-          {session.description}
-        </CardDescription>
-        
-        <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <div className="flex items-center gap-1">
-            <Clock className="h-3 w-3 text-respiro-dark" />
-            <span>{session.duration} min</span>
-          </div>
-          {session.rating && (
-            <div className="flex items-center gap-1">
-              <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-              <span>{session.rating}</span>
+    <Card className={`hover:shadow-lg transition-all duration-300 ${className}`}>
+      <CardContent className="p-4">
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-1">
+              <h3 className="font-semibold text-sm md:text-base line-clamp-2">
+                {session.title}
+              </h3>
+              {isDownloaded && (
+                <Badge variant="secondary" className="text-xs">
+                  <Check className="h-3 w-3 mr-1" />
+                  Downloaded
+                </Badge>
+              )}
             </div>
+            
+            <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
+              {session.description}
+            </p>
+            
+            <div className="flex items-center gap-3 text-xs text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <Clock className="h-3 w-3" />
+                <span>{session.duration} min</span>
+              </div>
+              {session.instructor && (
+                <div className="flex items-center gap-1">
+                  <User className="h-3 w-3" />
+                  <span>{session.instructor}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {isDownloading && (
+          <div className="mb-3">
+            <DownloadProgressIndicator
+              status="downloading"
+              progress={downloadProgress}
+              size="sm"
+            />
+          </div>
+        )}
+
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={onPlay}
+            className="flex-1 h-9"
+            size="sm"
+          >
+            Play
+          </Button>
+          
+          {!isDownloaded && !isDownloading && session.audio_url && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleDownload}
+              className="px-3"
+            >
+              <Download className="h-4 w-4" />
+            </Button>
           )}
         </div>
       </CardContent>
-      
-      <CardFooter className="p-2 border-t">
-        <Button 
-          className="w-full bg-respiro-dark hover:bg-respiro-darker text-white transition-colors duration-300" 
-          variant="ghost" 
-          onClick={onSelect}
-        >
-          Begin Session
-        </Button>
-      </CardFooter>
     </Card>
   );
 };
