@@ -1,26 +1,42 @@
 
-import { useCallback } from 'react';
-import { toast } from 'sonner';
+import { useState, useEffect } from 'react';
 import { MeditationSession } from '@/types/meditation';
-import { useSessionStorage } from './useSessionStorage';
 
 export const useMeditationFavorites = () => {
-  const [favoriteSessions, setFavoriteSessions] = useSessionStorage<string[]>('favoriteSessions', []);
+  const [favoriteSessions, setFavoriteSessions] = useState<string[]>([]);
   
-  const handleToggleFavorite = useCallback((session: MeditationSession) => {
-    if (favoriteSessions.includes(session.id)) {
-      setFavoriteSessions(favoriteSessions.filter(id => id !== session.id));
-      toast.info(`Removed "${session.title}" from favorites`);
-    } else {
-      setFavoriteSessions([...favoriteSessions, session.id]);
-      toast.success(`Added "${session.title}" to favorites`);
+  // Load favorites from localStorage on mount
+  useEffect(() => {
+    const savedFavorites = localStorage.getItem('meditation-favorites');
+    if (savedFavorites) {
+      try {
+        setFavoriteSessions(JSON.parse(savedFavorites));
+      } catch (error) {
+        console.error('Error parsing saved favorites:', error);
+        setFavoriteSessions([]);
+      }
     }
-  }, [favoriteSessions, setFavoriteSessions]);
+  }, []);
   
-  const isFavorite = useCallback((sessionId: string): boolean => {
-    return favoriteSessions.includes(sessionId);
+  // Save favorites to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('meditation-favorites', JSON.stringify(favoriteSessions));
   }, [favoriteSessions]);
+  
+  const handleToggleFavorite = (session: MeditationSession) => {
+    setFavoriteSessions(prev => {
+      if (prev.includes(session.id)) {
+        return prev.filter(id => id !== session.id);
+      } else {
+        return [...prev, session.id];
+      }
+    });
+  };
 
+  const isFavorite = (sessionId: string) => {
+    return favoriteSessions.includes(sessionId);
+  };
+  
   return {
     favoriteSessions,
     handleToggleFavorite,

@@ -1,39 +1,23 @@
 
-// Provide a basic implementation for the missing methods in useOfflineSync
-import { MeditationSession } from '@/types/meditation';
-
-export interface OfflineSyncState {
-  pendingSessions: MeditationSession[];
-  isPending: boolean;
-}
-
-export function useOfflineSync(
-  userId?: string,
-  updateUsage?: (minutes: number) => void,
-  onSyncComplete?: () => void
-) {
-  // Return the missing functions that are used in useMeditationSessions.ts
-  return {
-    syncState: {
-      pendingSessions: [],
-      isPending: false
-    },
-    addPendingSession: (session: MeditationSession) => {
-      console.log('Adding pending session', session);
-    },
-    syncPendingSessions: async () => {
-      console.log('Syncing pending sessions');
-    },
-    processOfflineSync: async () => {
-      console.log('Processing offline sync');
-    },
-    handleOfflineSessionStart: (newSession: Omit<MeditationSession, "id">, user: any) => {
-      console.log('Handling offline session start', newSession, user);
-      const sessionId = `offline-${Date.now()}`;
-      return sessionId;
-    },
-    handleOfflineSessionComplete: async (sessionId: string, user: any) => {
-      console.log('Handling offline session complete', sessionId, user);
-    }
+export const useOfflineSync = (userId?: string, updateUsage?: any, invalidateQueries?: any) => {
+  const processOfflineSync = async () => {
+    // Mock implementation
+    return;
   };
-}
+
+  const handleOfflineSessionStart = (session: any, user: any): string => {
+    // Mock implementation
+    return `offline-${Date.now()}`;
+  };
+
+  const handleOfflineSessionComplete = async (sessionId: string, user: any) => {
+    // Mock implementation
+    return;
+  };
+
+  return {
+    processOfflineSync,
+    handleOfflineSessionStart,
+    handleOfflineSessionComplete
+  };
+};

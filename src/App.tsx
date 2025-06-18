@@ -20,6 +20,7 @@ import '@/styles/animations.css'
 import LandingPage from '@/pages/LandingPage'
 import DashboardPage from '@/pages/DashboardPage'
 import MeditationPage from '@/pages/MeditationPage'
+import Meditate from '@/pages/Meditate'
 import MeditationSessionPage from '@/pages/MeditationSessionPage'
 import BreathePageRoute from '@/pages/BreathePageRoute'
 import ProgressPage from '@/pages/ProgressPage'
@@ -37,6 +38,7 @@ import ResetPasswordPage from '@/pages/ResetPasswordPage'
 import LoginPage from '@/pages/LoginPage'
 import SignupPage from '@/pages/SignupPage'
 import BreakSettingsPage from '@/pages/BreakSettingsPage'
+import OfflineDownloadsPage from '@/pages/OfflineDownloadsPage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -71,7 +73,10 @@ function App() {
                             <Route path="/reset-password" element={<ResetPasswordPage />} />
                             <Route path="/dashboard" element={<DashboardPage />} />
                             <Route path="/meditation" element={<MeditationPage />} />
+                            <Route path="/meditate" element={<Meditate />} />
+                            <Route path="/meditate/session/:id" element={<MeditationSessionPage />} />
                             <Route path="/meditation/session/:id" element={<MeditationSessionPage />} />
+                            <Route path="/offline-downloads" element={<OfflineDownloadsPage />} />
                             <Route path="/breathe" element={<BreathePageRoute />} />
                             <Route path="/progress" element={<ProgressPage />} />
                             <Route path="/biofeedback" element={<BiofeedbackPage />} />
