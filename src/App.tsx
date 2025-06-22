@@ -60,10 +60,10 @@ function App() {
             <SubscriptionProvider>
               <FocusProvider>
                 <NotificationsProvider>
-                  <NavigationHistoryProvider>
+                  <Router>
                     <OfflineStorageProvider>
-                      <OnboardingOrchestrator>
-                        <Router>
+                      <NavigationHistoryProvider>
+                        <OnboardingOrchestrator>
                           <div className="min-h-screen bg-background text-foreground w-full">
                             <SkipNavigation />
                             <AriaLiveRegion />
@@ -100,10 +100,10 @@ function App() {
                             <OfflineIndicator />
                             <Toaster />
                           </div>
-                        </Router>
-                      </OnboardingOrchestrator>
+                        </OnboardingOrchestrator>
+                      </NavigationHistoryProvider>
                     </OfflineStorageProvider>
-                  </NavigationHistoryProvider>
+                  </Router>
                 </NotificationsProvider>
               </FocusProvider>
             </SubscriptionProvider>

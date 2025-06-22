@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { Card, CardContent } from '@/components/ui/card';
@@ -21,6 +22,8 @@ const TooltipSystem: React.FC<TooltipSystemProps> = ({ tooltips }) => {
   const tooltipRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
   useEffect(() => {
+    const cleanupFunctions: (() => void)[] = [];
+    
     const handleTooltipTriggers = () => {
       tooltips.forEach(tooltip => {
         // Skip if already viewed and showOnce is true
@@ -38,7 +41,7 @@ const TooltipSystem: React.FC<TooltipSystemProps> = ({ tooltips }) => {
 
         const showTooltip = () => {
           const rect = targetElement.getBoundingClientRect();
-          let position = calculatePosition(tooltip.placement, rect, 300, 200); // approximate tooltip dimensions
+          let position = calculatePosition(tooltip.placement, rect, 300, 200);
 
           const activeTooltip: ActiveTooltip = {
             ...tooltip,
@@ -70,32 +73,34 @@ const TooltipSystem: React.FC<TooltipSystemProps> = ({ tooltips }) => {
           case 'hover':
             targetElement.addEventListener('mouseenter', showTooltip);
             targetElement.addEventListener('mouseleave', hideTooltip);
+            cleanupFunctions.push(() => {
+              targetElement.removeEventListener('mouseenter', showTooltip);
+              targetElement.removeEventListener('mouseleave', hideTooltip);
+            });
             break;
           case 'click':
             targetElement.addEventListener('click', showTooltip);
+            cleanupFunctions.push(() => {
+              targetElement.removeEventListener('click', showTooltip);
+            });
             break;
           case 'focus':
             targetElement.addEventListener('focus', showTooltip);
             targetElement.addEventListener('blur', hideTooltip);
+            cleanupFunctions.push(() => {
+              targetElement.removeEventListener('focus', showTooltip);
+              targetElement.removeEventListener('blur', hideTooltip);
+            });
             break;
           case 'manual':
             // Manual tooltips are triggered programmatically
             break;
         }
-
-        // Cleanup function
-        return () => {
-          targetElement.removeEventListener('mouseenter', showTooltip);
-          targetElement.removeEventListener('mouseleave', hideTooltip);
-          targetElement.removeEventListener('click', showTooltip);
-          targetElement.removeEventListener('focus', showTooltip);
-          targetElement.removeEventListener('blur', hideTooltip);
-        };
       });
     };
 
     // Set up tooltip triggers
-    const cleanup = handleTooltipTriggers();
+    handleTooltipTriggers();
 
     // Set up global tooltip trigger function
     window.triggerTooltip = (tooltipId: string) => {
@@ -123,7 +128,7 @@ const TooltipSystem: React.FC<TooltipSystemProps> = ({ tooltips }) => {
     };
 
     return () => {
-      if (cleanup) cleanup;
+      cleanupFunctions.forEach(cleanup => cleanup());
       delete window.triggerTooltip;
     };
   }, [tooltips, hasViewedTooltip, markTooltipViewed]);
