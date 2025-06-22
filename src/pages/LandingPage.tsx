@@ -23,12 +23,12 @@ const LandingPage = () => {
   };
   
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen relative">
       <Header />
       <Hero />
       
-      {/* Benefits Section with restored branding colors */}
-      <section className="py-20 px-6 bg-respiro-light/20" id="benefits">
+      {/* Benefits Section */}
+      <section className="py-20 px-6 bg-respiro-light/20 relative z-10" id="benefits">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-respiro-text">Why Choose Respiro Balance</h2>
@@ -75,7 +75,7 @@ const LandingPage = () => {
           <div className="text-center mt-16">
             <Button 
               size="lg" 
-              className="bg-respiro-dark hover:bg-respiro-darker text-white transition-transform hover:scale-105 shadow-lg hover:shadow-xl hover:shadow-respiro-default/30"
+              className="bg-respiro-dark hover:bg-respiro-darker text-white transition-transform hover:scale-105 shadow-lg hover:shadow-xl hover:shadow-respiro-default/30 relative z-10"
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
               onClick={handleGetStarted}
@@ -87,7 +87,7 @@ const LandingPage = () => {
               Get Started Now
             </Button>
             <p className="mt-4 text-sm text-respiro-text/70">
-              No credit card required. Start with our free plan.
+              No credit card required. Start with your wellness journey.
             </p>
           </div>
         </div>

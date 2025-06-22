@@ -20,7 +20,7 @@ const Hero = () => {
     if (user) {
       navigate('/dashboard');
     } else {
-      navigate('/login');
+      navigate('/onboarding');
     }
   };
 
@@ -30,10 +30,10 @@ const Hero = () => {
       <div className="absolute inset-0 bg-gradient-to-b from-respiro-light/30 to-transparent -z-10" />
       
       {/* Decorative circles - adjusted for mobile */}
-      <div className="absolute top-40 -right-20 w-60 md:w-80 h-60 md:h-80 rounded-full bg-respiro-light/40 blur-3xl -z-10" />
-      <div className="absolute bottom-20 -left-20 w-60 md:w-80 h-60 md:h-80 rounded-full bg-respiro-light/30 blur-3xl -z-10" />
+      <div className="absolute top-40 -right-20 w-60 md:w-80 h-60 md:h-80 rounded-full bg-respiro-light/40 blur-3xl -z-20" />
+      <div className="absolute bottom-20 -left-20 w-60 md:w-80 h-60 md:h-80 rounded-full bg-respiro-light/30 blur-3xl -z-20" />
       
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto relative z-10">
         <div className="flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12">
           <div className={`md:w-1/2 space-y-4 md:space-y-6 ${loaded ? 'animate-float-up' : 'opacity-0'}`}>
             <div className="inline-block">
@@ -53,7 +53,7 @@ const Hero = () => {
             <div className="flex flex-col sm:flex-row gap-3 pt-2 md:pt-4">
               <Button 
                 size={isMobile ? "default" : "lg"}
-                className="bg-primary text-white hover:bg-respiro-dark transition-all duration-300 rounded-2xl px-8 py-3 text-base font-medium shadow-lg hover:shadow-xl hover:shadow-primary/25 transform hover:scale-105 hover:glow-effect"
+                className="bg-primary text-white hover:bg-respiro-dark transition-all duration-300 rounded-2xl px-8 py-3 text-base font-medium shadow-lg hover:shadow-xl hover:shadow-primary/25 transform hover:scale-105 hover:glow-effect relative z-10"
                 onClick={handleGetStarted}
               >
                 Start Your Balance Journey
@@ -61,7 +61,7 @@ const Hero = () => {
               <Button 
                 size={isMobile ? "default" : "lg"}
                 variant="outline" 
-                className="border-primary text-primary hover:bg-primary/10 button-transition"
+                className="border-primary text-primary hover:bg-primary/10 button-transition relative z-10"
                 onClick={() => document.getElementById('benefits')?.scrollIntoView({ behavior: 'smooth' })}
               >
                 Discover More
@@ -81,7 +81,7 @@ const Hero = () => {
           </div>
           
           <div className={`w-full md:w-1/2 mt-8 md:mt-0 ${loaded ? 'animate-float-up animation-delay-200' : 'opacity-0'}`}>
-            <div className="relative">
+            <div className="relative z-10">
               <div className="aspect-square w-full max-w-xs md:max-w-md mx-auto rounded-3xl glassmorphism-card p-4 md:p-6 overflow-hidden">
                 <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-respiro-light via-respiro to-respiro-dark" />
                 
@@ -97,7 +97,7 @@ const Hero = () => {
                   
                   <Button 
                     variant="outline" 
-                    className="border-primary text-primary hover:bg-primary/10 rounded-full text-xs md:text-sm"
+                    className="border-primary text-primary hover:bg-primary/10 rounded-full text-xs md:text-sm relative z-10"
                     onClick={handleGetStarted}
                   >
                     Begin 5-Min Respiro Session
@@ -112,7 +112,7 @@ const Hero = () => {
           </div>
         </div>
         
-        <div className="absolute bottom-6 md:bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
+        <div className="absolute bottom-6 md:bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce z-10">
           <a 
             href="#benefits" 
             className="flex flex-col items-center text-foreground/60 hover:text-primary transition-colors"

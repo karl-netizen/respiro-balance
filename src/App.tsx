@@ -10,7 +10,7 @@ import { FocusProvider } from '@/context/FocusProvider'
 import { NotificationsProvider } from '@/context/NotificationsProvider'
 import { NavigationHistoryProvider } from '@/context/NavigationHistoryProvider'
 import { OfflineStorageProvider } from '@/components/meditation/offline/OfflineStorageProvider'
-import { OnboardingOrchestrator } from '@/components/guide'
+// import { OnboardingOrchestrator } from '@/components/guide'  // DISABLED - causing modal issues
 import SkipNavigation from '@/components/accessibility/SkipNavigation'
 import OfflineIndicator from '@/components/common/OfflineIndicator'
 import AriaLiveRegion from '@/components/accessibility/AriaLiveRegion'
@@ -63,7 +63,7 @@ function App() {
                   <Router>
                     <OfflineStorageProvider>
                       <NavigationHistoryProvider>
-                        <OnboardingOrchestrator>
+                        {/* <OnboardingOrchestrator> */}  {/* DISABLED - causing modal overlay issues */}
                           <div className="min-h-screen bg-background text-foreground w-full">
                             <SkipNavigation />
                             <AriaLiveRegion />
@@ -100,7 +100,7 @@ function App() {
                             <OfflineIndicator />
                             <Toaster />
                           </div>
-                        </OnboardingOrchestrator>
+                        {/* </OnboardingOrchestrator> */}
                       </NavigationHistoryProvider>
                     </OfflineStorageProvider>
                   </Router>
