@@ -1,64 +1,69 @@
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 interface NavigationHistoryContextType {
-  canGoBack: boolean;
+  history: string[];
+  addToHistory: (path: string) => void;
   goBack: () => void;
+  canGoBack: boolean;
   previousPath: string | null;
 }
 
 const NavigationHistoryContext = createContext<NavigationHistoryContextType | undefined>(undefined);
 
-export const NavigationHistoryProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [history, setHistory] = useState<string[]>([]);
-  const location = useLocation();
-  const navigate = useNavigate();
+interface NavigationHistoryProviderProps {
+  children: ReactNode;
+}
 
-  useEffect(() => {
-    const currentPath = location.pathname;
-    
+export const NavigationHistoryProvider: React.FC<NavigationHistoryProviderProps> = ({ children }) => {
+  const [history, setHistory] = useState<string[]>(['/']);
+
+  const addToHistory = (path: string) => {
     setHistory(prev => {
-      const newHistory = [...prev];
-      
-      // Don't add the same path twice in a row
-      if (newHistory[newHistory.length - 1] !== currentPath) {
-        newHistory.push(currentPath);
-        
-        // Keep only the last 10 pages to prevent memory issues
-        if (newHistory.length > 10) {
-          newHistory.shift();
-        }
+      if (prev[prev.length - 1] !== path) {
+        return [...prev.slice(-9), path];
       }
-      
-      return newHistory;
+      return prev;
     });
-  }, [location.pathname]);
+  };
+
+  const goBack = () => {
+    if (history.length > 1) {
+      setHistory(prev => prev.slice(0, -1));
+      // Use window.history.back() instead of React Router navigate
+      window.history.back();
+    }
+  };
 
   const canGoBack = history.length > 1;
   const previousPath = history.length > 1 ? history[history.length - 2] : null;
 
-  const goBack = () => {
-    if (canGoBack && previousPath) {
-      // Remove the current page from history before navigating back
-      setHistory(prev => prev.slice(0, -1));
-      navigate(previousPath);
-    } else {
-      // Fallback to dashboard or landing page
-      navigate('/dashboard');
-    }
+  const value = {
+    history,
+    addToHistory,
+    goBack,
+    canGoBack,
+    previousPath
   };
 
   return (
-    <NavigationHistoryContext.Provider value={{ canGoBack, goBack, previousPath }}>
+    <NavigationHistoryContext.Provider value={value}>
       {children}
     </NavigationHistoryContext.Provider>
   );
 };
 
-export const useNavigationHistory = (): NavigationHistoryContextType => {
+export const useNavigationHistory = () => {
   const context = useContext(NavigationHistoryContext);
   if (context === undefined) {
-    throw new Error('useNavigationHistory must be used within a NavigationHistoryProvider');
+    // Return safe defaults instead of throwing error
+    return {
+      history: ['/'],
+      addToHistory: () => {},
+      goBack: () => {},
+      canGoBack: false,
+      previousPath: null
+    };
   }
   return context;
 };
