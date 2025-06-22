@@ -12,6 +12,13 @@ interface OnboardingOrchestratorProps {
   children: React.ReactNode;
 }
 
+// Extend window interface for custom tooltip trigger
+declare global {
+  interface Window {
+    triggerTooltip?: (tooltipId: string) => void;
+  }
+}
+
 const OnboardingOrchestrator: React.FC<OnboardingOrchestratorProps> = ({ children }) => {
   const [activeTourId, setActiveTourId] = useState<string | undefined>();
   const [userProfile, setUserProfile] = useState<UserProfileAnalysis | null>(null);

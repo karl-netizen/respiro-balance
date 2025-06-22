@@ -1,18 +1,15 @@
 
-import React, { useState, useCallback, useEffect } from 'react';
-import { createPortal } from 'react-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useState, useEffect, useRef } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { ChevronLeft, ChevronRight, X, SkipForward } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, SkipForward } from 'lucide-react';
 import { TourSequence, TourStep } from './types';
-import { useUserGuideProgress } from './hooks/useUserGuideProgress';
 
 interface GuidedTourEngineProps {
   tours: TourSequence[];
   activeTourId?: string;
-  onTourComplete?: (tourId: string) => void;
-  onTourSkip?: (tourId: string) => void;
+  onTourComplete: (tourId: string) => void;
+  onTourSkip: (tourId: string) => void;
 }
 
 const GuidedTourEngine: React.FC<GuidedTourEngineProps> = ({
@@ -21,286 +18,195 @@ const GuidedTourEngine: React.FC<GuidedTourEngineProps> = ({
   onTourComplete,
   onTourSkip
 }) => {
-  const [currentTour, setCurrentTour] = useState<TourSequence | null>(null);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [isVisible, setIsVisible] = useState(false);
-  const [targetElement, setTargetElement] = useState<Element | null>(null);
-  const [overlayVisible, setOverlayVisible] = useState(false);
+  const [highlightedElement, setHighlightedElement] = useState<Element | null>(null);
+  const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
+  const tooltipRef = useRef<HTMLDivElement>(null);
 
-  const { markTourCompleted, hasTourCompleted, userPreferences } = useUserGuideProgress();
+  const activeTour = tours.find(tour => tour.id === activeTourId);
+  const currentStep = activeTour?.steps[currentStepIndex];
 
-  // Find and start tour
-  const startTour = useCallback((tourId: string) => {
-    const tour = tours.find(t => t.id === tourId);
-    if (!tour || hasTourCompleted(tourId)) return;
+  useEffect(() => {
+    if (!currentStep) return;
 
-    setCurrentTour(tour);
-    setCurrentStepIndex(0);
-    setIsVisible(true);
-    setOverlayVisible(true);
-  }, [tours, hasTourCompleted]);
-
-  // End tour
-  const endTour = useCallback((completed: boolean = false) => {
-    if (currentTour) {
-      if (completed) {
-        markTourCompleted(currentTour.id);
-        onTourComplete?.(currentTour.id);
-      } else {
-        onTourSkip?.(currentTour.id);
+    const targetElement = document.querySelector(currentStep.target);
+    if (targetElement) {
+      setHighlightedElement(targetElement);
+      targetElement.classList.add('tour-highlight');
+      
+      // Calculate tooltip position
+      const rect = targetElement.getBoundingClientRect();
+      const tooltipRect = tooltipRef.current?.getBoundingClientRect();
+      
+      let position = { top: 0, left: 0 };
+      
+      switch (currentStep.placement) {
+        case 'top':
+          position = {
+            top: rect.top - (tooltipRect?.height || 0) - 10,
+            left: rect.left + rect.width / 2 - (tooltipRect?.width || 0) / 2
+          };
+          break;
+        case 'bottom':
+          position = {
+            top: rect.bottom + 10,
+            left: rect.left + rect.width / 2 - (tooltipRect?.width || 0) / 2
+          };
+          break;
+        case 'left':
+          position = {
+            top: rect.top + rect.height / 2 - (tooltipRect?.height || 0) / 2,
+            left: rect.left - (tooltipRect?.width || 0) - 10
+          };
+          break;
+        case 'right':
+          position = {
+            top: rect.top + rect.height / 2 - (tooltipRect?.height || 0) / 2,
+            left: rect.right + 10
+          };
+          break;
       }
+      
+      setTooltipPosition(position);
     }
+
+    return () => {
+      if (targetElement) {
+        targetElement.classList.remove('tour-highlight');
+      }
+    };
+  }, [currentStep]);
+
+  const handleNext = () => {
+    if (!activeTour) return;
     
-    setCurrentTour(null);
-    setCurrentStepIndex(0);
-    setIsVisible(false);
-    setOverlayVisible(false);
-    setTargetElement(null);
-  }, [currentTour, markTourCompleted, onTourComplete, onTourSkip]);
-
-  // Navigate to next step
-  const nextStep = useCallback(() => {
-    if (!currentTour) return;
-
-    if (currentStepIndex < currentTour.steps.length - 1) {
+    if (currentStepIndex < activeTour.steps.length - 1) {
       setCurrentStepIndex(prev => prev + 1);
     } else {
-      endTour(true);
+      onTourComplete(activeTour.id);
+      setCurrentStepIndex(0);
     }
-  }, [currentTour, currentStepIndex, endTour]);
+  };
 
-  // Navigate to previous step
-  const previousStep = useCallback(() => {
+  const handlePrevious = () => {
     if (currentStepIndex > 0) {
       setCurrentStepIndex(prev => prev - 1);
     }
-  }, [currentStepIndex]);
+  };
 
-  // Skip tour
-  const skipTour = useCallback(() => {
-    endTour(false);
-  }, [endTour]);
+  const handleSkip = () => {
+    if (!activeTour) return;
+    onTourSkip(activeTour.id);
+    setCurrentStepIndex(0);
+  };
 
-  // Find target element and highlight it
-  useEffect(() => {
-    if (!currentTour || !isVisible) return;
+  const handleClose = () => {
+    if (!activeTour) return;
+    onTourSkip(activeTour.id);
+    setCurrentStepIndex(0);
+  };
 
-    const currentStep = currentTour.steps[currentStepIndex];
-    if (!currentStep) return;
-
-    const target = document.querySelector(currentStep.target);
-    if (target) {
-      setTargetElement(target);
-      
-      // Scroll target into view
-      target.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
-        inline: 'center'
-      });
-
-      // Add highlight class if specified
-      if (currentStep.highlight) {
-        target.classList.add('tour-highlight');
-      }
-    }
-
-    // Cleanup previous highlights
-    return () => {
-      if (target && currentStep.highlight) {
-        target.classList.remove('tour-highlight');
-      }
-    };
-  }, [currentTour, currentStepIndex, isVisible]);
-
-  // Auto-start tour based on activeTourId
-  useEffect(() => {
-    if (activeTourId && !currentTour) {
-      startTour(activeTourId);
-    }
-  }, [activeTourId, currentTour, startTour]);
-
-  // Handle keyboard navigation
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (!isVisible) return;
-
-      switch (event.key) {
-        case 'Escape':
-          endTour(false);
-          break;
-        case 'ArrowRight':
-        case 'Enter':
-          event.preventDefault();
-          nextStep();
-          break;
-        case 'ArrowLeft':
-          event.preventDefault();
-          previousStep();
-          break;
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isVisible, nextStep, previousStep, endTour]);
-
-  if (!currentTour || !isVisible) {
+  if (!activeTour || !currentStep) {
     return null;
   }
 
-  const currentStep = currentTour.steps[currentStepIndex];
-  const progress = ((currentStepIndex + 1) / currentTour.steps.length) * 100;
-  const isFirstStep = currentStepIndex === 0;
-  const isLastStep = currentStepIndex === currentTour.steps.length - 1;
+  const progress = ((currentStepIndex + 1) / activeTour.steps.length) * 100;
 
-  // Calculate position for tour step card
-  const getStepPosition = () => {
-    if (!targetElement) return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' };
-
-    const rect = targetElement.getBoundingClientRect();
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-
-    let top = rect.bottom + 20;
-    let left = rect.left;
-
-    // Adjust for viewport boundaries
-    if (top + 300 > viewportHeight) {
-      top = rect.top - 320;
-    }
-    if (left + 400 > viewportWidth) {
-      left = viewportWidth - 420;
-    }
-    if (left < 20) {
-      left = 20;
-    }
-
-    return {
-      position: 'fixed',
-      top: `${top}px`,
-      left: `${left}px`,
-      zIndex: 1000
-    };
-  };
-
-  const tourContent = (
+  return (
     <>
       {/* Overlay */}
-      {overlayVisible && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-40 animate-fade-in"
-          onClick={() => endTour(false)}
-        />
-      )}
-
-      {/* Spotlight effect for highlighted element */}
-      {targetElement && currentStep.highlight && (
-        <div 
-          className="fixed pointer-events-none z-50"
-          style={{
-            top: targetElement.getBoundingClientRect().top - 4,
-            left: targetElement.getBoundingClientRect().left - 4,
-            width: targetElement.getBoundingClientRect().width + 8,
-            height: targetElement.getBoundingClientRect().height + 8,
-            boxShadow: '0 0 0 4px rgba(0, 137, 123, 0.3), 0 0 0 9999px rgba(0, 0, 0, 0.5)',
-            borderRadius: '8px'
-          }}
-        />
-      )}
-
-      {/* Tour Step Card */}
-      <div 
-        style={getStepPosition()}
-        className="animate-scale-in z-50"
+      <div className="fixed inset-0 bg-black bg-opacity-50 z-50" />
+      
+      {/* Tour Tooltip */}
+      <div
+        ref={tooltipRef}
+        className="fixed z-[51] max-w-sm"
+        style={{
+          top: `${tooltipPosition.top}px`,
+          left: `${tooltipPosition.left}px`,
+          transform: 'translateX(-50%)'
+        } as React.CSSProperties}
       >
-        <Card className="w-[400px] max-w-[90vw] shadow-2xl border-primary/20">
-          <CardHeader className="pb-3">
+        <Card className="shadow-lg border-2 border-primary">
+          <CardContent className="p-4">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <h3 className="font-semibold text-sm">{currentStep.title}</h3>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleClose}
+                  className="h-6 w-6 p-0"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Progress Bar */}
+            <div className="mb-3">
+              <div className="w-full bg-gray-200 rounded-full h-1">
+                <div 
+                  className="bg-primary h-1 rounded-full transition-all duration-300"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Step {currentStepIndex + 1} of {activeTour.steps.length}
+              </p>
+            </div>
+
+            {/* Content */}
+            <div className="mb-4">
+              <p className="text-sm text-muted-foreground">
+                {currentStep.content}
+              </p>
+            </div>
+
+            {/* Actions */}
             <div className="flex items-center justify-between">
-              <CardTitle className="text-lg font-semibold text-primary">
-                {currentStep.title}
-              </CardTitle>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => endTour(false)}
-                className="h-8 w-8 p-0"
-                aria-label="Close tour"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-            
-            {/* Progress bar */}
-            <div className="space-y-2">
-              <div className="flex justify-between text-xs text-muted-foreground">
-                <span>Step {currentStepIndex + 1} of {currentTour.steps.length}</span>
-                <span>{Math.round(progress)}% complete</span>
-              </div>
-              <Progress value={progress} className="h-2" />
-            </div>
-          </CardHeader>
-
-          <CardContent className="space-y-4">
-            <div className="text-sm text-gray-700 dark:text-gray-200">
-              {typeof currentStep.content === 'string' ? (
-                <p>{currentStep.content}</p>
-              ) : (
-                currentStep.content
-              )}
-            </div>
-
-            {/* Custom component */}
-            {currentStep.customComponent && (
-              <div className="border-t pt-4">
-                <currentStep.customComponent />
-              </div>
-            )}
-
-            {/* Navigation */}
-            <div className="flex items-center justify-between pt-4 border-t">
-              <div className="flex items-center space-x-2">
-                {!isFirstStep && (
+              <div className="flex gap-2">
+                {currentStepIndex > 0 && (
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={previousStep}
-                    className="flex items-center space-x-1"
+                    onClick={handlePrevious}
                   >
-                    <ChevronLeft className="h-4 w-4" />
-                    <span>Back</span>
-                  </Button>
-                )}
-                
-                {currentStep.skippable && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={skipTour}
-                    className="flex items-center space-x-1 text-muted-foreground"
-                  >
-                    <SkipForward className="h-4 w-4" />
-                    <span>Skip Tour</span>
+                    <ChevronLeft className="h-4 w-4 mr-1" />
+                    Back
                   </Button>
                 )}
               </div>
-
-              <Button
-                onClick={nextStep}
-                size="sm"
-                className="flex items-center space-x-1"
-              >
-                <span>{isLastStep ? 'Complete' : 'Next'}</span>
-                {!isLastStep && <ChevronRight className="h-4 w-4" />}
-              </Button>
+              
+              <div className="flex gap-2">
+                {currentStep.skippable !== false && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleSkip}
+                  >
+                    <SkipForward className="h-4 w-4 mr-1" />
+                    Skip
+                  </Button>
+                )}
+                
+                <Button
+                  size="sm"
+                  onClick={handleNext}
+                >
+                  {currentStepIndex === activeTour.steps.length - 1 ? 'Finish' : 'Next'}
+                  {currentStepIndex < activeTour.steps.length - 1 && (
+                    <ChevronRight className="h-4 w-4 ml-1" />
+                  )}
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
       </div>
     </>
   );
-
-  return createPortal(tourContent, document.body);
 };
 
 export default GuidedTourEngine;

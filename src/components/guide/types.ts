@@ -3,7 +3,7 @@ export interface TooltipConfig {
   id: string;
   target: string;
   content: string | React.ReactNode;
-  placement: 'top' | 'bottom' | 'left' | 'right' | 'auto';
+  placement: 'top' | 'bottom' | 'left' | 'right';
   trigger: 'hover' | 'click' | 'focus' | 'manual';
   delay?: number;
   interactive?: boolean;
