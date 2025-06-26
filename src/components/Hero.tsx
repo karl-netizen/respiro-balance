@@ -87,9 +87,9 @@ const Hero = () => {
                 <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-respiro-light via-respiro-default to-respiro-dark" />
                 
                 <div className="text-center space-y-4 md:space-y-6 flex flex-col items-center justify-center h-full">
-                  <div className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-gradient-to-br from-respiro-light/50 to-respiro-default/20 flex items-center justify-center shadow-lg">
-                    <div className="w-16 h-16 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-respiro-default to-respiro-dark animate-pulse-slow flex items-center justify-center shadow-inner">
-                      <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-white animate-ping opacity-75"></div>
+                  <div className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-gradient-to-br from-blue-400 to-purple-600 flex items-center justify-center shadow-2xl">
+                    <div className="w-16 h-16 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 animate-pulse flex items-center justify-center shadow-inner border-2 border-white/30">
+                      <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-white animate-ping shadow-lg"></div>
                     </div>
                   </div>
                   
