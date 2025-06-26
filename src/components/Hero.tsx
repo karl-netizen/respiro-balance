@@ -37,7 +37,8 @@ const Hero = () => {
         <div className="flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12">
           <div className={`md:w-1/2 space-y-4 md:space-y-6 ${loaded ? 'animate-float-up' : 'opacity-0'}`}>
             <div className="inline-block">
-              <span className="inline-block px-4 py-1.5 rounded-full bg-respiro-light text-respiro-dark text-xs md:text-sm font-medium animate-fade-in">
+              <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-respiro-light text-respiro-dark text-xs md:text-sm font-medium animate-fade-in">
+                <div className="w-2 h-2 rounded-full bg-respiro-dark mr-2"></div>
                 Breathe Into Balance
               </span>
             </div>
@@ -71,7 +72,7 @@ const Hero = () => {
             <div className="flex items-center gap-2 text-xs md:text-sm text-respiro-text/60">
               <div className="flex -space-x-2">
                 {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-respiro-light border-2 border-white flex items-center justify-center text-xs font-medium text-respiro-dark">
+                  <div key={i} className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-respiro-default border-2 border-white flex items-center justify-center text-xs font-medium text-white">
                     {String.fromCharCode(64 + i)}
                   </div>
                 ))}
@@ -87,7 +88,9 @@ const Hero = () => {
                 
                 <div className="text-center space-y-4 md:space-y-6 flex flex-col items-center justify-center h-full">
                   <div className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-respiro-light flex items-center justify-center">
-                    <div className="w-16 h-16 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-respiro-default to-respiro-dark animate-pulse-slow" />
+                    <div className="w-16 h-16 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-respiro-default to-respiro-dark animate-pulse-slow flex items-center justify-center">
+                      <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-white/30 animate-ping"></div>
+                    </div>
                   </div>
                   
                   <div className="space-y-2">
