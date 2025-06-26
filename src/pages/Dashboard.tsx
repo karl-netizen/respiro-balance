@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   DashboardWelcome, 
   DashboardQuickAccess 
@@ -17,6 +17,7 @@ import { getMoodCheckForToday, setMoodCheckForToday } from '@/utils/moodCheckUti
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [showMoodModal, setShowMoodModal] = useState(false);
   const [dailyMood, setDailyMood] = useState<string | null>(null);
   
@@ -68,13 +69,16 @@ const Dashboard: React.FC = () => {
   }, []);
 
   const handleGoBack = useCallback(() => {
-    // Go back in browser history, or fallback to landing page
-    if (window.history.length > 1) {
-      window.history.back();
+    // Check if we came from a specific page
+    const from = location.state?.from;
+    
+    if (from && from !== '/dashboard') {
+      navigate(from);
     } else {
+      // Default fallback routes that make sense
       navigate('/landing');
     }
-  }, [navigate]);
+  }, [navigate, location.state]);
 
   if (!user) {
     navigate('/login');
