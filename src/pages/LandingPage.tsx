@@ -26,7 +26,7 @@ const LandingPage = () => {
   console.log('LandingPage rendered, user:', user ? 'logged in' : 'not logged in');
   
   return (
-    <div className="min-h-screen relative">
+    <div className="min-h-screen relative bg-gradient-to-b from-respiro-light/30 to-white">
       <Header />
       <Hero />
       

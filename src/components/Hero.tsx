@@ -43,17 +43,17 @@ const Hero = () => {
             </div>
             
             <h1 className="text-3xl md:text-4xl lg:text-6xl font-bold tracking-tight text-respiro-text">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-respiro-dark to-respiro">Breathe. Reflect. Recalibrate.</span>
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-respiro-dark to-respiro-default">Breathe. Reflect. Recalibrate.</span>
             </h1>
             
-            <p className="text-base md:text-lg text-foreground/80 max-w-xl">
+            <p className="text-base md:text-lg text-respiro-text/80 max-w-xl">
               Your wellness companion in a fast-paced world. Respiro Balance helps busy professionals reconnect with calm and clarity through guided wellness journeys and mindful routines.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-3 pt-2 md:pt-4">
               <Button 
                 size={isMobile ? "default" : "lg"}
-                className="bg-primary text-white hover:bg-respiro-dark transition-all duration-300 rounded-2xl px-8 py-3 text-base font-medium shadow-lg hover:shadow-xl hover:shadow-primary/25 transform hover:scale-105 hover:glow-effect relative z-10"
+                className="bg-respiro-dark text-white hover:bg-respiro-darker transition-all duration-300 rounded-2xl px-8 py-3 text-base font-medium shadow-lg hover:shadow-xl hover:shadow-respiro-default/25 transform hover:scale-105 hover:glow-effect relative z-10"
                 onClick={handleGetStarted}
               >
                 Start Your Balance Journey
@@ -61,17 +61,17 @@ const Hero = () => {
               <Button 
                 size={isMobile ? "default" : "lg"}
                 variant="outline" 
-                className="border-primary text-primary hover:bg-primary/10 button-transition relative z-10"
+                className="border-respiro-dark text-respiro-dark hover:bg-respiro-light/50 button-transition relative z-10"
                 onClick={() => document.getElementById('benefits')?.scrollIntoView({ behavior: 'smooth' })}
               >
                 Discover More
               </Button>
             </div>
             
-            <div className="flex items-center gap-2 text-xs md:text-sm text-foreground/60">
+            <div className="flex items-center gap-2 text-xs md:text-sm text-respiro-text/60">
               <div className="flex -space-x-2">
                 {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-secondary border-2 border-background flex items-center justify-center text-xs font-medium">
+                  <div key={i} className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-respiro-light border-2 border-white flex items-center justify-center text-xs font-medium text-respiro-dark">
                     {String.fromCharCode(64 + i)}
                   </div>
                 ))}
@@ -83,21 +83,21 @@ const Hero = () => {
           <div className={`w-full md:w-1/2 mt-8 md:mt-0 ${loaded ? 'animate-float-up animation-delay-200' : 'opacity-0'}`}>
             <div className="relative z-10">
               <div className="aspect-square w-full max-w-xs md:max-w-md mx-auto rounded-3xl glassmorphism-card p-4 md:p-6 overflow-hidden">
-                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-respiro-light via-respiro to-respiro-dark" />
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-respiro-light via-respiro-default to-respiro-dark" />
                 
                 <div className="text-center space-y-4 md:space-y-6 flex flex-col items-center justify-center h-full">
                   <div className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-respiro-light flex items-center justify-center">
-                    <div className="w-16 h-16 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-respiro to-respiro-dark animate-pulse-slow" />
+                    <div className="w-16 h-16 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-respiro-default to-respiro-dark animate-pulse-slow" />
                   </div>
                   
                   <div className="space-y-2">
-                    <h3 className="text-lg md:text-xl font-semibold">Breathe & Center</h3>
-                    <p className="text-xs md:text-sm text-foreground/70">Take a moment to breathe and restore your balance</p>
+                    <h3 className="text-lg md:text-xl font-semibold text-respiro-text">Breathe & Center</h3>
+                    <p className="text-xs md:text-sm text-respiro-text/70">Take a moment to breathe and restore your balance</p>
                   </div>
                   
                   <Button 
                     variant="outline" 
-                    className="border-primary text-primary hover:bg-primary/10 rounded-full text-xs md:text-sm relative z-10"
+                    className="border-respiro-dark text-respiro-dark hover:bg-respiro-light/50 rounded-full text-xs md:text-sm relative z-10"
                     onClick={handleGetStarted}
                   >
                     Begin 5-Min Respiro Session
@@ -115,7 +115,7 @@ const Hero = () => {
         <div className="absolute bottom-6 md:bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce z-10">
           <a 
             href="#benefits" 
-            className="flex flex-col items-center text-foreground/60 hover:text-primary transition-colors"
+            className="flex flex-col items-center text-respiro-text/60 hover:text-respiro-dark transition-colors"
             onClick={(e) => {
               e.preventDefault();
               document.getElementById('benefits')?.scrollIntoView({ behavior: 'smooth' });
