@@ -9,6 +9,7 @@ import DashboardLayout, { DashboardTopSection } from '@/components/dashboard/Das
 import DashboardMainContent from '@/components/dashboard/DashboardMainContent';
 import MoodCheckModal from '@/components/dashboard/MoodCheckModal';
 import MoodDashboardHeader from '@/components/dashboard/MoodDashboardHeader';
+import BackButton from '@/components/header/BackButton';
 import { useDashboardData } from '@/components/dashboard/hooks/useDashboardData';
 import { generateQuickStats } from '@/components/dashboard/utils/dashboardUtils';
 import { getMoodCheckForToday, setMoodCheckForToday } from '@/utils/moodCheckUtils';
@@ -76,47 +77,54 @@ const Dashboard: React.FC = () => {
   console.log('Dashboard render - dailyMood:', dailyMood, 'effectiveMood:', effectiveMood);
 
   return (
-    <DashboardLayout>
-      {/* Mood Check Modal */}
-      <MoodCheckModal 
-        open={showMoodModal}
-        onMoodSelect={handleMoodModalSelect}
-      />
+    <div className="min-h-screen bg-background">
+      {/* Header with Back Button */}
+      <div className="container mx-auto px-6 pt-6">
+        <BackButton />
+      </div>
 
-      {/* Welcome Section */}
-      <DashboardTopSection
-        welcomeSection={
-          <DashboardWelcome 
-            welcomeMessage={welcomeMessage}
-            currentPeriod={currentPeriod}
-            quickStats={quickStats}
-          />
-        }
-      />
+      <DashboardLayout>
+        {/* Mood Check Modal */}
+        <MoodCheckModal 
+          open={showMoodModal}
+          onMoodSelect={handleMoodModalSelect}
+        />
 
-      {/* Mood Dashboard Header */}
-      {effectiveMood && (
-        <div className="mb-6">
-          <MoodDashboardHeader 
-            currentMood={effectiveMood}
-            onMoodChange={handleMoodChange}
-          />
-        </div>
-      )}
+        {/* Welcome Section */}
+        <DashboardTopSection
+          welcomeSection={
+            <DashboardWelcome 
+              welcomeMessage={welcomeMessage}
+              currentPeriod={currentPeriod}
+              quickStats={quickStats}
+            />
+          }
+        />
 
-      {/* Progress and Actions Section */}
-      <DashboardMainContent
-        weeklyProgress={weeklyProgress}
-        weeklyGoal={weeklyGoal}
-        progressPercentage={progressPercentage}
-        currentMood={effectiveMood}
-        onMoodSelect={handleMoodModalSelect}
-        currentStreak={currentStreak}
-      />
+        {/* Mood Dashboard Header */}
+        {effectiveMood && (
+          <div className="mb-6">
+            <MoodDashboardHeader 
+              currentMood={effectiveMood}
+              onMoodChange={handleMoodChange}
+            />
+          </div>
+        )}
 
-      {/* Quick Access Tabs */}
-      <DashboardQuickAccess />
-    </DashboardLayout>
+        {/* Progress and Actions Section */}
+        <DashboardMainContent
+          weeklyProgress={weeklyProgress}
+          weeklyGoal={weeklyGoal}
+          progressPercentage={progressPercentage}
+          currentMood={effectiveMood}
+          onMoodSelect={handleMoodModalSelect}
+          currentStreak={currentStreak}
+        />
+
+        {/* Quick Access Tabs */}
+        <DashboardQuickAccess />
+      </DashboardLayout>
+    </div>
   );
 };
 
