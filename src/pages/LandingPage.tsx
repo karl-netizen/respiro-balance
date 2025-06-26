@@ -22,6 +22,9 @@ const LandingPage = () => {
     }
   };
   
+  // Don't auto-redirect - let users see the landing page
+  console.log('LandingPage rendered, user:', user ? 'logged in' : 'not logged in');
+  
   return (
     <div className="min-h-screen relative">
       <Header />

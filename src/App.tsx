@@ -67,6 +67,7 @@ function App() {
                         <main id="main-content" className="w-full">
                           <Routes>
                             <Route path="/" element={<LandingPage />} />
+                            <Route path="/home" element={<LandingPage />} />
                             <Route path="/landing" element={<LandingPage />} />
                             <Route path="/login" element={<LoginPage />} />
                             <Route path="/signup" element={<SignupPage />} />
