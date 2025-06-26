@@ -9,7 +9,8 @@ import DashboardLayout, { DashboardTopSection } from '@/components/dashboard/Das
 import DashboardMainContent from '@/components/dashboard/DashboardMainContent';
 import MoodCheckModal from '@/components/dashboard/MoodCheckModal';
 import MoodDashboardHeader from '@/components/dashboard/MoodDashboardHeader';
-import BackButton from '@/components/header/BackButton';
+import { ArrowLeft } from 'lucide-react';
+import { TouchFriendlyButton } from '@/components/responsive/TouchFriendlyButton';
 import { useDashboardData } from '@/components/dashboard/hooks/useDashboardData';
 import { generateQuickStats } from '@/components/dashboard/utils/dashboardUtils';
 import { getMoodCheckForToday, setMoodCheckForToday } from '@/utils/moodCheckUtils';
@@ -66,6 +67,15 @@ const Dashboard: React.FC = () => {
     setShowMoodModal(true);
   }, []);
 
+  const handleGoBack = useCallback(() => {
+    // Go back in browser history, or fallback to landing page
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      navigate('/landing');
+    }
+  }, [navigate]);
+
   if (!user) {
     navigate('/login');
     return null;
@@ -80,7 +90,17 @@ const Dashboard: React.FC = () => {
     <div className="min-h-screen bg-background">
       {/* Header with Back Button */}
       <div className="container mx-auto px-6 pt-6">
-        <BackButton />
+        <TouchFriendlyButton
+          variant="ghost"
+          size="sm"
+          onClick={handleGoBack}
+          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100"
+          hapticFeedback={true}
+        >
+          <ArrowLeft size={16} />
+          <span className="hidden sm:inline">Previous Page</span>
+          <span className="sm:hidden">Back</span>
+        </TouchFriendlyButton>
       </div>
 
       <DashboardLayout>
