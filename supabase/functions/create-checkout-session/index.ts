@@ -1,81 +1,62 @@
 
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1'
-import Stripe from 'https://esm.sh/stripe@12.13.0?dts'
+import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import Stripe from 'https://esm.sh/stripe@14.21.0';
+
+const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') || '', {
+  apiVersion: '2023-10-16',
+});
+
+const supabase = createClient(
+  Deno.env.get('SUPABASE_URL') ?? '',
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+);
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
+
+interface CheckoutRequest {
+  priceId: string;
+  userId: string;
+  email: string;
+  successUrl: string;
+  cancelUrl: string;
+  tier: string;
 }
 
-const handler = async (req: Request) => {
-  // Handle CORS preflight requests
+serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { userId, tier } = await req.json()
-    
-    // Create Supabase admin client
-    const supabaseAdmin = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
-    
-    // Get user details
-    const { data: user, error: userError } = await supabaseAdmin
-      .from('user_profiles')
-      .select('email')
-      .eq('id', userId)
-      .single()
-    
-    if (userError || !user) {
-      return new Response(
-        JSON.stringify({ error: 'User not found' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
-    }
-    
-    // Initialize Stripe
-    const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') ?? '', {
-      apiVersion: '2023-10-16',
-    })
-    
-    // Check if user already has a Stripe customer ID
-    const { data: customers } = await stripe.customers.list({
-      email: user.email,
-      limit: 1,
-    })
-    
-    let customerId: string
-    if (customers && customers.data.length > 0) {
-      customerId = customers.data[0].id
+    const { priceId, userId, email, successUrl, cancelUrl, tier }: CheckoutRequest = await req.json();
+
+    // Create or retrieve customer
+    let customer = await stripe.customers.list({ email, limit: 1 });
+    let customerId: string;
+
+    if (customer.data.length > 0) {
+      customerId = customer.data[0].id;
     } else {
-      // Create a new customer
-      const customer = await stripe.customers.create({
-        email: user.email,
-        metadata: {
-          userId,
-        },
-      })
-      customerId = customer.id
+      const newCustomer = await stripe.customers.create({
+        email,
+        metadata: { userId, tier }
+      });
+      customerId = newCustomer.id;
     }
-    
-    // Determine price ID based on tier
-    let priceId: string
-    if (tier === 'premium') {
-      priceId = Deno.env.get('STRIPE_PREMIUM_PRICE_ID') ?? 'price_1NVnftLzO76QiexqU8H6gezL' // Default to a test price if not set
-    } else if (tier === 'team') {
-      priceId = Deno.env.get('STRIPE_TEAM_PRICE_ID') ?? 'price_1NVngGLzO76QiexqKxD9LOxU' // Default to a test price if not set
-    } else {
-      return new Response(
-        JSON.stringify({ error: 'Invalid subscription tier' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
-    }
-    
-    // Create a Checkout session
+
+    // Update subscribers table
+    await supabase.from('subscribers').upsert({
+      user_id: userId,
+      email,
+      stripe_customer_id: customerId,
+      subscription_tier: 'free', // Will be updated via webhook
+    }, { onConflict: 'email' });
+
+    // Create checkout session
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       payment_method_types: ['card'],
@@ -86,25 +67,42 @@ const handler = async (req: Request) => {
         },
       ],
       mode: 'subscription',
-      success_url: `${req.headers.get('origin')}/dashboard?subscription=success`,
-      cancel_url: `${req.headers.get('origin')}/subscription?canceled=true`,
+      success_url: successUrl,
+      cancel_url: cancelUrl,
       metadata: {
         userId,
         tier,
       },
-    })
+      subscription_data: {
+        metadata: {
+          userId,
+          tier,
+        },
+      },
+      allow_promotion_codes: true,
+      billing_address_collection: 'required',
+      customer_update: {
+        address: 'auto',
+        name: 'auto',
+      },
+    });
 
     return new Response(
-      JSON.stringify({ url: session.url }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    )
+      JSON.stringify({ sessionId: session.id, url: session.url }),
+      {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200,
+      }
+    );
   } catch (error) {
-    console.error('Error creating checkout session:', error)
+    console.error('Checkout session creation error:', error);
+    
     return new Response(
       JSON.stringify({ error: error.message }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    )
+      {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 500,
+      }
+    );
   }
-}
-
-serve(handler)
+});
