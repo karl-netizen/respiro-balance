@@ -2,316 +2,197 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Flame, Target, Trophy, Calendar, Star, TrendingUp } from 'lucide-react';
-
-interface HabitStreak {
-  id: string;
-  habitType: 'meditation' | 'breathing' | 'mindfulness' | 'focus';
-  currentStreak: number;
-  longestStreak: number;
-  lastCompletedDate: Date;
-  targetFrequency: number; // days per week
-  weeklyGoal: number;
-  completedThisWeek: number;
-}
+import { Badge } from '@/components/ui/badge';
+import { useAuth } from '@/hooks/useAuth';
+import { Award, Flame, Target, Star, Trophy, Calendar, Zap } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface Achievement {
   id: string;
   title: string;
   description: string;
-  icon: string;
-  category: 'streak' | 'milestone' | 'consistency' | 'exploration';
-  requirement: number;
+  icon: React.ReactNode;
   progress: number;
+  maxProgress: number;
   unlocked: boolean;
-  unlockedAt?: Date;
+  rarity: 'common' | 'rare' | 'epic' | 'legendary';
+}
+
+interface HabitStreak {
+  type: string;
+  current: number;
+  longest: number;
+  lastActivity: Date;
 }
 
 interface Milestone {
-  day: number;
+  id: string;
   title: string;
   description: string;
+  progress: number;
+  target: number;
   reward: string;
   completed: boolean;
 }
 
 export const HabitFormationSystem: React.FC = () => {
-  const [streaks, setStreaks] = useState<HabitStreak[]>([
-    {
-      id: 'meditation',
-      habitType: 'meditation',
-      currentStreak: 7,
-      longestStreak: 15,
-      lastCompletedDate: new Date(),
-      targetFrequency: 5,
-      weeklyGoal: 5,
-      completedThisWeek: 4
-    },
-    {
-      id: 'breathing',
-      habitType: 'breathing',
-      currentStreak: 3,
-      longestStreak: 8,
-      lastCompletedDate: new Date(Date.now() - 24 * 60 * 60 * 1000),
-      targetFrequency: 3,
-      weeklyGoal: 3,
-      completedThisWeek: 2
-    }
-  ]);
+  const { user } = useAuth();
+  const [streaks, setStreaks] = useState<HabitStreak[]>([]);
+  const [achievements, setAchievements] = useState<Achievement[]>([]);
+  const [milestones, setMilestones] = useState<Milestone[]>([]);
+  const [totalPoints, setTotalPoints] = useState(0);
+  const [level, setLevel] = useState(1);
 
-  const [achievements, setAchievements] = useState<Achievement[]>([
-    {
-      id: 'first_week',
-      title: 'First Week Warrior',
-      description: 'Complete 7 consecutive days of meditation',
-      icon: '🏆',
-      category: 'streak',
-      requirement: 7,
-      progress: 7,
-      unlocked: true,
-      unlockedAt: new Date()
-    },
-    {
-      id: 'consistency_king',
-      title: 'Consistency King',
-      description: 'Maintain a 21-day streak',
-      icon: '👑',
-      category: 'streak',
-      requirement: 21,
-      progress: 7,
-      unlocked: false
-    },
-    {
-      id: 'explorer',
-      title: 'Mindful Explorer',
-      description: 'Try 5 different meditation types',
-      icon: '🧭',
-      category: 'exploration',
-      requirement: 5,
-      progress: 3,
-      unlocked: false
-    }
-  ]);
+  useEffect(() => {
+    loadUserProgress();
+  }, [user]);
 
-  const [milestones] = useState<Milestone[]>([
-    {
-      day: 1,
-      title: 'First Step',
-      description: 'Complete your first meditation session',
-      reward: 'Welcome badge',
-      completed: true
-    },
-    {
-      day: 3,
-      title: 'Building Momentum',
-      description: 'Three days in a row!',
-      reward: 'Streak badge',
-      completed: true
-    },
-    {
-      day: 7,
-      title: 'One Week Strong',
-      description: 'Seven consecutive days of practice',
-      reward: 'Warrior badge + Premium content unlock',
-      completed: true
-    },
-    {
-      day: 21,
-      title: 'Habit Formed',
-      description: 'Science says it takes 21 days to form a habit',
-      reward: 'Master badge + Advanced features',
-      completed: false
-    },
-    {
-      day: 66,
-      title: 'Automatic Habit',
-      description: 'Your practice is now automatic!',
-      reward: 'Legend status + Exclusive content',
-      completed: false
-    }
-  ];
+  const loadUserProgress = async () => {
+    // Mock data - would fetch from API
+    setStreaks([
+      {
+        type: 'meditation',
+        current: 7,
+        longest: 12,
+        lastActivity: new Date()
+      },
+      {
+        type: 'breathing',
+        current: 3,
+        longest: 8,
+        lastActivity: new Date()
+      }
+    ]);
 
-  const getStreakColor = (streak: number) => {
-    if (streak >= 21) return 'text-purple-600';
-    if (streak >= 14) return 'text-blue-600';
-    if (streak >= 7) return 'text-green-600';
-    if (streak >= 3) return 'text-yellow-600';
-    return 'text-gray-600';
+    setAchievements([
+      {
+        id: 'first_session',
+        title: 'First Steps',
+        description: 'Complete your first meditation session',
+        icon: <Star className="w-5 h-5" />,
+        progress: 1,
+        maxProgress: 1,
+        unlocked: true,
+        rarity: 'common'
+      },
+      {
+        id: 'week_streak',
+        title: 'Consistency Master',
+        description: 'Maintain a 7-day meditation streak',
+        icon: <Flame className="w-5 h-5" />,
+        progress: 7,
+        maxProgress: 7,
+        unlocked: true,
+        rarity: 'rare'
+      },
+      {
+        id: 'perfect_month',
+        title: 'Zen Master',
+        description: 'Complete 30 days of perfect meditation',
+        icon: <Trophy className="w-5 h-5" />,
+        progress: 15,
+        maxProgress: 30,
+        unlocked: false,
+        rarity: 'legendary'
+      }
+    ]);
+
+    setMilestones([
+      {
+        id: 'sessions_10',
+        title: '10 Sessions Milestone',
+        description: 'Complete 10 meditation sessions',
+        progress: 8,
+        target: 10,
+        reward: '50 bonus points',
+        completed: false
+      },
+      {
+        id: 'minutes_100',
+        title: '100 Minutes Milestone',
+        description: 'Meditate for 100 total minutes',
+        progress: 75,
+        target: 100,
+        reward: 'Exclusive breathing pattern',
+        completed: false
+      }
+    ]);
+
+    setTotalPoints(1250);
+    setLevel(3);
   };
 
-  const getStreakEmoji = (streak: number) => {
-    if (streak >= 21) return '🔥';
-    if (streak >= 14) return '⚡';
-    if (streak >= 7) return '🌟';
-    if (streak >= 3) return '✨';
-    return '💫';
+  const getRarityColor = (rarity: Achievement['rarity']) => {
+    switch (rarity) {
+      case 'common': return 'bg-gray-500';
+      case 'rare': return 'bg-blue-500';
+      case 'epic': return 'bg-purple-500';
+      case 'legendary': return 'bg-yellow-500';
+      default: return 'bg-gray-500';
+    }
   };
 
-  const getMotivationalMessage = (streak: number, isToday: boolean) => {
-    if (!isToday) {
-      return "Don't break the chain! Complete today's session.";
-    }
-    
-    if (streak >= 21) {
-      return "Incredible! You've mastered the art of consistency! 🔥";
-    }
-    if (streak >= 14) {
-      return "Two weeks strong! You're building a powerful habit! ⚡";
-    }
-    if (streak >= 7) {
-      return "One week complete! You're on fire! 🌟";
-    }
-    if (streak >= 3) {
-      return "Great momentum! Keep it going! ✨";
-    }
-    return "You're building something amazing! Every day counts! 💫";
+  const celebrateAchievement = (achievement: Achievement) => {
+    toast.success(`🎉 Achievement Unlocked: ${achievement.title}!`, {
+      description: achievement.description,
+      duration: 5000
+    });
   };
-
-  const calculateNextMilestone = () => {
-    const maxStreak = Math.max(...streaks.map(s => s.currentStreak));
-    return milestones.find(m => m.day > maxStreak && !m.completed);
-  };
-
-  const nextMilestone = calculateNextMilestone();
-  const totalSessions = streaks.reduce((sum, s) => sum + s.currentStreak, 0);
 
   return (
     <div className="space-y-6">
-      <div className="text-center">
-        <h2 className="text-2xl font-bold mb-2">Habit Formation Journey</h2>
-        <p className="text-muted-foreground">
-          Build lasting wellness habits with psychology-backed motivation
-        </p>
-      </div>
-
-      {/* Current Streaks */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {streaks.map(streak => {
-          const isToday = new Date().toDateString() === streak.lastCompletedDate.toDateString();
-          
-          return (
-            <Card key={streak.id} className="relative overflow-hidden">
-              <div className="absolute top-0 right-0 text-6xl opacity-10">
-                {getStreakEmoji(streak.currentStreak)}
-              </div>
-              <CardHeader className="pb-2">
-                <CardTitle className="flex items-center justify-between">
-                  <span className="capitalize">{streak.habitType}</span>
-                  <Badge variant={isToday ? "default" : "secondary"}>
-                    {isToday ? "Completed Today" : "Pending"}
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center space-x-4">
-                  <div className="text-center">
-                    <div className={`text-3xl font-bold ${getStreakColor(streak.currentStreak)}`}>
-                      {streak.currentStreak}
-                    </div>
-                    <div className="text-sm text-muted-foreground">Current Streak</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-semibold text-muted-foreground">
-                      {streak.longestStreak}
-                    </div>
-                    <div className="text-sm text-muted-foreground">Personal Best</div>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span>This Week</span>
-                    <span>{streak.completedThisWeek} / {streak.weeklyGoal}</span>
-                  </div>
-                  <Progress 
-                    value={(streak.completedThisWeek / streak.weeklyGoal) * 100} 
-                    className="h-2"
-                  />
-                </div>
-
-                <div className="text-sm text-center p-3 bg-muted rounded-lg">
-                  {getMotivationalMessage(streak.currentStreak, isToday)}
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
-
-      {/* Next Milestone */}
-      {nextMilestone && (
-        <Card className="border-2 border-dashed border-blue-300 bg-blue-50">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Target className="w-5 h-5 text-blue-600" />
-              Next Milestone: {nextMilestone.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-muted-foreground">{nextMilestone.description}</p>
-            
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span>Progress to Day {nextMilestone.day}</span>
-                <span>{Math.max(...streaks.map(s => s.currentStreak))} / {nextMilestone.day}</span>
-              </div>
-              <Progress 
-                value={(Math.max(...streaks.map(s => s.currentStreak)) / nextMilestone.day) * 100} 
-                className="h-3"
-              />
-            </div>
-
-            <div className="bg-white p-3 rounded-lg">
-              <div className="text-sm font-medium text-blue-600 mb-1">Reward:</div>
-              <div className="text-sm">{nextMilestone.reward}</div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Achievements */}
+      {/* Level and Points Overview */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Trophy className="w-5 w-5 text-yellow-600" />
-            Achievements
+            <Award className="w-5 h-5" />
+            Your Progress
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {achievements.map(achievement => (
-              <div 
-                key={achievement.id}
-                className={`p-4 rounded-lg border-2 transition-all ${
-                  achievement.unlocked 
-                    ? 'border-yellow-300 bg-yellow-50' 
-                    : 'border-gray-200 bg-gray-50'
-                }`}
-              >
-                <div className="text-center space-y-2">
-                  <div className="text-3xl">{achievement.icon}</div>
-                  <h3 className="font-medium">{achievement.title}</h3>
-                  <p className="text-sm text-muted-foreground">{achievement.description}</p>
-                  
-                  {!achievement.unlocked && (
-                    <div className="space-y-1">
-                      <Progress 
-                        value={(achievement.progress / achievement.requirement) * 100} 
-                        className="h-2"
-                      />
-                      <div className="text-xs text-muted-foreground">
-                        {achievement.progress} / {achievement.requirement}
-                      </div>
-                    </div>
-                  )}
-                  
-                  {achievement.unlocked && (
-                    <Badge variant="default" className="bg-yellow-500">
-                      Unlocked!
-                    </Badge>
-                  )}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-primary">Level {level}</div>
+              <div className="text-sm text-muted-foreground">Current Level</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-green-600">{totalPoints}</div>
+              <div className="text-sm text-muted-foreground">Total Points</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-orange-600">
+                {achievements.filter(a => a.unlocked).length}
+              </div>
+              <div className="text-sm text-muted-foreground">Achievements</div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Current Streaks */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Flame className="w-5 h-5" />
+            Current Streaks
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {streaks.map((streak, index) => (
+              <div key={index} className="flex items-center justify-between p-4 bg-gradient-to-r from-orange-50 to-red-50 rounded-lg">
+                <div>
+                  <div className="font-semibold capitalize">{streak.type} Streak</div>
+                  <div className="text-sm text-muted-foreground">
+                    Longest: {streak.longest} days
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-orange-600">
+                    {streak.current}
+                  </div>
+                  <div className="text-sm text-muted-foreground">days</div>
                 </div>
               </div>
             ))}
@@ -319,40 +200,94 @@ export const HabitFormationSystem: React.FC = () => {
         </CardContent>
       </Card>
 
-      {/* Weekly Summary */}
+      {/* Achievements */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-green-600" />
-            This Week's Progress
+            <Trophy className="w-5 h-5" />
+            Achievements
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="text-center p-3 bg-green-50 rounded-lg">
-              <div className="text-2xl font-bold text-green-600">
-                {streaks.reduce((sum, s) => sum + s.completedThisWeek, 0)}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {achievements.map((achievement) => (
+              <div
+                key={achievement.id}
+                className={`p-4 rounded-lg border-2 transition-all ${
+                  achievement.unlocked
+                    ? 'border-green-200 bg-green-50'
+                    : 'border-gray-200 bg-gray-50 opacity-60'
+                }`}
+              >
+                <div className="flex items-start justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    {achievement.icon}
+                    <Badge className={getRarityColor(achievement.rarity)}>
+                      {achievement.rarity}
+                    </Badge>
+                  </div>
+                  {achievement.unlocked && (
+                    <div className="text-green-600">
+                      <Award className="w-4 h-4" />
+                    </div>
+                  )}
+                </div>
+                <h3 className="font-semibold mb-1">{achievement.title}</h3>
+                <p className="text-sm text-muted-foreground mb-3">
+                  {achievement.description}
+                </p>
+                <Progress
+                  value={(achievement.progress / achievement.maxProgress) * 100}
+                  className="h-2"
+                />
+                <div className="text-xs text-muted-foreground mt-1">
+                  {achievement.progress} / {achievement.maxProgress}
+                </div>
               </div>
-              <div className="text-sm text-muted-foreground">Sessions This Week</div>
-            </div>
-            <div className="text-center p-3 bg-blue-50 rounded-lg">
-              <div className="text-2xl font-bold text-blue-600">
-                {Math.max(...streaks.map(s => s.currentStreak))}
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Milestones */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Target className="w-5 h-5" />
+            Current Milestones
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {milestones.map((milestone) => (
+              <div
+                key={milestone.id}
+                className={`p-4 rounded-lg border ${
+                  milestone.completed
+                    ? 'border-green-200 bg-green-50'
+                    : 'border-gray-200'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="font-semibold">{milestone.title}</h3>
+                  <Badge variant="outline" className="text-purple-600">
+                    {milestone.reward}
+                  </Badge>
+                </div>
+                <p className="text-sm text-muted-foreground mb-3">
+                  {milestone.description}
+                </p>
+                <div className="flex items-center justify-between mb-2">
+                  <Progress
+                    value={(milestone.progress / milestone.target) * 100}
+                    className="flex-1 mr-4"
+                  />
+                  <span className="text-sm font-medium">
+                    {milestone.progress} / {milestone.target}
+                  </span>
+                </div>
               </div>
-              <div className="text-sm text-muted-foreground">Current Best Streak</div>
-            </div>
-            <div className="text-center p-3 bg-purple-50 rounded-lg">
-              <div className="text-2xl font-bold text-purple-600">
-                {achievements.filter(a => a.unlocked).length}
-              </div>
-              <div className="text-sm text-muted-foreground">Achievements Earned</div>
-            </div>
-            <div className="text-center p-3 bg-orange-50 rounded-lg">
-              <div className="text-2xl font-bold text-orange-600">
-                {Math.round((streaks.reduce((sum, s) => sum + s.completedThisWeek, 0) / streaks.reduce((sum, s) => sum + s.weeklyGoal, 0)) * 100)}%
-              </div>
-              <div className="text-sm text-muted-foreground">Weekly Goal</div>
-            </div>
+            ))}
           </div>
         </CardContent>
       </Card>
