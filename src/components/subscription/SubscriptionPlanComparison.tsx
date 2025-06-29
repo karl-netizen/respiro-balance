@@ -122,7 +122,7 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
             "Social Features - Complete community engagement",
             "Focus Mode - Advanced Pomodoro timer with analytics"
           ]}
-          price={7.99}
+          price={12.99}
           highlighted={true}
           subscription={currentTier === 'premium' ? {
             status: 'active',
@@ -146,7 +146,7 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
             "Early Access - First access to new features and content",
             "Social Hub Premium - Advanced community features"
           ]}
-          price={12.99}
+          price={39.99}
           subscription={currentTier === 'premium-plus' ? {
             status: 'active',
             tier: 'premium-plus',

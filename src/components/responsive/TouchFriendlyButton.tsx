@@ -1,54 +1,44 @@
 
 import React from 'react';
-import { Button, ButtonProps } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { useDeviceDetection } from '@/hooks/useDeviceDetection';
 
-interface TouchFriendlyButtonProps extends ButtonProps {
-  hapticFeedback?: boolean;
+interface TouchFriendlyButtonProps {
+  children: React.ReactNode;
+  onClick?: () => void;
+  className?: string;
+  disabled?: boolean;
+  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+  size?: 'default' | 'sm' | 'lg' | 'icon';
+  type?: 'button' | 'submit' | 'reset';
 }
 
 export const TouchFriendlyButton: React.FC<TouchFriendlyButtonProps> = ({
   children,
-  className,
-  hapticFeedback = true,
   onClick,
-  ...props
+  className,
+  disabled = false,
+  variant = 'default',
+  size = 'default',
+  type = 'button'
 }) => {
-  const { touchCapable, deviceType } = useDeviceDetection();
-
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    // Haptic feedback for touch devices
-    if (hapticFeedback && touchCapable && 'vibrate' in navigator) {
-      navigator.vibrate(10);
-    }
-
-    onClick?.(e);
-  };
-
-  const touchOptimizedClasses = touchCapable ? {
-    'min-h-[44px]': deviceType === 'mobile',
-    'min-h-[40px]': deviceType === 'tablet',
-    'active:scale-95': true,
-    'transition-transform': true,
-    'duration-150': true,
-    'touch-manipulation': true
-  } : {};
-
   return (
     <Button
-      {...props}
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+      variant={variant}
+      size={size}
       className={cn(
-        touchOptimizedClasses,
+        'min-h-[44px] min-w-[44px] touch-manipulation select-none',
+        'active:scale-95 transition-transform duration-150',
+        'focus:ring-2 focus:ring-offset-2 focus:ring-blue-500',
         className
       )}
-      onClick={handleClick}
-      style={{
-        WebkitTapHighlightColor: 'transparent',
-        ...props.style
-      }}
     >
       {children}
     </Button>
   );
 };
+
+export default TouchFriendlyButton;

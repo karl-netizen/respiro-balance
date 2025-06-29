@@ -52,7 +52,7 @@ export const SubscriptionManagement: React.FC<SubscriptionManagementProps> = ({
     {
       id: 'premium',
       name: 'Premium',
-      price: 9.99,
+      price: 12.99,
       interval: 'month',
       features: [
         'Unlimited meditation sessions',
@@ -67,8 +67,8 @@ export const SubscriptionManagement: React.FC<SubscriptionManagementProps> = ({
     },
     {
       id: 'team',
-      name: 'Team',
-      price: 19.99,
+      name: 'Premium Plus',
+      price: 39.99,
       interval: 'month',
       features: [
         'Everything in Premium',

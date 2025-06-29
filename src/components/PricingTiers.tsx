@@ -94,7 +94,7 @@ const PricingTiers = () => {
             <CardHeader>
               <CardTitle className="text-xl text-gray-900 dark:text-white">Premium</CardTitle>
               <div className="mt-4">
-                <span className="text-3xl font-bold text-gray-900 dark:text-white">$7.99</span>
+                <span className="text-3xl font-bold text-gray-900 dark:text-white">$12.99</span>
                 <span className="text-muted-foreground ml-2 dark:text-gray-300">/month</span>
               </div>
               <CardDescription className="mt-2 text-gray-600 dark:text-gray-300">
@@ -126,7 +126,7 @@ const PricingTiers = () => {
             <CardHeader>
               <CardTitle className="text-xl text-gray-900 dark:text-white">Premium Plus</CardTitle>
               <div className="mt-4">
-                <span className="text-3xl font-bold text-gray-900 dark:text-white">$12.99</span>
+                <span className="text-3xl font-bold text-gray-900 dark:text-white">$39.99</span>
                 <span className="text-muted-foreground ml-2 dark:text-gray-300">/month</span>
               </div>
               <CardDescription className="mt-2 text-gray-600 dark:text-gray-300">
