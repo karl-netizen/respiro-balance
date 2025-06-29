@@ -21,7 +21,7 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
     manageSubscription 
   } = useSubscription();
   
-  const handleSubscribe = async (tier: 'free' | 'premium' | 'premium-plus') => {
+  const handleSubscribe = async (tier: 'free' | 'premium' | 'premium-pro' | 'premium-plus') => {
     if (!user && tier !== 'free') {
       toast.error("Please sign in to subscribe", {
         description: "You need to have an account to subscribe to a plan."
@@ -50,6 +50,14 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
         } else {
           throw new Error("Failed to get checkout URL");
         }
+        return;
+      }
+      
+      if (tier === 'premium-pro') {
+        toast.info("Premium Pro Available Soon", {
+          description: "Premium Pro features will be available soon. Contact us for early access."
+        });
+        window.open("mailto:sales@respirobalance.com?subject=Premium Pro Early Access", "_blank");
         return;
       }
       
@@ -87,18 +95,19 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
 
   return (
     <div className="w-full">
-      {/* Simple responsive grid using standard Tailwind classes */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 max-w-7xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 max-w-7xl mx-auto">
         {/* Free Plan */}
         <SubscriptionCard
           title="Free"
-          description="Essential meditation and breathing basics"
+          description="Essential meditation basics"
           features={[
-            "5 Core Sessions - Essential meditation and quick breaks",
+            "3 Core Sessions - Essential meditation basics",
             "Basic Breathing Techniques - 3 fundamental patterns",
-            "Simple Progress Tracking - Basic analytics and streaks",
-            "Community Access - Join discussions and view content",
-            "Weekly Session Limit - Up to 3 sessions per week"
+            "Simple Progress Tracking - Basic streaks only",
+            "Weekly Session Limit - Up to 2 sessions per week",
+            "Ads between sessions",
+            "Community access (view announcements only)",
+            "No offline access"
           ]}
           price={0}
           subscription={currentTier === 'free' ? {
@@ -113,17 +122,20 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
         {/* Premium Plan */}
         <SubscriptionCard
           title="Premium"
-          description="Comprehensive meditation and breathing toolkit"
+          description="Comprehensive meditation toolkit"
           features={[
             "14 Meditation Sessions - Comprehensive guided library",
             "Advanced Breathing Techniques - All patterns and customizations",
             "Unlimited Sessions - No weekly limits or restrictions",
             "Full Progress Analytics - Detailed insights and trends",
-            "Social Features - Complete community engagement",
+            "Ad-Free Experience - No interruptions",
+            "Offline Mode - Download and use anywhere",
+            "Community Access - Join discussions and share progress",
+            "Sleep Stories - 5 exclusive bedtime stories",
+            "Mood Tracking - Daily check-ins with meditation correlation",
             "Focus Mode - Advanced Pomodoro timer with analytics"
           ]}
-          price={12.99}
-          highlighted={true}
+          price={11.97}
           subscription={currentTier === 'premium' ? {
             status: 'active',
             tier: 'premium',
@@ -134,19 +146,50 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
           onManage={handleManageSubscription}
         />
 
+        {/* Premium Pro Plan */}
+        <SubscriptionCard
+          title="Premium Pro"
+          description="Advanced features + biofeedback"
+          features={[
+            "Everything in Premium, plus:",
+            "18 Meditation Sessions - Extended library with variety",
+            "Advanced Habit Tracking - Detailed streaks and rewards",
+            "Basic Biofeedback Integration - Heart rate monitoring",
+            "Sleep Stories Library - 15+ exclusive stories",
+            "Group Challenges - Join community meditation challenges",
+            "Email Support - 48-hour response time",
+            "Custom Breathing Patterns - Create your own techniques",
+            "Advanced Progress Metrics - Detailed wellness insights"
+          ]}
+          price={19.97}
+          highlighted={true}
+          subscription={currentTier === 'premium-pro' ? {
+            status: 'active',
+            tier: 'premium-pro',
+            current_period_end: subscriptionData?.subscription_period_end || '',
+            cancel_at_period_end: false
+          } : undefined}
+          onSubscribe={() => handleSubscribe('premium-pro')}
+          onManage={handleManageSubscription}
+        />
+
         {/* Premium Plus Plan */}
         <SubscriptionCard
           title="Premium Plus"
-          description="Complete platform access with AI insights"
+          description="Complete platform with AI & expert coaching"
           features={[
-            "Complete Library - All 22 sessions including exclusive content",
-            "Biofeedback Integration - Real-time heart rate monitoring",
-            "Advanced Analytics - AI-powered insights and recommendations",
-            "Priority Support - Enhanced customer service",
-            "Early Access - First access to new features and content",
-            "Social Hub Premium - Advanced community features"
+            "Everything in Premium Pro, plus:",
+            "Complete Library - All 22+ sessions + monthly new releases",
+            "1-on-1 Expert Sessions - 2 monthly video calls with meditation experts",
+            "Advanced Biofeedback Coaching - Real-time guidance and insights",
+            "AI-Powered Personalization - Custom meditation plans generated monthly",
+            "Family Sharing - Up to 4 accounts included",
+            "Exclusive Masterclasses - Monthly expert-led sessions",
+            "Priority Support - 24-hour response time",
+            "White-label Experience - Customize app branding",
+            "Comprehensive Wellness Dashboard - Full health integration"
           ]}
-          price={39.99}
+          price={29.97}
           subscription={currentTier === 'premium-plus' ? {
             status: 'active',
             tier: 'premium-plus',

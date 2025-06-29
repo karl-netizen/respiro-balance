@@ -11,6 +11,9 @@ interface TouchFriendlyButtonProps {
   variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
   size?: 'default' | 'sm' | 'lg' | 'icon';
   type?: 'button' | 'submit' | 'reset';
+  asChild?: boolean;
+  title?: string;
+  hapticFeedback?: boolean;
 }
 
 export const TouchFriendlyButton: React.FC<TouchFriendlyButtonProps> = ({
@@ -20,21 +23,37 @@ export const TouchFriendlyButton: React.FC<TouchFriendlyButtonProps> = ({
   disabled = false,
   variant = 'default',
   size = 'default',
-  type = 'button'
+  type = 'button',
+  asChild = false,
+  title,
+  hapticFeedback = false,
+  ...props
 }) => {
+  const handleClick = () => {
+    if (hapticFeedback && 'vibrate' in navigator) {
+      navigator.vibrate(10);
+    }
+    if (onClick) {
+      onClick();
+    }
+  };
+
   return (
     <Button
       type={type}
-      onClick={onClick}
+      onClick={handleClick}
       disabled={disabled}
       variant={variant}
       size={size}
+      asChild={asChild}
+      title={title}
       className={cn(
         'min-h-[44px] min-w-[44px] touch-manipulation select-none',
         'active:scale-95 transition-transform duration-150',
         'focus:ring-2 focus:ring-offset-2 focus:ring-blue-500',
         className
       )}
+      {...props}
     >
       {children}
     </Button>

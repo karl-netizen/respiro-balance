@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Check, Loader2 } from 'lucide-react';
+import { Check, X, Loader2, ToggleLeft, ToggleRight } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { PaymentButton } from '@/components/payment';
 import { toast } from 'sonner';
@@ -12,6 +12,7 @@ const PricingTiers = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [isAnnual, setIsAnnual] = useState(false);
   
   const handleGetStarted = () => {
     setIsLoading(true);
@@ -21,15 +22,21 @@ const PricingTiers = () => {
         description: "Welcome to Respiro Balance"
       });
       
-      // For free plan, always redirect to onboarding first
       navigate('/onboarding');
     } catch (error) {
       console.error("Navigation error:", error);
       toast.error("Navigation failed. Please try again.");
     } finally {
-      // Reset loading state
       setTimeout(() => setIsLoading(false), 500);
     }
+  };
+  
+  const togglePricing = () => {
+    setIsAnnual(!isAnnual);
+  };
+
+  const getPricing = (monthlyPrice: number, annualPrice: number) => {
+    return isAnnual ? { price: annualPrice, period: 'year', savings: Math.round(((monthlyPrice * 12 - annualPrice) / (monthlyPrice * 12)) * 100) } : { price: monthlyPrice, period: 'month', savings: 0 };
   };
   
   return (
@@ -37,13 +44,41 @@ const PricingTiers = () => {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900 dark:text-gray-100">Simple, Transparent Pricing</h2>
-          <p className="text-foreground/70 max-w-2xl mx-auto text-gray-700 dark:text-gray-300">
+          <p className="text-foreground/70 max-w-2xl mx-auto text-gray-700 dark:text-gray-300 mb-8">
             Choose the plan that fits your meditation journey. All plans include access to our 
             mobile app and web platform.
           </p>
+          
+          {/* Monthly/Annual Toggle */}
+          <div className="flex items-center justify-center gap-4 mb-8">
+            <span className={`text-sm font-medium ${!isAnnual ? 'text-gray-900 dark:text-white' : 'text-gray-500'}`}>
+              Monthly
+            </span>
+            <button
+              onClick={togglePricing}
+              className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-respiro-dark focus:ring-offset-2 dark:bg-gray-700"
+              style={{ backgroundColor: isAnnual ? '#1a365d' : '#e5e7eb' }}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  isAnnual ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
+            </button>
+            <div className="flex items-center gap-2">
+              <span className={`text-sm font-medium ${isAnnual ? 'text-gray-900 dark:text-white' : 'text-gray-500'}`}>
+                Annual
+              </span>
+              {isAnnual && (
+                <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-medium">
+                  Save 17%
+                </span>
+              )}
+            </div>
+          </div>
         </div>
         
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
           {/* Free Tier */}
           <Card className="flex flex-col border-border shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 bg-white hover:bg-gray-50/80 dark:bg-gray-800 dark:hover:bg-gray-700/80">
             <CardHeader>
@@ -53,16 +88,18 @@ const PricingTiers = () => {
                 <span className="text-muted-foreground ml-2 dark:text-gray-300">/month</span>
               </div>
               <CardDescription className="mt-2 text-gray-600 dark:text-gray-300">
-                Essential meditation and breathing basics
+                Essential meditation basics
               </CardDescription>
             </CardHeader>
             <CardContent className="flex-1">
               <ul className="space-y-2">
-                <PricingFeature>5 Core Sessions - Essential meditation and quick breaks</PricingFeature>
-                <PricingFeature>Basic Breathing Techniques - 3 fundamental patterns</PricingFeature>
-                <PricingFeature>Simple Progress Tracking - Basic analytics and streaks</PricingFeature>
-                <PricingFeature>Community Access - Join discussions and view content</PricingFeature>
-                <PricingFeature>Weekly Session Limit - Up to 3 sessions per week</PricingFeature>
+                <PricingFeature included>3 Core Sessions - Essential meditation basics</PricingFeature>
+                <PricingFeature included>Basic Breathing Techniques - 3 fundamental patterns</PricingFeature>
+                <PricingFeature included>Simple Progress Tracking - Basic streaks only</PricingFeature>
+                <PricingFeature included>Weekly Session Limit - Up to 2 sessions per week</PricingFeature>
+                <PricingFeature included={false}>Ads between sessions</PricingFeature>
+                <PricingFeature included={false}>Community access (view announcements only)</PricingFeature>
+                <PricingFeature included={false}>No offline access</PricingFeature>
               </ul>
             </CardContent>
             <CardFooter>
@@ -85,30 +122,40 @@ const PricingTiers = () => {
           </Card>
           
           {/* Premium Tier */}
-          <Card className="flex flex-col relative border-respiro-dark before:absolute before:inset-0 before:-z-10 before:rounded-lg before:bg-respiro-dark/5 shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 bg-white hover:bg-gray-50/80 dark:bg-gray-800 dark:hover:bg-gray-700/80">
-            <div className="absolute top-0 right-0 transform translate-x-1/4 -translate-y-1/3">
-              <div className="bg-respiro-dark text-white text-xs font-medium px-3 py-1 rounded-full">
-                Most Popular
-              </div>
-            </div>
+          <Card className="flex flex-col border-border shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 bg-white hover:bg-gray-50/80 dark:bg-gray-800 dark:hover:bg-gray-700/80">
             <CardHeader>
               <CardTitle className="text-xl text-gray-900 dark:text-white">Premium</CardTitle>
               <div className="mt-4">
-                <span className="text-3xl font-bold text-gray-900 dark:text-white">$12.99</span>
-                <span className="text-muted-foreground ml-2 dark:text-gray-300">/month</span>
+                <span className="text-3xl font-bold text-gray-900 dark:text-white">
+                  ${getPricing(11.97, 119.70).price}
+                </span>
+                <span className="text-muted-foreground ml-2 dark:text-gray-300">
+                  /{getPricing(11.97, 119.70).period}
+                </span>
+                {isAnnual && (
+                  <div className="mt-1">
+                    <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-medium">
+                      Save {getPricing(11.97, 119.70).savings}%
+                    </span>
+                  </div>
+                )}
               </div>
               <CardDescription className="mt-2 text-gray-600 dark:text-gray-300">
-                Comprehensive meditation and breathing toolkit
+                Comprehensive meditation toolkit
               </CardDescription>
             </CardHeader>
             <CardContent className="flex-1">
               <ul className="space-y-2">
-                <PricingFeature highlighted>14 Meditation Sessions - Comprehensive guided library</PricingFeature>
-                <PricingFeature highlighted>Advanced Breathing Techniques - All patterns and customizations</PricingFeature>
-                <PricingFeature highlighted>Unlimited Sessions - No weekly limits or restrictions</PricingFeature>
-                <PricingFeature highlighted>Full Progress Analytics - Detailed insights and trends</PricingFeature>
-                <PricingFeature highlighted>Social Features - Complete community engagement</PricingFeature>
-                <PricingFeature highlighted>Focus Mode - Advanced Pomodoro timer with analytics</PricingFeature>
+                <PricingFeature included highlighted>14 Meditation Sessions - Comprehensive guided library</PricingFeature>
+                <PricingFeature included highlighted>Advanced Breathing Techniques - All patterns and customizations</PricingFeature>
+                <PricingFeature included highlighted>Unlimited Sessions - No weekly limits or restrictions</PricingFeature>
+                <PricingFeature included highlighted>Full Progress Analytics - Detailed insights and trends</PricingFeature>
+                <PricingFeature included highlighted>Ad-Free Experience - No interruptions</PricingFeature>
+                <PricingFeature included highlighted>Offline Mode - Download and use anywhere</PricingFeature>
+                <PricingFeature included highlighted>Community Access - Join discussions and share progress</PricingFeature>
+                <PricingFeature included highlighted>Sleep Stories - 5 exclusive bedtime stories</PricingFeature>
+                <PricingFeature included highlighted>Mood Tracking - Daily check-ins with meditation correlation</PricingFeature>
+                <PricingFeature included highlighted>Focus Mode - Advanced Pomodoro timer with analytics</PricingFeature>
               </ul>
             </CardContent>
             <CardFooter>
@@ -121,26 +168,102 @@ const PricingTiers = () => {
             </CardFooter>
           </Card>
           
-          {/* Premium Plus Tier */}
-          <Card className="flex flex-col border-border shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 bg-white hover:bg-gray-50/80 dark:bg-gray-800 dark:hover:bg-gray-700/80">
+          {/* Premium Pro Tier */}
+          <Card className="flex flex-col relative border-respiro-dark before:absolute before:inset-0 before:-z-10 before:rounded-lg before:bg-respiro-dark/5 shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 bg-white hover:bg-gray-50/80 dark:bg-gray-800 dark:hover:bg-gray-700/80">
+            <div className="absolute top-0 right-0 transform translate-x-1/4 -translate-y-1/3">
+              <div className="bg-respiro-dark text-white text-xs font-medium px-3 py-1 rounded-full">
+                Most Popular
+              </div>
+            </div>
             <CardHeader>
-              <CardTitle className="text-xl text-gray-900 dark:text-white">Premium Plus</CardTitle>
+              <CardTitle className="text-xl text-gray-900 dark:text-white">Premium Pro</CardTitle>
               <div className="mt-4">
-                <span className="text-3xl font-bold text-gray-900 dark:text-white">$39.99</span>
-                <span className="text-muted-foreground ml-2 dark:text-gray-300">/month</span>
+                <span className="text-3xl font-bold text-gray-900 dark:text-white">
+                  ${getPricing(19.97, 199.70).price}
+                </span>
+                <span className="text-muted-foreground ml-2 dark:text-gray-300">
+                  /{getPricing(19.97, 199.70).period}
+                </span>
+                {isAnnual && (
+                  <div className="mt-1">
+                    <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-medium">
+                      Save {getPricing(19.97, 199.70).savings}%
+                    </span>
+                  </div>
+                )}
               </div>
               <CardDescription className="mt-2 text-gray-600 dark:text-gray-300">
-                Complete platform access with AI insights
+                Advanced features + biofeedback
               </CardDescription>
             </CardHeader>
             <CardContent className="flex-1">
+              <div className="mb-3 text-sm font-medium text-respiro-dark">Everything in Premium, plus:</div>
               <ul className="space-y-2">
-                <PricingFeature>Complete Library - All 22 sessions including exclusive content</PricingFeature>
-                <PricingFeature>Biofeedback Integration - Real-time heart rate monitoring</PricingFeature>
-                <PricingFeature>Advanced Analytics - AI-powered insights and recommendations</PricingFeature>
-                <PricingFeature>Priority Support - Enhanced customer service</PricingFeature>
-                <PricingFeature>Early Access - First access to new features and content</PricingFeature>
-                <PricingFeature>Social Hub Premium - Advanced community features</PricingFeature>
+                <PricingFeature included highlighted>18 Meditation Sessions - Extended library with variety</PricingFeature>
+                <PricingFeature included highlighted>Advanced Habit Tracking - Detailed streaks and rewards</PricingFeature>
+                <PricingFeature included highlighted>Basic Biofeedback Integration - Heart rate monitoring</PricingFeature>
+                <PricingFeature included highlighted>Sleep Stories Library - 15+ exclusive stories</PricingFeature>
+                <PricingFeature included highlighted>Group Challenges - Join community meditation challenges</PricingFeature>
+                <PricingFeature included highlighted>Email Support - 48-hour response time</PricingFeature>
+                <PricingFeature included highlighted>Custom Breathing Patterns - Create your own techniques</PricingFeature>
+                <PricingFeature included highlighted>Advanced Progress Metrics - Detailed wellness insights</PricingFeature>
+              </ul>
+            </CardContent>
+            <CardFooter>
+              <Button 
+                className="w-full bg-respiro-dark hover:bg-respiro-darker text-white font-medium transition-all duration-200 hover:scale-105"
+                onClick={() => {
+                  toast.info("Premium Pro Available Soon", {
+                    description: "Premium Pro features will be available soon. Contact us for early access."
+                  });
+                  window.open("mailto:sales@respirobalance.com?subject=Premium Pro Early Access", "_blank");
+                }}
+              >
+                Choose Premium Pro
+              </Button>
+            </CardFooter>
+          </Card>
+          
+          {/* Premium Plus Tier */}
+          <Card className="flex flex-col border-border shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 bg-white hover:bg-gray-50/80 dark:bg-gray-800 dark:hover:bg-gray-700/80">
+            <div className="absolute top-0 left-0 transform -translate-x-1/4 -translate-y-1/3">
+              <div className="bg-purple-600 text-white text-xs font-medium px-3 py-1 rounded-full">
+                Limited Beta
+              </div>
+            </div>
+            <CardHeader>
+              <CardTitle className="text-xl text-gray-900 dark:text-white">Premium Plus</CardTitle>
+              <div className="mt-4">
+                <span className="text-3xl font-bold text-gray-900 dark:text-white">
+                  ${getPricing(29.97, 299.70).price}
+                </span>
+                <span className="text-muted-foreground ml-2 dark:text-gray-300">
+                  /{getPricing(29.97, 299.70).period}
+                </span>
+                {isAnnual && (
+                  <div className="mt-1">
+                    <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-medium">
+                      Save {getPricing(29.97, 299.70).savings}%
+                    </span>
+                  </div>
+                )}
+              </div>
+              <CardDescription className="mt-2 text-gray-600 dark:text-gray-300">
+                Complete platform with AI & expert coaching
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex-1">
+              <div className="mb-3 text-sm font-medium text-respiro-dark">Everything in Premium Pro, plus:</div>
+              <ul className="space-y-2">
+                <PricingFeature included>Complete Library - All 22+ sessions + monthly new releases</PricingFeature>
+                <PricingFeature included>1-on-1 Expert Sessions - 2 monthly video calls with meditation experts</PricingFeature>
+                <PricingFeature included>Advanced Biofeedback Coaching - Real-time guidance and insights</PricingFeature>
+                <PricingFeature included>AI-Powered Personalization - Custom meditation plans generated monthly</PricingFeature>
+                <PricingFeature included>Family Sharing - Up to 4 accounts included</PricingFeature>
+                <PricingFeature included>Exclusive Masterclasses - Monthly expert-led sessions</PricingFeature>
+                <PricingFeature included>Priority Support - 24-hour response time</PricingFeature>
+                <PricingFeature included>White-label Experience - Customize app branding</PricingFeature>
+                <PricingFeature included>Comprehensive Wellness Dashboard - Full health integration</PricingFeature>
               </ul>
             </CardContent>
             <CardFooter>
@@ -151,12 +274,10 @@ const PricingTiers = () => {
                   toast.info("Premium Plus Available Soon", {
                     description: "Premium Plus features will be available soon. Contact us for early access."
                   });
-                  
-                  // Email client will open in new tab
                   window.open("mailto:sales@respirobalance.com?subject=Premium Plus Early Access", "_blank");
                 }}
               >
-                Coming Soon
+                Get Premium Plus
               </Button>
             </CardFooter>
           </Card>
@@ -177,11 +298,16 @@ const PricingTiers = () => {
 interface PricingFeatureProps {
   children: React.ReactNode;
   highlighted?: boolean;
+  included?: boolean;
 }
 
-const PricingFeature = ({ children, highlighted = false }: PricingFeatureProps) => (
+const PricingFeature = ({ children, highlighted = false, included = true }: PricingFeatureProps) => (
   <li className={`flex items-start ${highlighted ? 'text-respiro-dark font-medium dark:text-respiro-light' : 'text-gray-700 dark:text-gray-300'}`}>
-    <Check className={`h-5 w-5 mr-2 mt-0.5 flex-shrink-0 ${highlighted ? 'text-respiro-dark dark:text-respiro-light' : 'text-green-500'}`} />
+    {included ? (
+      <Check className={`h-5 w-5 mr-2 mt-0.5 flex-shrink-0 ${highlighted ? 'text-respiro-dark dark:text-respiro-light' : 'text-green-500'}`} />
+    ) : (
+      <X className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0 text-red-500" />
+    )}
     <span>{children}</span>
   </li>
 );

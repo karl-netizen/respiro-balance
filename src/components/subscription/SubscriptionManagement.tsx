@@ -42,43 +42,58 @@ export const SubscriptionManagement: React.FC<SubscriptionManagementProps> = ({
       price: 0,
       interval: 'month',
       features: [
-        '60 minutes of meditation per month',
-        'Basic guided sessions',
-        'Progress tracking',
-        'Mobile app access'
+        '3 Core Sessions - Essential meditation basics',
+        'Basic Breathing Techniques - 3 fundamental patterns',
+        'Simple Progress Tracking - Basic streaks only',
+        'Weekly Session Limit - Up to 2 sessions per week'
       ],
       current: currentTier === 'free'
     },
     {
       id: 'premium',
       name: 'Premium',
-      price: 12.99,
+      price: 11.97,
       interval: 'month',
       features: [
-        'Unlimited meditation sessions',
-        'Advanced biofeedback integration',
-        'Personalized AI recommendations',
-        'Offline mode',
-        'Premium guided content',
-        'Advanced analytics'
+        '14 Meditation Sessions - Comprehensive guided library',
+        'Advanced Breathing Techniques - All patterns and customizations',
+        'Unlimited Sessions - No weekly limits or restrictions',
+        'Full Progress Analytics - Detailed insights and trends',
+        'Ad-Free Experience - No interruptions',
+        'Offline Mode - Download and use anywhere'
       ],
-      current: currentTier === 'premium',
-      popular: true
+      current: currentTier === 'premium'
     },
     {
-      id: 'team',
-      name: 'Premium Plus',
-      price: 39.99,
+      id: 'premium-pro',
+      name: 'Premium Pro',
+      price: 19.97,
       interval: 'month',
       features: [
         'Everything in Premium',
-        'Team collaboration features',
-        'Group meditation sessions',
-        'Administrator dashboard',
-        'Priority support',
-        'Custom branding'
+        '18 Meditation Sessions - Extended library with variety',
+        'Advanced Habit Tracking - Detailed streaks and rewards',
+        'Basic Biofeedback Integration - Heart rate monitoring',
+        'Sleep Stories Library - 15+ exclusive stories',
+        'Group Challenges - Join community meditation challenges'
       ],
-      current: currentTier === 'team'
+      current: currentTier === 'premium-pro',
+      popular: true
+    },
+    {
+      id: 'premium-plus',
+      name: 'Premium Plus',
+      price: 29.97,
+      interval: 'month',
+      features: [
+        'Everything in Premium Pro',
+        'Complete Library - All 22+ sessions + monthly new releases',
+        '1-on-1 Expert Sessions - 2 monthly video calls with meditation experts',
+        'Advanced Biofeedback Coaching - Real-time guidance and insights',
+        'AI-Powered Personalization - Custom meditation plans generated monthly',
+        'Family Sharing - Up to 4 accounts included'
+      ],
+      current: currentTier === 'premium-plus'
     }
   ];
 
@@ -132,7 +147,7 @@ export const SubscriptionManagement: React.FC<SubscriptionManagementProps> = ({
       </Card>
 
       {/* Subscription Plans */}
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {tiers.map((tier) => (
           <Card 
             key={tier.id} 
@@ -147,7 +162,8 @@ export const SubscriptionManagement: React.FC<SubscriptionManagementProps> = ({
             <CardHeader className="text-center">
               <CardTitle className="flex items-center justify-center gap-2">
                 {tier.id === 'premium' && <Crown className="h-5 w-5 text-yellow-500" />}
-                {tier.id === 'team' && <Users className="h-5 w-5 text-purple-500" />}
+                {tier.id === 'premium-pro' && <Crown className="h-5 w-5 text-purple-500" />}
+                {tier.id === 'premium-plus' && <Users className="h-5 w-5 text-purple-500" />}
                 {tier.name}
               </CardTitle>
               <div className="text-3xl font-bold">
