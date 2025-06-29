@@ -16,6 +16,34 @@ export interface BiometricReadings {
   timestamp: string;
 }
 
+export interface BiometricData {
+  id: string;
+  user_id: string;
+  session_id?: string;
+  timestamp: string;
+  recorded_at?: string;
+  heart_rate?: number;
+  heartRate?: number;  // For backward compatibility
+  hrv?: number;
+  respiratory_rate?: number;
+  breath_rate?: number;
+  breathRate?: number;  // For backward compatibility
+  stress_score?: number;
+  stress_level?: number;
+  stress?: number;
+  focus_score?: number;
+  calm_score?: number;
+  coherence?: number;
+  device_source?: string;
+  brainwaves?: {
+    alpha: number;
+    beta: number;
+    delta: number;
+    gamma: number;
+    theta: number;
+  };
+}
+
 export interface BiofeedbackHookReturn {
   devices: DeviceInfo[];
   isScanning: boolean;

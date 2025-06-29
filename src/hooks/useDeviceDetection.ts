@@ -11,6 +11,11 @@ interface DeviceDetection {
     width: number;
     height: number;
   };
+  brandSpacing: {
+    small: string;
+    medium: string;
+    large: string;
+  };
 }
 
 export const useDeviceDetection = (): DeviceDetection => {
@@ -20,7 +25,12 @@ export const useDeviceDetection = (): DeviceDetection => {
     isDesktop: true,
     deviceType: 'desktop',
     touchCapable: false,
-    screenSize: { width: window.innerWidth, height: window.innerHeight }
+    screenSize: { width: window.innerWidth, height: window.innerHeight },
+    brandSpacing: {
+      small: '0.5rem',
+      medium: '1rem',
+      large: '2rem'
+    }
   });
 
   useEffect(() => {
@@ -43,7 +53,12 @@ export const useDeviceDetection = (): DeviceDetection => {
         isDesktop,
         deviceType,
         touchCapable,
-        screenSize: { width, height }
+        screenSize: { width, height },
+        brandSpacing: {
+          small: isMobile ? '0.25rem' : '0.5rem',
+          medium: isMobile ? '0.5rem' : '1rem',
+          large: isMobile ? '1rem' : '2rem'
+        }
       });
     };
 
