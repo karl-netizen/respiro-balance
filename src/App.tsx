@@ -1,116 +1,45 @@
-
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import { Toaster } from '@/components/ui/sonner'
-import { ThemeProvider } from '@/context/ThemeProvider'
-import { UserPreferencesProvider } from '@/context/UserPreferencesProvider'
-import { AuthProvider } from '@/context/AuthProvider'
-import { SubscriptionProvider } from '@/context/SubscriptionProvider'
-import { FocusProvider } from '@/context/FocusProvider'
-import { NotificationsProvider } from '@/context/NotificationsProvider'
-import { OfflineStorageProvider } from '@/components/meditation/offline/OfflineStorageProvider'
-import SkipNavigation from '@/components/accessibility/SkipNavigation'
-import OfflineIndicator from '@/components/common/OfflineIndicator'
-import AriaLiveRegion from '@/components/accessibility/AriaLiveRegion'
-import ErrorBoundary from '@/components/ErrorBoundary'
-
-// Import animations CSS
-import '@/styles/animations.css'
-
-// Import pages - Fixed imports
-import LandingPage from '@/pages/LandingPage'
-import Dashboard from '@/pages/Dashboard'
-import MeditationPage from '@/pages/MeditationPage'
-import Meditate from '@/pages/Meditate'
-import MeditationSessionPage from '@/pages/MeditationSessionPage'
-import BreathePageRoute from '@/pages/BreathePageRoute'
-import ProgressPage from '@/pages/ProgressPage'
-import BiofeedbackPage from '@/pages/BiofeedbackPage'
-import FocusPage from '@/pages/FocusPage'
-import MorningRitualPage from '@/pages/MorningRitualPage'
-import SocialPage from '@/pages/SocialPage'
-import SettingsPage from '@/pages/SettingsPage'
-import ProfilePage from '@/pages/ProfilePage'
-import OnboardingPage from '@/pages/OnboardingPage'
-import WorkLifeBalancePage from '@/pages/WorkLifeBalancePage'
-import PaymentSuccessPage from '@/pages/PaymentSuccessPage'
-import PaymentCancelPage from '@/pages/PaymentCancelPage'
-import ResetPasswordPage from '@/pages/ResetPasswordPage'
-import LoginPage from '@/pages/LoginPage'
-import SignupPage from '@/pages/SignupPage'
-import BreakSettingsPage from '@/pages/BreakSettingsPage'
-import OfflineDownloadsPage from '@/pages/OfflineDownloadsPage'
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      gcTime: 1000 * 60 * 10, // 10 minutes
-      retry: 1, // Reduce retries to speed up error handling
-    },
-  },
-})
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import HomePage from '@/pages/HomePage';
+import LoginPage from '@/pages/LoginPage';
+import RegisterPage from '@/pages/RegisterPage';
+import ForgotPasswordPage from '@/pages/ForgotPasswordPage';
+import ResetPasswordPage from '@/pages/ResetPasswordPage';
+import ProfilePage from '@/pages/ProfilePage';
+import SettingsPage from '@/pages/SettingsPage';
+import SystemDashboardPage from '@/pages/SystemDashboardPage';
+import Meditate from '@/pages/Meditate';
+import BiofeedbackPage from '@/pages/BiofeedbackPage';
+import SubscriptionPage from '@/pages/SubscriptionPage';
+import PremiumPlusPage from '@/pages/PremiumPlusPage';
+import SocialPage from '@/pages/SocialPage';
+import MeditateAdvanced from '@/pages/MeditateAdvanced';
+import PremiumProPage from '@/pages/PremiumProPage';
 
 function App() {
   return (
-    <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-          <AuthProvider>
-            <UserPreferencesProvider>
-              <SubscriptionProvider>
-                <FocusProvider>
-                  <NotificationsProvider>
-                    <Router>
-                      <OfflineStorageProvider>
-                        <div className="min-h-screen bg-background text-foreground w-full">
-                          <SkipNavigation />
-                          <AriaLiveRegion />
-                          
-                          <main id="main-content" className="w-full">
-                            <Routes>
-                              <Route path="/" element={<LandingPage />} />
-                              <Route path="/landing" element={<LandingPage />} />
-                              <Route path="/home" element={<LandingPage />} />
-                              <Route path="/login" element={<LoginPage />} />
-                              <Route path="/signup" element={<SignupPage />} />
-                              <Route path="/reset-password" element={<ResetPasswordPage />} />
-                              <Route path="/dashboard" element={<Dashboard />} />
-                              <Route path="/meditation" element={<MeditationPage />} />
-                              <Route path="/meditate" element={<Meditate />} />
-                              <Route path="/meditate/session/:id" element={<MeditationSessionPage />} />
-                              <Route path="/meditation/session/:id" element={<MeditationSessionPage />} />
-                              <Route path="/offline-downloads" element={<OfflineDownloadsPage />} />
-                              <Route path="/breathe" element={<BreathePageRoute />} />
-                              <Route path="/progress" element={<ProgressPage />} />
-                              <Route path="/biofeedback" element={<BiofeedbackPage />} />
-                              <Route path="/focus" element={<FocusPage />} />
-                              <Route path="/morning-ritual" element={<MorningRitualPage />} />
-                              <Route path="/social" element={<SocialPage />} />
-                              <Route path="/settings" element={<SettingsPage />} />
-                              <Route path="/profile" element={<ProfilePage />} />
-                              <Route path="/onboarding" element={<OnboardingPage />} />
-                              <Route path="/work-life-balance" element={<WorkLifeBalancePage />} />
-                              <Route path="/work-life-balance/break-settings" element={<BreakSettingsPage />} />
-                              <Route path="/payment/success" element={<PaymentSuccessPage />} />
-                              <Route path="/payment/cancel" element={<PaymentCancelPage />} />
-                            </Routes>
-                          </main>
-
-                          <OfflineIndicator />
-                          <Toaster />
-                        </div>
-                      </OfflineStorageProvider>
-                    </Router>
-                  </NotificationsProvider>
-                </FocusProvider>
-              </SubscriptionProvider>
-            </UserPreferencesProvider>
-          </AuthProvider>
-        </ThemeProvider>
-      </QueryClientProvider>
-    </ErrorBoundary>
-  )
+    <Router>
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/system" element={<SystemDashboardPage />} />
+          <Route path="/meditation" element={<Meditate />} />
+          <Route path="/biofeedback" element={<BiofeedbackPage />} />
+          <Route path="/subscription" element={<SubscriptionPage />} />
+          <Route path="/premium-plus" element={<PremiumPlusPage />} />
+          <Route path="/social" element={<SocialPage />} />
+          <Route path="/meditate-advanced" element={<MeditateAdvanced />} />
+          <Route path="/premium-pro" element={<PremiumProPage />} />
+        </Routes>
+      </div>
+    </Router>
+  );
 }
 
-export default App
+export default App;

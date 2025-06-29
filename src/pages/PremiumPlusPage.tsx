@@ -5,6 +5,9 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useFeatureAccess } from '@/hooks/useFeatureAccess';
 import { Navigate } from 'react-router-dom';
+import { AIPersonalizationEngine } from '@/components/premium-plus/AIPersonalizationEngine';
+import { FamilySharingSystem } from '@/components/premium-plus/FamilySharingSystem';
+import { ExpertSessionPlatform } from '@/components/premium-plus/ExpertSessionPlatform';
 import BiofeedbackCoaching from '@/components/premium-plus/BiofeedbackCoaching';
 import MasterclassSystem from '@/components/premium-plus/MasterclassSystem';
 import WhiteLabelCustomization from '@/components/premium-plus/WhiteLabelCustomization';
@@ -29,18 +32,33 @@ const PremiumPlusPage: React.FC = () => {
               Premium Plus Features
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl">
-              Access our most advanced features including biofeedback coaching, 
-              exclusive masterclasses, white-label customization, and comprehensive wellness tracking.
+              Access our most advanced features including AI personalization, family sharing, 
+              expert sessions, and comprehensive wellness tracking.
             </p>
           </div>
 
-          <Tabs defaultValue="biofeedback" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4">
+          <Tabs defaultValue="ai" className="space-y-6">
+            <TabsList className="grid w-full grid-cols-3 lg:grid-cols-7">
+              <TabsTrigger value="ai">AI Engine</TabsTrigger>
+              <TabsTrigger value="family">Family</TabsTrigger>
+              <TabsTrigger value="experts">Experts</TabsTrigger>
               <TabsTrigger value="biofeedback">Biofeedback</TabsTrigger>
-              <TabsTrigger value="masterclass">Masterclasses</TabsTrigger>
-              <TabsTrigger value="wellness">Wellness Hub</TabsTrigger>
+              <TabsTrigger value="masterclass">Masterclass</TabsTrigger>
+              <TabsTrigger value="wellness">Wellness</TabsTrigger>
               <TabsTrigger value="whitelabel">White-label</TabsTrigger>
             </TabsList>
+
+            <TabsContent value="ai">
+              <AIPersonalizationEngine />
+            </TabsContent>
+
+            <TabsContent value="family">
+              <FamilySharingSystem />
+            </TabsContent>
+
+            <TabsContent value="experts">
+              <ExpertSessionPlatform />
+            </TabsContent>
 
             <TabsContent value="biofeedback">
               <BiofeedbackCoaching />
