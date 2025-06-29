@@ -35,8 +35,15 @@ const PricingTiers = () => {
     setIsAnnual(!isAnnual);
   };
 
-  const getPricing = (monthlyPrice: number, annualPrice: number) => {
-    return isAnnual ? { price: annualPrice, period: 'year', savings: Math.round(((monthlyPrice * 12 - annualPrice) / (monthlyPrice * 12)) * 100) } : { price: monthlyPrice, period: 'month', savings: 0 };
+  const getPricing = (monthlyPrice: number) => {
+    if (monthlyPrice === 0) return { price: 0, period: 'month', savings: 0 };
+    
+    const annualPrice = Math.round(monthlyPrice * 12 * 0.7 * 100) / 100; // 30% discount
+    const savings = 30;
+    
+    return isAnnual 
+      ? { price: annualPrice, period: 'year', savings } 
+      : { price: monthlyPrice, period: 'month', savings: 0 };
   };
   
   return (
@@ -71,7 +78,7 @@ const PricingTiers = () => {
               </span>
               {isAnnual && (
                 <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-medium">
-                  Save 17%
+                  Save 30%
                 </span>
               )}
             </div>
@@ -127,15 +134,15 @@ const PricingTiers = () => {
               <CardTitle className="text-xl text-gray-900 dark:text-white">Premium</CardTitle>
               <div className="mt-4">
                 <span className="text-3xl font-bold text-gray-900 dark:text-white">
-                  ${getPricing(11.97, 119.70).price}
+                  ${getPricing(11.97).price}
                 </span>
                 <span className="text-muted-foreground ml-2 dark:text-gray-300">
-                  /{getPricing(11.97, 119.70).period}
+                  /{getPricing(11.97).period}
                 </span>
                 {isAnnual && (
                   <div className="mt-1">
                     <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-medium">
-                      Save {getPricing(11.97, 119.70).savings}%
+                      Save {getPricing(11.97).savings}%
                     </span>
                   </div>
                 )}
@@ -179,15 +186,15 @@ const PricingTiers = () => {
               <CardTitle className="text-xl text-gray-900 dark:text-white">Premium Pro</CardTitle>
               <div className="mt-4">
                 <span className="text-3xl font-bold text-gray-900 dark:text-white">
-                  ${getPricing(19.97, 199.70).price}
+                  ${getPricing(19.97).price}
                 </span>
                 <span className="text-muted-foreground ml-2 dark:text-gray-300">
-                  /{getPricing(19.97, 199.70).period}
+                  /{getPricing(19.97).period}
                 </span>
                 {isAnnual && (
                   <div className="mt-1">
                     <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-medium">
-                      Save {getPricing(19.97, 199.70).savings}%
+                      Save {getPricing(19.97).savings}%
                     </span>
                   </div>
                 )}
@@ -225,7 +232,7 @@ const PricingTiers = () => {
           </Card>
           
           {/* Premium Plus Tier */}
-          <Card className="flex flex-col border-border shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 bg-white hover:bg-gray-50/80 dark:bg-gray-800 dark:hover:bg-gray-700/80">
+          <Card className="flex flex-col relative border-border shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 bg-white hover:bg-gray-50/80 dark:bg-gray-800 dark:hover:bg-gray-700/80">
             <div className="absolute top-0 left-0 transform -translate-x-1/4 -translate-y-1/3">
               <div className="bg-purple-600 text-white text-xs font-medium px-3 py-1 rounded-full">
                 Limited Beta
@@ -235,15 +242,15 @@ const PricingTiers = () => {
               <CardTitle className="text-xl text-gray-900 dark:text-white">Premium Plus</CardTitle>
               <div className="mt-4">
                 <span className="text-3xl font-bold text-gray-900 dark:text-white">
-                  ${getPricing(29.97, 299.70).price}
+                  ${getPricing(29.97).price}
                 </span>
                 <span className="text-muted-foreground ml-2 dark:text-gray-300">
-                  /{getPricing(29.97, 299.70).period}
+                  /{getPricing(29.97).period}
                 </span>
                 {isAnnual && (
                   <div className="mt-1">
                     <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-medium">
-                      Save {getPricing(29.97, 299.70).savings}%
+                      Save {getPricing(29.97).savings}%
                     </span>
                   </div>
                 )}

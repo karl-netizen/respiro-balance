@@ -35,6 +35,12 @@ export const SubscriptionManagement: React.FC<SubscriptionManagementProps> = ({
 }) => {
   const [selectedTier, setSelectedTier] = useState<string | null>(null);
 
+  // Calculate annual pricing with 30% discount
+  const getAnnualPrice = (monthlyPrice: number) => {
+    if (monthlyPrice === 0) return 0;
+    return Math.round(monthlyPrice * 12 * 0.7 * 100) / 100;
+  };
+
   const tiers: SubscriptionTier[] = [
     {
       id: 'free',
@@ -170,6 +176,11 @@ export const SubscriptionManagement: React.FC<SubscriptionManagementProps> = ({
                 ${tier.price}
                 <span className="text-sm font-normal text-muted-foreground">/{tier.interval}</span>
               </div>
+              {tier.price > 0 && (
+                <div className="text-xs text-muted-foreground">
+                  Annual: ${getAnnualPrice(tier.price)}/year (Save 30%)
+                </div>
+              )}
             </CardHeader>
             
             <CardContent>

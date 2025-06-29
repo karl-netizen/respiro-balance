@@ -43,14 +43,10 @@ const SignupPage = () => {
     setIsLoading(true);
     try {
       const inviteToken = localStorage.getItem('inviteToken');
-      const { error } = await signUp({
-        email,
-        password,
-        options: {
-          data: {
-            full_name: fullName,
-            inviteToken: inviteToken || null,
-          },
+      const { error } = await signUp(email, password, {
+        data: {
+          full_name: fullName,
+          inviteToken: inviteToken || null,
         },
       });
 

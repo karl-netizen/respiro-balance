@@ -34,15 +34,11 @@ const Register = () => {
     setError(null);
 
     try {
-      const { error } = await signUp({
-        email,
-        password,
-        options: {
-          data: {
-            full_name: fullName,
-          },
-          redirectTo: `${window.location.origin}/dashboard`,
+      const { error } = await signUp(email, password, {
+        data: {
+          full_name: fullName,
         },
+        redirectTo: `${window.location.origin}/dashboard`,
       });
 
       if (error) {
