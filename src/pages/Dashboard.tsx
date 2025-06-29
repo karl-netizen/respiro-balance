@@ -46,7 +46,7 @@ const Dashboard: React.FC = () => {
                 welcomeSection={
                   <DashboardWelcome 
                     welcomeMessage={welcomeMessage}
-                    currentPeriod={currentPeriod}
+                    currentPeriod={currentPeriod as 'morning' | 'afternoon' | 'evening'}
                     quickStats={quickStats}
                   />
                 }

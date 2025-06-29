@@ -4,6 +4,9 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useDashboardData } from './hooks/useDashboardData';
 import { generateQuickStats } from './utils/dashboardUtils';
 import { getMoodCheckForToday, setMoodCheckForToday } from '@/utils/moodCheckUtils';
+import { BreadcrumbNavigation } from '@/components/navigation/BreadcrumbNavigation';
+import { EnhancedLoadingState } from '@/components/ui/enhanced-loading-states';
+import { ErrorDisplay } from '@/components/error/ErrorDisplay';
 
 interface DashboardContainerProps {
   children: (props: {
@@ -31,6 +34,8 @@ const DashboardContainer: React.FC<DashboardContainerProps> = ({ children }) => 
   const location = useLocation();
   const [showMoodModal, setShowMoodModal] = useState(false);
   const [dailyMood, setDailyMood] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
   
   const {
     user,
@@ -44,6 +49,15 @@ const DashboardContainer: React.FC<DashboardContainerProps> = ({ children }) => 
     userName,
     handleMoodSelect
   } = useDashboardData();
+
+  // Simulate loading state
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   // Check for daily mood on component mount
   useEffect(() => {
@@ -102,10 +116,45 @@ const DashboardContainer: React.FC<DashboardContainerProps> = ({ children }) => 
     navigate('/landing', { replace: true });
   }, [navigate, location.state]);
 
+  const handleRetry = useCallback(() => {
+    setError(null);
+    setIsLoading(true);
+    // Simulate retry
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+  }, []);
+
   console.log('Dashboard render - dailyMood:', dailyMood, 'user:', user);
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background p-6">
+        <EnhancedLoadingState variant="dashboard" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-6">
+        <ErrorDisplay
+          title="Dashboard Error"
+          message="Unable to load your dashboard. Please try again."
+          onRetry={handleRetry}
+          error={error}
+          showDetails={true}
+        />
+      </div>
+    );
+  }
+
   return (
-    <>
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-6 pt-6">
+        <BreadcrumbNavigation />
+      </div>
+      
       {children({
         user: user || { email: 'demo@respiro.com', id: 'demo-user' },
         currentPeriod,
@@ -124,7 +173,7 @@ const DashboardContainer: React.FC<DashboardContainerProps> = ({ children }) => 
         handleGoBack,
         setShowMoodModal,
       })}
-    </>
+    </div>
   );
 };
 
