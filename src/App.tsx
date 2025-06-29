@@ -1,6 +1,6 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { Toaster } from '@/components/ui/sonner'
 import { ThemeProvider } from '@/context/ThemeProvider'
 import { UserPreferencesProvider } from '@/context/UserPreferencesProvider'
@@ -12,11 +12,12 @@ import { OfflineStorageProvider } from '@/components/meditation/offline/OfflineS
 import SkipNavigation from '@/components/accessibility/SkipNavigation'
 import OfflineIndicator from '@/components/common/OfflineIndicator'
 import AriaLiveRegion from '@/components/accessibility/AriaLiveRegion'
+import ErrorBoundary from '@/components/ErrorBoundary'
 
 // Import animations CSS
 import '@/styles/animations.css'
 
-// Import pages
+// Import pages - Fixed imports
 import LandingPage from '@/pages/LandingPage'
 import Dashboard from '@/pages/Dashboard'
 import MeditationPage from '@/pages/MeditationPage'
@@ -45,67 +46,70 @@ const queryClient = new QueryClient({
     queries: {
       staleTime: 1000 * 60 * 5, // 5 minutes
       gcTime: 1000 * 60 * 10, // 10 minutes
+      retry: 1, // Reduce retries to speed up error handling
     },
   },
 })
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-        <AuthProvider>
-          <UserPreferencesProvider>
-            <SubscriptionProvider>
-              <FocusProvider>
-                <NotificationsProvider>
-                  <Router>
-                    <OfflineStorageProvider>
-                      <div className="min-h-screen bg-background text-foreground w-full">
-                        <SkipNavigation />
-                        <AriaLiveRegion />
-                        
-                        <main id="main-content" className="w-full">
-                          <Routes>
-                            <Route path="/" element={<LandingPage />} />
-                            <Route path="/landing" element={<LandingPage />} />
-                            <Route path="/home" element={<LandingPage />} />
-                            <Route path="/login" element={<LoginPage />} />
-                            <Route path="/signup" element={<SignupPage />} />
-                            <Route path="/reset-password" element={<ResetPasswordPage />} />
-                            <Route path="/dashboard" element={<Dashboard />} />
-                            <Route path="/meditation" element={<MeditationPage />} />
-                            <Route path="/meditate" element={<Meditate />} />
-                            <Route path="/meditate/session/:id" element={<MeditationSessionPage />} />
-                            <Route path="/meditation/session/:id" element={<MeditationSessionPage />} />
-                            <Route path="/offline-downloads" element={<OfflineDownloadsPage />} />
-                            <Route path="/breathe" element={<BreathePageRoute />} />
-                            <Route path="/progress" element={<ProgressPage />} />
-                            <Route path="/biofeedback" element={<BiofeedbackPage />} />
-                            <Route path="/focus" element={<FocusPage />} />
-                            <Route path="/morning-ritual" element={<MorningRitualPage />} />
-                            <Route path="/social" element={<SocialPage />} />
-                            <Route path="/settings" element={<SettingsPage />} />
-                            <Route path="/profile" element={<ProfilePage />} />
-                            <Route path="/onboarding" element={<OnboardingPage />} />
-                            <Route path="/work-life-balance" element={<WorkLifeBalancePage />} />
-                            <Route path="/work-life-balance/break-settings" element={<BreakSettingsPage />} />
-                            <Route path="/payment/success" element={<PaymentSuccessPage />} />
-                            <Route path="/payment/cancel" element={<PaymentCancelPage />} />
-                          </Routes>
-                        </main>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+          <AuthProvider>
+            <UserPreferencesProvider>
+              <SubscriptionProvider>
+                <FocusProvider>
+                  <NotificationsProvider>
+                    <Router>
+                      <OfflineStorageProvider>
+                        <div className="min-h-screen bg-background text-foreground w-full">
+                          <SkipNavigation />
+                          <AriaLiveRegion />
+                          
+                          <main id="main-content" className="w-full">
+                            <Routes>
+                              <Route path="/" element={<LandingPage />} />
+                              <Route path="/landing" element={<LandingPage />} />
+                              <Route path="/home" element={<LandingPage />} />
+                              <Route path="/login" element={<LoginPage />} />
+                              <Route path="/signup" element={<SignupPage />} />
+                              <Route path="/reset-password" element={<ResetPasswordPage />} />
+                              <Route path="/dashboard" element={<Dashboard />} />
+                              <Route path="/meditation" element={<MeditationPage />} />
+                              <Route path="/meditate" element={<Meditate />} />
+                              <Route path="/meditate/session/:id" element={<MeditationSessionPage />} />
+                              <Route path="/meditation/session/:id" element={<MeditationSessionPage />} />
+                              <Route path="/offline-downloads" element={<OfflineDownloadsPage />} />
+                              <Route path="/breathe" element={<BreathePageRoute />} />
+                              <Route path="/progress" element={<ProgressPage />} />
+                              <Route path="/biofeedback" element={<BiofeedbackPage />} />
+                              <Route path="/focus" element={<FocusPage />} />
+                              <Route path="/morning-ritual" element={<MorningRitualPage />} />
+                              <Route path="/social" element={<SocialPage />} />
+                              <Route path="/settings" element={<SettingsPage />} />
+                              <Route path="/profile" element={<ProfilePage />} />
+                              <Route path="/onboarding" element={<OnboardingPage />} />
+                              <Route path="/work-life-balance" element={<WorkLifeBalancePage />} />
+                              <Route path="/work-life-balance/break-settings" element={<BreakSettingsPage />} />
+                              <Route path="/payment/success" element={<PaymentSuccessPage />} />
+                              <Route path="/payment/cancel" element={<PaymentCancelPage />} />
+                            </Routes>
+                          </main>
 
-                        <OfflineIndicator />
-                        <Toaster />
-                      </div>
-                    </OfflineStorageProvider>
-                  </Router>
-                </NotificationsProvider>
-              </FocusProvider>
-            </SubscriptionProvider>
-          </UserPreferencesProvider>
-        </AuthProvider>
-      </ThemeProvider>
-    </QueryClientProvider>
+                          <OfflineIndicator />
+                          <Toaster />
+                        </div>
+                      </OfflineStorageProvider>
+                    </Router>
+                  </NotificationsProvider>
+                </FocusProvider>
+              </SubscriptionProvider>
+            </UserPreferencesProvider>
+          </AuthProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   )
 }
 

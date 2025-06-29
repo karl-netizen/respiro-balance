@@ -1,3 +1,3 @@
 
-// We're replacing this file with a simple export from our AuthContext
-export { useAuth } from '@/context/AuthContext';
+// Consolidate all auth functionality into one clean export
+export { useAuth } from '@/context/AuthProvider';

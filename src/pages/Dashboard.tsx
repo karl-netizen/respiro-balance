@@ -68,27 +68,34 @@ const Dashboard: React.FC = () => {
     setShowMoodModal(true);
   }, []);
 
+  // FIXED: Smart back navigation that prevents circular loops
   const handleGoBack = useCallback(() => {
-    // Check if we came from a specific page
     const from = location.state?.from;
+    const referrer = document.referrer;
     
-    if (from && from !== '/dashboard') {
-      navigate(from);
-    } else {
-      // Default fallback routes that make sense
-      navigate('/landing');
+    console.log('Dashboard navigation - from:', from, 'referrer:', referrer);
+    
+    // Prevent going back to dashboard itself
+    if (from === '/dashboard' || referrer.includes('/dashboard')) {
+      console.log('Preventing dashboard loop, going to landing');
+      navigate('/landing', { replace: true });
+      return;
     }
+    
+    // If we have a valid previous location that's not dashboard
+    if (from && from !== '/dashboard' && from !== window.location.pathname) {
+      navigate(from, { replace: true });
+      return;
+    }
+    
+    // Safe fallback to landing page
+    navigate('/landing', { replace: true });
   }, [navigate, location.state]);
 
-  if (!user) {
-    navigate('/login');
-    return null;
-  }
+  // Demo mode handling - bypass auth check for now
+  const demoUser = user || { email: 'demo@respiro.com', id: 'demo-user' };
 
-  // Use dailyMood as the primary source of truth
-  const effectiveMood = dailyMood;
-
-  console.log('Dashboard render - dailyMood:', dailyMood, 'effectiveMood:', effectiveMood);
+  console.log('Dashboard render - dailyMood:', dailyMood, 'user:', demoUser);
 
   return (
     <div className="min-h-screen bg-background">
@@ -102,7 +109,7 @@ const Dashboard: React.FC = () => {
           hapticFeedback={true}
         >
           <ArrowLeft size={16} />
-          <span className="hidden sm:inline">Previous Page</span>
+          <span className="hidden sm:inline">Back to Landing</span>
           <span className="sm:hidden">Back</span>
         </TouchFriendlyButton>
       </div>
@@ -126,10 +133,10 @@ const Dashboard: React.FC = () => {
         />
 
         {/* Mood Dashboard Header */}
-        {effectiveMood && (
+        {dailyMood && (
           <div className="mb-6">
             <MoodDashboardHeader 
-              currentMood={effectiveMood}
+              currentMood={dailyMood}
               onMoodChange={handleMoodChange}
             />
           </div>
@@ -140,7 +147,7 @@ const Dashboard: React.FC = () => {
           weeklyProgress={weeklyProgress}
           weeklyGoal={weeklyGoal}
           progressPercentage={progressPercentage}
-          currentMood={effectiveMood}
+          currentMood={dailyMood}
           onMoodSelect={handleMoodModalSelect}
           currentStreak={currentStreak}
         />
