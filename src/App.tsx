@@ -18,7 +18,7 @@ import '@/styles/animations.css'
 
 // Import pages
 import LandingPage from '@/pages/LandingPage'
-import DashboardPage from '@/pages/DashboardPage'
+import Dashboard from '@/pages/Dashboard'
 import MeditationPage from '@/pages/MeditationPage'
 import Meditate from '@/pages/Meditate'
 import MeditationSessionPage from '@/pages/MeditationSessionPage'
@@ -67,12 +67,12 @@ function App() {
                         <main id="main-content" className="w-full">
                           <Routes>
                             <Route path="/" element={<LandingPage />} />
-                            <Route path="/home" element={<LandingPage />} />
                             <Route path="/landing" element={<LandingPage />} />
+                            <Route path="/home" element={<LandingPage />} />
                             <Route path="/login" element={<LoginPage />} />
                             <Route path="/signup" element={<SignupPage />} />
                             <Route path="/reset-password" element={<ResetPasswordPage />} />
-                            <Route path="/dashboard" element={<DashboardPage />} />
+                            <Route path="/dashboard" element={<Dashboard />} />
                             <Route path="/meditation" element={<MeditationPage />} />
                             <Route path="/meditate" element={<Meditate />} />
                             <Route path="/meditate/session/:id" element={<MeditationSessionPage />} />
