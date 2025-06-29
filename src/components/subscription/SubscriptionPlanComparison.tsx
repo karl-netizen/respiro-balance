@@ -93,10 +93,10 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
 
   const currentTier = isPremium ? (subscriptionData?.tier || 'premium') : 'free';
 
-  // Calculate annual pricing with 30% discount
-  const getAnnualPrice = (monthlyPrice: number) => {
+  // Calculate annual pricing with different discount percentages
+  const getAnnualPrice = (monthlyPrice: number, discountPercent: number) => {
     if (monthlyPrice === 0) return 0;
-    return Math.round(monthlyPrice * 12 * 0.7 * 100) / 100;
+    return Math.round(monthlyPrice * 12 * (1 - discountPercent / 100) * 100) / 100;
   };
 
   return (
@@ -210,7 +210,7 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
       <div className="text-center mt-12">
         <p className="text-sm text-muted-foreground max-w-2xl mx-auto text-gray-700 dark:text-gray-300">
           All plans include access to our mobile app and web platform. Premium plans
-          can be canceled at any time. Annual plans save 30% compared to monthly.
+          can be canceled at any time. Annual plans save 32-40% compared to monthly.
           For enterprise solutions or custom pricing, please contact our sales team.
         </p>
       </div>

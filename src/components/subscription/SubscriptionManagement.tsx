@@ -14,6 +14,7 @@ interface SubscriptionTier {
   features: string[];
   current?: boolean;
   popular?: boolean;
+  discountPercent?: number;
 }
 
 interface SubscriptionManagementProps {
@@ -35,10 +36,10 @@ export const SubscriptionManagement: React.FC<SubscriptionManagementProps> = ({
 }) => {
   const [selectedTier, setSelectedTier] = useState<string | null>(null);
 
-  // Calculate annual pricing with 30% discount
-  const getAnnualPrice = (monthlyPrice: number) => {
+  // Calculate annual pricing with different discount percentages
+  const getAnnualPrice = (monthlyPrice: number, discountPercent: number) => {
     if (monthlyPrice === 0) return 0;
-    return Math.round(monthlyPrice * 12 * 0.7 * 100) / 100;
+    return Math.round(monthlyPrice * 12 * (1 - discountPercent / 100) * 100) / 100;
   };
 
   const tiers: SubscriptionTier[] = [
@@ -60,6 +61,7 @@ export const SubscriptionManagement: React.FC<SubscriptionManagementProps> = ({
       name: 'Premium',
       price: 11.97,
       interval: 'month',
+      discountPercent: 32,
       features: [
         '14 Meditation Sessions - Comprehensive guided library',
         'Advanced Breathing Techniques - All patterns and customizations',
@@ -75,6 +77,7 @@ export const SubscriptionManagement: React.FC<SubscriptionManagementProps> = ({
       name: 'Premium Pro',
       price: 19.97,
       interval: 'month',
+      discountPercent: 35,
       features: [
         'Everything in Premium',
         '18 Meditation Sessions - Extended library with variety',
@@ -91,6 +94,7 @@ export const SubscriptionManagement: React.FC<SubscriptionManagementProps> = ({
       name: 'Premium Plus',
       price: 29.97,
       interval: 'month',
+      discountPercent: 40,
       features: [
         'Everything in Premium Pro',
         'Complete Library - All 22+ sessions + monthly new releases',
@@ -176,9 +180,9 @@ export const SubscriptionManagement: React.FC<SubscriptionManagementProps> = ({
                 ${tier.price}
                 <span className="text-sm font-normal text-muted-foreground">/{tier.interval}</span>
               </div>
-              {tier.price > 0 && (
+              {tier.price > 0 && tier.discountPercent && (
                 <div className="text-xs text-muted-foreground">
-                  Annual: ${getAnnualPrice(tier.price)}/year (Save 30%)
+                  Annual: ${getAnnualPrice(tier.price, tier.discountPercent)}/year (Save {tier.discountPercent}%)
                 </div>
               )}
             </CardHeader>

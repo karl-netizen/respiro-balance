@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Calendar, Clock, Users, Play, Live, Download, MessageCircle } from 'lucide-react';
+import { Calendar, Clock, Users, Play, Radio, Download, MessageCircle } from 'lucide-react';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
 
 interface Masterclass {
@@ -114,7 +114,7 @@ const MasterclassSystem: React.FC = () => {
         />
         {masterclass.isLive && (
           <Badge className="absolute top-2 left-2 bg-red-600 text-white">
-            <Live className="w-3 h-3 mr-1" />
+            <Radio className="w-3 h-3 mr-1" />
             LIVE
           </Badge>
         )}
@@ -247,7 +247,7 @@ const MasterclassSystem: React.FC = () => {
               <div className="space-y-4">
                 <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
                   <div className="flex items-center space-x-2 text-red-800">
-                    <Live className="w-5 h-5" />
+                    <Radio className="w-5 h-5" />
                     <span className="font-medium">Live Sessions Available</span>
                   </div>
                   <p className="text-sm text-red-700 mt-1">
@@ -268,7 +268,7 @@ const MasterclassSystem: React.FC = () => {
             ) : (
               <Card>
                 <CardContent className="p-8 text-center">
-                  <Live className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                  <Radio className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
                   <h3 className="text-lg font-semibold mb-2">No Live Sessions</h3>
                   <p className="text-muted-foreground">
                     There are no live masterclasses at the moment. Check the upcoming tab for scheduled sessions.
