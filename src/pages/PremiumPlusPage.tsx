@@ -5,38 +5,18 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useFeatureAccess } from '@/hooks/useFeatureAccess';
 import { Navigate } from 'react-router-dom';
-import ExpertDirectory from '@/components/premium-plus/ExpertDirectory';
-import SessionBooking from '@/components/premium-plus/SessionBooking';
 import BiofeedbackCoaching from '@/components/premium-plus/BiofeedbackCoaching';
 import MasterclassSystem from '@/components/premium-plus/MasterclassSystem';
 import WhiteLabelCustomization from '@/components/premium-plus/WhiteLabelCustomization';
 import ComprehensiveWellnessDashboard from '@/components/premium-plus/ComprehensiveWellnessDashboard';
-import { Expert } from '@/types/experts';
 
 const PremiumPlusPage: React.FC = () => {
   const { currentTier } = useFeatureAccess();
-  const [selectedExpert, setSelectedExpert] = useState<Expert | null>(null);
-  const [showBooking, setShowBooking] = useState(false);
 
   // Redirect if not Premium Plus user
   if (currentTier !== 'premium_plus') {
     return <Navigate to="/subscription" />;
   }
-
-  const handleBookSession = (expert: Expert) => {
-    setSelectedExpert(expert);
-    setShowBooking(true);
-  };
-
-  const handleBookingComplete = (bookingDetails: any) => {
-    console.log('Booking completed:', bookingDetails);
-    // Handle booking completion
-  };
-
-  const handleBookingClose = () => {
-    setSelectedExpert(null);
-    setShowBooking(false);
-  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -49,24 +29,18 @@ const PremiumPlusPage: React.FC = () => {
               Premium Plus Features
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl">
-              Access our most advanced features including expert sessions, biofeedback coaching, 
-              exclusive masterclasses, and comprehensive wellness tracking.
+              Access our most advanced features including biofeedback coaching, 
+              exclusive masterclasses, white-label customization, and comprehensive wellness tracking.
             </p>
           </div>
 
-          <Tabs defaultValue="experts" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6">
-              <TabsTrigger value="experts">Expert Sessions</TabsTrigger>
+          <Tabs defaultValue="biofeedback" className="space-y-6">
+            <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4">
               <TabsTrigger value="biofeedback">Biofeedback</TabsTrigger>
               <TabsTrigger value="masterclass">Masterclasses</TabsTrigger>
               <TabsTrigger value="wellness">Wellness Hub</TabsTrigger>
               <TabsTrigger value="whitelabel">White-label</TabsTrigger>
-              <TabsTrigger value="analytics">Analytics</TabsTrigger>
             </TabsList>
-
-            <TabsContent value="experts">
-              <ExpertDirectory onBookSession={handleBookSession} />
-            </TabsContent>
 
             <TabsContent value="biofeedback">
               <BiofeedbackCoaching />
@@ -83,30 +57,11 @@ const PremiumPlusPage: React.FC = () => {
             <TabsContent value="whitelabel">
               <WhiteLabelCustomization />
             </TabsContent>
-
-            <TabsContent value="analytics">
-              <div className="text-center py-12">
-                <h3 className="text-xl font-semibold mb-4">Advanced Analytics Coming Soon</h3>
-                <p className="text-muted-foreground">
-                  Comprehensive analytics and reporting features are in development.
-                </p>
-              </div>
-            </TabsContent>
           </Tabs>
         </div>
       </main>
 
       <Footer />
-
-      {/* Session Booking Modal */}
-      {selectedExpert && (
-        <SessionBooking
-          expert={selectedExpert}
-          isOpen={showBooking}
-          onClose={handleBookingClose}
-          onBookingComplete={handleBookingComplete}
-        />
-      )}
     </div>
   );
 };

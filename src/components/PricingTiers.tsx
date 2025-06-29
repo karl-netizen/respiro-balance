@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -255,14 +254,13 @@ const PricingTiers = () => {
                 )}
               </div>
               <CardDescription className="mt-2 text-gray-600 dark:text-gray-300">
-                Complete platform with AI & expert coaching
+                Complete platform with AI & biofeedback coaching
               </CardDescription>
             </CardHeader>
             <CardContent className="flex-1">
               <div className="mb-3 text-sm font-medium text-respiro-dark">Everything in Premium Pro, plus:</div>
               <ul className="space-y-2">
-                <PricingFeature included>Complete Library - All 22+ sessions + monthly new releases</PricingFeature>
-                <PricingFeature included>1-on-1 Expert Sessions - 2 monthly video calls with meditation experts</PricingFeature>
+                <PricingFeature included>Complete Library - All 50+ sessions + monthly new releases</PricingFeature>
                 <PricingFeature included>Advanced Biofeedback Coaching - Real-time guidance and insights</PricingFeature>
                 <PricingFeature included>AI-Powered Personalization - Custom meditation plans generated monthly</PricingFeature>
                 <PricingFeature included>Family Sharing - Up to 4 accounts included</PricingFeature>
@@ -288,12 +286,12 @@ const PricingTiers = () => {
             </CardFooter>
           </Card>
         </div>
-        
-        <div className="mt-16 text-center">
+
+        <div className="text-center mt-12">
           <p className="text-sm text-muted-foreground max-w-2xl mx-auto text-gray-700 dark:text-gray-300">
             All plans include access to our mobile app and web platform. Premium plans
-            can be canceled at any time. For enterprise solutions or custom
-            pricing, please contact our sales team.
+            can be canceled at any time. Annual plans save 32-40% compared to monthly.
+            For enterprise solutions or custom pricing, please contact our sales team.
           </p>
         </div>
       </div>
@@ -301,13 +299,11 @@ const PricingTiers = () => {
   );
 };
 
-interface PricingFeatureProps {
-  children: React.ReactNode;
+const PricingFeature = ({ children, included = true, highlighted = false }: { 
+  children: React.ReactNode; 
+  included?: boolean; 
   highlighted?: boolean;
-  included?: boolean;
-}
-
-const PricingFeature = ({ children, highlighted = false, included = true }: PricingFeatureProps) => (
+}) => (
   <li className={`flex items-start ${highlighted ? 'text-respiro-dark font-medium dark:text-respiro-light' : 'text-gray-700 dark:text-gray-300'}`}>
     {included ? (
       <Check className={`h-5 w-5 mr-2 mt-0.5 flex-shrink-0 ${highlighted ? 'text-respiro-dark dark:text-respiro-light' : 'text-green-500'}`} />

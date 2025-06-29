@@ -182,11 +182,10 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
         {/* Premium Plus Plan */}
         <SubscriptionCard
           title="Premium Plus"
-          description="Complete platform with AI & expert coaching"
+          description="Complete platform with AI & biofeedback coaching"
           features={[
             "Everything in Premium Pro, plus:",
-            "Complete Library - All 22+ sessions + monthly new releases",
-            "1-on-1 Expert Sessions - 2 monthly video calls with meditation experts",
+            "Complete Library - All 50+ sessions + monthly new releases",
             "Advanced Biofeedback Coaching - Real-time guidance and insights",
             "AI-Powered Personalization - Custom meditation plans generated monthly",
             "Family Sharing - Up to 4 accounts included",
