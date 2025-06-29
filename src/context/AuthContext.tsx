@@ -1,7 +1,6 @@
 
 import { createContext, useContext } from 'react';
 
-// Extend the AuthContextType to include all necessary methods
 export interface AuthContextType {
   user: any | null;
   session: any | null;
@@ -17,23 +16,8 @@ export interface AuthContextType {
   resendVerificationEmail: (email: string) => Promise<any>;
 }
 
-// Create the context with a default value
-const AuthContext = createContext<AuthContextType>({
-  user: null,
-  session: null,
-  loading: true,
-  isLoading: true,
-  signUp: async () => null,
-  signIn: async () => null,
-  signOut: async () => null,
-  forgotPassword: async () => null,
-  resetPassword: async () => null,
-  updateProfile: async () => {},
-  verifyEmail: async () => null,
-  resendVerificationEmail: async () => null
-});
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Export the useAuth hook
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

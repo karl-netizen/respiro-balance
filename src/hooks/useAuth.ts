@@ -1,3 +1,3 @@
 
-// Consolidate all auth functionality into one clean export
-export { useAuth } from '@/context/AuthProvider';
+// Clean, consolidated auth hook that imports from the correct location
+export { useAuth } from '@/context/AuthContext';

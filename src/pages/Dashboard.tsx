@@ -1,160 +1,83 @@
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { 
-  DashboardWelcome, 
-  DashboardQuickAccess 
-} from '@/components/dashboard';
+import React from 'react';
+import DashboardContainer from '@/components/dashboard/DashboardContainer';
+import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import DashboardLayout, { DashboardTopSection } from '@/components/dashboard/DashboardLayout';
 import DashboardMainContent from '@/components/dashboard/DashboardMainContent';
 import MoodCheckModal from '@/components/dashboard/MoodCheckModal';
 import MoodDashboardHeader from '@/components/dashboard/MoodDashboardHeader';
-import { ArrowLeft } from 'lucide-react';
-import { TouchFriendlyButton } from '@/components/responsive/TouchFriendlyButton';
-import { useDashboardData } from '@/components/dashboard/hooks/useDashboardData';
-import { generateQuickStats } from '@/components/dashboard/utils/dashboardUtils';
-import { getMoodCheckForToday, setMoodCheckForToday } from '@/utils/moodCheckUtils';
+import { DashboardWelcome, DashboardQuickAccess } from '@/components/dashboard';
 
 const Dashboard: React.FC = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [showMoodModal, setShowMoodModal] = useState(false);
-  const [dailyMood, setDailyMood] = useState<string | null>(null);
-  
-  const {
-    user,
-    currentPeriod,
-    meditationStats,
-    currentStreak,
-    weeklyGoal,
-    weeklyProgress,
-    progressPercentage,
-    welcomeMessage,
-    userName,
-    handleMoodSelect
-  } = useDashboardData();
-
-  // Check for daily mood on component mount
-  useEffect(() => {
-    if (user) {
-      const todayMood = getMoodCheckForToday();
-      if (todayMood) {
-        console.log('Setting daily mood from storage:', todayMood);
-        setDailyMood(todayMood);
-        handleMoodSelect(todayMood);
-      } else {
-        // Show modal if no mood check for today
-        setShowMoodModal(true);
-      }
-    }
-  }, [user, handleMoodSelect]);
-
-  // Memoize quick stats to prevent recalculation
-  const quickStats = useMemo(() => 
-    generateQuickStats(currentStreak, weeklyProgress, weeklyGoal, meditationStats),
-    [currentStreak, weeklyProgress, weeklyGoal, meditationStats]
-  );
-
-  // Use useCallback for event handlers
-  const handleMoodModalSelect = useCallback((mood: string) => {
-    console.log('Mood selected from modal:', mood);
-    setMoodCheckForToday(mood);
-    setDailyMood(mood);
-    handleMoodSelect(mood);
-    setShowMoodModal(false);
-  }, [handleMoodSelect]);
-
-  const handleMoodChange = useCallback(() => {
-    setShowMoodModal(true);
-  }, []);
-
-  // FIXED: Smart back navigation that prevents circular loops
-  const handleGoBack = useCallback(() => {
-    const from = location.state?.from;
-    const referrer = document.referrer;
-    
-    console.log('Dashboard navigation - from:', from, 'referrer:', referrer);
-    
-    // Prevent going back to dashboard itself
-    if (from === '/dashboard' || referrer.includes('/dashboard')) {
-      console.log('Preventing dashboard loop, going to landing');
-      navigate('/landing', { replace: true });
-      return;
-    }
-    
-    // If we have a valid previous location that's not dashboard
-    if (from && from !== '/dashboard' && from !== window.location.pathname) {
-      navigate(from, { replace: true });
-      return;
-    }
-    
-    // Safe fallback to landing page
-    navigate('/landing', { replace: true });
-  }, [navigate, location.state]);
-
-  // Demo mode handling - bypass auth check for now
-  const demoUser = user || { email: 'demo@respiro.com', id: 'demo-user' };
-
-  console.log('Dashboard render - dailyMood:', dailyMood, 'user:', demoUser);
-
   return (
     <div className="min-h-screen bg-background">
-      {/* Header with Back Button */}
-      <div className="container mx-auto px-6 pt-6">
-        <TouchFriendlyButton
-          variant="ghost"
-          size="sm"
-          onClick={handleGoBack}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100"
-          hapticFeedback={true}
-        >
-          <ArrowLeft size={16} />
-          <span className="hidden sm:inline">Back to Landing</span>
-          <span className="sm:hidden">Back</span>
-        </TouchFriendlyButton>
-      </div>
+      <DashboardContainer>
+        {({
+          user,
+          currentPeriod,
+          meditationStats,
+          currentStreak,
+          weeklyGoal,
+          weeklyProgress,
+          progressPercentage,
+          welcomeMessage,
+          userName,
+          dailyMood,
+          showMoodModal,
+          quickStats,
+          handleMoodModalSelect,
+          handleMoodChange,
+          handleGoBack,
+          setShowMoodModal,
+        }) => (
+          <>
+            {/* Header with Back Button */}
+            <DashboardHeader onGoBack={handleGoBack} />
 
-      <DashboardLayout>
-        {/* Mood Check Modal */}
-        <MoodCheckModal 
-          open={showMoodModal}
-          onMoodSelect={handleMoodModalSelect}
-        />
+            <DashboardLayout>
+              {/* Mood Check Modal */}
+              <MoodCheckModal 
+                open={showMoodModal}
+                onMoodSelect={handleMoodModalSelect}
+              />
 
-        {/* Welcome Section */}
-        <DashboardTopSection
-          welcomeSection={
-            <DashboardWelcome 
-              welcomeMessage={welcomeMessage}
-              currentPeriod={currentPeriod}
-              quickStats={quickStats}
-            />
-          }
-        />
+              {/* Welcome Section */}
+              <DashboardTopSection
+                welcomeSection={
+                  <DashboardWelcome 
+                    welcomeMessage={welcomeMessage}
+                    currentPeriod={currentPeriod}
+                    quickStats={quickStats}
+                  />
+                }
+              />
 
-        {/* Mood Dashboard Header */}
-        {dailyMood && (
-          <div className="mb-6">
-            <MoodDashboardHeader 
-              currentMood={dailyMood}
-              onMoodChange={handleMoodChange}
-            />
-          </div>
+              {/* Mood Dashboard Header */}
+              {dailyMood && (
+                <div className="mb-6">
+                  <MoodDashboardHeader 
+                    currentMood={dailyMood}
+                    onMoodChange={handleMoodChange}
+                  />
+                </div>
+              )}
+
+              {/* Progress and Actions Section */}
+              <DashboardMainContent
+                weeklyProgress={weeklyProgress}
+                weeklyGoal={weeklyGoal}
+                progressPercentage={progressPercentage}
+                currentMood={dailyMood}
+                onMoodSelect={handleMoodModalSelect}
+                currentStreak={currentStreak}
+              />
+
+              {/* Quick Access Tabs */}
+              <DashboardQuickAccess />
+            </DashboardLayout>
+          </>
         )}
-
-        {/* Progress and Actions Section */}
-        <DashboardMainContent
-          weeklyProgress={weeklyProgress}
-          weeklyGoal={weeklyGoal}
-          progressPercentage={progressPercentage}
-          currentMood={dailyMood}
-          onMoodSelect={handleMoodModalSelect}
-          currentStreak={currentStreak}
-        />
-
-        {/* Quick Access Tabs */}
-        <DashboardQuickAccess />
-      </DashboardLayout>
+      </DashboardContainer>
     </div>
   );
 };

@@ -1,28 +1,26 @@
 
 import React from 'react';
-import { useUserPreferences } from '@/context';
-import { useTimeAwareness } from '@/hooks/useTimeAwareness';
+import { ArrowLeft } from 'lucide-react';
+import { TouchFriendlyButton } from '@/components/responsive/TouchFriendlyButton';
 
 interface DashboardHeaderProps {
-  welcomeMessage: string;
-  currentPeriod: string;
+  onGoBack: () => void;
 }
 
-const DashboardHeader: React.FC<DashboardHeaderProps> = ({
-  welcomeMessage,
-  currentPeriod
-}) => {
+const DashboardHeader: React.FC<DashboardHeaderProps> = ({ onGoBack }) => {
   return (
-    <div className="mb-6">
-      <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-        {welcomeMessage}
-      </h1>
-      <p className="text-gray-600 dark:text-gray-300 mt-2">
-        {currentPeriod === 'morning' && "Start your day with intention"}
-        {currentPeriod === 'afternoon' && "Take a moment to reset and refocus"}
-        {currentPeriod === 'evening' && "Unwind and reflect on your day"}
-        {currentPeriod === 'night' && "Prepare for restful sleep"}
-      </p>
+    <div className="container mx-auto px-6 pt-6">
+      <TouchFriendlyButton
+        variant="ghost"
+        size="sm"
+        onClick={onGoBack}
+        className="flex items-center gap-2 text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100"
+        hapticFeedback={true}
+      >
+        <ArrowLeft size={16} />
+        <span className="hidden sm:inline">Back to Landing</span>
+        <span className="sm:hidden">Back</span>
+      </TouchFriendlyButton>
     </div>
   );
 };
