@@ -1,93 +1,87 @@
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Heart, Activity, Brain, Zap } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
-import { Heart, Brain, Activity, Zap } from 'lucide-react';
 
 interface BiometricSummaryProps {
-  data?: {
+  data: {
     heartRate?: number;
     hrv?: number;
     stress?: number;
     coherence?: number;
-    focusScore?: number;
-    calmScore?: number;
   };
   loading?: boolean;
 }
 
-export const BiometricSummary: React.FC<BiometricSummaryProps> = ({ data, loading }) => {
+export const BiometricSummary: React.FC<BiometricSummaryProps> = ({ data, loading = false }) => {
   if (loading) {
     return (
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {[...Array(4)].map((_, i) => (
-          <Card key={i}>
-            <CardContent className="p-4">
-              <div className="animate-pulse">
-                <div className="h-4 bg-gray-200 rounded mb-2"></div>
-                <div className="h-8 bg-gray-200 rounded"></div>
-              </div>
-            </CardContent>
-          </Card>
+      <div className="grid grid-cols-2 gap-4">
+        {[1, 2, 3, 4].map((i) => (
+          <div key={i} className="animate-pulse">
+            <div className="bg-gray-200 h-16 rounded-lg"></div>
+          </div>
         ))}
       </div>
     );
   }
 
-  if (!data) return null;
-
   const metrics = [
     {
+      icon: Heart,
       label: 'Heart Rate',
       value: data.heartRate || 0,
-      unit: 'bpm',
-      icon: Heart,
-      color: 'text-red-500'
+      unit: 'BPM',
+      color: 'text-red-500',
+      bgColor: 'bg-red-50'
     },
     {
+      icon: Activity,
       label: 'HRV',
       value: data.hrv || 0,
       unit: 'ms',
-      icon: Activity,
-      color: 'text-blue-500'
+      color: 'text-blue-500',
+      bgColor: 'bg-blue-50'
     },
     {
-      label: 'Stress',
+      icon: Brain,
+      label: 'Stress Level',
       value: data.stress || 0,
       unit: '%',
-      icon: Brain,
       color: 'text-orange-500',
-      showProgress: true
+      bgColor: 'bg-orange-50'
     },
     {
-      label: 'Coherence',
-      value: data.coherence ? Math.round(data.coherence * 100) : 0,
-      unit: '%',
       icon: Zap,
+      label: 'Coherence',
+      value: data.coherence || 0,
+      unit: '%',
       color: 'text-green-500',
-      showProgress: true
+      bgColor: 'bg-green-50'
     }
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 gap-4">
       {metrics.map((metric) => {
         const Icon = metric.icon;
         return (
-          <Card key={metric.label}>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <Icon className={`h-4 w-4 ${metric.color}`} />
-                <span className="text-sm font-medium">{metric.label}</span>
-              </div>
-              <div className="text-2xl font-bold">
-                {metric.value}{metric.unit}
-              </div>
-              {metric.showProgress && (
-                <Progress value={metric.value} className="h-2 mt-2" />
-              )}
-            </CardContent>
-          </Card>
+          <div key={metric.label} className={`p-4 rounded-lg ${metric.bgColor}`}>
+            <div className="flex items-center gap-2 mb-2">
+              <Icon className={`h-4 w-4 ${metric.color}`} />
+              <span className="text-sm font-medium text-gray-700">{metric.label}</span>
+            </div>
+            <div className="text-2xl font-bold text-gray-900 mb-1">
+              {metric.value}
+              <span className="text-sm font-normal text-gray-500 ml-1">{metric.unit}</span>
+            </div>
+            {metric.label === 'Stress Level' && (
+              <Progress value={metric.value} className="h-2" />
+            )}
+            {metric.label === 'Coherence' && (
+              <Progress value={metric.value} className="h-2" />
+            )}
+          </div>
         );
       })}
     </div>

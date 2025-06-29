@@ -15,27 +15,40 @@ export const BiofeedbackControls: React.FC<BiofeedbackControlsProps> = ({
   onStopMonitoring
 }) => {
   const handleStart = async () => {
-    await onStartMonitoring();
+    try {
+      await onStartMonitoring();
+    } catch (error) {
+      console.error('Failed to start monitoring:', error);
+    }
   };
 
   return (
-    <div className="flex items-center gap-3 mb-4">
+    <div className="flex items-center gap-2 mb-4">
       {!isMonitoring ? (
-        <Button onClick={handleStart} className="flex items-center gap-2">
+        <Button
+          onClick={handleStart}
+          className="flex items-center gap-2"
+          size="sm"
+        >
           <Play className="h-4 w-4" />
           Start Monitoring
         </Button>
       ) : (
-        <Button onClick={onStopMonitoring} variant="outline" className="flex items-center gap-2">
+        <Button
+          onClick={onStopMonitoring}
+          variant="outline"
+          className="flex items-center gap-2"
+          size="sm"
+        >
           <Square className="h-4 w-4" />
           Stop Monitoring
         </Button>
       )}
       
       {isMonitoring && (
-        <div className="flex items-center gap-2 text-sm text-green-600">
+        <div className="flex items-center gap-1 text-green-600 text-sm">
           <Activity className="h-4 w-4 animate-pulse" />
-          Live monitoring active
+          Monitoring...
         </div>
       )}
     </div>

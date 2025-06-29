@@ -1,74 +1,55 @@
 
-import { useState, useEffect, useRef } from 'react';
-import { BiometricReadings } from './types';
+import { useState, useEffect, useCallback } from 'react';
 
 export const useSimulation = () => {
   const [isSimulating, setIsSimulating] = useState(false);
-  const [simulatedData, setSimulatedData] = useState<BiometricReadings>({
+  const [simulatedData, setSimulatedData] = useState({
     heartRate: 72,
     hrv: 45,
     stress: 25,
-    coherence: 0.8,
-    focusScore: 75,
-    calmScore: 70,
-    restingHeartRate: 60,
-    timestamp: new Date().toISOString()
+    restingHeartRate: 65
   });
-  
-  const intervalRef = useRef<NodeJS.Timeout>();
 
-  const generateRealisticData = (): BiometricReadings => {
-    const baseHeartRate = 72;
-    const heartRateVariation = Math.sin(Date.now() / 10000) * 8;
-    const heartRate = Math.round(baseHeartRate + heartRateVariation + (Math.random() - 0.5) * 4);
+  const generateRealisticData = useCallback(() => {
+    // Generate realistic variations
+    const baseHR = 72;
+    const hrVariation = (Math.random() - 0.5) * 8; // ±4 bpm
+    const newHeartRate = Math.max(60, Math.min(100, baseHR + hrVariation));
     
-    const hrv = Math.round(45 + Math.sin(Date.now() / 15000) * 15 + (Math.random() - 0.5) * 8);
-    const stress = Math.max(0, Math.min(100, Math.round(30 - heartRateVariation + (Math.random() - 0.5) * 20)));
-    const coherence = Math.max(0.1, Math.min(1.0, 0.8 + Math.sin(Date.now() / 8000) * 0.3));
-    const focusScore = Math.round(75 + Math.sin(Date.now() / 12000) * 20);
-    const calmScore = Math.round(70 + Math.cos(Date.now() / 14000) * 25);
-    const restingHeartRate = 60;
+    const baseHRV = 45;
+    const hrvVariation = (Math.random() - 0.5) * 10; // ±5 ms
+    const newHRV = Math.max(20, Math.min(80, baseHRV + hrvVariation));
+    
+    const baseStress = 25;
+    const stressVariation = (Math.random() - 0.5) * 10; // ±5 points
+    const newStress = Math.max(0, Math.min(100, baseStress + stressVariation));
 
     return {
-      heartRate,
-      hrv,
-      stress,
-      coherence: Math.round(coherence * 100) / 100,
-      focusScore: Math.max(0, Math.min(100, focusScore)),
-      calmScore: Math.max(0, Math.min(100, calmScore)),
-      restingHeartRate,
-      timestamp: new Date().toISOString()
-    };
-  };
-
-  const startSimulation = () => {
-    setIsSimulating(true);
-    
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-    }
-    
-    intervalRef.current = setInterval(() => {
-      setSimulatedData(generateRealisticData());
-    }, 1000);
-  };
-
-  const stopSimulation = () => {
-    setIsSimulating(false);
-    
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = undefined;
-    }
-  };
-
-  useEffect(() => {
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
+      heartRate: Math.round(newHeartRate),
+      hrv: Math.round(newHRV),
+      stress: Math.round(newStress),
+      restingHeartRate: 65
     };
   }, []);
+
+  const startSimulation = useCallback(() => {
+    setIsSimulating(true);
+  }, []);
+
+  const stopSimulation = useCallback(() => {
+    setIsSimulating(false);
+  }, []);
+
+  // Update simulated data periodically
+  useEffect(() => {
+    if (!isSimulating) return;
+
+    const interval = setInterval(() => {
+      setSimulatedData(generateRealisticData());
+    }, 2000); // Update every 2 seconds
+
+    return () => clearInterval(interval);
+  }, [isSimulating, generateRealisticData]);
 
   return {
     isSimulating,
