@@ -1,141 +1,137 @@
 
 import { useState, useEffect } from 'react';
-import { useAuth } from './useAuth';
-import { useUserPreferences } from '@/context';
+import { UserPreferences } from '@/context/types';
 
-export interface OnboardingProfile {
-  experience_level: 'beginner' | 'intermediate' | 'advanced';
-  primary_goals: string[];
-  preferred_session_length: number;
-  stress_level: number;
-  meditation_style: string[];
-  time_preferences: string[];
-  health_focus: string[];
-  motivation_factors: string[];
-}
-
-export interface OnboardingRecommendation {
-  type: 'session' | 'goal' | 'schedule' | 'feature';
+interface OnboardingStep {
+  id: string;
   title: string;
   description: string;
-  action: string;
-  priority: number;
+  component: 'welcome' | 'goals' | 'experience' | 'preferences' | 'first-session';
+  completed: boolean;
+}
+
+interface OnboardingProfile {
+  experience: 'beginner' | 'intermediate' | 'advanced';
+  goals: string[];
+  preferredTime: string;
+  sessionDuration: number;
+  interests: string[];
 }
 
 export const useIntelligentOnboarding = () => {
-  const { user } = useAuth();
-  const { preferences, updatePreferences } = useUserPreferences();
-  const [profile, setProfile] = useState<OnboardingProfile | null>(null);
-  const [recommendations, setRecommendations] = useState<OnboardingRecommendation[]>([]);
   const [currentStep, setCurrentStep] = useState(0);
-  const [isComplete, setIsComplete] = useState(false);
+  const [profile, setProfile] = useState<OnboardingProfile>({
+    experience: 'beginner',
+    goals: [],
+    preferredTime: 'morning',
+    sessionDuration: 10,
+    interests: []
+  });
+  const [isCompleted, setIsCompleted] = useState(false);
 
-  // Generate personalized recommendations based on profile
-  const generateRecommendations = (userProfile: OnboardingProfile): OnboardingRecommendation[] => {
-    const recs: OnboardingRecommendation[] = [];
-
-    // Session recommendations based on experience
-    if (userProfile.experience_level === 'beginner') {
-      recs.push({
-        type: 'session',
-        title: 'Start with Breathing Basics',
-        description: 'Perfect for beginners - learn fundamental breathing techniques',
-        action: 'start_breathing_session',
-        priority: 1
-      });
+  const steps: OnboardingStep[] = [
+    {
+      id: 'welcome',
+      title: 'Welcome to Respiro',
+      description: 'Your journey to mindfulness begins here',
+      component: 'welcome',
+      completed: false
+    },
+    {
+      id: 'goals',
+      title: 'Set Your Goals',
+      description: 'What would you like to achieve?',
+      component: 'goals',
+      completed: false
+    },
+    {
+      id: 'experience',
+      title: 'Your Experience',
+      description: 'Tell us about your meditation background',
+      component: 'experience',
+      completed: false
+    },
+    {
+      id: 'preferences',
+      title: 'Personal Preferences',
+      description: 'Customize your meditation experience',
+      component: 'preferences',
+      completed: false
+    },
+    {
+      id: 'first-session',
+      title: 'Your First Session',
+      description: 'Let\'s start with a guided meditation',
+      component: 'first-session',
+      completed: false
     }
+  ];
 
-    // Goal-based recommendations
-    if (userProfile.primary_goals.includes('stress_relief')) {
-      recs.push({
-        type: 'goal',
-        title: 'Set Stress Relief Goal',
-        description: 'Track your stress levels and build a consistent practice',
-        action: 'set_stress_goal',
-        priority: 2
-      });
+  const nextStep = () => {
+    if (currentStep < steps.length - 1) {
+      setCurrentStep(prev => prev + 1);
+    } else {
+      completeOnboarding();
     }
-
-    // Schedule recommendations
-    if (userProfile.time_preferences.includes('morning')) {
-      recs.push({
-        type: 'schedule',
-        title: 'Morning Meditation Routine',
-        description: 'Start your day with a 10-minute morning meditation',
-        action: 'set_morning_reminder',
-        priority: 3
-      });
-    }
-
-    // Feature recommendations based on stress level
-    if (userProfile.stress_level >= 7) {
-      recs.push({
-        type: 'feature',
-        title: 'Enable Stress Tracking',
-        description: 'Monitor your stress patterns and get personalized insights',
-        action: 'enable_stress_tracking',
-        priority: 4
-      });
-    }
-
-    return recs.sort((a, b) => a.priority - b.priority);
   };
 
-  // Save onboarding profile
-  const saveProfile = async (newProfile: OnboardingProfile) => {
-    setProfile(newProfile);
-    
-    // Generate recommendations
-    const recs = generateRecommendations(newProfile);
-    setRecommendations(recs);
-
-    // Update user preferences
-    await updatePreferences({
-      ...preferences,
-      onboardingProfile: newProfile,
-      preferredSessionDuration: newProfile.preferred_session_length,
-      hasCompletedOnboarding: true
-    });
-
-    setIsComplete(true);
+  const previousStep = () => {
+    if (currentStep > 0) {
+      setCurrentStep(prev => prev - 1);
+    }
   };
 
-  // Get quick win session for immediate value
-  const getQuickWinSession = (userProfile: OnboardingProfile) => {
-    if (userProfile.stress_level >= 7) {
-      return {
-        type: 'breathing',
-        title: '5-Minute Stress Relief',
-        duration: 5,
-        description: 'Quick breathing exercise to reduce stress immediately'
+  const completeOnboarding = async () => {
+    try {
+      // Convert onboarding profile to user preferences format
+      const preferences: Partial<UserPreferences> = {
+        notifications: {
+          enabled: true,
+          soundEnabled: true,
+          vibrationEnabled: true,
+          types: {
+            reminders: true,
+            achievements: true,
+            social: false,
+            marketing: false
+          }
+        },
+        meditation: {
+          defaultDuration: profile.sessionDuration,
+          preferredTechniques: profile.interests,
+          backgroundSounds: true,
+          guidedVoice: 'female',
+          sessionReminders: true
+        }
       };
+      
+      // Here you would typically save to the database
+      console.log('Saving onboarding preferences:', preferences);
+      
+      setIsCompleted(true);
+    } catch (error) {
+      console.error('Error completing onboarding:', error);
     }
+  };
 
-    if (userProfile.experience_level === 'beginner') {
-      return {
-        type: 'meditation',
-        title: 'First Meditation',
-        duration: 3,
-        description: 'Gentle introduction to mindfulness meditation'
-      };
-    }
+  const updateProfile = (updates: Partial<OnboardingProfile>) => {
+    setProfile(prev => ({ ...prev, ...updates }));
+  };
 
-    return {
-      type: 'focus',
-      title: 'Focus Boost',
-      duration: 10,
-      description: 'Enhance concentration and mental clarity'
-    };
+  const skipOnboarding = () => {
+    setIsCompleted(true);
   };
 
   return {
-    profile,
-    recommendations,
     currentStep,
-    isComplete,
-    setCurrentStep,
-    saveProfile,
-    getQuickWinSession,
-    generateRecommendations
+    steps,
+    profile,
+    isCompleted,
+    nextStep,
+    previousStep,
+    updateProfile,
+    completeOnboarding,
+    skipOnboarding,
+    progress: ((currentStep + 1) / steps.length) * 100
   };
 };

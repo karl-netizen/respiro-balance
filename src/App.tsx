@@ -1,5 +1,13 @@
+
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { UserPreferencesProvider } from '@/context/UserPreferencesProvider';
+import { ThemeProvider } from 'next-themes';
+import { Toaster } from 'sonner';
+import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import HomePage from '@/pages/HomePage';
 import LoginPage from '@/pages/LoginPage';
 import RegisterPage from '@/pages/RegisterPage';
@@ -17,11 +25,8 @@ import MeditateAdvanced from '@/pages/MeditateAdvanced';
 import PremiumProPage from '@/pages/PremiumProPage';
 import { MobilePWASetup } from '@/components/mobile/MobilePWASetup';
 import { usePerformanceMonitoring } from '@/hooks/usePerformanceMonitoring';
-import { QueryClient } from 'react-query';
-import { UserPreferencesProvider } from '@/context/UserPreferencesContext';
-import { ThemeProvider } from 'next-themes';
-import { Header, Footer, Toaster } from '@/components';
-import { ErrorBoundary } from '@/components';
+
+const queryClient = new QueryClient();
 
 function App() {
   const { trackError } = usePerformanceMonitoring();
@@ -43,7 +48,7 @@ function App() {
 
   return (
     <ErrorBoundary>
-      <QueryClient>
+      <QueryClientProvider client={queryClient}>
         <UserPreferencesProvider>
           <ThemeProvider defaultTheme="system" storageKey="respiro-ui-theme">
             <Router>
@@ -79,7 +84,7 @@ function App() {
             </Router>
           </ThemeProvider>
         </UserPreferencesProvider>
-      </QueryClient>
+      </QueryClientProvider>
     </ErrorBoundary>
   );
 }

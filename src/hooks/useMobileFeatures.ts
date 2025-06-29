@@ -1,6 +1,17 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useDeviceDetection } from './useDeviceDetection';
 
+declare global {
+  interface Window {
+    SpeechRecognition: any;
+    webkitSpeechRecognition: any;
+  }
+  
+  interface DeviceOrientationEvent {
+    requestPermission?: () => Promise<'granted' | 'denied'>;
+  }
+}
+
 interface VoiceCommand {
   command: string;
   action: () => void;
@@ -65,7 +76,7 @@ export const useMobileFeatures = () => {
       console.log('Voice recognition started');
     };
 
-    recognition.onresult = (event) => {
+    recognition.onresult = (event: any) => {
       const transcript = event.results[event.results.length - 1][0].transcript.toLowerCase();
       console.log('Voice command:', transcript);
 
@@ -80,7 +91,7 @@ export const useMobileFeatures = () => {
       }
     };
 
-    recognition.onerror = (event) => {
+    recognition.onerror = (event: any) => {
       console.error('Voice recognition error:', event.error);
       setIsListening(false);
     };
@@ -169,9 +180,10 @@ export const useMobileFeatures = () => {
 
   // Device Orientation
   const requestOrientationPermission = useCallback(async () => {
-    if ('DeviceOrientationEvent' in window && typeof DeviceOrientationEvent.requestPermission === 'function') {
+    if ('DeviceOrientationEvent' in window && 
+        typeof (DeviceOrientationEvent as any).requestPermission === 'function') {
       try {
-        const permission = await DeviceOrientationEvent.requestPermission();
+        const permission = await (DeviceOrientationEvent as any).requestPermission();
         return permission === 'granted';
       } catch (error) {
         console.error('Orientation permission failed:', error);

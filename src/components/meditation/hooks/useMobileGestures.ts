@@ -1,90 +1,93 @@
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useEffect } from 'react';
 
 interface UseMobileGesturesProps {
   onSwipeLeft?: () => void;
   onSwipeRight?: () => void;
+  onSwipeUp?: () => void;
+  onSwipeDown?: () => void;
   onTap?: () => void;
-  onDoubleTap?: () => void;
   enabled?: boolean;
 }
 
 export const useMobileGestures = ({
   onSwipeLeft,
   onSwipeRight,
+  onSwipeUp,
+  onSwipeDown,
   onTap,
-  onDoubleTap,
   enabled = true
 }: UseMobileGesturesProps) => {
   const elementRef = useRef<HTMLDivElement>(null);
-  const [startX, setStartX] = useState(0);
-  const [startY, setStartY] = useState(0);
-  const [lastTap, setLastTap] = useState(0);
 
   useEffect(() => {
+    if (!enabled || !elementRef.current) return;
+
     const element = elementRef.current;
-    if (!element || !enabled) return;
+    let startX = 0;
+    let startY = 0;
+    let startTime = 0;
 
     const handleTouchStart = (e: TouchEvent) => {
       const touch = e.touches[0];
-      setStartX(touch.clientX);
-      setStartY(touch.clientY);
+      startX = touch.clientX;
+      startY = touch.clientY;
+      startTime = Date.now();
     };
 
     const handleTouchEnd = (e: TouchEvent) => {
-      if (!e.changedTouches) return;
-      
+      if (!e.changedTouches.length) return;
+
       const touch = e.changedTouches[0];
       const endX = touch.clientX;
       const endY = touch.clientY;
-      
+      const endTime = Date.now();
+
       const deltaX = endX - startX;
       const deltaY = endY - startY;
-      const absDeltaX = Math.abs(deltaX);
-      const absDeltaY = Math.abs(deltaY);
-      
-      // Minimum swipe distance
-      const minSwipeDistance = 50;
-      
-      // Check for swipe gestures
-      if (absDeltaX > minSwipeDistance && absDeltaX > absDeltaY) {
-        if (deltaX > 0) {
-          onSwipeRight?.();
-        } else {
-          onSwipeLeft?.();
-        }
+      const deltaTime = endTime - startTime;
+
+      // Detect tap (short duration, minimal movement)
+      if (deltaTime < 200 && Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10) {
+        onTap?.();
         return;
       }
-      
-      // Check for tap gestures
-      if (absDeltaX < 10 && absDeltaY < 10) {
-        const currentTime = Date.now();
-        const timeSinceLastTap = currentTime - lastTap;
-        
-        if (timeSinceLastTap < 300 && timeSinceLastTap > 0) {
-          // Double tap
-          onDoubleTap?.();
-        } else {
-          // Single tap
-          setTimeout(() => {
-            if (Date.now() - currentTime >= 300) {
-              onTap?.();
-            }
-          }, 300);
+
+      // Detect swipes (minimum distance and reasonable speed)
+      const minSwipeDistance = 50;
+      const maxSwipeTime = 1000;
+
+      if (deltaTime > maxSwipeTime) return;
+
+      if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        // Horizontal swipe
+        if (Math.abs(deltaX) > minSwipeDistance) {
+          if (deltaX > 0) {
+            onSwipeRight?.();
+          } else {
+            onSwipeLeft?.();
+          }
         }
-        
-        setLastTap(currentTime);
+      } else {
+        // Vertical swipe
+        if (Math.abs(deltaY) > minSwipeDistance) {
+          if (deltaY > 0) {
+            onSwipeDown?.();
+          } else {
+            onSwipeUp?.();
+          }
+        }
       }
     };
 
-    element.addEventListener('touchstart', handleTouchStart, { passive: true });
-    element.addEventListener('touchend', handleTouchEnd, { passive: true });
+    element.addEventListener('touchstart', handleTouchStart);
+    element.addEventListener('touchend', handleTouchEnd);
 
     return () => {
       element.removeEventListener('touchstart', handleTouchStart);
       element.removeEventListener('touchend', handleTouchEnd);
     };
-  }, [startX, startY, lastTap, onSwipeLeft, onSwipeRight, onTap, onDoubleTap, enabled]);
+  }, [enabled, onSwipeLeft, onSwipeRight, onSwipeUp, onSwipeDown, onTap]);
 
   return elementRef;
 };
