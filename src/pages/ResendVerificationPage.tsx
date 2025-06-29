@@ -1,95 +1,132 @@
-
 import React, { useState } from 'react';
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { MobileForm, MobileFormField } from "@/components/ui/mobile-form";
-import { TouchFriendlyButton } from "@/components/responsive/TouchFriendlyButton";
-import { useAuth } from "@/hooks/useAuth";
-import { SuccessMessage } from "@/components/auth";
-import { toast } from "sonner";
-
-const formSchema = z.object({
-  email: z.string().email({ message: "Please enter a valid email address" }),
-});
-
-type FormData = z.infer<typeof formSchema>;
+import { Link } from 'react-router-dom';
+import { Mail, ArrowLeft, CheckCircle } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { TouchFriendlyButton } from '@/components/responsive/TouchFriendlyButton';
+import { useAuth } from '@/hooks/useAuth';
 
 const ResendVerificationPage = () => {
-  const { resendVerificationEmail, loading } = useAuth();
-  const [success, setSuccess] = useState(false);
+  const [email, setEmail] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [emailSent, setEmailSent] = useState(false);
+  const { resendVerificationEmail } = useAuth();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormData>({
-    resolver: zodResolver(formSchema),
-  });
-
-  const onSubmit = async (data: FormData) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
     setError(null);
+
     try {
-      await resendVerificationEmail(data.email);
-      setSuccess(true);
-      toast.success("Verification email sent");
+      await resendVerificationEmail(email);
+      setEmailSent(true);
     } catch (err: any) {
-      console.error("Error resending verification:", err);
-      setError(err.message || "Failed to resend verification email");
+      setError(err.message || 'Failed to send verification email. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  if (success) {
+  if (emailSent) {
     return (
-      <SuccessMessage
-        title="Verification Email Sent"
-        message="Please check your email for the verification link. If you don't see it, check your spam folder."
-        buttonText="Back to Login"
-        buttonLink="/login"
-      />
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full space-y-8">
+          <Card className="shadow-lg">
+            <CardHeader className="text-center">
+              <CheckCircle className="mx-auto h-12 w-12 text-green-500 mb-4" />
+              <CardTitle className="text-2xl font-bold text-gray-900">Email Sent!</CardTitle>
+            </CardHeader>
+            
+            <CardContent className="text-center">
+              <p className="text-gray-600 mb-6">
+                We've sent a new verification email to <strong>{email}</strong>. 
+                Please check your inbox and click the verification link.
+              </p>
+              
+              <div className="space-y-4">
+                <TouchFriendlyButton
+                  onClick={() => {
+                    setEmailSent(false);
+                    setEmail('');
+                  }}
+                  className="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200"
+                >
+                  Send Another Email
+                </TouchFriendlyButton>
+                
+                <Link 
+                  to="/login"
+                  className="inline-flex items-center text-sm text-teal-600 hover:text-teal-500"
+                >
+                  <ArrowLeft className="w-4 h-4 mr-1" />
+                  Back to Sign In
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-white to-secondary/10 px-4 py-12">
-      <div className="w-full max-w-md space-y-8">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold tracking-tight text-primary">Resend Verification Email</h1>
-          <p className="mt-2 text-lg text-muted-foreground">
-            Enter your email to receive a new verification link
-          </p>
-        </div>
-
-        <MobileForm onSubmit={handleSubmit(onSubmit)} spacing="normal">
-          {error && (
-            <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-              {error}
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <Card className="shadow-lg">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold text-gray-900">Resend Verification</CardTitle>
+            <p className="text-gray-600">Enter your email to receive a new verification link</p>
+          </CardHeader>
+          
+          <CardContent>
+            {error && (
+              <Alert className="mb-4 border-red-200 bg-red-50">
+                <AlertDescription className="text-red-800">{error}</AlertDescription>
+              </Alert>
+            )}
+            
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <Label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                  Email Address
+                </Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <Input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="pl-10"
+                    placeholder="Enter your email"
+                    required
+                  />
+                </div>
+              </div>
+              
+              <TouchFriendlyButton
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isLoading ? 'Sending...' : 'Send Verification Email'}
+              </TouchFriendlyButton>
+            </form>
+            
+            <div className="mt-6 text-center">
+              <Link 
+                to="/login"
+                className="inline-flex items-center text-sm text-teal-600 hover:text-teal-500"
+              >
+                <ArrowLeft className="w-4 h-4 mr-1" />
+                Back to Sign In
+              </Link>
             </div>
-          )}
-
-          <MobileFormField label="Email" error={errors.email?.message} required>
-            <Input
-              id="email"
-              type="email"
-              autoComplete="email"
-              preventZoom={true}
-              {...register("email")}
-            />
-          </MobileFormField>
-
-          <TouchFriendlyButton
-            type="submit"
-            disabled={loading}
-            className="w-full bg-primary text-white hover:bg-primary/90"
-            spacing="relaxed"
-          >
-            {loading ? "Sending..." : "Resend Verification Email"}
-          </TouchFriendlyButton>
-        </MobileForm>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

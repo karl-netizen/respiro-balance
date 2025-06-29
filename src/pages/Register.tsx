@@ -1,161 +1,187 @@
-
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useAuth } from '@/hooks/useAuth';
+import { Link, useNavigate } from 'react-router-dom';
+import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { MobileForm, MobileFormField } from "@/components/ui/mobile-form";
-import { TouchFriendlyButton } from "@/components/responsive/TouchFriendlyButton";
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { TouchFriendlyButton } from '@/components/responsive/TouchFriendlyButton';
+import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 
-// Define form validation schema
-const formSchema = z.object({
-  firstName: z.string().min(1, { message: "First name is required" }),
-  email: z.string().email({ message: "Please enter a valid email address" }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
-  confirmPassword: z.string().min(6, { message: "Please confirm your password" }),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
-
-type FormData = z.infer<typeof formSchema>;
-
-const Register: React.FC = () => {
+const Register = () => {
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const { signUp } = useAuth();
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormData>({
-    resolver: zodResolver(formSchema),
-  });
 
-  const onSubmit = async (data: FormData) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    setIsLoading(true);
     setError(null);
-    setLoading(true);
-    
+
     try {
-      await signUp(data.email, data.password, { firstName: data.firstName });
-      setSuccess(true);
-      
-      // Set a flag to indicate this is a new signup for onboarding trigger
-      sessionStorage.setItem('newSignUp', 'true');
-      
-      toast("Account created successfully", {
-        description: "Please check your email to verify your account"
+      const { error } = await signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+          },
+          redirectTo: `${window.location.origin}/dashboard`,
+        },
       });
-      
-      // In development, auto-redirect after 3 seconds
-      setTimeout(() => {
-        navigate('/onboarding');
-      }, 3000);
+
+      if (error) {
+        setError(error.message);
+        toast.error(error.message);
+      } else {
+        toast.success("Account created! Check your email to verify.");
+        navigate('/login');
+      }
     } catch (err: any) {
-      setError(err.message || "Failed to create account");
-      console.error("Signup error:", err);
+      setError(err.message || "An error occurred");
+      toast.error(err.message || "An error occurred");
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  if (success) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-white to-secondary/10 px-4 py-12">
-        <div className="w-full max-w-md space-y-8 text-center">
-          <h1 className="text-3xl font-bold tracking-tight text-primary">Check your email</h1>
-          <p className="text-lg text-muted-foreground">
-            We've sent you a confirmation link. Please check your email to complete your registration.
-          </p>
-          <Link to="/login">
-            <TouchFriendlyButton className="mt-4">Back to Login</TouchFriendlyButton>
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-white to-secondary/10 px-4 py-12">
-      <div className="w-full max-w-md space-y-8">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold tracking-tight text-primary">Create your account</h1>
-          <p className="mt-2 text-lg text-muted-foreground">Sign up for Respiro Balance</p>
-        </div>
-
-        <MobileForm onSubmit={handleSubmit(onSubmit)} spacing="normal">
-          {error && (
-            <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-              {error}
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <Card className="shadow-lg">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold text-gray-900">Create Account</CardTitle>
+            <p className="text-gray-600">Join Respiro Balance and start your meditation journey</p>
+          </CardHeader>
+          
+          <CardContent>
+            {error && (
+              <Alert className="mb-4 border-red-200 bg-red-50">
+                <AlertDescription className="text-red-800">{error}</AlertDescription>
+              </Alert>
+            )}
+            
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <Label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
+                  Full Name
+                </Label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <Input
+                    id="fullName"
+                    type="text"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    className="pl-10"
+                    placeholder="Enter your full name"
+                    required
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <Label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                  Email Address
+                </Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <Input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="pl-10"
+                    placeholder="Enter your email"
+                    required
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <Label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                  Password
+                </Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="pl-10 pr-10"
+                    placeholder="Create a password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+              </div>
+              
+              <div>
+                <Label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+                  Confirm Password
+                </Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <Input
+                    id="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="pl-10 pr-10"
+                    placeholder="Confirm your password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+              </div>
+              
+              <TouchFriendlyButton
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isLoading ? 'Creating Account...' : 'Create Account'}
+              </TouchFriendlyButton>
+            </form>
+            
+            <div className="mt-6 text-center">
+              <p className="text-sm text-gray-600">
+                Already have an account?{' '}
+                <Link to="/login" className="font-medium text-teal-600 hover:text-teal-500">
+                  Sign in here
+                </Link>
+              </p>
             </div>
-          )}
-
-          <MobileFormField label="First Name" error={errors.firstName?.message} required>
-            <Input
-              id="firstName"
-              type="text"
-              autoComplete="given-name"
-              preventZoom={true}
-              {...register("firstName")}
-            />
-          </MobileFormField>
-
-          <MobileFormField label="Email" error={errors.email?.message} required>
-            <Input
-              id="email"
-              type="email"
-              autoComplete="email"
-              preventZoom={true}
-              {...register("email")}
-            />
-          </MobileFormField>
-
-          <MobileFormField label="Password" error={errors.password?.message} required>
-            <Input
-              id="password"
-              type="password"
-              autoComplete="new-password"
-              preventZoom={true}
-              {...register("password")}
-            />
-          </MobileFormField>
-
-          <MobileFormField label="Confirm Password" error={errors.confirmPassword?.message} required>
-            <Input
-              id="confirmPassword"
-              type="password"
-              autoComplete="new-password"
-              preventZoom={true}
-              {...register("confirmPassword")}
-            />
-          </MobileFormField>
-
-          <TouchFriendlyButton
-            type="submit"
-            disabled={loading}
-            className="w-full bg-primary text-white hover:bg-primary/90"
-            spacing="relaxed"
-          >
-            {loading ? "Creating account..." : "Create account"}
-          </TouchFriendlyButton>
-
-          <div className="text-center text-sm mt-6">
-            <p>
-              Already have an account?{" "}
-              <Link to="/login" className="font-medium text-primary hover:text-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded touch-manipulation">
-                Sign in
-              </Link>
-            </p>
-          </div>
-        </MobileForm>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
