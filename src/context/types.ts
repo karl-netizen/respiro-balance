@@ -87,19 +87,27 @@ export interface UserPreferences {
   recommendedTechniques: string[];
   
   // Morning ritual
-  morningRituals: RitualReminder[];
+  morningRituals: MorningRitual[];
   morningActivities: string[];
   morningEnergyLevel: 'low' | 'medium' | 'high';
   morningExercise: boolean;
+  morningDevices?: string;
   
   // Business
   attributionSource: string;
+  
+  // Bluetooth devices
+  connectBluetoothDevice?: (device: BluetoothDeviceInfo) => Promise<void>;
+  disconnectBluetoothDevice?: (deviceId: string) => Promise<void>;
+  
+  // Coach functionality
+  isCoach?: boolean;
 }
 
 export interface RitualReminder {
   enabled: boolean;
   time: number;
-  message: string;
+  message?: string;
 }
 
 export type RitualRecurrence = 'daily' | 'weekdays' | 'weekends' | 'custom';
@@ -118,21 +126,30 @@ export interface MorningRitual {
   title: string;
   description?: string;
   start_time: string;
+  timeOfDay: string;
   duration: number;
   recurrence: RitualRecurrence;
   days_of_week?: string[];
+  daysOfWeek: string[];
   reminder_enabled: boolean;
   reminder_time?: number;
   priority?: 'low' | 'medium' | 'high';
   tags?: string[];
+  reminders: RitualReminder[];
   status: RitualStatus;
   streak: number;
   last_completed?: string;
+  lastCompleted?: string;
   created_at: string;
   updated_at: string;
+  complete?: boolean;
+  completed?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+  date?: Date;
 }
 
-export type RitualStatus = 'planned' | 'active' | 'completed' | 'skipped' | 'archived';
+export type RitualStatus = 'planned' | 'active' | 'completed' | 'skipped' | 'archived' | 'in_progress' | 'missed';
 
 export type WorkDay = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
 
@@ -179,6 +196,9 @@ export interface UserPreferencesContextType {
   updatePreferences: (updates: Partial<UserPreferences>) => Promise<void>;
   loading: boolean;
   error: string | null;
+  connectBluetoothDevice?: (device: BluetoothDeviceInfo) => Promise<void>;
+  disconnectBluetoothDevice?: (deviceId: string) => Promise<void>;
+  isCoach?: boolean;
 }
 
 // Device Types  

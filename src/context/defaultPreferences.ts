@@ -93,9 +93,13 @@ const defaultPreferences: UserPreferences = {
   morningActivities: ['meditation', 'journaling'],
   morningEnergyLevel: 'medium',
   morningExercise: false,
+  morningDevices: 'phone_delayed',
   
   // Business defaults
-  attributionSource: 'organic'
+  attributionSource: 'organic',
+  
+  // Coach functionality
+  isCoach: false
 };
 
 export default defaultPreferences;

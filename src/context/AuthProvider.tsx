@@ -1,142 +1,106 @@
 
-import React, { ReactNode, useState, useEffect } from 'react';
-import { useAuthInitialization } from '@/hooks/useAuthInitialization';
-import AuthContext, { AuthContextType } from './AuthContext';
-import { toast } from 'sonner';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+
+interface User {
+  id: string;
+  email: string;
+  name?: string;
+}
+
+interface AuthContextType {
+  user: User | null;
+  loading: boolean;
+  signIn: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string) => Promise<void>;
+  signOut: () => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
+}
+
+const AuthContext = createContext<AuthContextType | null>(null);
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
-export function AuthProvider({ children }: AuthProviderProps) {
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const { user, session, loading: initializing } = useAuthInitialization();
-  
-  // Force loading to end after a certain time to prevent infinite loading states
+
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (loading || initializing) {
-        console.log("Force ending auth loading state after timeout");
+    // Simulate auth check
+    const checkAuth = async () => {
+      try {
+        // In a real app, this would check for existing auth tokens
+        const savedUser = localStorage.getItem('auth_user');
+        if (savedUser) {
+          setUser(JSON.parse(savedUser));
+        }
+      } catch (error) {
+        console.error('Auth check error:', error);
+      } finally {
         setLoading(false);
       }
-    }, 5000); // Force loading to end after 5 seconds max
-    
-    return () => clearTimeout(timer);
-  }, [loading, initializing]);
-  
-  // Create auth methods without using useNavigate
-  const signUp = async (email: string, password: string, metadata?: Record<string, any>) => {
+    };
+
+    checkAuth();
+  }, []);
+
+  const signIn = async (email: string, password: string) => {
+    setLoading(true);
     try {
-      // Simulate auth signup
-      console.log('SignUp called:', email);
-      toast.success('Account created successfully!');
-      return { success: true };
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      const mockUser = { id: '1', email, name: 'Demo User' };
+      setUser(mockUser);
+      localStorage.setItem('auth_user', JSON.stringify(mockUser));
     } catch (error) {
-      console.error('SignUp error:', error);
-      toast.error('Failed to create account');
-      throw error;
+      throw new Error('Sign in failed');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const signIn = async (email: string, password: string) => {
+  const signUp = async (email: string, password: string) => {
+    setLoading(true);
     try {
-      // Simulate auth signin
-      console.log('SignIn called:', email);
-      toast.success('Welcome back!');
-      return { success: true };
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      const mockUser = { id: '1', email, name: 'New User' };
+      setUser(mockUser);
+      localStorage.setItem('auth_user', JSON.stringify(mockUser));
     } catch (error) {
-      console.error('SignIn error:', error);
-      toast.error('Failed to sign in');
-      throw error;
+      throw new Error('Sign up failed');
+    } finally {
+      setLoading(false);
     }
   };
 
   const signOut = async () => {
-    try {
-      // Simulate auth signout
-      console.log('SignOut called');
-      toast.success('Signed out successfully');
-      return { success: true };
-    } catch (error) {
-      console.error('SignOut error:', error);
-      toast.error('Failed to sign out');
-      throw error;
-    }
+    setUser(null);
+    localStorage.removeItem('auth_user');
   };
 
-  const forgotPassword = async (email: string) => {
-    try {
-      console.log('ForgotPassword called:', email);
-      toast.success('Password reset email sent!');
-      return { success: true };
-    } catch (error) {
-      console.error('ForgotPassword error:', error);
-      toast.error('Failed to send reset email');
-      throw error;
-    }
+  const resetPassword = async (email: string) => {
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    console.log('Password reset email sent to:', email);
   };
 
-  const resetPassword = async (password: string) => {
-    try {
-      console.log('ResetPassword called');
-      toast.success('Password reset successful!');
-      return { success: true };
-    } catch (error) {
-      console.error('ResetPassword error:', error);
-      toast.error('Failed to reset password');
-      throw error;
-    }
-  };
-
-  const updateProfile = async (data: any) => {
-    try {
-      console.log('UpdateProfile called:', data);
-      toast.success('Profile updated successfully!');
-    } catch (error) {
-      console.error('UpdateProfile error:', error);
-      toast.error('Failed to update profile');
-      throw error;
-    }
-  };
-
-  const verifyEmail = async (token: string) => {
-    try {
-      console.log('VerifyEmail called:', token);
-      toast.success('Email verified successfully!');
-      return { success: true };
-    } catch (error) {
-      console.error('VerifyEmail error:', error);
-      toast.error('Failed to verify email');
-      throw error;
-    }
-  };
-
-  const resendVerificationEmail = async (email: string) => {
-    try {
-      console.log('ResendVerificationEmail called:', email);
-      toast.success('Verification email sent!');
-      return { success: true };
-    } catch (error) {
-      console.error('ResendVerificationEmail error:', error);
-      toast.error('Failed to resend verification email');
-      throw error;
-    }
-  };
-  
-  // Create the combined auth context value
   const value: AuthContextType = {
     user,
-    session,
-    loading: loading || initializing,
-    isLoading: loading || initializing,
-    signUp,
+    loading,
     signIn,
+    signUp,
     signOut,
-    forgotPassword,
     resetPassword,
-    updateProfile,
-    verifyEmail,
-    resendVerificationEmail
   };
 
   return (
@@ -144,6 +108,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       {children}
     </AuthContext.Provider>
   );
-}
+};
 
 export default AuthProvider;
