@@ -1,19 +1,19 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Crown, Calendar, CreditCard, Settings } from 'lucide-react';
-import { useSubscriptionContext } from '@/context/SubscriptionProvider';
+import { useSubscription } from './SubscriptionProvider';
 import { format } from 'date-fns';
 
 export const SubscriptionStatus: React.FC = () => {
-  const { isPremium, tier, expiresAt, startPremiumCheckout, manageSubscription } = useSubscriptionContext();
+  const { subscription, isPremium, startCheckout, manageSubscription, checkSubscription } = useSubscription();
 
   const handleUpgrade = async () => {
     try {
-      if (startPremiumCheckout) {
-        await startPremiumCheckout();
-      }
+      const checkoutUrl = await startCheckout();
+      window.open(checkoutUrl, '_blank');
     } catch (error) {
       console.error('Error starting checkout:', error);
     }
@@ -21,9 +21,8 @@ export const SubscriptionStatus: React.FC = () => {
 
   const handleManage = async () => {
     try {
-      if (manageSubscription) {
-        await manageSubscription();
-      }
+      const portalUrl = await manageSubscription();
+      window.open(portalUrl, '_blank');
     } catch (error) {
       console.error('Error opening customer portal:', error);
     }
@@ -60,12 +59,12 @@ export const SubscriptionStatus: React.FC = () => {
           <div className="space-y-1">
             <p className="text-sm font-medium">Current Plan</p>
             <div className="flex items-center gap-2">
-              <Badge className={getTierColor(tier)}>
-                {tier.charAt(0).toUpperCase() + tier.slice(1)}
+              <Badge className={getTierColor(subscription.tier)}>
+                {subscription.tier.charAt(0).toUpperCase() + subscription.tier.slice(1)}
               </Badge>
               {isPremium && (
-                <Badge className={getStatusColor('active')}>
-                  Active
+                <Badge className={getStatusColor(subscription.status)}>
+                  {subscription.status}
                 </Badge>
               )}
             </div>
@@ -73,18 +72,18 @@ export const SubscriptionStatus: React.FC = () => {
           <Button 
             variant="outline" 
             size="sm"
-            onClick={() => {}}
+            onClick={checkSubscription}
           >
             Refresh
           </Button>
         </div>
 
-        {expiresAt && (
+        {subscription.periodEnd && (
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Calendar className="h-4 w-4" />
             <span>
-              {isPremium ? 'Renews' : 'Expires'} on{' '}
-              {format(new Date(expiresAt), 'MMM dd, yyyy')}
+              {subscription.status === 'active' ? 'Renews' : 'Expires'} on{' '}
+              {format(new Date(subscription.periodEnd), 'MMM dd, yyyy')}
             </span>
           </div>
         )}

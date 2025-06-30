@@ -1,63 +1,58 @@
 
-import React from 'react';
-import { ErrorBoundary as ReactErrorBoundary } from 'react-error-boundary';
-import { AlertTriangle, RefreshCw } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { Component, ErrorInfo, ReactNode } from 'react';
 
-interface ErrorFallbackProps {
-  error: Error;
-  resetErrorBoundary: () => void;
+interface Props {
+  children: ReactNode;
 }
 
-const ErrorFallback: React.FC<ErrorFallbackProps> = ({ error, resetErrorBoundary }) => {
-  return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
-      <Card className="max-w-md w-full">
-        <CardHeader className="text-center">
-          <div className="mx-auto w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4">
-            <AlertTriangle className="w-6 h-6 text-red-600" />
+interface State {
+  hasError: boolean;
+  error?: Error;
+}
+
+class ErrorBoundary extends Component<Props, State> {
+  public state: State = {
+    hasError: false
+  };
+
+  public static getDerivedStateFromError(error: Error): State {
+    return { hasError: true, error };
+  }
+
+  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error('❌ ErrorBoundary caught an error:', error, errorInfo);
+  }
+
+  public render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen flex items-center justify-center bg-background p-4">
+          <div className="text-center max-w-md">
+            <h1 className="text-2xl font-bold text-red-600 mb-4">Something went wrong</h1>
+            <p className="text-gray-600 dark:text-gray-300 mb-4">
+              The app encountered an error. Please refresh the page or try again.
+            </p>
+            <button 
+              onClick={() => window.location.reload()}
+              className="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90"
+            >
+              Refresh Page
+            </button>
+            {this.state.error && (
+              <details className="mt-4 text-left text-sm text-gray-500">
+                <summary>Error Details</summary>
+                <pre className="mt-2 p-2 bg-gray-100 dark:bg-gray-800 rounded text-xs overflow-auto">
+                  {this.state.error.toString()}
+                </pre>
+              </details>
+            )}
           </div>
-          <CardTitle className="text-xl">Something went wrong</CardTitle>
-          <CardDescription>
-            We encountered an unexpected error. Our team has been notified.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <details className="text-sm">
-            <summary className="cursor-pointer text-gray-600 hover:text-gray-800">
-              Error details
-            </summary>
-            <pre className="mt-2 p-2 bg-gray-100 rounded text-xs overflow-auto">
-              {error.message}
-            </pre>
-          </details>
-          <Button onClick={resetErrorBoundary} className="w-full">
-            <RefreshCw className="w-4 h-4 mr-2" />
-            Try again
-          </Button>
-        </CardContent>
-      </Card>
-    </div>
-  );
-};
+        </div>
+      );
+    }
 
-interface ErrorBoundaryProps {
-  children: React.ReactNode;
+    return this.props.children;
+  }
 }
-
-const ErrorBoundary: React.FC<ErrorBoundaryProps> = ({ children }) => {
-  return (
-    <ReactErrorBoundary
-      FallbackComponent={ErrorFallback}
-      onError={(error) => {
-        console.error('Error caught by boundary:', error);
-        // Here you could send to error reporting service
-      }}
-    >
-      {children}
-    </ReactErrorBoundary>
-  );
-};
 
 export default ErrorBoundary;

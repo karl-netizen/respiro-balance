@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { User, LogOut, Settings, Crown } from "lucide-react";
-import { useSubscriptionContext } from "@/context/SubscriptionProvider";
+import { useSubscriptionContext } from "@/hooks/useSubscriptionContext";
 import SubscriptionBadge from "@/components/subscription/SubscriptionBadge";
 import ProfileAvatarUpload from "@/components/profile/ProfileAvatarUpload";
 

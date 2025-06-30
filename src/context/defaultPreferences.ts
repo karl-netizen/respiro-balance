@@ -20,11 +20,7 @@ const defaultPreferences: UserPreferences = {
       achievements: true,
       social: false,
       marketing: false
-    },
-    sessionReminders: true,
-    streakAlerts: true,
-    achievementNotifications: true,
-    weeklySummary: false
+    }
   },
   
   meditation: {
@@ -36,8 +32,6 @@ const defaultPreferences: UserPreferences = {
   },
   
   preferred_session_duration: 10,
-  preferredSessionDuration: 10,
-  defaultMeditationDuration: 10,
   
   privacy: {
     shareProgress: false,
@@ -75,7 +69,6 @@ const defaultPreferences: UserPreferences = {
   exerciseTime: '07:00',
   bedTime: '22:00',
   weekdayWakeTime: '07:00',
-  wakeTime: '07:00',
   
   // User role and experience defaults
   userRole: 'user',
@@ -100,46 +93,9 @@ const defaultPreferences: UserPreferences = {
   morningActivities: ['meditation', 'journaling'],
   morningEnergyLevel: 'medium',
   morningExercise: false,
-  morningDevices: [],
   
   // Business defaults
-  attributionSource: 'organic',
-  offlineAccess: false,
-  
-  // Additional compatibility fields
-  enableSessionReminders: true,
-  enableProgressUpdates: true,
-  enableRecommendations: true,
-  timeManagementStyle: 'moderate',
-  notificationSettings: {
-    enabled: true,
-    soundEnabled: true,
-    vibrationEnabled: true,
-    types: {
-      reminders: true,
-      achievements: true,
-      social: false,
-      marketing: false
-    },
-    sessionReminders: true,
-    streakAlerts: true,
-    achievementNotifications: true,
-    weeklySummary: false
-  },
-  country: 'US',
-  measurementSystem: 'imperial',
-  location: '',
-  
-  // App-specific settings
-  darkMode: false,
-  reducedMotion: false,
-  highContrast: false,
-  enableBackgroundAudio: true,
-  highQualityAudio: false,
-  focusTimerDuration: 25,
-  breakTimerDuration: 5,
-  breakReminders: true,
-  breakNotificationsEnabled: true
+  attributionSource: 'organic'
 };
 
 export default defaultPreferences;

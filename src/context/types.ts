@@ -9,10 +9,6 @@ export interface NotificationSettings {
     social: boolean;
     marketing: boolean;
   };
-  sessionReminders?: boolean;
-  streakAlerts?: boolean;
-  achievementNotifications?: boolean;
-  weeklySummary?: boolean;
 }
 
 export interface MeditationSettings {
@@ -25,16 +21,9 @@ export interface MeditationSettings {
 
 // Morning Ritual Types
 export type RecurrenceType = 'daily' | 'weekdays' | 'weekends' | 'custom';
-export type RitualRecurrence = RecurrenceType;
 export type RitualPriority = 'low' | 'medium' | 'high';
 export type RitualStatus = 'planned' | 'completed' | 'skipped' | 'in_progress' | 'missed';
 export type WorkDay = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
-
-export interface RitualReminder {
-  enabled: boolean;
-  time: number;
-  message?: string;
-}
 
 export interface MorningRitual {
   id: string;
@@ -49,7 +38,7 @@ export interface MorningRitual {
   daysOfWeek: string[];
   reminderEnabled: boolean;
   reminderTime: number;
-  reminders: RitualReminder[];
+  reminders?: boolean; // Added missing property
   tags: string[];
   complete: boolean;
   completed?: boolean;
@@ -68,8 +57,8 @@ export interface Notification {
   type: 'info' | 'success' | 'warning' | 'error' | 'achievement' | 'reminder' | 'streak' | 'suggestion';
   read: boolean;
   createdAt: Date;
-  timestamp?: Date;
-  actionUrl?: string;
+  timestamp?: Date; // Added missing property
+  actionUrl?: string; // Added missing property
   data?: any;
 }
 
@@ -81,11 +70,9 @@ export interface BluetoothDeviceInfo {
   connected: boolean;
   batteryLevel?: number;
   lastSeen?: Date;
-  rssi?: number;
-  services?: string[];
 }
 
-export type DeviceType = 'heart_rate' | 'fitness_tracker' | 'smart_watch' | 'meditation_device' | 'heart_rate_monitor';
+export type DeviceType = 'heart_rate' | 'fitness_tracker' | 'smart_watch' | 'meditation_device';
 
 // Session Flow Types
 export interface SessionFlow {
@@ -94,16 +81,11 @@ export interface SessionFlow {
   steps: string[];
   duration: number;
   type: 'meditation' | 'breathing' | 'focus';
-  currentStep?: number;
-  totalSteps?: number;
-  status?: 'active' | 'paused' | 'completed';
-  estimatedDuration?: number;
-  currentModule?: string;
 }
 
 // Completion Entry Types
 export interface CompletionEntry {
-  id?: string;
+  id?: string; // Added missing property
   date: string;
   completed: boolean;
   duration?: number;
@@ -126,9 +108,7 @@ export interface UserPreferences {
   
   // Meditation settings
   meditation: MeditationSettings;
-  preferred_session_duration?: number;
-  preferredSessionDuration?: number;
-  defaultMeditationDuration?: number;
+  preferred_session_duration?: number; // Added missing property
   
   // Privacy settings
   privacy: {
@@ -169,8 +149,7 @@ export interface UserPreferences {
   lunchBreak: boolean;
   exerciseTime: string;
   bedTime: string;
-  weekdayWakeTime?: string;
-  wakeTime?: string;
+  weekdayWakeTime?: string; // Added missing property
   
   // User role and experience
   userRole: 'user' | 'coach' | 'admin';
@@ -182,45 +161,22 @@ export interface UserPreferences {
   // Advanced settings
   metricsOfInterest: string[];
   focusChallenges: string[];
-  timeChallenges?: string[];
+  timeChallenges?: string[]; // Added missing property
   hasWearableDevice: boolean;
-  wearableDeviceType?: string;
-  connectedDevices?: BluetoothDeviceInfo[];
+  wearableDeviceType?: string; // Added missing property
+  connectedDevices?: BluetoothDeviceInfo[]; // Added missing property
   recommendedSessionDuration: number;
   recommendedMeditationTime: string;
   recommendedTechniques: string[];
   
   // Morning ritual and activities
-  morningRituals?: MorningRitual[];
-  morningActivities?: string[];
-  morningEnergyLevel?: 'low' | 'medium' | 'high';
-  morningExercise?: boolean;
-  morningDevices?: string[];
+  morningRituals?: MorningRitual[]; // Added missing property
+  morningActivities?: string[]; // Added missing property
+  morningEnergyLevel?: 'low' | 'medium' | 'high'; // Added missing property
+  morningExercise?: boolean; // Added missing property
   
   // Business and attribution
-  attributionSource?: string;
-  offlineAccess?: boolean;
-  
-  // Additional compatibility fields
-  enableSessionReminders?: boolean;
-  enableProgressUpdates?: boolean;
-  enableRecommendations?: boolean;
-  timeManagementStyle?: string;
-  notificationSettings?: NotificationSettings;
-  country?: string;
-  measurementSystem?: 'metric' | 'imperial';
-  location?: string;
-  
-  // App-specific settings
-  darkMode?: boolean;
-  reducedMotion?: boolean;
-  highContrast?: boolean;
-  enableBackgroundAudio?: boolean;
-  highQualityAudio?: boolean;
-  focusTimerDuration?: number;
-  breakTimerDuration?: number;
-  breakReminders?: boolean;
-  breakNotificationsEnabled?: boolean;
+  attributionSource?: string; // Added missing property
 }
 
 export interface UserPreferencesContextType {
@@ -230,6 +186,6 @@ export interface UserPreferencesContextType {
   isCoach: boolean;
   isEnterprise: boolean;
   isLoading: boolean;
-  connectBluetoothDevice: (deviceInfo: BluetoothDeviceInfo) => Promise<boolean>;
+  connectBluetoothDevice: (deviceId: string) => Promise<boolean>;
   disconnectBluetoothDevice: (deviceId: string) => Promise<boolean>;
 }

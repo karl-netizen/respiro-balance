@@ -3,7 +3,7 @@ import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { MeditationSession } from '@/types/meditation';
-import { useSubscriptionContext } from '@/context/SubscriptionProvider';
+import { useSubscriptionContext } from '@/hooks/useSubscriptionContext';
 import { meditationSessions } from '@/data/meditationSessions';
 import { useMeditationNavigation } from './meditation/useMeditationNavigation';
 import { useMeditationFavorites } from './meditation/useMeditationFavorites';

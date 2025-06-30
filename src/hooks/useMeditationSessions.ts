@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { isSupabaseConfigured } from '@/lib/supabase';
 import { MeditationSession, StartSessionParams } from '@/types/meditation';
 import { useAuth } from './useAuth';
-import { useSubscriptionContext } from '@/context/SubscriptionProvider';
+import { useSubscriptionContext } from './useSubscriptionContext';
 import { toast } from 'sonner';
 import { useOfflineStorage } from './meditation/useOfflineStorage';
 import { useMeditationApi } from './meditation/useMeditationApi';

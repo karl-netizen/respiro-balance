@@ -1,9 +1,10 @@
+
 import React, { ReactNode } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Crown, Lock, Sparkles } from 'lucide-react';
-import { useSubscriptionContext } from '@/context/SubscriptionProvider';
+import { useSubscription } from './SubscriptionProvider';
 
 interface SubscriptionGateProps {
   children: ReactNode;
@@ -18,20 +19,22 @@ export const SubscriptionGate: React.FC<SubscriptionGateProps> = ({
   tier = 'premium',
   showPreview = false
 }) => {
-  const { isPremium, startPremiumCheckout } = useSubscriptionContext();
+  const { isPremium, subscription, startCheckout } = useSubscription();
 
   const handleUpgrade = async () => {
     try {
-      if (startPremiumCheckout) {
-        await startPremiumCheckout();
-      }
+      const checkoutUrl = await startCheckout();
+      window.open(checkoutUrl, '_blank');
     } catch (error) {
       console.error('Error starting checkout:', error);
     }
   };
 
   // Allow access if user has premium or higher
-  const hasAccess = isPremium;
+  const hasAccess = isPremium && (
+    tier === 'premium' || 
+    (tier === 'team' && ['premium', 'team'].includes(subscription.tier))
+  );
 
   if (hasAccess) {
     return <>{children}</>;

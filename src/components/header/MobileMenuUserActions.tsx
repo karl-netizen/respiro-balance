@@ -2,7 +2,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { useSubscriptionContext } from "@/context/SubscriptionProvider";
+import { useSubscriptionContext } from "@/hooks/useSubscriptionContext";
 import { TouchFriendlyButton } from "@/components/responsive/TouchFriendlyButton";
 import { User, Crown, LogOut } from "lucide-react";
 
