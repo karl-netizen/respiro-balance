@@ -9,13 +9,21 @@ export interface NavSection {
   items: NavItem[];
 }
 
+export const homeSection: NavSection = {
+  title: "Home",
+  items: [
+    { label: "Landing Page", path: "/" },
+    { label: "Dashboard", path: "/dashboard" }
+  ]
+};
+
 export const meditateSection: NavSection = {
   title: "Meditate",
   items: [
-    { label: "Guided Meditation", path: "/meditate?tab=guided" },
-    { label: "Quick Sessions", path: "/meditate?tab=quick" },
-    { label: "Deep Focus", path: "/meditate?tab=deep" },
-    { label: "Sleep", path: "/meditate?tab=sleep" }
+    { label: "Guided Meditation", path: "/meditation?tab=guided" },
+    { label: "Quick Sessions", path: "/meditation?tab=quick" },
+    { label: "Deep Focus", path: "/meditation?tab=deep" },
+    { label: "Sleep", path: "/meditation?tab=sleep" }
   ]
 };
 

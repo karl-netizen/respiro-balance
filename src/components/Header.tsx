@@ -28,8 +28,8 @@ const Header = () => {
       console.log("Already on homepage, scrolling to top");
       window.scrollTo({top: 0, behavior: 'smooth'});
     } else {
-      console.log("Navigating to homepage");
-      navigate("/landing");
+      console.log("Navigating to landing page");
+      navigate("/");
       
       setTimeout(() => {
         console.log("Scrolling to top after navigation");

@@ -10,6 +10,7 @@ import { useActiveRoute } from "./navigation/navigationUtils";
 import NavLink from "./navigation/NavLink";
 import NavDropdown from "./navigation/NavDropdown";
 import { 
+  homeSection,
   meditateSection, 
   breathingSection, 
   workLifeBalanceSection 
@@ -47,22 +48,19 @@ const DesktopNavLinks = () => {
   return (
     <NavigationMenu className="z-50">
       <NavigationMenuList>
-        {/* Home link */}
-        <NavigationMenuItem>
-          <NavLink 
-            to="/landing"
-            isActive={isActive('/landing') || isActive('/')}
-            onClick={() => handleNavClick("/landing")}
-          >
-            Home
-          </NavLink>
-        </NavigationMenuItem>
+        {/* Home dropdown */}
+        <NavDropdown
+          title={homeSection.title}
+          items={homeSection.items}
+          isActive={isActive('/') || isActive('/landing') || isActive('/dashboard')}
+          onItemClick={handleNavClick}
+        />
 
         {/* Meditation dropdown */}
         <NavDropdown
           title={meditateSection.title}
           items={meditateSection.items}
-          isActive={isActive('/meditate')}
+          isActive={isActive('/meditation')}
           onItemClick={handleNavClick}
           activeCategory={activeCategory}
         />

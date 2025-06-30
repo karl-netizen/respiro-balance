@@ -10,6 +10,7 @@ import SimpleHeader from '@/components/SimpleHeader';
 import Footer from '@/components/Footer';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import HomePage from '@/pages/HomePage';
+import LandingPage from '@/pages/LandingPage';
 import LoginPage from '@/pages/LoginPage';
 import RegisterPage from '@/pages/RegisterPage';
 import ForgotPasswordPage from '@/pages/ForgotPasswordPage';
@@ -62,7 +63,9 @@ function App() {
                   
                   <main className="flex-1">
                     <Routes>
-                      <Route path="/" element={<HomePage />} />
+                      <Route path="/" element={<LandingPage />} />
+                      <Route path="/landing" element={<LandingPage />} />
+                      <Route path="/dashboard" element={<HomePage />} />
                       <Route path="/register" element={<RegisterPage />} />
                       <Route path="/login" element={<LoginPage />} />
                       <Route path="/forgot-password" element={<ForgotPasswordPage />} />

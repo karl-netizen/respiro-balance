@@ -110,3 +110,76 @@ export interface BluetoothDeviceInfo {
   connected: boolean;
   type: string;
 }
+
+// Morning Ritual Types
+export interface MorningRitual {
+  id: string;
+  user_id: string;
+  title: string;
+  description?: string;
+  start_time: string;
+  duration: number;
+  recurrence: RitualRecurrence;
+  days_of_week?: string[];
+  reminder_enabled: boolean;
+  reminder_time?: number;
+  priority?: 'low' | 'medium' | 'high';
+  tags?: string[];
+  status: RitualStatus;
+  streak: number;
+  last_completed?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export type RitualStatus = 'planned' | 'active' | 'completed' | 'skipped' | 'archived';
+
+export type WorkDay = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
+
+export interface CompletionEntry {
+  id: string;
+  ritual_id: string;
+  completed_at: string;
+  notes?: string;
+  mood_before?: number;
+  mood_after?: number;
+}
+
+// Notification Types
+export interface Notification {
+  id: string;
+  user_id: string;
+  title: string;
+  message: string;
+  notification_type: string;
+  data?: Record<string, any>;
+  read_at?: string;
+  created_at: string;
+}
+
+// Session Flow Types
+export interface SessionFlow {
+  id: string;
+  name: string;
+  steps: SessionFlowStep[];
+  duration: number;
+  type: 'meditation' | 'breathing' | 'focus';
+}
+
+export interface SessionFlowStep {
+  id: string;
+  type: 'meditation' | 'breathing' | 'break';
+  duration: number;
+  instructions?: string;
+}
+
+// Context Types
+export interface UserPreferencesContextType {
+  preferences: UserPreferences;
+  updatePreferences: (updates: Partial<UserPreferences>) => Promise<void>;
+  loading: boolean;
+  error: string | null;
+}
+
+// Device Types  
+export type DeviceType = 'mobile' | 'tablet' | 'desktop';
