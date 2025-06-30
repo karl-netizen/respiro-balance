@@ -7,6 +7,10 @@ const defaultPreferences: UserPreferences = {
   timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
   subscriptionTier: 'free',
   
+  // Onboarding
+  hasCompletedOnboarding: false,
+  lastOnboardingStep: 0,
+  
   notifications: {
     enabled: true,
     soundEnabled: true,
@@ -26,6 +30,8 @@ const defaultPreferences: UserPreferences = {
     guidedVoice: 'female',
     sessionReminders: true
   },
+  
+  preferred_session_duration: 10,
   
   privacy: {
     shareProgress: false,
@@ -62,6 +68,7 @@ const defaultPreferences: UserPreferences = {
   lunchBreak: true,
   exerciseTime: '07:00',
   bedTime: '22:00',
+  weekdayWakeTime: '07:00',
   
   // User role and experience defaults
   userRole: 'user',
@@ -73,10 +80,22 @@ const defaultPreferences: UserPreferences = {
   // Advanced settings defaults
   metricsOfInterest: ['stress', 'focus', 'energy'],
   focusChallenges: ['distractions', 'time_management'],
+  timeChallenges: ['procrastination', 'interruptions'],
   hasWearableDevice: false,
+  wearableDeviceType: 'none',
+  connectedDevices: [],
   recommendedSessionDuration: 10,
   recommendedMeditationTime: '08:00',
-  recommendedTechniques: ['mindfulness', 'breathing']
+  recommendedTechniques: ['mindfulness', 'breathing'],
+  
+  // Morning ritual defaults
+  morningRituals: [],
+  morningActivities: ['meditation', 'journaling'],
+  morningEnergyLevel: 'medium',
+  morningExercise: false,
+  
+  // Business defaults
+  attributionSource: 'organic'
 };
 
 export default defaultPreferences;

@@ -38,6 +38,7 @@ export interface MorningRitual {
   daysOfWeek: string[];
   reminderEnabled: boolean;
   reminderTime: number;
+  reminders?: boolean; // Added missing property
   tags: string[];
   complete: boolean;
   completed?: boolean;
@@ -53,9 +54,11 @@ export interface Notification {
   id: string;
   title: string;
   message: string;
-  type: 'info' | 'success' | 'warning' | 'error';
+  type: 'info' | 'success' | 'warning' | 'error' | 'achievement' | 'reminder' | 'streak' | 'suggestion';
   read: boolean;
   createdAt: Date;
+  timestamp?: Date; // Added missing property
+  actionUrl?: string; // Added missing property
   data?: any;
 }
 
@@ -82,6 +85,7 @@ export interface SessionFlow {
 
 // Completion Entry Types
 export interface CompletionEntry {
+  id?: string; // Added missing property
   date: string;
   completed: boolean;
   duration?: number;
@@ -95,11 +99,16 @@ export interface UserPreferences {
   timezone: string;
   subscriptionTier: 'free' | 'premium' | 'premium-plus' | 'premium-pro' | 'coach' | 'enterprise';
   
+  // Onboarding and setup
+  hasCompletedOnboarding?: boolean;
+  lastOnboardingStep?: number;
+  
   // Notification settings
   notifications: NotificationSettings;
   
   // Meditation settings
   meditation: MeditationSettings;
+  preferred_session_duration?: number; // Added missing property
   
   // Privacy settings
   privacy: {
@@ -140,6 +149,7 @@ export interface UserPreferences {
   lunchBreak: boolean;
   exerciseTime: string;
   bedTime: string;
+  weekdayWakeTime?: string; // Added missing property
   
   // User role and experience
   userRole: 'user' | 'coach' | 'admin';
@@ -151,10 +161,22 @@ export interface UserPreferences {
   // Advanced settings
   metricsOfInterest: string[];
   focusChallenges: string[];
+  timeChallenges?: string[]; // Added missing property
   hasWearableDevice: boolean;
+  wearableDeviceType?: string; // Added missing property
+  connectedDevices?: BluetoothDeviceInfo[]; // Added missing property
   recommendedSessionDuration: number;
   recommendedMeditationTime: string;
   recommendedTechniques: string[];
+  
+  // Morning ritual and activities
+  morningRituals?: MorningRitual[]; // Added missing property
+  morningActivities?: string[]; // Added missing property
+  morningEnergyLevel?: 'low' | 'medium' | 'high'; // Added missing property
+  morningExercise?: boolean; // Added missing property
+  
+  // Business and attribution
+  attributionSource?: string; // Added missing property
 }
 
 export interface UserPreferencesContextType {
