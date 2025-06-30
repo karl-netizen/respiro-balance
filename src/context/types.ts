@@ -25,6 +25,12 @@ export type RitualPriority = 'low' | 'medium' | 'high';
 export type RitualStatus = 'planned' | 'completed' | 'skipped' | 'in_progress' | 'missed';
 export type WorkDay = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
 
+export interface RitualReminder {
+  enabled: boolean;
+  time: number;
+  message?: string;
+}
+
 export interface MorningRitual {
   id: string;
   title: string;
@@ -38,7 +44,7 @@ export interface MorningRitual {
   daysOfWeek: string[];
   reminderEnabled: boolean;
   reminderTime: number;
-  reminders?: boolean; // Added missing property
+  reminders: RitualReminder[];
   tags: string[];
   complete: boolean;
   completed?: boolean;
@@ -57,8 +63,8 @@ export interface Notification {
   type: 'info' | 'success' | 'warning' | 'error' | 'achievement' | 'reminder' | 'streak' | 'suggestion';
   read: boolean;
   createdAt: Date;
-  timestamp?: Date; // Added missing property
-  actionUrl?: string; // Added missing property
+  timestamp?: Date;
+  actionUrl?: string;
   data?: any;
 }
 
@@ -70,9 +76,11 @@ export interface BluetoothDeviceInfo {
   connected: boolean;
   batteryLevel?: number;
   lastSeen?: Date;
+  rssi?: number;
+  services?: string[];
 }
 
-export type DeviceType = 'heart_rate' | 'fitness_tracker' | 'smart_watch' | 'meditation_device';
+export type DeviceType = 'heart_rate' | 'fitness_tracker' | 'smart_watch' | 'meditation_device' | 'heart_rate_monitor';
 
 // Session Flow Types
 export interface SessionFlow {
@@ -85,7 +93,7 @@ export interface SessionFlow {
 
 // Completion Entry Types
 export interface CompletionEntry {
-  id?: string; // Added missing property
+  id?: string;
   date: string;
   completed: boolean;
   duration?: number;
@@ -108,7 +116,8 @@ export interface UserPreferences {
   
   // Meditation settings
   meditation: MeditationSettings;
-  preferred_session_duration?: number; // Added missing property
+  preferred_session_duration?: number;
+  preferredSessionDuration?: number; // Added for compatibility
   
   // Privacy settings
   privacy: {
@@ -149,7 +158,8 @@ export interface UserPreferences {
   lunchBreak: boolean;
   exerciseTime: string;
   bedTime: string;
-  weekdayWakeTime?: string; // Added missing property
+  weekdayWakeTime?: string;
+  wakeTime?: string; // Added for compatibility
   
   // User role and experience
   userRole: 'user' | 'coach' | 'admin';
@@ -161,22 +171,32 @@ export interface UserPreferences {
   // Advanced settings
   metricsOfInterest: string[];
   focusChallenges: string[];
-  timeChallenges?: string[]; // Added missing property
+  timeChallenges?: string[];
   hasWearableDevice: boolean;
-  wearableDeviceType?: string; // Added missing property
-  connectedDevices?: BluetoothDeviceInfo[]; // Added missing property
+  wearableDeviceType?: string;
+  connectedDevices?: BluetoothDeviceInfo[];
   recommendedSessionDuration: number;
   recommendedMeditationTime: string;
   recommendedTechniques: string[];
   
   // Morning ritual and activities
-  morningRituals?: MorningRitual[]; // Added missing property
-  morningActivities?: string[]; // Added missing property
-  morningEnergyLevel?: 'low' | 'medium' | 'high'; // Added missing property
-  morningExercise?: boolean; // Added missing property
+  morningRituals?: MorningRitual[];
+  morningActivities?: string[];
+  morningEnergyLevel?: 'low' | 'medium' | 'high';
+  morningExercise?: boolean;
+  morningDevices?: string[]; // Added for compatibility
   
   // Business and attribution
-  attributionSource?: string; // Added missing property
+  attributionSource?: string;
+  
+  // Additional compatibility fields
+  enableSessionReminders?: boolean;
+  enableProgressUpdates?: boolean;
+  enableRecommendations?: boolean;
+  timeManagementStyle?: string;
+  notificationSettings?: NotificationSettings; // Duplicate for compatibility
+  country?: string;
+  measurementSystem?: 'metric' | 'imperial';
 }
 
 export interface UserPreferencesContextType {
@@ -186,6 +206,6 @@ export interface UserPreferencesContextType {
   isCoach: boolean;
   isEnterprise: boolean;
   isLoading: boolean;
-  connectBluetoothDevice: (deviceId: string) => Promise<boolean>;
+  connectBluetoothDevice: (deviceInfo: BluetoothDeviceInfo) => Promise<boolean>;
   disconnectBluetoothDevice: (deviceId: string) => Promise<boolean>;
 }

@@ -1,130 +1,122 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { X, Download, Smartphone, Wifi, WifiOff } from 'lucide-react';
-import { useDeviceDetection } from '@/hooks/useDeviceDetection';
-
-interface PWAInstallPromptEvent extends Event {
-  prompt(): Promise<void>;
-  userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
-}
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Smartphone, X } from 'lucide-react';
 
 export const MobilePWASetup: React.FC = () => {
-  const { isMobile } = useDeviceDetection();
-  const [deferredPrompt, setDeferredPrompt] = useState<PWAInstallPromptEvent | null>(null);
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
-  const [isPWAInstalled, setIsPWAInstalled] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
 
   useEffect(() => {
-    // Listen for PWA install prompt
     const handleBeforeInstallPrompt = (e: Event) => {
+      // Prevent the mini-infobar from appearing on mobile
       e.preventDefault();
-      setDeferredPrompt(e as PWAInstallPromptEvent);
+      // Stash the event so it can be triggered later
+      setDeferredPrompt(e);
+      // Update UI to notify the user they can install the PWA
       setShowInstallPrompt(true);
     };
 
-    // Check if app is already installed
-    const checkPWAInstalled = () => {
-      if (window.matchMedia('(display-mode: standalone)').matches) {
-        setIsPWAInstalled(true);
-      }
+    const handleAppInstalled = () => {
+      console.log('PWA was installed');
+      setShowInstallPrompt(false);
+      setDeferredPrompt(null);
     };
 
-    // Online/offline status
-    const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
-
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-    
-    checkPWAInstalled();
+    window.addEventListener('appinstalled', handleAppInstalled);
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
+      window.removeEventListener('appinstalled', handleAppInstalled);
     };
   }, []);
 
-  const handleInstallPWA = async () => {
+  const handleInstallClick = async () => {
     if (!deferredPrompt) return;
 
+    // Show the install prompt
     deferredPrompt.prompt();
+
+    // Wait for the user to respond to the prompt
     const { outcome } = await deferredPrompt.userChoice;
-    
+
     if (outcome === 'accepted') {
-      setShowInstallPrompt(false);
-      setIsPWAInstalled(true);
+      console.log('User accepted the install prompt');
+    } else {
+      console.log('User dismissed the install prompt');
     }
-    
+
+    // Clear the deferredPrompt variable
     setDeferredPrompt(null);
-  };
-
-  const dismissInstallPrompt = () => {
     setShowInstallPrompt(false);
-    localStorage.setItem('pwa-install-dismissed', 'true');
   };
 
-  // Don't show if already installed or dismissed
-  if (isPWAInstalled || localStorage.getItem('pwa-install-dismissed')) {
+  const handleDismiss = () => {
+    setShowInstallPrompt(false);
+    // Store dismissal in localStorage to avoid showing again for a while
+    localStorage.setItem('pwa-install-dismissed', Date.now().toString());
+  };
+
+  // Check if user previously dismissed the prompt recently
+  useEffect(() => {
+    const dismissed = localStorage.getItem('pwa-install-dismissed');
+    if (dismissed) {
+      const dismissedTime = parseInt(dismissed);
+      const dayInMs = 24 * 60 * 60 * 1000;
+      if (Date.now() - dismissedTime < dayInMs * 7) { // Don't show for 7 days
+        setShowInstallPrompt(false);
+      }
+    }
+  }, []);
+
+  if (!showInstallPrompt || !deferredPrompt) {
     return null;
   }
 
   return (
-    <>
-      {/* Offline Indicator */}
-      {!isOnline && (
-        <div className="fixed top-0 left-0 right-0 bg-orange-500 text-white text-center py-2 z-50">
-          <div className="flex items-center justify-center gap-2">
-            <WifiOff className="w-4 h-4" />
-            <span className="text-sm">You're offline. Some features may be limited.</span>
+    <div className="fixed bottom-4 left-4 right-4 z-50 md:max-w-sm md:left-auto">
+      <Card className="border shadow-lg">
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Smartphone className="h-5 w-5 text-primary" />
+              <CardTitle className="text-sm">Install App</CardTitle>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-6 w-6"
+              onClick={handleDismiss}
+            >
+              <X className="h-4 w-4" />
+            </Button>
           </div>
-        </div>
-      )}
-
-      {/* PWA Install Prompt */}
-      {showInstallPrompt && isMobile && (
-        <div className="fixed bottom-4 left-4 right-4 z-50">
-          <Card className="shadow-lg">
-            <CardContent className="p-4">
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                    <Smartphone className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold">Install Respiro Balance</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Get the full app experience with offline access
-                    </p>
-                  </div>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={dismissInstallPrompt}
-                  className="p-1"
-                >
-                  <X className="w-4 h-4" />
-                </Button>
-              </div>
-              
-              <div className="flex gap-2">
-                <Button onClick={handleInstallPWA} className="flex-1">
-                  <Download className="w-4 h-4 mr-2" />
-                  Install App
-                </Button>
-                <Button variant="outline" onClick={dismissInstallPrompt}>
-                  Not Now
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
-    </>
+          <CardDescription className="text-xs">
+            Install Respiro Balance for quick access and offline use
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              className="flex-1 text-xs"
+              onClick={handleInstallClick}
+            >
+              Install
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1 text-xs"
+              onClick={handleDismiss}
+            >
+              Not Now
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 };

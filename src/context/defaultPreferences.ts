@@ -32,6 +32,7 @@ const defaultPreferences: UserPreferences = {
   },
   
   preferred_session_duration: 10,
+  preferredSessionDuration: 10, // Compatibility field
   
   privacy: {
     shareProgress: false,
@@ -69,6 +70,7 @@ const defaultPreferences: UserPreferences = {
   exerciseTime: '07:00',
   bedTime: '22:00',
   weekdayWakeTime: '07:00',
+  wakeTime: '07:00', // Compatibility field
   
   // User role and experience defaults
   userRole: 'user',
@@ -93,9 +95,29 @@ const defaultPreferences: UserPreferences = {
   morningActivities: ['meditation', 'journaling'],
   morningEnergyLevel: 'medium',
   morningExercise: false,
+  morningDevices: [], // Compatibility field
   
   // Business defaults
-  attributionSource: 'organic'
+  attributionSource: 'organic',
+  
+  // Additional compatibility fields
+  enableSessionReminders: true,
+  enableProgressUpdates: true,
+  enableRecommendations: true,
+  timeManagementStyle: 'moderate',
+  notificationSettings: {
+    enabled: true,
+    soundEnabled: true,
+    vibrationEnabled: true,
+    types: {
+      reminders: true,
+      achievements: true,
+      social: false,
+      marketing: false
+    }
+  },
+  country: 'US',
+  measurementSystem: 'imperial'
 };
 
 export default defaultPreferences;

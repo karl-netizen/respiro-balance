@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { UserPreferences } from './types';
+import { UserPreferences, BluetoothDeviceInfo } from './types';
 import defaultPreferences from './defaultPreferences';
 
 interface UserPreferencesContextType {
@@ -10,7 +10,7 @@ interface UserPreferencesContextType {
   isCoach: boolean;
   isEnterprise: boolean;
   isLoading: boolean;
-  connectBluetoothDevice: (deviceId: string) => Promise<boolean>;
+  connectBluetoothDevice: (deviceInfo: BluetoothDeviceInfo) => Promise<boolean>;
   disconnectBluetoothDevice: (deviceId: string) => Promise<boolean>;
 }
 
@@ -48,14 +48,34 @@ export const UserPreferencesProvider: React.FC<UserPreferencesProviderProps> = (
     setPreferences(defaultPreferences);
   };
 
-  const connectBluetoothDevice = async (deviceId: string): Promise<boolean> => {
-    // Implement Bluetooth connection logic
-    return true;
+  const connectBluetoothDevice = async (deviceInfo: BluetoothDeviceInfo): Promise<boolean> => {
+    try {
+      // Update connected devices in preferences
+      const updatedDevices = [...(preferences.connectedDevices || []), deviceInfo];
+      await updatePreferences({ 
+        connectedDevices: updatedDevices,
+        hasWearableDevice: true
+      });
+      return true;
+    } catch (error) {
+      console.error('Error connecting device:', error);
+      return false;
+    }
   };
 
   const disconnectBluetoothDevice = async (deviceId: string): Promise<boolean> => {
-    // Implement Bluetooth disconnection logic
-    return true;
+    try {
+      // Remove device from connected devices
+      const updatedDevices = (preferences.connectedDevices || []).filter(device => device.id !== deviceId);
+      await updatePreferences({ 
+        connectedDevices: updatedDevices,
+        hasWearableDevice: updatedDevices.length > 0
+      });
+      return true;
+    } catch (error) {
+      console.error('Error disconnecting device:', error);
+      return false;
+    }
   };
 
   const value: UserPreferencesContextType = {
