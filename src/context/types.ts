@@ -1,221 +1,65 @@
-import type { MorningRitual as MorningRitualType } from '@/components/morning-ritual/types';
-
-// Use unified Bluetooth types
-export interface BluetoothDevice {
-  id: string;
-  name: string;
-  type: string;
-  connected: boolean;
-}
-
-export interface BluetoothDeviceInfo {
-  id: string;
-  name: string;
-  type: string;
-  connected: boolean;
-  batteryLevel?: number;
-}
-
-export type DeviceType = 'heart_rate' | 'eeg' | 'gsr' | 'unknown';
-
-// Export morning ritual types
-export type MorningRitual = MorningRitualType;
-export type RitualPriority = 'low' | 'medium' | 'high';
-export type RitualRecurrence = 'daily' | 'weekdays' | 'weekends' | 'custom';
-export type RitualStatus = 'planned' | 'in_progress' | 'completed' | 'skipped' | 'missed';
-
-export interface RitualReminder {
-  enabled: boolean;
-  time: number;
-  message?: string;
-}
-
-// Notification types with correct type values
-export interface Notification {
-  id: string;
-  type: 'info' | 'success' | 'warning' | 'error' | 'achievement' | 'reminder' | 'streak' | 'suggestion';
-  title: string;
-  message: string;
-  timestamp: Date;
-  read: boolean;
-  actionUrl?: string;
-}
-
-export interface CompletionEntry {
-  id: string;
-  date: string;
-  completed: boolean;
-  duration?: number;
-}
-
-export interface SessionFlow {
-  id: string;
-  currentStep: number;
-  totalSteps: number;
-  estimatedDuration: number;
-  status: 'not_started' | 'in_progress' | 'completed' | 'paused';
-  currentModule: string;
-  modules: string[];
-}
-
-export type WorkDay = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
-export type StressLevelType = 'low' | 'moderate' | 'high';
-export type Theme = 'light' | 'dark' | 'system';
-export type MeasurementSystem = 'metric' | 'imperial';
-export type TimeManagementStyle = 'pomodoro' | 'timeblocking' | 'deadline' | 'flexible';
-export type SubscriptionTier = 'free' | 'premium' | 'team' | 'enterprise' | 'coach';
 
 export interface NotificationSettings {
-  sessionReminders?: boolean;
-  achievementNotifications?: boolean;
-  streakAlerts?: boolean;
-  weeklyNotifications?: boolean;
-  weeklySummary?: boolean;
+  enabled: boolean;
+  soundEnabled: boolean;
+  vibrationEnabled: boolean;
+  types: {
+    reminders: boolean;
+    achievements: boolean;
+    social: boolean;
+    marketing: boolean;
+  };
 }
 
-export interface UserLocation {
-  latitude?: number;
-  longitude?: number;
-  city?: string;
-  country?: string;
+export interface MeditationSettings {
+  defaultDuration: number;
+  preferredTechniques: string[];
+  backgroundSounds: boolean;
+  guidedVoice: 'male' | 'female';
+  sessionReminders: boolean;
 }
 
 export interface UserPreferences {
-  // Schedule preferences
-  workDays: WorkDay[];
-  workStartTime: string;
-  workEndTime: string;
-  lunchTime: string;
-  exerciseTime: string;
-  bedTime: string;
-  wakeTime?: string;
-  weekdayWakeTime?: string;
+  // Core settings
+  theme: 'light' | 'dark' | 'system';
+  language: string;
+  timezone: string;
+  subscriptionTier: 'free' | 'premium' | 'premium-plus' | 'premium-pro' | 'coach' | 'enterprise';
   
-  // Location and internationalization
-  country?: string;
-  timezone?: string;
-  measurementSystem?: MeasurementSystem;
-  location?: UserLocation;
+  // Notification settings
+  notifications: NotificationSettings;
   
-  // Wellness preferences
-  lunchBreak: boolean;
-  morningExercise: boolean;
-  meditationExperience: 'beginner' | 'intermediate' | 'advanced';
-  meditationGoals: string[];
-  stressLevel: StressLevelType;
-  workEnvironment: 'office' | 'home' | 'hybrid';
-  preferredSessionDuration: number;
-  preferred_session_duration?: number;
-  morningEnergyLevel?: number;
+  // Meditation settings
+  meditation: MeditationSettings;
   
-  // App preferences
-  hasCompletedOnboarding: boolean;
-  lastOnboardingStep?: number;
-  lastOnboardingCompleted?: string;
-  lastOnboardingSkipped?: string;
-  notificationSettings: NotificationSettings;
-  connectedDevices: BluetoothDeviceInfo[];
-  hasWearableDevice: boolean;
-  subscriptionTier: SubscriptionTier;
-  theme: Theme;
-  focusMode?: boolean;
-  businessAttribution?: string;
+  // Privacy settings
+  privacy: {
+    shareProgress: boolean;
+    publicProfile: boolean;
+    dataCollection: boolean;
+  };
   
-  // Morning ritual specific
-  morningRituals?: MorningRitual[];
+  // Accessibility settings
+  accessibility: {
+    reducedMotion: boolean;
+    highContrast: boolean;
+    screenReader: boolean;
+    fontSize: 'small' | 'medium' | 'large';
+  };
   
-  // Onboarding specific fields
-  focusChallenges?: string[];
-  metricsOfInterest?: string[];
-  morningActivities?: string[];
-  timeChallenges?: string[];
-  energyPattern?: string;
+  // Display settings
+  display: {
+    compactMode: boolean;
+    showAchievements: boolean;
+    showStreak: boolean;
+    showProgress: boolean;
+  };
   
-  // Enhanced UX fields
-  recommendedSessionDuration?: number;
-  recommendedMeditationTime?: string;
-  recommendedTechniques?: string[];
-  
-  // User profile
-  userName?: string;
-  userAvatar?: string;
-  
-  // Daily inspiration
-  dailyQuote?: boolean;
-  quoteCategory?: string;
-  
-  // Affirmations
-  affirmationsEnabled?: boolean;
-  affirmationsList?: string[];
-  
-  // Journaling
-  journalPromptsEnabled?: boolean;
-  journalPromptsList?: string[];
-  
-  // Gratitude
-  gratitudeList?: string[];
-  
-  // Mindfulness exercises
-  mindfulnessExercises?: string[];
-  
-  // Focus techniques
-  focusTechniques?: string[];
-  
-  // Energy levels
-  energyLevels?: string[];
-  
-  // Mood states
-  moodStates?: string[];
-  
-  // Stress management techniques
-  stressManagementTechniques?: string[];
-  
-  // Productivity hacks
-  productivityHacks?: string[];
-
-  // User role
-  userRole?: 'user' | 'admin' | 'coach';
-  
-  // Hydration and sleep goals
-  sleepGoal?: number;
-  hydrationGoal?: number;
-  
-  // Cross-module progress
-  cross_module_progress?: any;
-
-  // Missing properties that were causing build errors
-  wearableDeviceType?: string;
-  attributionSource?: string;
-  enableSessionReminders?: boolean;
-  enableProgressUpdates?: boolean;
-  enableRecommendations?: boolean;
-  timeManagementStyle?: TimeManagementStyle;
-  breakReminders?: any;
-  breakNotificationsEnabled?: boolean;
-  morningDevices?: string;
-  focusTimerDuration?: number;
-  breakTimerDuration?: number;
-  
-  // App Settings specific
-  darkMode?: boolean;
-  reducedMotion?: boolean;
-  highContrast?: boolean;
-  enableBackgroundAudio?: boolean;
-  highQualityAudio?: boolean;
-  offlineAccess?: boolean;
-  
-  // Format converters compatibility
-  weeklyMeditationGoal?: number;
-  defaultMeditationDuration?: number;
-}
-
-export interface UserPreferencesContextType {
-  preferences: UserPreferences;
-  updatePreferences: (updates: Partial<UserPreferences>) => Promise<void>;
-  resetPreferences: () => void;
-  connectBluetoothDevice: (device: BluetoothDeviceInfo) => Promise<boolean>;
-  disconnectBluetoothDevice: (deviceId: string) => Promise<boolean>;
-  isCoach: boolean;
-  isEnterprise: boolean;
-  isLoading: boolean;
+  // Integration settings
+  integrations: {
+    healthKit: boolean;
+    googleFit: boolean;
+    fitbit: boolean;
+    spotify: boolean;
+  };
 }
