@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { UserPreferencesProvider } from '@/context/UserPreferencesProvider';
 import { ThemeProvider } from 'next-themes';
 import { Toaster } from 'sonner';
-import Header from '@/components/Header';
+import SimpleHeader from '@/components/SimpleHeader';
 import Footer from '@/components/Footer';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import HomePage from '@/pages/HomePage';
@@ -53,7 +53,7 @@ function App() {
           <ThemeProvider defaultTheme="system" storageKey="respiro-ui-theme">
             <Router>
               <div className="min-h-screen bg-background font-sans antialiased">
-                <Header />
+                <SimpleHeader />
                 
                 {/* Mobile PWA Setup */}
                 <MobilePWASetup />

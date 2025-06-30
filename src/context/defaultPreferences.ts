@@ -52,7 +52,31 @@ const defaultPreferences: UserPreferences = {
     googleFit: false,
     fitbit: false,
     spotify: false
-  }
+  },
+
+  // Work-life balance defaults
+  workDays: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
+  workStartTime: '09:00',
+  workEndTime: '17:00',
+  lunchTime: '12:00',
+  lunchBreak: true,
+  exerciseTime: '07:00',
+  bedTime: '22:00',
+  
+  // User role and experience defaults
+  userRole: 'user',
+  meditationExperience: 'beginner',
+  meditationGoals: ['stress_reduction', 'better_sleep'],
+  stressLevel: 'moderate',
+  workEnvironment: 'office',
+  
+  // Advanced settings defaults
+  metricsOfInterest: ['stress', 'focus', 'energy'],
+  focusChallenges: ['distractions', 'time_management'],
+  hasWearableDevice: false,
+  recommendedSessionDuration: 10,
+  recommendedMeditationTime: '08:00',
+  recommendedTechniques: ['mindfulness', 'breathing']
 };
 
 export default defaultPreferences;
