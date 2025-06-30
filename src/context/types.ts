@@ -9,6 +9,10 @@ export interface NotificationSettings {
     social: boolean;
     marketing: boolean;
   };
+  sessionReminders?: boolean;
+  streakAlerts?: boolean;
+  achievementNotifications?: boolean;
+  weeklySummary?: boolean;
 }
 
 export interface MeditationSettings {
@@ -21,6 +25,7 @@ export interface MeditationSettings {
 
 // Morning Ritual Types
 export type RecurrenceType = 'daily' | 'weekdays' | 'weekends' | 'custom';
+export type RitualRecurrence = RecurrenceType; // Add this export
 export type RitualPriority = 'low' | 'medium' | 'high';
 export type RitualStatus = 'planned' | 'completed' | 'skipped' | 'in_progress' | 'missed';
 export type WorkDay = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
@@ -89,6 +94,11 @@ export interface SessionFlow {
   steps: string[];
   duration: number;
   type: 'meditation' | 'breathing' | 'focus';
+  currentStep?: number;
+  totalSteps?: number;
+  status?: 'active' | 'paused' | 'completed';
+  estimatedDuration?: number;
+  currentModule?: string;
 }
 
 // Completion Entry Types
@@ -118,6 +128,7 @@ export interface UserPreferences {
   meditation: MeditationSettings;
   preferred_session_duration?: number;
   preferredSessionDuration?: number; // Added for compatibility
+  defaultMeditationDuration?: number;
   
   // Privacy settings
   privacy: {
@@ -197,6 +208,18 @@ export interface UserPreferences {
   notificationSettings?: NotificationSettings; // Duplicate for compatibility
   country?: string;
   measurementSystem?: 'metric' | 'imperial';
+  location?: string;
+  
+  // App-specific settings
+  darkMode?: boolean;
+  reducedMotion?: boolean;
+  highContrast?: boolean;
+  enableBackgroundAudio?: boolean;
+  highQualityAudio?: boolean;
+  focusTimerDuration?: number;
+  breakTimerDuration?: number;
+  breakReminders?: boolean;
+  breakNotificationsEnabled?: boolean;
 }
 
 export interface UserPreferencesContextType {

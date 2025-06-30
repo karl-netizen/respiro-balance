@@ -20,7 +20,11 @@ const defaultPreferences: UserPreferences = {
       achievements: true,
       social: false,
       marketing: false
-    }
+    },
+    sessionReminders: true,
+    streakAlerts: true,
+    achievementNotifications: true,
+    weeklySummary: false
   },
   
   meditation: {
@@ -33,6 +37,7 @@ const defaultPreferences: UserPreferences = {
   
   preferred_session_duration: 10,
   preferredSessionDuration: 10, // Compatibility field
+  defaultMeditationDuration: 10,
   
   privacy: {
     shareProgress: false,
@@ -114,10 +119,26 @@ const defaultPreferences: UserPreferences = {
       achievements: true,
       social: false,
       marketing: false
-    }
+    },
+    sessionReminders: true,
+    streakAlerts: true,
+    achievementNotifications: true,
+    weeklySummary: false
   },
   country: 'US',
-  measurementSystem: 'imperial'
+  measurementSystem: 'imperial',
+  location: '',
+  
+  // App-specific settings
+  darkMode: false,
+  reducedMotion: false,
+  highContrast: false,
+  enableBackgroundAudio: true,
+  highQualityAudio: false,
+  focusTimerDuration: 25,
+  breakTimerDuration: 5,
+  breakReminders: true,
+  breakNotificationsEnabled: true
 };
 
 export default defaultPreferences;
