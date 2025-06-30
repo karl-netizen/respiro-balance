@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
-import { useSubscriptionContext } from '@/hooks/useSubscriptionContext';
+import { useSubscriptionContext } from '@/context/SubscriptionProvider';
 import { Crown } from 'lucide-react';
 
 interface SubscriptionBadgeProps {

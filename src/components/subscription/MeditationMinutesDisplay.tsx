@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useSubscriptionContext } from '@/hooks/useSubscriptionContext';
+import { useSubscriptionContext } from '@/context/SubscriptionProvider';
 import { Progress } from '@/components/ui/progress';
 import { Clock } from 'lucide-react';
 

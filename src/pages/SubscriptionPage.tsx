@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -10,7 +9,7 @@ import { Link, Navigate } from 'react-router-dom';
 import SubscriptionPlanComparison from '@/components/subscription/SubscriptionPlanComparison';
 import SubscriptionFAQs from '@/components/subscription/SubscriptionFAQs';
 import CheckoutFlow from '@/components/subscription/CheckoutFlow';
-import { useSubscriptionContext } from '@/hooks/useSubscriptionContext';
+import { useSubscriptionContext } from '@/context/SubscriptionProvider';
 import { useNavigationHistory } from '@/context/NavigationHistoryProvider';
 import { toast } from 'sonner';
 

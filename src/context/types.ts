@@ -25,7 +25,7 @@ export interface MeditationSettings {
 
 // Morning Ritual Types
 export type RecurrenceType = 'daily' | 'weekdays' | 'weekends' | 'custom';
-export type RitualRecurrence = RecurrenceType; // Add this export
+export type RitualRecurrence = RecurrenceType;
 export type RitualPriority = 'low' | 'medium' | 'high';
 export type RitualStatus = 'planned' | 'completed' | 'skipped' | 'in_progress' | 'missed';
 export type WorkDay = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
@@ -127,7 +127,7 @@ export interface UserPreferences {
   // Meditation settings
   meditation: MeditationSettings;
   preferred_session_duration?: number;
-  preferredSessionDuration?: number; // Added for compatibility
+  preferredSessionDuration?: number;
   defaultMeditationDuration?: number;
   
   // Privacy settings
@@ -170,7 +170,7 @@ export interface UserPreferences {
   exerciseTime: string;
   bedTime: string;
   weekdayWakeTime?: string;
-  wakeTime?: string; // Added for compatibility
+  wakeTime?: string;
   
   // User role and experience
   userRole: 'user' | 'coach' | 'admin';
@@ -195,17 +195,18 @@ export interface UserPreferences {
   morningActivities?: string[];
   morningEnergyLevel?: 'low' | 'medium' | 'high';
   morningExercise?: boolean;
-  morningDevices?: string[]; // Added for compatibility
+  morningDevices?: string[];
   
   // Business and attribution
   attributionSource?: string;
+  offlineAccess?: boolean;
   
   // Additional compatibility fields
   enableSessionReminders?: boolean;
   enableProgressUpdates?: boolean;
   enableRecommendations?: boolean;
   timeManagementStyle?: string;
-  notificationSettings?: NotificationSettings; // Duplicate for compatibility
+  notificationSettings?: NotificationSettings;
   country?: string;
   measurementSystem?: 'metric' | 'imperial';
   location?: string;

@@ -36,7 +36,7 @@ const defaultPreferences: UserPreferences = {
   },
   
   preferred_session_duration: 10,
-  preferredSessionDuration: 10, // Compatibility field
+  preferredSessionDuration: 10,
   defaultMeditationDuration: 10,
   
   privacy: {
@@ -75,7 +75,7 @@ const defaultPreferences: UserPreferences = {
   exerciseTime: '07:00',
   bedTime: '22:00',
   weekdayWakeTime: '07:00',
-  wakeTime: '07:00', // Compatibility field
+  wakeTime: '07:00',
   
   // User role and experience defaults
   userRole: 'user',
@@ -100,10 +100,11 @@ const defaultPreferences: UserPreferences = {
   morningActivities: ['meditation', 'journaling'],
   morningEnergyLevel: 'medium',
   morningExercise: false,
-  morningDevices: [], // Compatibility field
+  morningDevices: [],
   
   // Business defaults
   attributionSource: 'organic',
+  offlineAccess: false,
   
   // Additional compatibility fields
   enableSessionReminders: true,

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Play, Pause, RotateCcw, Heart, Clock, Star, Crown } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { SubscriptionGate } from '@/components/subscription/SubscriptionGate';
-import { useSubscription } from '@/components/subscription/SubscriptionProvider';
+import { useSubscriptionContext } from '@/context/SubscriptionProvider';
 
 export interface MeditationSessionViewProps {
   sessionId?: string;
@@ -20,7 +19,7 @@ const MeditationSessionView: React.FC<MeditationSessionViewProps> = ({
 }) => {
   const { sessionId: urlSessionId } = useParams<{ sessionId: string }>();
   const navigate = useNavigate();
-  const { isPremium, subscription } = useSubscription();
+  const { isPremium } = useSubscriptionContext();
   
   const sessionId = propSessionId || urlSessionId;
   const [isPlaying, setIsPlaying] = useState(false);
