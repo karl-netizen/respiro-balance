@@ -5,9 +5,10 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from '@/context/AuthProvider';
 import { UserPreferencesProvider } from '@/context/UserPreferencesProvider';
 import { SubscriptionProvider } from '@/context/SubscriptionProvider';
+import { NavigationHistoryProvider } from '@/context/NavigationHistoryProvider';
 import { ThemeProvider } from 'next-themes';
 import { Toaster } from 'sonner';
-import SimpleHeader from '@/components/SimpleHeader';
+import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import HomePage from '@/pages/HomePage';
@@ -57,37 +58,39 @@ function App() {
             <SubscriptionProvider>
               <ThemeProvider defaultTheme="system" storageKey="respiro-ui-theme">
                 <Router>
-                  <div className="min-h-screen bg-background font-sans antialiased">
-                    <SimpleHeader />
-                    
-                    {/* Mobile PWA Setup */}
-                    <MobilePWASetup />
-                    
-                    <main className="flex-1">
-                      <Routes>
-                        <Route path="/" element={<LandingPage />} />
-                        <Route path="/landing" element={<LandingPage />} />
-                        <Route path="/dashboard" element={<HomePage />} />
-                        <Route path="/register" element={<RegisterPage />} />
-                        <Route path="/login" element={<LoginPage />} />
-                        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-                        <Route path="/reset-password" element={<ResetPasswordPage />} />
-                        <Route path="/profile" element={<ProfilePage />} />
-                        <Route path="/settings" element={<SettingsPage />} />
-                        <Route path="/system" element={<SystemDashboardPage />} />
-                        <Route path="/meditation" element={<Meditate />} />
-                        <Route path="/biofeedback" element={<BiofeedbackPage />} />
-                        <Route path="/subscription" element={<SubscriptionPage />} />
-                        <Route path="/premium-plus" element={<PremiumPlusPage />} />
-                        <Route path="/social" element={<SocialPage />} />
-                        <Route path="/meditate-advanced" element={<MeditateAdvanced />} />
-                        <Route path="/premium-pro" element={<PremiumProPage />} />
-                      </Routes>
-                    </main>
-                    
-                    <Footer />
-                    <Toaster />
-                  </div>
+                  <NavigationHistoryProvider>
+                    <div className="min-h-screen bg-background font-sans antialiased">
+                      <Header />
+                      
+                      {/* Mobile PWA Setup */}
+                      <MobilePWASetup />
+                      
+                      <main className="flex-1">
+                        <Routes>
+                          <Route path="/" element={<LandingPage />} />
+                          <Route path="/landing" element={<LandingPage />} />
+                          <Route path="/dashboard" element={<HomePage />} />
+                          <Route path="/register" element={<RegisterPage />} />
+                          <Route path="/login" element={<LoginPage />} />
+                          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                          <Route path="/reset-password" element={<ResetPasswordPage />} />
+                          <Route path="/profile" element={<ProfilePage />} />
+                          <Route path="/settings" element={<SettingsPage />} />
+                          <Route path="/system" element={<SystemDashboardPage />} />
+                          <Route path="/meditation" element={<Meditate />} />
+                          <Route path="/biofeedback" element={<BiofeedbackPage />} />
+                          <Route path="/subscription" element={<SubscriptionPage />} />
+                          <Route path="/premium-plus" element={<PremiumPlusPage />} />
+                          <Route path="/social" element={<SocialPage />} />
+                          <Route path="/meditate-advanced" element={<MeditateAdvanced />} />
+                          <Route path="/premium-pro" element={<PremiumProPage />} />
+                        </Routes>
+                      </main>
+                      
+                      <Footer />
+                      <Toaster />
+                    </div>
+                  </NavigationHistoryProvider>
                 </Router>
               </ThemeProvider>
             </SubscriptionProvider>

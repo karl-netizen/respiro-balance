@@ -1,5 +1,6 @@
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { useLocation } from 'react-router-dom';
 
 interface NavigationHistoryContextType {
   history: string[];
@@ -17,6 +18,18 @@ interface NavigationHistoryProviderProps {
 
 export const NavigationHistoryProvider: React.FC<NavigationHistoryProviderProps> = ({ children }) => {
   const [history, setHistory] = useState<string[]>(['/']);
+  const location = useLocation();
+
+  // Track navigation changes
+  useEffect(() => {
+    const currentPath = location.pathname + location.search;
+    setHistory(prev => {
+      if (prev[prev.length - 1] !== currentPath) {
+        return [...prev.slice(-9), currentPath];
+      }
+      return prev;
+    });
+  }, [location]);
 
   const addToHistory = (path: string) => {
     setHistory(prev => {
@@ -29,8 +42,7 @@ export const NavigationHistoryProvider: React.FC<NavigationHistoryProviderProps>
 
   const goBack = () => {
     if (history.length > 1) {
-      setHistory(prev => prev.slice(0, -1));
-      // Use window.history.back() instead of React Router navigate
+      // Use window.history.back() for proper browser navigation
       window.history.back();
     }
   };
@@ -60,8 +72,8 @@ export const useNavigationHistory = () => {
     return {
       history: ['/'],
       addToHistory: () => {},
-      goBack: () => {},
-      canGoBack: false,
+      goBack: () => window.history.back(),
+      canGoBack: window.history.length > 1,
       previousPath: null
     };
   }

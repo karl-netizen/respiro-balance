@@ -49,7 +49,7 @@ const Header = () => {
     >
       <div className="container flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-4">
-          <BackButton />
+          {!isHomePage && <BackButton />}
           <button
             className="flex items-center text-xl font-bold tracking-tight hover:text-respiro-dark transition-colors"
             aria-label="Home"
