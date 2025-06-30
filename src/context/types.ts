@@ -59,7 +59,7 @@ export interface UserPreferences {
   };
 
   // Work-life balance
-  workDays: string[];
+  workDays: WorkDay[];
   workStartTime: string;
   workEndTime: string;
   lunchTime: string;

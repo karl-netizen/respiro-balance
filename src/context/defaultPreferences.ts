@@ -1,5 +1,5 @@
 
-import { UserPreferences } from './types';
+import { UserPreferences, WorkDay } from './types';
 
 const defaultPreferences: UserPreferences = {
   theme: 'system',
@@ -61,7 +61,7 @@ const defaultPreferences: UserPreferences = {
   },
 
   // Work-life balance defaults
-  workDays: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
+  workDays: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'] as WorkDay[],
   workStartTime: '09:00',
   workEndTime: '17:00',
   lunchTime: '12:00',
