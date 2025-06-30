@@ -84,10 +84,10 @@ export const SubscriptionProvider: React.FC<{ children: ReactNode }> = ({ childr
   );
 };
 
-export const useSubscription = (): SubscriptionContextType => {
+export const useSubscriptionContext = (): SubscriptionContextType => {
   const context = useContext(SubscriptionContext);
   if (context === undefined) {
-    throw new Error('useSubscription must be used within a SubscriptionProvider');
+    throw new Error('useSubscriptionContext must be used within a SubscriptionProvider');
   }
   return context;
 };

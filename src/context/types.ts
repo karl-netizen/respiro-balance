@@ -1,123 +1,42 @@
 
-export interface NotificationSettings {
-  enabled: boolean;
-  soundEnabled: boolean;
-  vibrationEnabled: boolean;
-  types: {
-    reminders: boolean;
-    achievements: boolean;
-    social: boolean;
-    marketing: boolean;
-  };
-}
-
-export interface MeditationSettings {
-  defaultDuration: number;
-  preferredTechniques: string[];
-  backgroundSounds: boolean;
-  guidedVoice: 'male' | 'female';
-  sessionReminders: boolean;
-}
-
-// Morning Ritual Types
-export type RecurrenceType = 'daily' | 'weekdays' | 'weekends' | 'custom';
-export type RitualPriority = 'low' | 'medium' | 'high';
-export type RitualStatus = 'planned' | 'completed' | 'skipped' | 'in_progress' | 'missed';
-export type WorkDay = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
-
-export interface MorningRitual {
-  id: string;
-  title: string;
-  description: string;
-  date?: Date;
-  startTime: string;
-  timeOfDay: string;
-  duration: number;
-  priority: RitualPriority;
-  recurrence: RecurrenceType;
-  daysOfWeek: string[];
-  reminderEnabled: boolean;
-  reminderTime: number;
-  reminders?: boolean; // Added missing property
-  tags: string[];
-  complete: boolean;
-  completed?: boolean;
-  createdAt: Date;
-  updatedAt?: Date;
-  status: RitualStatus;
-  lastCompleted?: string;
-  streak?: number;
-}
-
-// Notification Types
-export interface Notification {
-  id: string;
-  title: string;
-  message: string;
-  type: 'info' | 'success' | 'warning' | 'error' | 'achievement' | 'reminder' | 'streak' | 'suggestion';
-  read: boolean;
-  createdAt: Date;
-  timestamp?: Date; // Added missing property
-  actionUrl?: string; // Added missing property
-  data?: any;
-}
-
-// Bluetooth Device Types
-export interface BluetoothDeviceInfo {
-  id: string;
-  name: string;
-  type: DeviceType;
-  connected: boolean;
-  batteryLevel?: number;
-  lastSeen?: Date;
-}
-
-export type DeviceType = 'heart_rate' | 'fitness_tracker' | 'smart_watch' | 'meditation_device';
-
-// Session Flow Types
-export interface SessionFlow {
-  id: string;
-  name: string;
-  steps: string[];
-  duration: number;
-  type: 'meditation' | 'breathing' | 'focus';
-}
-
-// Completion Entry Types
-export interface CompletionEntry {
-  id?: string; // Added missing property
-  date: string;
-  completed: boolean;
-  duration?: number;
-  notes?: string;
-}
-
 export interface UserPreferences {
-  // Core settings
   theme: 'light' | 'dark' | 'system';
   language: string;
   timezone: string;
-  subscriptionTier: 'free' | 'premium' | 'premium-plus' | 'premium-pro' | 'coach' | 'enterprise';
+  subscriptionTier: 'free' | 'premium' | 'coach' | 'enterprise';
   
-  // Onboarding and setup
-  hasCompletedOnboarding?: boolean;
-  lastOnboardingStep?: number;
+  // Onboarding
+  hasCompletedOnboarding: boolean;
+  lastOnboardingStep: number;
   
-  // Notification settings
-  notifications: NotificationSettings;
+  notifications: {
+    enabled: boolean;
+    soundEnabled: boolean;
+    vibrationEnabled: boolean;
+    types: {
+      reminders: boolean;
+      achievements: boolean;
+      social: boolean;
+      marketing: boolean;
+    };
+  };
   
-  // Meditation settings
-  meditation: MeditationSettings;
-  preferred_session_duration?: number; // Added missing property
+  meditation: {
+    defaultDuration: number;
+    preferredTechniques: string[];
+    backgroundSounds: boolean;
+    guidedVoice: 'male' | 'female';
+    sessionReminders: boolean;
+  };
   
-  // Privacy settings
+  preferred_session_duration: number;
+  
   privacy: {
     shareProgress: boolean;
     publicProfile: boolean;
     dataCollection: boolean;
   };
   
-  // Accessibility settings
   accessibility: {
     reducedMotion: boolean;
     highContrast: boolean;
@@ -125,7 +44,6 @@ export interface UserPreferences {
     fontSize: 'small' | 'medium' | 'large';
   };
   
-  // Display settings
   display: {
     compactMode: boolean;
     showAchievements: boolean;
@@ -133,7 +51,6 @@ export interface UserPreferences {
     showProgress: boolean;
   };
   
-  // Integration settings
   integrations: {
     healthKit: boolean;
     googleFit: boolean;
@@ -141,15 +58,15 @@ export interface UserPreferences {
     spotify: boolean;
   };
 
-  // Work-life balance settings
-  workDays: WorkDay[];
+  // Work-life balance
+  workDays: string[];
   workStartTime: string;
   workEndTime: string;
   lunchTime: string;
   lunchBreak: boolean;
   exerciseTime: string;
   bedTime: string;
-  weekdayWakeTime?: string; // Added missing property
+  weekdayWakeTime: string;
   
   // User role and experience
   userRole: 'user' | 'coach' | 'admin';
@@ -161,31 +78,35 @@ export interface UserPreferences {
   // Advanced settings
   metricsOfInterest: string[];
   focusChallenges: string[];
-  timeChallenges?: string[]; // Added missing property
+  timeChallenges: string[];
   hasWearableDevice: boolean;
-  wearableDeviceType?: string; // Added missing property
-  connectedDevices?: BluetoothDeviceInfo[]; // Added missing property
+  wearableDeviceType: string;
+  connectedDevices: any[];
   recommendedSessionDuration: number;
   recommendedMeditationTime: string;
   recommendedTechniques: string[];
   
-  // Morning ritual and activities
-  morningRituals?: MorningRitual[]; // Added missing property
-  morningActivities?: string[]; // Added missing property
-  morningEnergyLevel?: 'low' | 'medium' | 'high'; // Added missing property
-  morningExercise?: boolean; // Added missing property
+  // Morning ritual
+  morningRituals: RitualReminder[];
+  morningActivities: string[];
+  morningEnergyLevel: 'low' | 'medium' | 'high';
+  morningExercise: boolean;
   
-  // Business and attribution
-  attributionSource?: string; // Added missing property
+  // Business
+  attributionSource: string;
 }
 
-export interface UserPreferencesContextType {
-  preferences: UserPreferences;
-  updatePreferences: (updates: Partial<UserPreferences>) => Promise<void>;
-  resetPreferences: () => void;
-  isCoach: boolean;
-  isEnterprise: boolean;
-  isLoading: boolean;
-  connectBluetoothDevice: (deviceId: string) => Promise<boolean>;
-  disconnectBluetoothDevice: (deviceId: string) => Promise<boolean>;
+export interface RitualReminder {
+  enabled: boolean;
+  time: number;
+  message: string;
+}
+
+export type RitualRecurrence = 'daily' | 'weekdays' | 'weekends' | 'custom';
+
+export interface BluetoothDeviceInfo {
+  id: string;
+  name: string;
+  connected: boolean;
+  type: string;
 }
