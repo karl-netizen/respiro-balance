@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import Header from '@/components/Header';
+
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Heart, Users, Target, Sparkles } from 'lucide-react';
@@ -13,7 +13,7 @@ const AboutPage = () => {
         <title>About Us | Respiro Balance</title>
         <meta name="description" content="Learn about Respiro Balance - your daily companion for mindfulness, meditation, and work-life balance." />
       </Helmet>
-      <Header />
+      
       
       <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
         <div className="container max-w-6xl mx-auto px-4 py-16">

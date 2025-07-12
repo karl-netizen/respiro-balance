@@ -1,6 +1,6 @@
 
 import React from 'react';
-import Header from '@/components/Header';
+
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/useAuth';
@@ -21,7 +21,7 @@ const Settings = () => {
   
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
       
       <main className="flex-grow container max-w-5xl mx-auto px-4 py-8">
         <div className="mb-8">

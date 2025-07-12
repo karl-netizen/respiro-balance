@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import Header from "@/components/Header";
+
 
 import DailyQuote from "@/components/DailyQuote";
 import SubscriptionFAQs from "@/components/subscription/SubscriptionFAQs";
@@ -19,7 +19,7 @@ const FAQ = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
       
       <main className="flex-1 container mx-auto px-4 py-12 mt-16">
         <div className="max-w-3xl mx-auto mb-12">

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import Header from '@/components/Header';
+
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SecurityAudit } from '@/components/system/SecurityAudit';
@@ -21,7 +21,7 @@ const SystemDashboardPage: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
       
       <main className="flex-grow">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 max-w-7xl">

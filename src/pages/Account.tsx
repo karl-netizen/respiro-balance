@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
-import Header from '@/components/Header';
+
 
 import AccountSubscriptionSettings from '@/components/settings/AccountSubscriptionSettings';
 import SubscriptionCard from '@/components/subscription/SubscriptionCard';
@@ -33,7 +33,7 @@ const Account = () => {
   
   return (
     <>
-      <Header />
+      
       <main className="container py-8">
         <div className="flex items-center justify-between mb-6">
           <Button variant="ghost" onClick={() => navigate(-1)}>

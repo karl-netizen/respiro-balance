@@ -1,6 +1,6 @@
 
 import React from 'react';
-import Header from '@/components/Header';
+
 
 import { useBiofeedback } from '@/hooks/biofeedback';
 import BiofeedbackLayout from '@/components/biofeedback/layout/BiofeedbackLayout';
@@ -68,7 +68,7 @@ const BiofeedbackPage: React.FC = () => {
   
   return (
     <>
-      <Header />
+      
       <main className="container mx-auto py-8 px-4 space-y-8">
         <BiofeedbackLayout
           devices={devices}

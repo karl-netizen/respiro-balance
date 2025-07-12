@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import Header from '@/components/Header';
+
 
 import { useFeatureAccess } from '@/hooks/useFeatureAccess';
 import { Navigate } from 'react-router-dom';
@@ -19,7 +19,7 @@ const PremiumProPage: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
       
       <main className="flex-grow">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 max-w-7xl">

@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import Header from "@/components/Header";
+
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useUserPreferences } from "@/context";
@@ -32,7 +32,7 @@ const ProgressDashboard = () => {
   
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
       
       <main className="flex-grow">
         <ProgressHero />

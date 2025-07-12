@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import Header from '@/components/Header';
+
 
 import { MeditationLibraryBrowser } from '@/components/meditation';
 import { useSubscriptionContext } from '@/hooks/useSubscriptionContext';
@@ -77,7 +77,7 @@ const MeditationLibrary = () => {
   
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
       
       <main className="flex-grow container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">

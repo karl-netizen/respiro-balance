@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
-import Header from '@/components/Header';
+
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -48,7 +48,7 @@ const ContactPage = () => {
         <title>Contact Us | Respiro Balance</title>
         <meta name="description" content="Get in touch with Respiro Balance. We're here to help with your mindfulness and wellness journey." />
       </Helmet>
-      <Header />
+      
       
       <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
         <div className="container max-w-6xl mx-auto px-4 py-16">

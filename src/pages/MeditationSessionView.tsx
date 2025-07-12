@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import Header from '@/components/Header';
+
 
 import { Button } from '@/components/ui/button';
 import { ChevronLeft } from 'lucide-react';
@@ -99,7 +99,7 @@ const MeditationSessionView = () => {
   
   return (
     <div className="min-h-screen flex flex-col bg-gray-900">
-      <Header />
+      
       
       <main className="flex-grow container max-w-5xl mx-auto px-4 py-8">
         <Button 

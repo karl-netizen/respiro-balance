@@ -2,7 +2,7 @@
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import Header from "@/components/Header";
+
 
 
 const ErrorPage = () => {
@@ -17,7 +17,7 @@ const ErrorPage = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
       
       <div className="flex-grow flex items-center justify-center px-6 pb-20 pt-32">
         <div className="glassmorphism-card max-w-lg w-full p-8 text-center">

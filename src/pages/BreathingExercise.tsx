@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import Header from "@/components/Header";
+
 
 import BreathingVisualizer from "@/components/BreathingVisualizer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -47,7 +47,7 @@ const BreathingExercise = () => {
   
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
       
       <main className="flex-grow">
         <section className="bg-gradient-to-b from-background to-secondary/20 pt-24 pb-12 px-6">

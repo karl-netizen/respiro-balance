@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Header from "@/components/Header";
+
 import Hero from "@/components/Hero";
 import PricingTiers from "@/components/PricingTiers";
 
@@ -38,7 +38,7 @@ const Index = () => {
           zIndex: 1
         }}
       >
-        <Header />
+        
         <Hero />
         
         {/* Benefits Section with restored branding colors */}

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import Header from '@/components/Header';
+
 
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
@@ -12,7 +12,7 @@ const BreakSettingsPage = () => {
   
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-white to-gray-50">
-      <Header />
+      
       <main className="flex-grow">
         <div className="container mx-auto px-4 py-8">
           <div className="mb-6">

@@ -1,12 +1,12 @@
 
 import React from 'react';
-import Header from "@/components/Header";
+
 
 
 const TermsPage = () => {
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      
       
       <main className="flex-grow py-16 px-4">
         <div className="max-w-4xl mx-auto prose">

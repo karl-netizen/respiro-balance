@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import Header from '@/components/Header';
+
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -74,7 +74,7 @@ const BiofeedbackDashboard: React.FC = () => {
 
   return (
     <>
-      <Header />
+      
       <main className="container mx-auto py-8 px-4 space-y-8">
         {/* Hero Section */}
         <div className="space-y-6">
