@@ -29,6 +29,7 @@ import MeditateAdvanced from '@/pages/MeditateAdvanced';
 import PremiumProPage from '@/pages/PremiumProPage';
 import LibraryPage from '@/pages/LibraryPage';
 import MeditationAudioManagement from '@/pages/MeditationAudioManagement';
+import MeditationSessionPage from '@/pages/MeditationSessionPage';
 import { MobilePWASetup } from '@/components/mobile/MobilePWASetup';
 import { usePerformanceMonitoring } from '@/hooks/usePerformanceMonitoring';
 
@@ -71,6 +72,7 @@ function App() {
                           <Route path="/premium-pro" element={<PremiumProPage />} />
                           <Route path="/library" element={<LibraryPage />} />
                           <Route path="/meditation/audio-management" element={<MeditationAudioManagement />} />
+                          <Route path="/meditate/session/:sessionId" element={<MeditationSessionPage />} />
                         </Routes>
                       </main>
                       
