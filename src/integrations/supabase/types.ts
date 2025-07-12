@@ -231,6 +231,39 @@ export type Database = {
           },
         ]
       }
+      content_categories: {
+        Row: {
+          color_theme: string | null
+          created_at: string | null
+          description: string | null
+          icon_name: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          sort_order: number | null
+        }
+        Insert: {
+          color_theme?: string | null
+          created_at?: string | null
+          description?: string | null
+          icon_name?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          sort_order?: number | null
+        }
+        Update: {
+          color_theme?: string | null
+          created_at?: string | null
+          description?: string | null
+          icon_name?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          sort_order?: number | null
+        }
+        Relationships: []
+      }
       focus_achievements: {
         Row: {
           achievement_key: string
@@ -391,6 +424,75 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      meditation_content: {
+        Row: {
+          audio_file_path: string | null
+          audio_file_url: string | null
+          average_rating: number | null
+          background_music_type: string | null
+          category: string
+          created_at: string | null
+          description: string | null
+          difficulty_level: string | null
+          duration: number
+          id: string
+          instructor: string | null
+          is_active: boolean | null
+          is_featured: boolean | null
+          play_count: number | null
+          subscription_tier: string | null
+          tags: string[] | null
+          thumbnail_url: string | null
+          title: string
+          transcript: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          audio_file_path?: string | null
+          audio_file_url?: string | null
+          average_rating?: number | null
+          background_music_type?: string | null
+          category: string
+          created_at?: string | null
+          description?: string | null
+          difficulty_level?: string | null
+          duration: number
+          id?: string
+          instructor?: string | null
+          is_active?: boolean | null
+          is_featured?: boolean | null
+          play_count?: number | null
+          subscription_tier?: string | null
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          title: string
+          transcript?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          audio_file_path?: string | null
+          audio_file_url?: string | null
+          average_rating?: number | null
+          background_music_type?: string | null
+          category?: string
+          created_at?: string | null
+          description?: string | null
+          difficulty_level?: string | null
+          duration?: number
+          id?: string
+          instructor?: string | null
+          is_active?: boolean | null
+          is_featured?: boolean | null
+          play_count?: number | null
+          subscription_tier?: string | null
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          title?: string
+          transcript?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       meditation_sessions: {
         Row: {
@@ -872,6 +974,56 @@ export type Database = {
           },
         ]
       }
+      user_content_progress: {
+        Row: {
+          completed: boolean | null
+          completion_count: number | null
+          content_id: string
+          created_at: string | null
+          id: string
+          is_favorite: boolean | null
+          last_played_at: string | null
+          progress_seconds: number | null
+          rating: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean | null
+          completion_count?: number | null
+          content_id: string
+          created_at?: string | null
+          id?: string
+          is_favorite?: boolean | null
+          last_played_at?: string | null
+          progress_seconds?: number | null
+          rating?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          completed?: boolean | null
+          completion_count?: number | null
+          content_id?: string
+          created_at?: string | null
+          id?: string
+          is_favorite?: boolean | null
+          last_played_at?: string | null
+          progress_seconds?: number | null
+          rating?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_content_progress_content_id_fkey"
+            columns: ["content_id"]
+            isOneToOne: false
+            referencedRelation: "meditation_content"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_friendships: {
         Row: {
           addressee_id: string
@@ -1197,8 +1349,20 @@ export type Database = {
         Args: { user_id_param: string; minutes_used: number }
         Returns: undefined
       }
+      increment_play_count: {
+        Args: { content_id: string }
+        Returns: undefined
+      }
       reset_monthly_meditation_limits: {
         Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      update_content_progress: {
+        Args: {
+          p_content_id: string
+          p_progress_seconds: number
+          p_completed?: boolean
+        }
         Returns: undefined
       }
     }

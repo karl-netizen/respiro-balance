@@ -27,6 +27,7 @@ import PremiumPlusPage from '@/pages/PremiumPlusPage';
 import SocialPage from '@/pages/SocialPage';
 import MeditateAdvanced from '@/pages/MeditateAdvanced';
 import PremiumProPage from '@/pages/PremiumProPage';
+import LibraryPage from '@/pages/LibraryPage';
 import { MobilePWASetup } from '@/components/mobile/MobilePWASetup';
 import { usePerformanceMonitoring } from '@/hooks/usePerformanceMonitoring';
 
@@ -89,6 +90,7 @@ function App() {
                           <Route path="/social" element={<SocialPage />} />
                           <Route path="/meditate-advanced" element={<MeditateAdvanced />} />
                           <Route path="/premium-pro" element={<PremiumProPage />} />
+                          <Route path="/library" element={<LibraryPage />} />
                         </Routes>
                       </main>
                       
