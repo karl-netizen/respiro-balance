@@ -91,64 +91,65 @@ const RitualHero = () => {
                   }
                 }}
               >
-                {/* Fixed positioned container to prevent layout shifts */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  {!showDetails ? (
-                    // Default state - just background decoration, no visible box
+                {/* Default state - just background decoration, no visible box */}
+                {!showDetails && (
+                  <div className="absolute inset-0 flex items-center justify-center">
                     <div className="text-center text-muted-foreground">
                       <Info className="h-8 w-8 mx-auto mb-2 opacity-50" />
                       <p className="text-sm px-4">
                         {isMobile ? "Tap to view morning details" : "Hover to view morning details"}
                       </p>
                     </div>
-                  ) : (
-                    // Detailed box that appears on interaction - mobile-first sizing
-                    <div className={cn(
-                      "bg-white rounded-lg shadow-2xl border animate-fade-in",
-                      // Mobile-first responsive sizing and positioning
-                      "w-full max-w-[280px] sm:max-w-sm mx-auto p-4",
-                      // Ensure it stays within viewport on mobile
-                      "absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2",
-                      // Add some margin from screen edges on mobile
-                      "mx-2 sm:mx-4"
-                    )}>
-                      <div className="flex justify-between items-center mb-4">
-                        <div className="text-xs sm:text-sm text-muted-foreground">Morning Energy</div>
-                        <div className="text-xs sm:text-sm font-medium">{preferences.morningEnergyLevel || 5}/10</div>
-                      </div>
-                      
-                      <div className="space-y-3">
-                        <h3 className="font-medium text-base sm:text-lg">Your Current Morning</h3>
-                        {morningActivities.length > 0 ? (
-                          <ul className="space-y-2 max-h-24 sm:max-h-32 overflow-y-auto">
-                            {morningActivities.map((activity, i) => (
-                              <li key={i} className="flex items-center text-xs sm:text-sm">
-                                <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-primary/20 flex items-center justify-center mr-2 sm:mr-3 flex-shrink-0 text-xs">
-                                  {i + 1}
-                                </div>
-                                <span className="capitalize leading-tight">
-                                  {activity.replace(/_/g, ' ')}
-                                </span>
-                              </li>
-                            ))}
-                          </ul>
-                        ) : (
-                          <p className="text-xs sm:text-sm text-muted-foreground">
-                            You haven't set up your morning activities yet.
-                          </p>
-                        )}
-                        
-                        {/* Mobile close hint */}
-                        {isMobile && showDetails && (
-                          <p className="text-xs text-muted-foreground text-center pt-2 border-t mt-3">
-                            Tap anywhere to close
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
+
+              {/* Popup appears outside container for mobile positioning control */}
+              {showDetails && (
+                <div className={cn(
+                  "fixed z-50 animate-fade-in",
+                  // Mobile-first positioning - center on screen with margins
+                  isMobile 
+                    ? "inset-4 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[calc(100vw-2rem)] max-w-[280px]"
+                    : "absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-sm"
+                )}>
+                  <div className="bg-white rounded-lg shadow-2xl border p-4">
+                    <div className="flex justify-between items-center mb-4">
+                      <div className="text-xs sm:text-sm text-muted-foreground">Morning Energy</div>
+                      <div className="text-xs sm:text-sm font-medium">{preferences.morningEnergyLevel || 5}/10</div>
+                    </div>
+                    
+                    <div className="space-y-3">
+                      <h3 className="font-medium text-base sm:text-lg">Your Current Morning</h3>
+                      {morningActivities.length > 0 ? (
+                        <ul className="space-y-2 max-h-24 sm:max-h-32 overflow-y-auto">
+                          {morningActivities.map((activity, i) => (
+                            <li key={i} className="flex items-center text-xs sm:text-sm">
+                              <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-primary/20 flex items-center justify-center mr-2 sm:mr-3 flex-shrink-0 text-xs">
+                                {i + 1}
+                              </div>
+                              <span className="capitalize leading-tight">
+                                {activity.replace(/_/g, ' ')}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p className="text-xs sm:text-sm text-muted-foreground">
+                          You haven't set up your morning activities yet.
+                        </p>
+                      )}
+                      
+                      {/* Mobile close hint */}
+                      {isMobile && (
+                        <p className="text-xs text-muted-foreground text-center pt-2 border-t mt-3">
+                          Tap anywhere to close
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
