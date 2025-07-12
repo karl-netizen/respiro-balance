@@ -33,6 +33,25 @@ import { usePerformanceMonitoring } from '@/hooks/usePerformanceMonitoring';
 const queryClient = new QueryClient();
 
 function App() {
+  console.log('🚀 App component is rendering!');
+  
+  // Add a test to see if we can render anything at all
+  const testRender = () => {
+    console.log('✅ Test render function called');
+    return (
+      <div style={{ 
+        position: 'fixed', 
+        top: '10px', 
+        left: '10px', 
+        background: 'red', 
+        color: 'white', 
+        padding: '10px', 
+        zIndex: 9999 
+      }}>
+        APP IS WORKING!
+      </div>
+    );
+  };
 
   return (
     <ErrorBoundary>
@@ -44,6 +63,8 @@ function App() {
                 <Router>
                   <NavigationHistoryProvider>
                     <div className="min-h-screen bg-background font-sans antialiased">
+                      {testRender()}
+                      
                       <Header />
                       
                       {/* Mobile PWA Setup */}
