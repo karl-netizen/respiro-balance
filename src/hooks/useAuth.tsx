@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 interface ExtendedUser extends User {
   user_metadata: Record<string, any>;
   app_metadata: Record<string, any>;
+  subscription_tier?: string; // Add subscription_tier property
 }
 
 interface AuthContextType {
@@ -195,4 +196,3 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-export default AuthProvider;
