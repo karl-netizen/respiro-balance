@@ -24,10 +24,51 @@ export const useMeditatePage = () => {
 
   // Fetch meditation content from database
   useEffect(() => {
-    const fetchMeditationContent = async () => {
-      console.log('🎯 useMeditatePage: Starting to fetch meditation content...');
+    const testBasicConnection = async () => {
+      console.log('🔗 STEP 1: Testing basic Supabase connection...');
       try {
-        console.log('🔗 Checking Supabase client:', !!supabase);
+        // Test 1: Basic connection
+        const { data: testData, error: testError } = await supabase
+          .from('meditation_content')
+          .select('count')
+          .limit(1);
+        console.log('🔗 Basic connection test:', { testData, testError });
+
+        // Test 2: Check if table exists and has data
+        const { data: countData, error: countError } = await supabase
+          .from('meditation_content')
+          .select('*', { count: 'exact', head: true });
+        console.log('📊 Table existence & count test:', { countData, countError });
+
+        // Test 3: Simple query without filters (should work with RLS)
+        const { data: simpleData, error: simpleError } = await supabase
+          .from('meditation_content')
+          .select('id, title, category')
+          .limit(3);
+        console.log('🎯 Simple query test (no filters):', { simpleData, simpleError });
+
+        // Test 4: Query with is_active filter (tests RLS policy)
+        const { data: activeData, error: activeError } = await supabase
+          .from('meditation_content')
+          .select('id, title, category')
+          .eq('is_active', true)
+          .limit(3);
+        console.log('🔒 RLS filtered query test:', { activeData, activeError });
+
+      } catch (connectionError) {
+        console.error('💥 Connection test exception:', connectionError);
+      }
+    };
+
+    const fetchMeditationContent = async () => {
+      console.log('🎯 STEP 2: Starting full meditation content fetch...');
+      
+      // First run connection tests
+      await testBasicConnection();
+      
+      try {
+        console.log('🔗 Checking Supabase client availability:', !!supabase);
+        console.log('🔒 Checking auth state:', await supabase.auth.getUser());
         
         const { data, error } = await supabase
           .from('meditation_content')
@@ -35,7 +76,13 @@ export const useMeditatePage = () => {
           .eq('is_active', true)
           .order('created_at', { ascending: false });
 
-        console.log('📊 Raw meditation content from database:', { data, error, count: data?.length });
+        console.log('📊 FULL QUERY RESULT:', { 
+          data, 
+          error, 
+          count: data?.length,
+          hasSupabase: !!supabase,
+          queryExecuted: true 
+        });
 
         if (error) {
           console.error('❌ Supabase error fetching meditation content:', error);
