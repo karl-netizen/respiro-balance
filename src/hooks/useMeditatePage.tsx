@@ -137,6 +137,18 @@ export const useMeditatePage = () => {
     return meditationSessions;
   }, [meditationSessions]);
 
+  // Category mapping function - maps UI categories to database categories
+  const getCategoryMapping = useCallback((uiCategory: string): string[] => {
+    const categoryMap: Record<string, string[]> = {
+      'guided': ['Mindfulness', 'Loving Kindness', 'Body Scan'],
+      'quick': ['Focus', 'Energy'], 
+      'deep': ['Stress Relief'],
+      'sleep': ['Sleep'],
+      'breathing': ['Breathing']
+    };
+    return categoryMap[uiCategory] || [];
+  }, []);
+
   // Get sessions for a specific category
   const getFilteredSessions = useCallback((category: string): MeditationSession[] => {
     console.log(`🔍 getFilteredSessions called for category: ${category}, total sessions: ${meditationSessions.length}`);
@@ -148,11 +160,13 @@ export const useMeditatePage = () => {
       console.log(`❤️ Found ${favs.length} favorite sessions`);
       return favs;
     } else {
-      const filtered = meditationSessions.filter(s => s.category === category);
-      console.log(`📂 Filtered sessions for ${category}:`, filtered.length);
+      // Use category mapping for filtering
+      const mappedCategories = getCategoryMapping(category);
+      const filtered = meditationSessions.filter(s => mappedCategories.includes(s.category));
+      console.log(`📂 Filtered sessions for ${category}: ${filtered.length} (mapped from categories: ${mappedCategories.join(', ')})`);
       return filtered;
     }
-  }, [meditationSessions, favorites.favoriteSessions]);
+  }, [meditationSessions, favorites.favoriteSessions, getCategoryMapping]);
   
   const getFavoriteSessions = useCallback((): MeditationSession[] => {
     return meditationSessions.filter(s => favorites.favoriteSessions.includes(s.id));
