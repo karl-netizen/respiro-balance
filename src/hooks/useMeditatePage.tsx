@@ -111,6 +111,15 @@ export const useMeditatePage = () => {
           level: content.difficulty_level || 'beginner'
         }));
         
+        // Debug: Log all unique categories found in the data
+        const categories = [...new Set(data.map(content => content.category))];
+        console.log('🏷️ Unique categories found in database:', categories);
+        console.log('📊 Category breakdown:');
+        categories.forEach(cat => {
+          const count = data.filter(content => content.category === cat).length;
+          console.log(`  - ${cat}: ${count} sessions`);
+        });
+        
         console.log('✅ Transformed sessions:', sessions.length, 'sessions created');
         console.log('📝 Sample session:', sessions[0]);
         setMeditationSessions(sessions);
