@@ -27,42 +27,11 @@ const MeditationTabsContent: React.FC<MeditationTabsContentProps> = ({
   // Update filtered sessions whenever the tab changes or filters change
   useEffect(() => {
     const allSessions = getFilteredSessions();
-    console.log('📋 MeditationTabsContent - all sessions:', allSessions.length);
+    console.log('📋 MeditationTabsContent - sessions already filtered by primary filter:', allSessions.length);
     setSessions(allSessions);
   }, [getFilteredSessions, activeTab]);
 
-  // Filter sessions based on category - mapping database categories to UI categories
-  const filterByCategory = (tab: string) => {
-    console.log(`🔍 Filtering for tab: ${tab}, total sessions: ${sessions.length}`);
-    
-    if (tab === 'guided') {
-      const filtered = sessions.filter(session => 
-        ['Mindfulness', 'Body Scan', 'Loving Kindness', 'Breathing'].includes(session.category)
-      );
-      console.log(`🎯 Guided sessions found: ${filtered.length}`);
-      return filtered;
-    } else if (tab === 'quick') {
-      const filtered = sessions.filter(session => 
-        ['Focus', 'Energy'].includes(session.category)
-      );
-      console.log(`⚡ Quick sessions found: ${filtered.length}`);
-      return filtered;
-    } else if (tab === 'deep') {
-      const filtered = sessions.filter(session => 
-        ['Stress Relief'].includes(session.category)
-      );
-      console.log(`🧘 Deep sessions found: ${filtered.length}`);
-      return filtered;
-    } else if (tab === 'sleep') {
-      const filtered = sessions.filter(session => 
-        ['Sleep'].includes(session.category)
-      );
-      console.log(`🌙 Sleep sessions found: ${filtered.length}`);
-      return filtered;
-    }
-    console.log(`📋 All sessions returned: ${sessions.length}`);
-    return sessions;
-  };
+  // NO MORE SECONDARY FILTERING - use sessions directly since they're already filtered correctly
   
   return (
     <Tabs value={activeTab} onValueChange={handleTabChange} className="mt-6">
@@ -75,7 +44,7 @@ const MeditationTabsContent: React.FC<MeditationTabsContentProps> = ({
       
       <TabsContent value="guided">
         <GuidedMeditationList 
-          sessions={filterByCategory('guided')}
+          sessions={sessions}
           onSelectSession={onSelectSession}
           onToggleFavorite={onToggleFavorite}
           isFavorite={isFavorite}
@@ -84,7 +53,7 @@ const MeditationTabsContent: React.FC<MeditationTabsContentProps> = ({
       
       <TabsContent value="quick">
         <QuickBreaksList 
-          sessions={filterByCategory('quick')}
+          sessions={sessions}
           onSelectSession={onSelectSession}
           onToggleFavorite={onToggleFavorite}
           isFavorite={isFavorite}
@@ -93,7 +62,7 @@ const MeditationTabsContent: React.FC<MeditationTabsContentProps> = ({
       
       <TabsContent value="deep">
         <DeepFocusList 
-          sessions={filterByCategory('deep')}
+          sessions={sessions}
           onSelectSession={onSelectSession}
           onToggleFavorite={onToggleFavorite}
           isFavorite={isFavorite}
@@ -102,7 +71,7 @@ const MeditationTabsContent: React.FC<MeditationTabsContentProps> = ({
       
       <TabsContent value="sleep">
         <SleepMeditationList 
-          sessions={filterByCategory('sleep')}
+          sessions={sessions}
           onSelectSession={onSelectSession}
           onToggleFavorite={onToggleFavorite}
           isFavorite={isFavorite}
