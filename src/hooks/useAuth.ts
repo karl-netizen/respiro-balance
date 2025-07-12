@@ -1,1 +1,1 @@
-export { useAuth } from '@/hooks/useAuth.tsx';
+export { useAuth, AuthProvider } from '@/hooks/useAuth.tsx';
