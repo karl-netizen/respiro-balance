@@ -43,8 +43,15 @@ const AudioFileManager: React.FC = () => {
   };
 
   const handleFileUpload = async (file: File) => {
+    console.log('Starting file upload:', file.name, file.type, file.size);
+    
     if (!file.type.startsWith('audio/')) {
       toast.error('Please select an audio file');
+      return;
+    }
+
+    if (file.size > 50 * 1024 * 1024) { // 50MB limit
+      toast.error('File size must be less than 50MB');
       return;
     }
 
@@ -52,8 +59,11 @@ const AudioFileManager: React.FC = () => {
     setUploadProgress(0);
 
     try {
-      const filename = `${Date.now()}_${file.name}`;
+      const filename = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+      console.log('Uploading with filename:', filename);
+      
       const url = await uploadMeditationAudio(file, filename);
+      console.log('Upload result:', url);
       
       if (url) {
         await loadAudioFiles();

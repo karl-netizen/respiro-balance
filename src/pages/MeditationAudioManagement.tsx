@@ -1,7 +1,5 @@
 
 import React from 'react';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import AudioFileManager from '@/components/meditation/admin/AudioFileManager';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -12,8 +10,6 @@ const MeditationAudioManagement = () => {
   
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
-      
       <main className="flex-grow container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           <div className="mb-6">
@@ -35,8 +31,6 @@ const MeditationAudioManagement = () => {
           <AudioFileManager />
         </div>
       </main>
-      
-      <Footer />
     </div>
   );
 };
