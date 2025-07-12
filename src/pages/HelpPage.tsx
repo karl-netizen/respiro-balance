@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+
 import DailyQuote from "@/components/DailyQuote";
 import { 
   Accordion,
@@ -85,7 +85,7 @@ const HelpPage = () => {
         </div>
       </main>
 
-      <Footer />
+      
     </div>
   );
 };

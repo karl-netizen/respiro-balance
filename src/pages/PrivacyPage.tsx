@@ -1,7 +1,7 @@
 
 import React from 'react';
 import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+
 
 const PrivacyPage = () => {
   return (
@@ -81,7 +81,7 @@ const PrivacyPage = () => {
         </div>
       </main>
       
-      <Footer />
+      
     </div>
   );
 };

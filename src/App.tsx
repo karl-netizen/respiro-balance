@@ -36,6 +36,11 @@ import Breathe from '@/pages/Breathe';
 import MorningRitual from '@/pages/MorningRitual';
 import WorkLifeBalance from '@/pages/WorkLifeBalance';
 import Progress from '@/pages/Progress';
+import FocusPage from '@/pages/FocusPage';
+import HelpPage from '@/pages/HelpPage';
+import ContactPage from '@/pages/ContactPage';
+import PrivacyPage from '@/pages/PrivacyPage';
+import TermsPage from '@/pages/TermsPage';
 import { MobilePWASetup } from '@/components/mobile/MobilePWASetup';
 import { usePerformanceMonitoring } from '@/hooks/usePerformanceMonitoring';
 
@@ -85,6 +90,11 @@ function App() {
                           <Route path="/morning-ritual" element={<MorningRitual />} />
                           <Route path="/work-life-balance" element={<WorkLifeBalance />} />
                           <Route path="/progress" element={<Progress />} />
+                          <Route path="/focus" element={<FocusPage />} />
+                          <Route path="/help" element={<HelpPage />} />
+                          <Route path="/contact" element={<ContactPage />} />
+                          <Route path="/privacy" element={<PrivacyPage />} />
+                          <Route path="/terms" element={<TermsPage />} />
                         </Routes>
                       </main>
                       

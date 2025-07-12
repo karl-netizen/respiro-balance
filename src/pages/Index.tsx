@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import PricingTiers from "@/components/PricingTiers";
-import Footer from "@/components/Footer";
+
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { Clock, Shield, Zap } from "lucide-react";
@@ -108,7 +108,6 @@ const Index = () => {
         </section>
         
         <PricingTiers />
-        <Footer />
       </div>
     </div>
   );
