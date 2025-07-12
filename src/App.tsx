@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from '@/hooks/useAuth';
 import { NotificationsProvider } from '@/context/NotificationsProvider';
+import { FocusProvider } from '@/context/FocusProvider';
 import { UserPreferencesProvider } from '@/context/UserPreferencesProvider';
 import { SubscriptionProvider } from '@/context/SubscriptionProvider';
 import { NavigationHistoryProvider } from '@/context/NavigationHistoryProvider';
@@ -46,12 +47,13 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <NotificationsProvider>
-            <UserPreferencesProvider>
-              <SubscriptionProvider>
-                <ThemeProvider defaultTheme="system" storageKey="respiro-ui-theme">
-                  <Router>
-                    <NavigationHistoryProvider>
-                    <div className="min-h-screen bg-background font-sans antialiased">
+            <FocusProvider>
+              <UserPreferencesProvider>
+                <SubscriptionProvider>
+                  <ThemeProvider defaultTheme="system" storageKey="respiro-ui-theme">
+                    <Router>
+                      <NavigationHistoryProvider>
+                      <div className="min-h-screen bg-background font-sans antialiased">
                       <Header />
                       
                       {/* Mobile PWA Setup */}
@@ -94,8 +96,9 @@ function App() {
               </ThemeProvider>
             </SubscriptionProvider>
           </UserPreferencesProvider>
-        </NotificationsProvider>
-      </AuthProvider>
+        </FocusProvider>
+      </NotificationsProvider>
+    </AuthProvider>
       </QueryClientProvider>
     </ErrorBoundary>
   );
