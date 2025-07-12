@@ -59,7 +59,8 @@ const AudioFileManager: React.FC = () => {
     setUploadProgress(0);
 
     try {
-      const filename = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+      // Create user-specific folder structure for RLS policies
+      const filename = `user_${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
       console.log('Uploading with filename:', filename);
       
       const url = await uploadMeditationAudio(file, filename);
