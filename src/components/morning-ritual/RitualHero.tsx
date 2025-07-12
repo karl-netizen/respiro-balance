@@ -3,13 +3,33 @@ import React, { useState } from "react";
 import { useUserPreferences } from "@/context";
 import { Sun, Clock, Calendar, Info } from "lucide-react";
 import { useTimeAwareness } from "@/hooks/useTimeAwareness";
+import { useDeviceDetection } from "@/hooks/useDeviceDetection";
+import { cn } from "@/lib/utils";
 
 const RitualHero = () => {
   const { preferences } = useUserPreferences();
   const { getGreeting } = useTimeAwareness();
+  const { deviceType } = useDeviceDetection();
   const [showDetails, setShowDetails] = useState(false);
   const morningActivities = preferences.morningActivities || [];
   const ritualsCount = preferences.morningRituals?.length || 0;
+  
+  const isMobile = deviceType === 'mobile';
+  
+  // Mobile-first interaction handlers
+  const handleInteraction = () => {
+    if (isMobile) {
+      setShowDetails(!showDetails); // Toggle on mobile tap
+    } else {
+      setShowDetails(true); // Show on desktop hover
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (!isMobile) {
+      setShowDetails(false); // Hide on desktop mouse leave
+    }
+  };
 
   return (
     <div className="bg-gradient-to-b from-primary/10 to-background py-12 px-4">
@@ -47,58 +67,79 @@ const RitualHero = () => {
           </div>
           
           <div className="md:w-2/5">
-            <div className="relative">
+            <div className="relative min-h-[16rem]"> {/* Fixed height prevents jumps */}
               {/* Background decorative circles */}
               <div className="absolute -top-4 -left-4 w-24 h-24 bg-primary/20 rounded-full"></div>
               <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-primary/10 rounded-full"></div>
               
-              {/* Hover area - covers the entire space */}
+              {/* Interactive area - mobile-first optimized */}
               <div 
-                className="relative z-10 h-64 w-full cursor-pointer"
-                onMouseEnter={() => setShowDetails(true)}
-                onMouseLeave={() => setShowDetails(false)}
+                className={cn(
+                  "relative z-10 h-64 w-full transition-all duration-200",
+                  isMobile ? "cursor-pointer active:scale-95" : "cursor-pointer hover:scale-105"
+                )}
+                onClick={handleInteraction}
+                onMouseEnter={isMobile ? undefined : handleInteraction}
+                onMouseLeave={handleMouseLeave}
+                role="button"
+                tabIndex={0}
+                aria-label={isMobile ? "Tap to view morning details" : "Hover to view morning details"}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleInteraction();
+                  }
+                }}
               >
-                {/* Default state - just background decoration, no visible box */}
-                {!showDetails && (
-                  <div className="h-full w-full flex items-center justify-center">
+                {/* Fixed positioned container to prevent layout shifts */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  {!showDetails ? (
+                    // Default state - just background decoration, no visible box
                     <div className="text-center text-muted-foreground">
                       <Info className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                      <p className="text-sm">Hover to view morning details</p>
+                      <p className="text-sm px-4">
+                        {isMobile ? "Tap to view morning details" : "Hover to view morning details"}
+                      </p>
                     </div>
-                  </div>
-                )}
-
-                {/* Detailed box that appears on hover */}
-                {showDetails && (
-                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full bg-white rounded-lg shadow-2xl p-6 border animate-fade-in">
-                    <div className="flex justify-between mb-4">
-                      <div className="text-sm text-muted-foreground">Morning Energy</div>
-                      <div className="text-sm font-medium">{preferences.morningEnergyLevel || 5}/10</div>
+                  ) : (
+                    // Detailed box that appears on interaction
+                    <div className="w-full max-w-sm bg-white rounded-lg shadow-2xl p-4 sm:p-6 border animate-fade-in mx-4">
+                      <div className="flex justify-between mb-4">
+                        <div className="text-sm text-muted-foreground">Morning Energy</div>
+                        <div className="text-sm font-medium">{preferences.morningEnergyLevel || 5}/10</div>
+                      </div>
+                      
+                      <div className="space-y-4">
+                        <h3 className="font-medium text-lg">Your Current Morning</h3>
+                        {morningActivities.length > 0 ? (
+                          <ul className="space-y-2 max-h-32 overflow-y-auto">
+                            {morningActivities.map((activity, i) => (
+                              <li key={i} className="flex items-center text-sm">
+                                <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center mr-3 flex-shrink-0">
+                                  {i + 1}
+                                </div>
+                                <span className="capitalize">
+                                  {activity.replace(/_/g, ' ')}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <p className="text-sm text-muted-foreground">
+                            You haven't set up your morning activities yet.
+                          </p>
+                        )}
+                        
+                        {/* Mobile close hint */}
+                        {isMobile && showDetails && (
+                          <p className="text-xs text-muted-foreground text-center pt-2 border-t">
+                            Tap anywhere to close
+                          </p>
+                        )}
+                      </div>
                     </div>
-                    
-                    <div className="space-y-4">
-                      <h3 className="font-medium text-lg">Your Current Morning</h3>
-                      {morningActivities.length > 0 ? (
-                        <ul className="space-y-2">
-                          {morningActivities.map((activity, i) => (
-                            <li key={i} className="flex items-center text-sm">
-                              <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center mr-3">
-                                {i + 1}
-                              </div>
-                              <span className="capitalize">
-                                {activity.replace(/_/g, ' ')}
-                              </span>
-                            </li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <p className="text-sm text-muted-foreground">
-                          You haven't set up your morning activities yet.
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
           </div>

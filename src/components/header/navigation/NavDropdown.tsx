@@ -49,7 +49,7 @@ const NavDropdown = ({ title, items, isActive, onItemClick, activeCategory }: Na
       >
         {title}
       </NavigationMenuTrigger>
-      <NavigationMenuContent className="bg-white border shadow-lg z-[9999] rounded-lg min-w-[200px] p-1">
+      <NavigationMenuContent className="bg-white border shadow-lg z-[99999] rounded-lg min-w-[200px] p-1 fixed">{/*Increased z-index and added fixed positioning for mobile*/}
         <div className="bg-white rounded-lg">
           <ul className="grid gap-1 p-3 w-full bg-white min-w-[180px]">
             {filteredItems.map((item) => {
