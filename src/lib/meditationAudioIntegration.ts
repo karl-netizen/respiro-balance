@@ -1,12 +1,28 @@
 
-export const getMeditationAudioUrl = (filename: string): string => {
-  // For demo purposes, return a placeholder or empty string
-  return `/audio/${filename}`;
-};
+import { uploadMeditationAudio, deleteMeditationAudio, getMeditationAudioUrl } from './meditationAudio';
+import { supabase } from '@/integrations/supabase/client';
+
+export { uploadMeditationAudio, deleteMeditationAudio, getMeditationAudioUrl };
 
 export const fetchMeditationAudioFiles = async (): Promise<string[]> => {
-  // Mock implementation for demo
-  return [];
+  try {
+    const { data, error } = await supabase.storage
+      .from('meditation-audio')
+      .list('', {
+        limit: 100,
+        offset: 0
+      });
+
+    if (error) {
+      console.error('Error fetching audio files:', error);
+      return [];
+    }
+
+    return data?.map(file => file.name) || [];
+  } catch (error) {
+    console.error('Unexpected error fetching audio files:', error);
+    return [];
+  }
 };
 
 export const mapAudioFilesToSessions = (sessions: any[], audioFiles: string[]) => {
@@ -16,17 +32,5 @@ export const mapAudioFilesToSessions = (sessions: any[], audioFiles: string[]) =
 
 export const initializeAudioBucket = async (): Promise<boolean> => {
   // Mock implementation for demo
-  return true;
-};
-
-export const uploadMeditationAudio = async (file: File): Promise<string> => {
-  // Mock implementation for demo
-  console.log('Mock uploading audio file:', file.name);
-  return `audio_${Date.now()}.mp3`;
-};
-
-export const deleteMeditationAudio = async (filename: string): Promise<boolean> => {
-  // Mock implementation for demo
-  console.log('Mock deleting audio file:', filename);
   return true;
 };
