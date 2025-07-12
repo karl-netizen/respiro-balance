@@ -49,28 +49,30 @@ const NavDropdown = ({ title, items, isActive, onItemClick, activeCategory }: Na
       >
         {title}
       </NavigationMenuTrigger>
-      <NavigationMenuContent className="bg-white border shadow-md z-[999] dropdown-content">
-        <ul className="grid gap-2 p-4 w-48 bg-white">
-          {filteredItems.map((item) => {
-            // Use our useActiveRoute hook to check if this item's path is active
-            const isItemActive = checkIsActive(item.path);
-            
-            return (
-              <li key={item.path}>
-                <Link 
-                  to={item.path} 
-                  className={cn(
-                    "block p-2 hover:bg-accent hover:text-accent-foreground text-foreground rounded-md transition-colors focus:bg-accent focus:text-accent-foreground focus:outline-none",
-                    isItemActive && "bg-primary/10 text-primary font-medium" // Highlight active item
-                  )}
-                  onClick={(e) => handleItemClick(item.path, e)}
-                >
-                  {item.label}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
+      <NavigationMenuContent className="bg-white border shadow-lg z-[9999] rounded-lg min-w-[200px] p-1">
+        <div className="bg-white rounded-lg">
+          <ul className="grid gap-1 p-3 w-full bg-white min-w-[180px]">
+            {filteredItems.map((item) => {
+              // Use our useActiveRoute hook to check if this item's path is active
+              const isItemActive = checkIsActive(item.path);
+              
+              return (
+                <li key={item.path}>
+                  <Link 
+                    to={item.path} 
+                    className={cn(
+                      "block p-2 hover:bg-accent hover:text-accent-foreground text-foreground rounded-md transition-colors focus:bg-accent focus:text-accent-foreground focus:outline-none",
+                      isItemActive && "bg-primary/10 text-primary font-medium" // Highlight active item
+                    )}
+                    onClick={(e) => handleItemClick(item.path, e)}
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       </NavigationMenuContent>
     </NavigationMenuItem>
   );
