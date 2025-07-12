@@ -17,14 +17,16 @@ const SuggestionCard: React.FC<SuggestionCardProps> = ({ suggestion }) => {
   };
 
   return (
-    <Card className="h-full">
-      <CardHeader>
-        <div className="flex items-start justify-between">
-          <div>
-            <CardTitle className="text-lg">{suggestion.title}</CardTitle>
-            <CardDescription>{suggestion.description}</CardDescription>
+    <Card className="h-full overflow-hidden">
+      <CardHeader className="pb-3">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex-1 min-w-0">
+            <CardTitle className="text-lg leading-tight truncate">{suggestion.title}</CardTitle>
+            <CardDescription className="mt-1 text-sm leading-relaxed line-clamp-2">
+              {suggestion.description}
+            </CardDescription>
           </div>
-          <Badge variant={suggestion.difficulty === 'easy' ? 'secondary' : 'default'}>
+          <Badge variant={suggestion.difficulty === 'easy' ? 'secondary' : 'default'} className="flex-shrink-0">
             {suggestion.difficulty}
           </Badge>
         </div>

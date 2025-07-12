@@ -14,13 +14,15 @@ const RitualHero = () => {
   const morningActivities = preferences.morningActivities || [];
   const ritualsCount = preferences.morningRituals?.length || 0;
   
-  const isMobile = deviceType === 'mobile';
+  const isMobile = window.innerWidth < 768;
   
   // Mobile-first interaction handlers
   const handleInteraction = () => {
-    if (isMobile) {
-      setShowDetails(!showDetails); // Toggle on mobile tap
-    } else {
+    setShowDetails(!showDetails); // Toggle for both mobile and desktop
+  };
+
+  const handleMouseEnter = () => {
+    if (!isMobile) {
       setShowDetails(true); // Show on desktop hover
     }
   };
@@ -79,7 +81,7 @@ const RitualHero = () => {
                   isMobile ? "cursor-pointer active:scale-95" : "cursor-pointer hover:scale-105"
                 )}
                 onClick={handleInteraction}
-                onMouseEnter={isMobile ? undefined : handleInteraction}
+                onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
                 role="button"
                 tabIndex={0}
