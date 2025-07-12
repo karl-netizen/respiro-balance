@@ -16,10 +16,15 @@ const SleepMeditationList: React.FC<SleepMeditationListProps> = ({
   isFavorite,
   onToggleFavorite
 }) => {
-  // Filter sessions for sleep meditations
-  const sleepMeditations = sessions.filter(
-    (session) => session.category === 'sleep'
-  );
+  console.log('🎬 SleepMeditationList received sessions:', sessions.length);
+  
+  // REMOVE BROKEN FILTERING - sessions are already correctly filtered!
+  // const sleepMeditations = sessions.filter(
+  //   (session) => session.category === 'sleep'
+  // );
+  
+  // Use sessions directly since they're already filtered by category mapping
+  const sleepMeditations = sessions;
 
   if (sleepMeditations.length === 0) {
     return (

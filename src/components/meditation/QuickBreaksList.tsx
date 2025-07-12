@@ -16,10 +16,15 @@ const QuickBreaksList: React.FC<QuickBreaksListProps> = ({
   isFavorite,
   onToggleFavorite
 }) => {
-  // Filter sessions for quick break meditations
-  const quickBreaks = sessions.filter(
-    (session) => session.category === 'quick'
-  );
+  console.log('🎬 QuickBreaksList received sessions:', sessions.length);
+  
+  // REMOVE BROKEN FILTERING - sessions are already correctly filtered!
+  // const quickBreaks = sessions.filter(
+  //   (session) => session.category === 'quick'
+  // );
+  
+  // Use sessions directly since they're already filtered by category mapping
+  const quickBreaks = sessions;
 
   if (quickBreaks.length === 0) {
     return (

@@ -16,10 +16,18 @@ const GuidedMeditationList: React.FC<GuidedMeditationListProps> = ({
   isFavorite,
   onToggleFavorite
 }) => {
-  // Filter sessions for guided meditations
-  const guidedMeditations = sessions.filter(
-    (session) => session.category === 'guided'
-  );
+  console.log('🎬 GuidedMeditationList received sessions:', sessions.length);
+  console.log('🎬 Session categories:', sessions.map(s => s.category));
+  
+  // REMOVE THIS BROKEN FILTERING - sessions are already correctly filtered!
+  // const guidedMeditations = sessions.filter(
+  //   (session) => session.category === 'guided'
+  // );
+  
+  // Use sessions directly since they're already filtered by category mapping
+  const guidedMeditations = sessions;
+  
+  console.log('🎬 Final guided meditations to render:', guidedMeditations.length);
 
   if (guidedMeditations.length === 0) {
     return (

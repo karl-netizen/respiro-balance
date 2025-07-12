@@ -16,10 +16,15 @@ const DeepFocusList: React.FC<DeepFocusListProps> = ({
   isFavorite,
   onToggleFavorite
 }) => {
-  // Filter sessions for deep focus meditations
-  const deepFocusSessions = sessions.filter(
-    (session) => session.category === 'deep'
-  );
+  console.log('🎬 DeepFocusList received sessions:', sessions.length);
+  
+  // REMOVE BROKEN FILTERING - sessions are already correctly filtered!
+  // const deepFocusSessions = sessions.filter(
+  //   (session) => session.category === 'deep'
+  // );
+  
+  // Use sessions directly since they're already filtered by category mapping
+  const deepFocusSessions = sessions;
 
   if (deepFocusSessions.length === 0) {
     return (
