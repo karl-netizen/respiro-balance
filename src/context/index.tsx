@@ -1,7 +1,7 @@
 // Re-export everything from the individual context files
 export { UserPreferencesProvider } from './UserPreferencesProvider';
 export { useUserPreferences } from './hooks/useUserPreferences';
-export { AuthProvider } from './AuthProvider';
+export { AuthProvider } from '../hooks/useAuth';
 export { NotificationsProvider } from './NotificationsProvider';
 export { SubscriptionProvider } from './SubscriptionProvider';
 export { FocusProvider } from './FocusProvider';
