@@ -33,22 +33,6 @@ import { usePerformanceMonitoring } from '@/hooks/usePerformanceMonitoring';
 const queryClient = new QueryClient();
 
 function App() {
-  const { trackError } = usePerformanceMonitoring();
-
-  // Global error boundary
-  useEffect(() => {
-    const handleError = (event: ErrorEvent) => {
-      trackError(event.error, { 
-        source: 'global',
-        filename: event.filename,
-        lineno: event.lineno,
-        colno: event.colno
-      });
-    };
-
-    window.addEventListener('error', handleError);
-    return () => window.removeEventListener('error', handleError);
-  }, [trackError]);
 
   return (
     <ErrorBoundary>
