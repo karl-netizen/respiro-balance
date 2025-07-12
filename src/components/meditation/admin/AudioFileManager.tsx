@@ -3,8 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Upload, Trash2, Download, Music, CloudUpload, FileAudio } from 'lucide-react';
+import { Upload, Trash2, Download, Music, CloudUpload, FileAudio, Plus } from 'lucide-react';
 import { uploadMeditationAudio, deleteMeditationAudio, fetchMeditationAudioFiles, getMeditationAudioUrl } from '@/lib/meditationAudioIntegration';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
@@ -39,6 +40,41 @@ const AudioFileManager: React.FC = () => {
     } catch (error) {
       console.error('Error loading audio files:', error);
       toast.error('Failed to load audio files');
+    }
+  };
+
+  const handleCreateContent = async (audioFile: AudioFile) => {
+    try {
+      const contentTitle = audioFile.name.replace(/\.[^/.]+$/, "").replace(/[_-]/g, " "); // Remove extension and replace _ - with spaces
+      
+      const { error } = await supabase
+        .from('meditation_content')
+        .insert({
+          title: contentTitle,
+          description: `Meditation session created from uploaded audio: ${audioFile.name}`,
+          duration: 600, // Default 10 minutes, user can edit later
+          category: 'Mindfulness',
+          difficulty_level: 'beginner',
+          subscription_tier: 'free',
+          audio_file_url: audioFile.url,
+          audio_file_path: audioFile.name,
+          instructor: 'Custom Content',
+          tags: ['custom', 'uploaded'],
+          is_featured: false,
+          is_active: true
+        });
+
+      if (error) {
+        console.error('Error creating content:', error);
+        toast.error('Failed to create meditation content');
+        return;
+      }
+
+      toast.success(`Created meditation content: "${contentTitle}"`);
+      toast.info('Your content is now available in the meditation library!');
+    } catch (error) {
+      console.error('Error creating content:', error);
+      toast.error('Failed to create meditation content');
     }
   };
 
@@ -263,6 +299,16 @@ const AudioFileManager: React.FC = () => {
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleCreateContent(file)}
+                      className="text-primary hover:text-primary"
+                      title="Create meditation content from this audio"
+                    >
+                      <Plus className="h-4 w-4 mr-1" />
+                      Create Content
+                    </Button>
                     <Button
                       variant="outline"
                       size="sm"
