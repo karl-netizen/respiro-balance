@@ -1,180 +1,338 @@
+import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { isSupabaseConfigured } from '@/lib/supabase';
-import { MeditationSession, StartSessionParams } from '@/types/meditation';
-import { useAuth } from './useAuth';
-import { useSubscriptionContext } from './useSubscriptionContext';
-import { toast } from 'sonner';
-import { useOfflineStorage } from './meditation/useOfflineStorage';
-import { useMeditationApi } from './meditation/useMeditationApi';
-import { useOfflineSync } from './meditation/useOfflineSync';
+export interface MeditationSession {
+  id: string;
+  user_id: string;
+  duration: number;
+  started_at: string;
+  completed: boolean;
+  completed_at?: string;
+  rating?: number;
+  session_type: string;
+  title?: string;
+  category?: string;
+  difficulty?: string;
+  image_url?: string;
+  instructor?: string;
+  level?: string;
+  description?: string;
+  tags?: string[];
+  feedback?: string;
+  favorite?: boolean;
+  created_at: string;
+}
 
-export function useMeditationSessions() {
+export interface SessionProgress {
+  totalSessions: number;
+  totalMinutes: number;
+  currentStreak: number;
+  longestStreak: number;
+  completionRate: number;
+  averageRating: number;
+  favoriteSessions: MeditationSession[];
+  recentSessions: MeditationSession[];
+}
+
+export const useMeditationSessions = () => {
+  const [sessions, setSessions] = useState<MeditationSession[]>([]);
+  const [progress, setProgress] = useState<SessionProgress>({
+    totalSessions: 0,
+    totalMinutes: 0,
+    currentStreak: 0,
+    longestStreak: 0,
+    completionRate: 0,
+    averageRating: 0,
+    favoriteSessions: [],
+    recentSessions: []
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
-  const { updateUsage, hasExceededUsageLimit } = useSubscriptionContext();
-  const queryClient = useQueryClient();
-  
-  const { getOfflineSessions, saveOfflineSessions } = useOfflineStorage();
-  const meditationApi = useMeditationApi(user?.id);
-  
-  const invalidateSessionQueries = () => {
-    if (user) {
-      queryClient.invalidateQueries({ queryKey: ['meditationSessions', user.id] });
+
+  // Load sessions when user changes
+  useEffect(() => {
+    if (user?.id) {
+      loadSessions();
+    } else {
+      setSessions([]);
+      setProgress({
+        totalSessions: 0,
+        totalMinutes: 0,
+        currentStreak: 0,
+        longestStreak: 0,
+        completionRate: 0,
+        averageRating: 0,
+        favoriteSessions: [],
+        recentSessions: []
+      });
+    }
+  }, [user?.id]);
+
+  const loadSessions = async () => {
+    if (!user?.id) return;
+
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const { data, error: sessionsError } = await supabase
+        .from('meditation_sessions')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (sessionsError) {
+        throw sessionsError;
+      }
+
+      setSessions(data || []);
+      calculateProgress(data || []);
+    } catch (error) {
+      console.error('Error loading meditation sessions:', error);
+      setError(error instanceof Error ? error.message : 'Failed to load sessions');
+    } finally {
+      setIsLoading(false);
     }
   };
-  
-  const offlineSync = useOfflineSync(
-    user?.id, 
-    updateUsage, 
-    invalidateSessionQueries
-  );
 
-  // Fetch recent meditation sessions
-  const fetchRecentSessions = async () => {
-    if (!user) return [];
+  const calculateProgress = (sessionData: MeditationSession[]) => {
+    const completedSessions = sessionData.filter(s => s.completed);
+    const totalMinutes = completedSessions.reduce((sum, s) => sum + s.duration, 0);
+    const completionRate = sessionData.length > 0 ? (completedSessions.length / sessionData.length) * 100 : 0;
     
-    // If not connected to Supabase, return from localStorage
-    if (!isSupabaseConfigured()) {
-      return getOfflineSessions();
+    const ratedSessions = completedSessions.filter(s => s.rating);
+    const averageRating = ratedSessions.length > 0 
+      ? ratedSessions.reduce((sum, s) => sum + (s.rating || 0), 0) / ratedSessions.length 
+      : 0;
+
+    const favoriteSessions = sessionData.filter(s => s.favorite);
+    const recentSessions = sessionData.slice(0, 10);
+
+    // Calculate streak (simplified - consecutive days with completed sessions)
+    const currentStreak = calculateCurrentStreak(completedSessions);
+    const longestStreak = calculateLongestStreak(completedSessions);
+
+    setProgress({
+      totalSessions: completedSessions.length,
+      totalMinutes,
+      currentStreak,
+      longestStreak,
+      completionRate,
+      averageRating,
+      favoriteSessions,
+      recentSessions
+    });
+  };
+
+  const calculateCurrentStreak = (sessions: MeditationSession[]): number => {
+    if (sessions.length === 0) return 0;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    let streak = 0;
+    const sortedSessions = sessions.sort((a, b) => new Date(b.completed_at || b.created_at).getTime() - new Date(a.completed_at || a.created_at).getTime());
+    
+    for (let i = 0; i < sortedSessions.length; i++) {
+      const sessionDate = new Date(sortedSessions[i].completed_at || sortedSessions[i].created_at);
+      sessionDate.setHours(0, 0, 0, 0);
+      
+      const daysDiff = Math.floor((today.getTime() - sessionDate.getTime()) / (1000 * 60 * 60 * 24));
+      
+      if (daysDiff === streak) {
+        streak++;
+      } else {
+        break;
+      }
+    }
+    
+    return streak;
+  };
+
+  const calculateLongestStreak = (sessions: MeditationSession[]): number => {
+    if (sessions.length === 0) return 0;
+
+    const dates = sessions
+      .map(s => {
+        const date = new Date(s.completed_at || s.created_at);
+        date.setHours(0, 0, 0, 0);
+        return date.getTime();
+      })
+      .filter((value, index, self) => self.indexOf(value) === index)
+      .sort((a, b) => b - a);
+
+    let maxStreak = 1;
+    let currentStreak = 1;
+
+    for (let i = 1; i < dates.length; i++) {
+      const daysDiff = (dates[i - 1] - dates[i]) / (1000 * 60 * 60 * 24);
+      
+      if (daysDiff === 1) {
+        currentStreak++;
+        maxStreak = Math.max(maxStreak, currentStreak);
+      } else {
+        currentStreak = 1;
+      }
+    }
+
+    return maxStreak;
+  };
+
+  const createSession = async (sessionData: Partial<MeditationSession>) => {
+    if (!user?.id) {
+      throw new Error('User not authenticated');
     }
 
     try {
-      const data = await meditationApi.fetchRecentSessions();
-      
-      // Store sessions in localStorage as backup
-      saveOfflineSessions(data || []);
-      
-      // Process any pending offline changes
-      await offlineSync.processOfflineSync();
+      setIsLoading(true);
+      setError(null);
 
+      const newSession = {
+        user_id: user.id,
+        duration: sessionData.duration || 0,
+        session_type: sessionData.session_type || 'meditation',
+        title: sessionData.title,
+        category: sessionData.category,
+        difficulty: sessionData.difficulty,
+        image_url: sessionData.image_url,
+        instructor: sessionData.instructor,
+        level: sessionData.level,
+        description: sessionData.description,
+        tags: sessionData.tags || [],
+        started_at: new Date().toISOString(),
+        completed: false
+      };
+
+      const { data, error } = await supabase
+        .from('meditation_sessions')
+        .insert(newSession)
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      await loadSessions();
       return data;
     } catch (error) {
-      console.error('Failed to fetch sessions from Supabase:', error);
-      // Fall back to localStorage
-      return getOfflineSessions();
+      console.error('Error creating meditation session:', error);
+      setError(error instanceof Error ? error.message : 'Failed to create session');
+      throw error;
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Start a new meditation session
-  const startSession = async (params: StartSessionParams): Promise<string> => {
-    if (!user) throw new Error('User not authenticated');
-    
-    // Check if user has reached their usage limit
-    if (hasExceededUsageLimit) {
-      throw new Error('You have reached your monthly meditation limit. Please upgrade to continue.');
-    }
-
-    const newSession: Omit<MeditationSession, "id"> = {
-      title: `${params.sessionType.charAt(0).toUpperCase() + params.sessionType.slice(1)} Session`,
-      user_id: user.id,
-      session_type: params.sessionType,
-      duration: params.duration,
-      started_at: new Date().toISOString(),
-      completed: false,
-      description: "",
-      category: params.sessionType,
-      level: "beginner",
-      instructor: "",
-      tags: []
-    };
-    
-    // If not connected to Supabase, save to localStorage
-    if (!isSupabaseConfigured()) {
-      const sessionId = offlineSync.handleOfflineSessionStart(newSession, user);
-      return sessionId;
-    }
-
+  const completeSession = async (sessionId: string, rating?: number, feedback?: string) => {
     try {
-      return await meditationApi.createSession(newSession);
+      setIsLoading(true);
+      setError(null);
+
+      const updates: any = {
+        completed: true,
+        completed_at: new Date().toISOString()
+      };
+
+      if (rating !== undefined) {
+        updates.rating = rating;
+      }
+
+      if (feedback) {
+        updates.feedback = feedback;
+      }
+
+      const { error } = await supabase
+        .from('meditation_sessions')
+        .update(updates)
+        .eq('id', sessionId);
+
+      if (error) {
+        throw error;
+      }
+
+      await loadSessions();
     } catch (error) {
-      console.error('Failed to start session in Supabase:', error);
-      
-      // Fall back to offline mode
-      const sessionId = offlineSync.handleOfflineSessionStart(newSession, user);
-      
-      toast("Offline mode", {
-        description: "Session started in offline mode and will sync when connection is restored"
-      });
-      
-      return sessionId;
+      console.error('Error completing meditation session:', error);
+      setError(error instanceof Error ? error.message : 'Failed to complete session');
+      throw error;
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Complete a meditation session
-  const completeSession = async (sessionId: string): Promise<void> => {
-    if (!user) throw new Error('User not authenticated');
-    
-    // If not connected to Supabase or session ID is an offline ID
-    if (!isSupabaseConfigured() || sessionId.startsWith('offline-')) {
-      await offlineSync.handleOfflineSessionComplete(sessionId, user);
-      
-      // Refresh local data
-      invalidateSessionQueries();
-      return;
-    }
-
+  const toggleFavorite = async (sessionId: string, favorite: boolean) => {
     try {
-      // First get the session to get its duration
-      const sessionData = await meditationApi.getSession(sessionId);
-      if (!sessionData) {
-        throw new Error('Session not found');
+      const { error } = await supabase
+        .from('meditation_sessions')
+        .update({ favorite })
+        .eq('id', sessionId);
+
+      if (error) {
+        throw error;
       }
-      
-      // Update the session to completed
-      await meditationApi.completeSession(sessionId);
-      
-      // Update usage tracking
-      try {
-        updateUsage(sessionData.duration);
-      } catch (error) {
-        console.error('Error updating usage after session completion:', error);
-      }
-      
-      // Refresh queries
-      invalidateSessionQueries();
-      queryClient.invalidateQueries({ queryKey: ['subscription', user.id] });
+
+      await loadSessions();
     } catch (error) {
-      console.error('Failed to complete session in Supabase:', error);
-      
-      // Fall back to offline mode for completion
-      await offlineSync.handleOfflineSessionComplete(sessionId, user);
-      
-      toast("Offline mode", {
-        description: "Session completed in offline mode and will sync when connection is restored"
-      });
+      console.error('Error updating favorite status:', error);
+      throw error;
     }
   };
 
-  // React Query hooks
-  const sessionsQuery = useQuery({
-    queryKey: ['meditationSessions', user?.id],
-    queryFn: fetchRecentSessions,
-    enabled: !!user,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-  });
+  const updateRating = async (sessionId: string, rating: number) => {
+    try {
+      const { error } = await supabase
+        .from('meditation_sessions')
+        .update({ rating })
+        .eq('id', sessionId);
 
-  const startSessionMutation = useMutation({
-    mutationFn: startSession,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['meditationSessions', user?.id] });
-    },
-  });
+      if (error) {
+        throw error;
+      }
 
-  const completeSessionMutation = useMutation({
-    mutationFn: completeSession,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['meditationSessions', user?.id] });
-    },
-  });
+      await loadSessions();
+    } catch (error) {
+      console.error('Error updating rating:', error);
+      throw error;
+    }
+  };
+
+  const deleteSession = async (sessionId: string) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const { error } = await supabase
+        .from('meditation_sessions')
+        .delete()
+        .eq('id', sessionId);
+
+      if (error) {
+        throw error;
+      }
+
+      await loadSessions();
+    } catch (error) {
+      console.error('Error deleting meditation session:', error);
+      setError(error instanceof Error ? error.message : 'Failed to delete session');
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return {
-    sessions: sessionsQuery.data || [],
-    isLoading: sessionsQuery.isLoading,
-    isError: sessionsQuery.isError,
-    error: sessionsQuery.error,
-    startSession: startSessionMutation.mutate,
-    completeSession: completeSessionMutation.mutate,
-    isStarting: startSessionMutation.isPending,
-    isCompleting: completeSessionMutation.isPending,
+    sessions,
+    progress,
+    isLoading,
+    error,
+    createSession,
+    completeSession,
+    toggleFavorite,
+    updateRating,
+    deleteSession,
+    loadSessions
   };
-}
+};

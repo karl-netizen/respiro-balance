@@ -58,11 +58,48 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setSession(session);
         setUser(session?.user as ExtendedUser ?? null);
         setIsLoading(false);
+        
+        // Load user profile data when signed in
+        if (session?.user && event === 'SIGNED_IN') {
+          setTimeout(async () => {
+            await loadUserProfile(session.user.id);
+          }, 0);
+        }
       }
     );
 
     return () => subscription.unsubscribe();
   }, []);
+
+  // Load user profile data from database
+  const loadUserProfile = async (userId: string) => {
+    try {
+      const { data: profile, error } = await supabase
+        .from('user_profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+      if (error && error.code !== 'PGRST116') {
+        console.error('Error loading user profile:', error);
+        return;
+      }
+
+      if (profile) {
+        setUser(prev => prev ? {
+          ...prev,
+          subscription_tier: profile.subscription_tier,
+          user_metadata: {
+            ...prev.user_metadata,
+            full_name: profile.full_name,
+            avatar_url: profile.avatar_url
+          }
+        } : null);
+      }
+    } catch (error) {
+      console.error('Error loading user profile:', error);
+    }
+  };
 
   const signIn = async (email: string, password: string, options?: any) => {
     const { error } = await supabase.auth.signInWithPassword({
