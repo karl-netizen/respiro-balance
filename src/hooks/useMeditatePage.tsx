@@ -10,10 +10,12 @@ import { useMeditationFavorites } from './meditation/useMeditationFavorites';
 import { useMeditationRecentlyPlayed } from './meditation/useMeditationRecentlyPlayed';
 
 export const useMeditatePage = () => {
+  console.log('🚀 useMeditatePage hook called!');
   const navigate = useNavigate();
   const { isPremium } = useSubscriptionContext();
   const [meditationSessions, setMeditationSessions] = useState<MeditationSession[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  console.log('💾 Current meditation sessions state:', meditationSessions.length);
   
   // Use extracted hooks
   const navigation = useMeditationNavigation();
