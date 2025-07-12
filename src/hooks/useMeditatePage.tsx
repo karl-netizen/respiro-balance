@@ -111,17 +111,14 @@ export const useMeditatePage = () => {
           level: content.difficulty_level || 'beginner'
         }));
         
-        // Debug: Log all unique categories found in the data
-        const categories = [...new Set(data.map(content => content.category))];
-        console.log('🏷️ Unique categories found in database:', categories);
-        console.log('📊 Category breakdown:');
-        categories.forEach(cat => {
-          const count = data.filter(content => content.category === cat).length;
-          console.log(`  - ${cat}: ${count} sessions`);
-        });
+        console.log('🔥 MEDITATION DEBUG - Data fetched:', data.length, 'items');
+        console.log('🔥 MEDITATION DEBUG - Sessions created:', sessions.length, 'sessions');
         
-        console.log('✅ Transformed sessions:', sessions.length, 'sessions created');
-        console.log('📝 Sample session:', sessions[0]);
+        if (sessions.length === 0) {
+          console.log('🚨 NO SESSIONS CREATED - Raw data:', data);
+        } else {
+          console.log('✅ Sessions sample:', sessions.slice(0, 2));
+        }
         setMeditationSessions(sessions);
       } catch (error) {
         console.error('💥 Exception in fetchMeditationContent:', error);
