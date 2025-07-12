@@ -5,9 +5,20 @@ export interface UserPreferences {
   timezone: string;
   subscriptionTier: 'free' | 'premium' | 'coach' | 'enterprise';
   
-  // Onboarding
+  // Onboarding - align with database schema
+  has_completed_onboarding: boolean;
   hasCompletedOnboarding: boolean;
   lastOnboardingStep: number;
+  
+  // Notification settings - align with database schema  
+  notification_settings: {
+    session_reminders: boolean;
+    progress_updates: boolean;
+    achievement_notifications: boolean;
+    recommendations: boolean;
+    streak_alerts: boolean;
+    weekly_summary: boolean;
+  };
   
   notifications: {
     enabled: boolean;
@@ -21,6 +32,13 @@ export interface UserPreferences {
     };
   };
   
+  // Legacy notification properties (for compatibility)
+  enableSessionReminders: boolean;
+  enableProgressUpdates: boolean;
+  enableAchievementNotifications: boolean;
+  enableRecommendations: boolean;
+  notificationSettings: any;
+  
   meditation: {
     defaultDuration: number;
     preferredTechniques: string[];
@@ -29,7 +47,9 @@ export interface UserPreferences {
     sessionReminders: boolean;
   };
   
+  // Session duration - align with database schema
   preferred_session_duration: number;
+  preferredSessionDuration: number; // Legacy compatibility
   
   privacy: {
     shareProgress: boolean;
@@ -58,7 +78,16 @@ export interface UserPreferences {
     spotify: boolean;
   };
 
-  // Work-life balance
+  // Work-life balance - align with database schema
+  work_days: WorkDay[];
+  work_start_time: string;
+  work_end_time: string;
+  lunch_time: string;
+  lunch_break: boolean;
+  exercise_time: string;
+  bed_time: string;
+  
+  // Legacy compatibility
   workDays: WorkDay[];
   workStartTime: string;
   workEndTime: string;
@@ -67,31 +96,45 @@ export interface UserPreferences {
   exerciseTime: string;
   bedTime: string;
   weekdayWakeTime: string;
+  wakeTime: string;
   
-  // User role and experience
+  // User role and experience - align with database schema
   userRole: 'user' | 'coach' | 'admin';
+  meditation_experience: 'beginner' | 'intermediate' | 'advanced';
+  meditation_goals: string[];
+  stress_level: 'low' | 'moderate' | 'high';
+  work_environment: 'office' | 'home' | 'hybrid';
+  
+  // Legacy compatibility
   meditationExperience: 'beginner' | 'intermediate' | 'advanced';
   meditationGoals: string[];
   stressLevel: 'low' | 'moderate' | 'high';
   workEnvironment: 'office' | 'home' | 'hybrid';
+  timeManagementStyle: string;
   
-  // Advanced settings
+  // Advanced settings - align with database schema
   metricsOfInterest: string[];
   focusChallenges: string[];
   timeChallenges: string[];
   hasWearableDevice: boolean;
   wearableDeviceType: string;
-  connectedDevices: any[];
+  connected_devices: any[];
   recommendedSessionDuration: number;
   recommendedMeditationTime: string;
   recommendedTechniques: string[];
   
-  // Morning ritual
+  // Legacy compatibility
+  connectedDevices: any[];
+  
+  // Morning ritual - align with database schema
   morningRituals: MorningRitual[];
   morningActivities: string[];
   morningEnergyLevel: 'low' | 'medium' | 'high';
-  morningExercise: boolean;
+  morning_exercise: boolean;
   morningDevices?: string;
+  
+  // Legacy compatibility
+  morningExercise: boolean;
   
   // Business
   attributionSource: string;
@@ -102,6 +145,29 @@ export interface UserPreferences {
   
   // Coach functionality
   isCoach?: boolean;
+  
+  // Additional properties for compatibility
+  country: string;
+  measurementSystem: 'metric' | 'imperial';
+  location: {
+    country: string;
+    timezone: string;
+    city: string;
+  };
+  darkMode: boolean;
+  reducedMotion: boolean;
+  focusTimerDuration: number;
+  breakTimerDuration: number;
+  breakReminders: {
+    enabled: boolean;
+    frequency: number;
+  };
+  breakNotificationsEnabled: boolean;
+  defaultMeditationDuration: number;
+  highContrast: boolean;
+  enableBackgroundAudio: boolean;
+  highQualityAudio: boolean;
+  offlineAccess: boolean;
 }
 
 export interface RitualReminder {
@@ -162,7 +228,7 @@ export interface CompletionEntry {
   mood_after?: number;
 }
 
-// Notification Types
+// Notification Types - align with database schema
 export interface Notification {
   id: string;
   user_id: string;
@@ -172,6 +238,12 @@ export interface Notification {
   data?: Record<string, any>;
   read_at?: string;
   created_at: string;
+  
+  // Legacy compatibility properties
+  type: string;
+  read: boolean;
+  timestamp: string;
+  actionUrl?: string;
 }
 
 // Session Flow Types
@@ -181,6 +253,16 @@ export interface SessionFlow {
   steps: SessionFlowStep[];
   duration: number;
   type: 'meditation' | 'breathing' | 'focus';
+  
+  // Additional properties for compatibility
+  currentStep: number;
+  totalSteps: number;
+  status: 'active' | 'completed' | 'paused';
+  estimatedDuration: number;
+  currentModule: {
+    name: string;
+    duration: number;
+  };
 }
 
 export interface SessionFlowStep {

@@ -1,2 +1,1 @@
-
-export { useAuth } from '@/context/AuthProvider';
+export { useAuth } from '@/hooks/useAuth.tsx';
