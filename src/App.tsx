@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from '@/hooks/useAuth';
+import { NotificationsProvider } from '@/context/NotificationsProvider';
 import { UserPreferencesProvider } from '@/context/UserPreferencesProvider';
 import { SubscriptionProvider } from '@/context/SubscriptionProvider';
 import { NavigationHistoryProvider } from '@/context/NavigationHistoryProvider';
@@ -30,6 +31,10 @@ import PremiumProPage from '@/pages/PremiumProPage';
 import LibraryPage from '@/pages/LibraryPage';
 import MeditationAudioManagement from '@/pages/MeditationAudioManagement';
 import MeditationSessionPage from '@/pages/MeditationSessionPage';
+import Breathe from '@/pages/Breathe';
+import MorningRitual from '@/pages/MorningRitual';
+import WorkLifeBalance from '@/pages/WorkLifeBalance';
+import Progress from '@/pages/Progress';
 import { MobilePWASetup } from '@/components/mobile/MobilePWASetup';
 import { usePerformanceMonitoring } from '@/hooks/usePerformanceMonitoring';
 
@@ -40,11 +45,12 @@ function App() {
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <UserPreferencesProvider>
-            <SubscriptionProvider>
-              <ThemeProvider defaultTheme="system" storageKey="respiro-ui-theme">
-                <Router>
-                  <NavigationHistoryProvider>
+          <NotificationsProvider>
+            <UserPreferencesProvider>
+              <SubscriptionProvider>
+                <ThemeProvider defaultTheme="system" storageKey="respiro-ui-theme">
+                  <Router>
+                    <NavigationHistoryProvider>
                     <div className="min-h-screen bg-background font-sans antialiased">
                       <Header />
                       
@@ -73,6 +79,10 @@ function App() {
                           <Route path="/library" element={<LibraryPage />} />
                           <Route path="/meditation/audio-management" element={<MeditationAudioManagement />} />
                           <Route path="/meditate/session/:sessionId" element={<MeditationSessionPage />} />
+                          <Route path="/breathe" element={<Breathe />} />
+                          <Route path="/morning-ritual" element={<MorningRitual />} />
+                          <Route path="/work-life-balance" element={<WorkLifeBalance />} />
+                          <Route path="/progress" element={<Progress />} />
                         </Routes>
                       </main>
                       
@@ -84,7 +94,8 @@ function App() {
               </ThemeProvider>
             </SubscriptionProvider>
           </UserPreferencesProvider>
-        </AuthProvider>
+        </NotificationsProvider>
+      </AuthProvider>
       </QueryClientProvider>
     </ErrorBoundary>
   );
