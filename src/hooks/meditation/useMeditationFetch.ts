@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
-import { MeditationSession } from './types';
+import { MeditationSession } from '@/types/meditation';
 
 export const useMeditationFetch = () => {
   const [sessions, setSessions] = useState<MeditationSession[]>([]);
@@ -15,7 +15,7 @@ export const useMeditationFetch = () => {
     
     try {
       const { data, error } = await supabase
-        .from('meditation_library')
+        .from('meditation_content')
         .select('*')
         .order('created_at', { ascending: false });
       
@@ -25,17 +25,23 @@ export const useMeditationFetch = () => {
       
       const formattedSessions: MeditationSession[] = data.map(session => ({
         id: session.id,
+        user_id: '', // Content isn't user-specific
         title: session.title,
-        description: session.description,
+        description: session.description || '',
         duration: session.duration,
         category: session.category,
-        imageUrl: session.image_url,
-        audioUrl: session.audio_url,
-        instructor: session.instructor,
+        session_type: session.category, // Map category to session_type
+        level: session.difficulty_level || 'beginner',
+        instructor: session.instructor || '',
         tags: session.tags || [],
-        isFeatured: session.is_featured,
-        createdAt: session.created_at,
-        updatedAt: session.updated_at,
+        image_url: session.thumbnail_url,
+        audio_url: session.audio_file_url,
+        started_at: session.created_at,
+        completed: false,
+        completed_at: null,
+        rating: null,
+        favorite: false,
+        premium: session.subscription_tier === 'premium',
       }));
       
       setSessions(formattedSessions);
@@ -51,10 +57,10 @@ export const useMeditationFetch = () => {
   const getSessionById = async (id: string): Promise<MeditationSession | null> => {
     try {
       const { data, error } = await supabase
-        .from('meditation_library')
+        .from('meditation_content')
         .select('*')
         .eq('id', id)
-        .single();
+        .maybeSingle();
       
       if (error) {
         throw new Error(error.message);
@@ -66,17 +72,23 @@ export const useMeditationFetch = () => {
       
       return {
         id: data.id,
+        user_id: '', // Content isn't user-specific
         title: data.title,
-        description: data.description,
+        description: data.description || '',
         duration: data.duration,
         category: data.category,
-        imageUrl: data.image_url,
-        audioUrl: data.audio_url,
-        instructor: data.instructor,
+        session_type: data.category, // Map category to session_type
+        level: data.difficulty_level || 'beginner',
+        instructor: data.instructor || '',
         tags: data.tags || [],
-        isFeatured: data.is_featured,
-        createdAt: data.created_at,
-        updatedAt: data.updated_at,
+        image_url: data.thumbnail_url,
+        audio_url: data.audio_file_url,
+        started_at: data.created_at,
+        completed: false,
+        completed_at: null,
+        rating: null,
+        favorite: false,
+        premium: data.subscription_tier === 'premium',
       };
     } catch (err: any) {
       console.error('Error fetching meditation session:', err);
