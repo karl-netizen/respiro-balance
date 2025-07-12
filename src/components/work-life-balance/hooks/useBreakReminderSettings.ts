@@ -31,7 +31,38 @@ export const useBreakReminderSettings = () => {
         
         // Try to load from preferences if available
         if (preferences.breakReminders) {
-          setReminders(preferences.breakReminders);
+          // Map the flat structure to our Record type
+          const reminderRecord: Record<BreakType, BreakReminder> = {
+            micro: {
+              type: 'micro',
+              interval: preferences.breakReminders.frequency,
+              title: 'Micro Break',
+              message: 'Time for a quick stretch!',
+              enabled: preferences.breakReminders.enabled
+            },
+            medium: {
+              type: 'medium',
+              interval: preferences.breakReminders.frequency * 2,
+              title: 'Medium Break',
+              message: 'Take a medium break!',
+              enabled: preferences.breakReminders.enabled
+            },
+            lunch: {
+              type: 'lunch',
+              interval: preferences.breakReminders.frequency * 6,
+              title: 'Lunch Break',
+              message: 'Time for lunch!',
+              enabled: preferences.breakReminders.enabled
+            },
+            long: {
+              type: 'long',
+              interval: preferences.breakReminders.frequency * 4,
+              title: 'Long Break',
+              message: 'Take a longer break!',
+              enabled: preferences.breakReminders.enabled
+            }
+          };
+          setReminders(reminderRecord);
         }
         
         // Set notifications enabled if we have permission and it's enabled in preferences
@@ -94,7 +125,10 @@ export const useBreakReminderSettings = () => {
     // Update preferences
     updatePreferences({
       breakNotificationsEnabled: enabled,
-      breakReminders: reminders
+      breakReminders: {
+        enabled: reminders.micro.enabled,
+        frequency: reminders.micro.interval
+      }
     });
     
     // Save to Supabase if user is authenticated
@@ -119,7 +153,10 @@ export const useBreakReminderSettings = () => {
     // Update preferences
     updatePreferences({
       breakNotificationsEnabled: notificationsEnabled,
-      breakReminders: reminders
+      breakReminders: {
+        enabled: reminders.micro.enabled,
+        frequency: reminders.micro.interval
+      }
     });
     
     // Reschedule notifications if enabled

@@ -86,21 +86,25 @@ const RitualCreationWizard: React.FC<RitualCreationWizardProps> = ({
       if (suggestion) {
         const newRitual: MorningRitual = {
           id: `ritual_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          user_id: '',
           title: suggestion.title,
           description: suggestion.description,
           timeOfDay: suggestion.timeOfDay,
-          startTime: suggestion.timeOfDay,
+          start_time: suggestion.timeOfDay,
           duration: suggestion.duration,
           priority: suggestion.priority,
           recurrence: 'daily',
+          days_of_week: [],
           daysOfWeek: [],
-          reminderEnabled: true,
-          reminderTime: 10,
+          reminder_enabled: true,
+          reminder_time: 10,
           reminders: [],
           tags: suggestion.tags,
           status: 'planned',
           complete: false,
           streak: 0,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
           createdAt: new Date()
         };
 

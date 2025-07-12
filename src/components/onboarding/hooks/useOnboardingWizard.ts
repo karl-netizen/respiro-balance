@@ -68,8 +68,7 @@ export const useOnboardingWizard = () => {
     updatePreferences({ 
       ...personalizedSettings,
       hasCompletedOnboarding: true,
-      lastOnboardingCompleted: new Date().toISOString(),
-      lastOnboardingStep: null
+      lastOnboardingStep: 0
     });
     
     setOpen(false);
@@ -83,8 +82,7 @@ export const useOnboardingWizard = () => {
   const skipOnboarding = useCallback(() => {
     updatePreferences({ 
       lastOnboardingStep: currentStep,
-      hasCompletedOnboarding: true,
-      lastOnboardingSkipped: new Date().toISOString()
+      hasCompletedOnboarding: true
     });
     
     setOpen(false);

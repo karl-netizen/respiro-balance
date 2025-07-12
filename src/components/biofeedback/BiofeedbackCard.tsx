@@ -38,9 +38,11 @@ const BiofeedbackCard = () => {
         services: ['heart_rate']
       };
       
-      const success = await connectBluetoothDevice(mockDevice);
+      if (connectBluetoothDevice) {
+        await connectBluetoothDevice(mockDevice);
+      }
       
-      if (success) {
+      if (connectBluetoothDevice) {
         toast.success("Device connected successfully", {
           description: "Your wearable device is now connected to Respiro Balance."
         });

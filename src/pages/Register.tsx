@@ -34,20 +34,16 @@ const Register = () => {
     setError(null);
 
     try {
-      const { error } = await signUp(email, password, {
+      await signUp(email, password, {
         data: {
           full_name: fullName,
         },
         redirectTo: `${window.location.origin}/dashboard`,
       });
 
-      if (error) {
-        setError(error.message);
-        toast.error(error.message);
-      } else {
-        toast.success("Account created! Check your email to verify.");
-        navigate('/login');
-      }
+      // signUp returns void on success
+      toast.success("Account created! Check your email to verify.");
+      navigate('/login');
     } catch (err: any) {
       setError(err.message || "An error occurred");
       toast.error(err.message || "An error occurred");

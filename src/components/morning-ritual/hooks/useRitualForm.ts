@@ -36,21 +36,25 @@ export const useRitualForm = () => {
 
       const newRitual: MorningRitual = {
         id: `ritual_${Date.now()}`,
+        user_id: '',
         title: data.title,
         description: data.description || '',
         timeOfDay: data.timeOfDay,
-        startTime: data.timeOfDay,
+        start_time: data.timeOfDay,
         duration: data.duration,
         priority: data.priority,
         recurrence: data.recurrence,
+        days_of_week: data.daysOfWeek,
         daysOfWeek: data.daysOfWeek,
-        reminderEnabled: reminders.length > 0,
-        reminderTime: reminders[0]?.time || 10,
+        reminder_enabled: reminders.length > 0,
+        reminder_time: reminders[0]?.time || 10,
         reminders: reminders,
         tags: data.tags,
         status: 'planned',
         complete: false,
         streak: 0,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
         createdAt: new Date()
       };
 

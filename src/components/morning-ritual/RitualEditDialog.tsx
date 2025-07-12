@@ -33,7 +33,7 @@ const RitualEditDialog: React.FC<RitualEditDialogProps> = ({
       title: data.title,
       description: data.description || '',
       timeOfDay: data.timeOfDay,
-      startTime: data.timeOfDay,
+      start_time: data.timeOfDay,
       duration: data.duration,
       priority: data.priority,
       recurrence: data.recurrence,

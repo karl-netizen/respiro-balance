@@ -6,10 +6,9 @@ import defaultPreferences from './defaultPreferences';
 export const UserPreferencesContext = createContext<UserPreferencesContextType>({
   preferences: defaultPreferences,
   updatePreferences: async () => {},
-  resetPreferences: () => {},
+  loading: false,
+  error: null,
+  connectBluetoothDevice: async () => {},
+  disconnectBluetoothDevice: async () => {},
   isCoach: false,
-  isEnterprise: false,
-  isLoading: false,
-  connectBluetoothDevice: async () => false,
-  disconnectBluetoothDevice: async () => false,
-} as UserPreferencesContextType);
+});

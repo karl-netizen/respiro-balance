@@ -42,8 +42,9 @@ export const useMorningRitual = () => {
   };
 
   const handleEnergyLevelChange = (energyLevel: number) => {
+    const level = energyLevel <= 1 ? 'low' : energyLevel <= 2 ? 'medium' : 'high';
     setMorningEnergyLevel(energyLevel);
-    updatePreferences({ morningEnergyLevel: energyLevel });
+    updatePreferences({ morningEnergyLevel: level });
   };
 
   return {

@@ -25,7 +25,7 @@ const SessionFlowWidget: React.FC<SessionFlowWidgetProps> = ({
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg">Session Progress</CardTitle>
-          <Badge variant={sessionFlow.status === 'in_progress' ? 'default' : 'secondary'}>
+          <Badge variant={sessionFlow.status === 'active' ? 'default' : 'secondary'}>
             {sessionFlow.status.replace('_', ' ')}
           </Badge>
         </div>
@@ -47,7 +47,7 @@ const SessionFlowWidget: React.FC<SessionFlowWidgetProps> = ({
           </div>
           
           <div className="flex gap-2">
-            {sessionFlow.status === 'in_progress' && onPause && (
+            {sessionFlow.status === 'active' && onPause && (
               <button onClick={onPause} className="flex items-center gap-1 hover:text-foreground">
                 <Pause className="h-4 w-4" />
                 Pause
@@ -66,7 +66,7 @@ const SessionFlowWidget: React.FC<SessionFlowWidgetProps> = ({
         {sessionFlow.currentModule && (
           <div className="text-sm">
             <span className="text-muted-foreground">Current: </span>
-            <span className="font-medium">{sessionFlow.currentModule}</span>
+            <span className="font-medium">{sessionFlow.currentModule.name} ({sessionFlow.currentModule.duration}min)</span>
           </div>
         )}
       </CardContent>

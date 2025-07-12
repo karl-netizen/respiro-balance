@@ -82,9 +82,11 @@ export const getCompletionHistory = (ritual: MorningRitual): CompletionEntry[] =
     
     entries.push({
       id: `${ritual.id}-${date.toISOString().split('T')[0]}`,
-      date: date.toISOString().split('T')[0],
-      completed: Math.random() > 0.3,
-      duration: ritual.duration
+      ritual_id: ritual.id,
+      completed_at: date.toISOString(),
+      notes: '',
+      mood_before: Math.floor(Math.random() * 5) + 1,
+      mood_after: Math.floor(Math.random() * 5) + 1
     });
   }
   

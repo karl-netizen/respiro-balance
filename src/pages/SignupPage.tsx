@@ -43,20 +43,16 @@ const SignupPage = () => {
     setIsLoading(true);
     try {
       const inviteToken = localStorage.getItem('inviteToken');
-      const { error } = await signUp(email, password, {
+      await signUp(email, password, {
         data: {
           full_name: fullName,
           inviteToken: inviteToken || null,
         },
       });
 
-      if (error) {
-        setError(error.message);
-        toast.error(error.message);
-      } else {
-        toast.success("Account created! Please check your email to verify your account.");
-        navigate('/verify-email');
-      }
+      // signUp returns void on success
+      toast.success("Account created! Please check your email to verify your account.");
+      navigate('/verify-email');
     } catch (err: any) {
       setError(err.message || "An unexpected error occurred");
       console.error("Signup error:", err);

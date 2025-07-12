@@ -21,20 +21,24 @@ export const useAddSuggestion = () => {
     try {
       const newRitual: MorningRitual = {
         id: `ritual_${Date.now()}`,
+        user_id: '',
         title: suggestion.title,
         description: suggestion.description,
         timeOfDay: suggestion.timeOfDay,
-        startTime: suggestion.timeOfDay,
+        start_time: suggestion.timeOfDay,
         duration: suggestion.duration,
         recurrence: 'daily',
         priority: suggestion.priority,
-        reminderEnabled: true,
-        reminderTime: 10,
+        reminder_enabled: true,
+        reminder_time: 10,
         tags: suggestion.tags || [],
         status: 'planned',
         complete: false,
         streak: 0,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
         createdAt: new Date(),
+        days_of_week: [],
         daysOfWeek: [],
         reminders: []
       };
