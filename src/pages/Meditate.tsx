@@ -1,7 +1,5 @@
 
 import React, { useState, useCallback, useEffect } from 'react';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import { MeditationHeader, MeditationSessionDialog } from '@/components/meditation';
 import RecentPlayedList from '@/components/meditation/RecentPlayedList';
 import MeditationTabsContent from '@/components/meditation/MeditationTabsContent';
@@ -57,8 +55,6 @@ const Meditate = () => {
   
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
-      
       <main className="flex-grow container mx-auto px-4 py-8">
         <MeditationHeader />
         
@@ -89,8 +85,6 @@ const Meditate = () => {
         isFavorite={currentFavoriteStatus()}
         onToggleFavorite={handleCurrentSessionToggleFavorite}
       />
-      
-      <Footer />
       
       {process.env.NODE_ENV !== 'production' && (
         <StateDebugger

@@ -60,7 +60,7 @@ export const useMeditationContent = () => {
   
   // Simple fallback for demo - replace with actual subscription context later
   const isSubscribed = true;
-  const subscriptionTier = 'premium';
+  const subscriptionTier = 'premium' as 'free' | 'premium' | 'premium_pro' | 'premium_plus';
 
   // Fetch all content
   const fetchContent = async () => {
