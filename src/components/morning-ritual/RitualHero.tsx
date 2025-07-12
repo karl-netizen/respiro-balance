@@ -108,14 +108,19 @@ const RitualHero = () => {
 
               {/* Popup appears outside container for mobile positioning control */}
               {showDetails && (
-                <div className={cn(
-                  "fixed z-50 animate-fade-in",
-                  // Mobile-first positioning - center on screen with margins
-                  isMobile 
-                    ? "inset-4 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[calc(100vw-2rem)] max-w-[280px]"
-                    : "absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-sm"
-                )}>
-                  <div className="bg-white rounded-lg shadow-2xl border p-4">
+                <div 
+                  className={cn(
+                    "fixed z-50 animate-fade-in",
+                    // Mobile-first positioning - center on screen with margins
+                    isMobile 
+                      ? "inset-4 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[calc(100vw-2rem)] max-w-[280px]"
+                      : "absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-sm"
+                  )}
+                  onMouseEnter={!isMobile ? () => setShowDetails(true) : undefined}
+                  onMouseLeave={!isMobile ? handleMouseLeave : undefined}
+                  onClick={isMobile ? () => setShowDetails(false) : undefined}
+                >
+                  <div className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl border p-4">
                     <div className="flex justify-between items-center mb-4">
                       <div className="text-xs sm:text-sm text-muted-foreground">Morning Energy</div>
                       <div className="text-xs sm:text-sm font-medium">{preferences.morningEnergyLevel || 5}/10</div>
