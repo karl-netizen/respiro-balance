@@ -1,7 +1,7 @@
 
 import React from 'react';
 import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+
 import { DownloadManagementSection } from '@/components/meditation/DownloadManagementSection';
 
 const OfflineDownloadsPage = () => {
@@ -18,7 +18,7 @@ const OfflineDownloadsPage = () => {
         <DownloadManagementSection onPlaySession={handlePlaySession} />
       </main>
       
-      <Footer />
+      
     </div>
   );
 };

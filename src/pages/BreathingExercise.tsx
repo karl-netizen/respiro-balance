@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+
 import BreathingVisualizer from "@/components/BreathingVisualizer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -142,7 +142,7 @@ const BreathingExercise = () => {
         </section>
       </main>
       
-      <Footer />
+      
     </div>
   );
 };

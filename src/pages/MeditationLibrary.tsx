@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+
 import { MeditationLibraryBrowser } from '@/components/meditation';
 import { useSubscriptionContext } from '@/hooks/useSubscriptionContext';
 import SubscriptionBanner from '@/components/subscription/SubscriptionBanner';
@@ -110,7 +110,7 @@ const MeditationLibrary = () => {
         </Tabs>
       </main>
       
-      <Footer />
+      
     </div>
   );
 };

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
@@ -62,7 +62,7 @@ const Settings = () => {
         </Tabs>
       </main>
       
-      <Footer />
+      
     </div>
   );
 };

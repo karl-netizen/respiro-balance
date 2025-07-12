@@ -2,7 +2,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Heart, Users, Target, Sparkles } from 'lucide-react';
 
@@ -214,7 +214,7 @@ const AboutPage = () => {
         </div>
       </main>
       
-      <Footer />
+      
     </>
   );
 };

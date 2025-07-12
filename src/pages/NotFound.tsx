@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+
 
 const NotFound = () => {
   const location = useLocation();
@@ -36,7 +36,7 @@ const NotFound = () => {
         </div>
       </div>
       
-      <Footer />
+      
     </div>
   );
 };

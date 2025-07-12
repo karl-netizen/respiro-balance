@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useUserPreferences } from "@/context";
 import { 
@@ -70,7 +70,7 @@ const ProgressDashboard = () => {
         </section>
       </main>
       
-      <Footer />
+      
     </div>
   );
 };

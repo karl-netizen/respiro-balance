@@ -2,7 +2,7 @@
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+
 import { useFeatureAccess } from '@/hooks/useFeatureAccess';
 import { Navigate } from 'react-router-dom';
 import { AdvancedBiofeedbackDashboard } from '@/components/premium-pro/AdvancedBiofeedbackDashboard';
@@ -55,7 +55,7 @@ const PremiumProPage: React.FC = () => {
         </div>
       </main>
 
-      <Footer />
+      
     </div>
   );
 };

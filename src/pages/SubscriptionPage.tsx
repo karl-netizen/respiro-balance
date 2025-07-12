@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+
 import { PaymentCard } from '@/components/payment';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -89,7 +89,7 @@ const SubscriptionPage = () => {
         </div>
       </main>
       
-      <Footer />
+      
     </div>
   );
 };

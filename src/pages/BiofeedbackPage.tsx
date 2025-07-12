@@ -1,7 +1,7 @@
 
 import React from 'react';
 import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+
 import { useBiofeedback } from '@/hooks/biofeedback';
 import BiofeedbackLayout from '@/components/biofeedback/layout/BiofeedbackLayout';
 
@@ -84,7 +84,7 @@ const BiofeedbackPage: React.FC = () => {
           onStopScan={handleStopScan}
         />
       </main>
-      <Footer />
+      
     </>
   );
 };

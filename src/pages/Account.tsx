@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+
 import AccountSubscriptionSettings from '@/components/settings/AccountSubscriptionSettings';
 import SubscriptionCard from '@/components/subscription/SubscriptionCard';
 import MeditationHistoryList from '@/components/meditation/MeditationHistoryList';
@@ -82,7 +82,7 @@ const Account = () => {
           </TabsContent>
         </Tabs>
       </main>
-      <Footer />
+      
     </>
   );
 };

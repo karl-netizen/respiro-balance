@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+
 import { Button } from '@/components/ui/button';
 import { ChevronLeft } from 'lucide-react';
 import { useMeditationSessions } from '@/hooks/useMeditationSessions';
@@ -145,7 +145,7 @@ const MeditationSessionView = () => {
         </div>
       </main>
       
-      <Footer />
+      
       
       <SessionCompletionDialog
         isOpen={showCompletionDialog}

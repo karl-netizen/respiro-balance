@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+
 import DailyQuote from "@/components/DailyQuote";
 import SubscriptionFAQs from "@/components/subscription/SubscriptionFAQs";
 import { 
@@ -153,7 +153,7 @@ const FAQ = () => {
         </div>
       </main>
 
-      <Footer />
+      
     </div>
   );
 };

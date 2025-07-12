@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
 import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -266,7 +266,7 @@ const BlogPage = () => {
         </div>
       </main>
       
-      <Footer />
+      
     </>
   );
 };

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SecurityAudit } from '@/components/system/SecurityAudit';
 import { ContentManager } from '@/components/system/ContentManager';
@@ -61,7 +61,7 @@ const SystemDashboardPage: React.FC = () => {
         </div>
       </main>
 
-      <Footer />
+      
     </div>
   );
 };

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+
 import { ConversionAnalytics } from '@/components/analytics/ConversionAnalytics';
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
@@ -24,7 +24,7 @@ const ConversionDashboardPage: React.FC = () => {
         </div>
       </main>
 
-      <Footer />
+      
     </div>
   );
 };
