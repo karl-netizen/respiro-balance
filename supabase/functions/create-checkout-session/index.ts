@@ -24,6 +24,7 @@ interface CheckoutRequest {
   successUrl: string;
   cancelUrl: string;
   tier: string;
+  billingPeriod: 'monthly' | 'yearly';
 }
 
 serve(async (req) => {
@@ -32,37 +33,71 @@ serve(async (req) => {
   }
 
   try {
-    const { priceId, userId, email, successUrl, cancelUrl, tier }: CheckoutRequest = await req.json();
+    const { priceId, userId, email, successUrl, cancelUrl, tier, billingPeriod }: CheckoutRequest = await req.json();
 
-    // Create or retrieve customer
-    let customer = await stripe.customers.list({ email, limit: 1 });
-    let customerId: string;
+    console.log('Creating checkout session for:', { priceId, tier, billingPeriod, email });
 
-    if (customer.data.length > 0) {
-      customerId = customer.data[0].id;
+    // Get or create customer
+    let customers = await stripe.customers.list({ email, limit: 1 });
+    let customerId;
+    
+    if (customers.data.length > 0) {
+      customerId = customers.data[0].id;
     } else {
-      const newCustomer = await stripe.customers.create({
+      const customer = await stripe.customers.create({
         email,
-        metadata: { userId, tier }
+        metadata: { userId }
       });
-      customerId = newCustomer.id;
+      customerId = customer.id;
     }
 
     // Update subscribers table
-    await supabase.from('subscribers').upsert({
-      user_id: userId,
-      email,
-      stripe_customer_id: customerId,
-      subscription_tier: 'free', // Will be updated via webhook
-    }, { onConflict: 'email' });
+    const { error: upsertError } = await supabase
+      .from('subscribers')
+      .upsert({
+        user_id: userId,
+        email,
+        stripe_customer_id: customerId,
+        subscription_tier: tier,
+        updated_at: new Date().toISOString(),
+      }, { onConflict: 'email' });
+
+    if (upsertError) {
+      console.error('Error upserting subscriber:', upsertError);
+    }
+
+    // Create price based on tier and billing period
+    let unitAmount;
+    switch (tier) {
+      case 'premium':
+        unitAmount = billingPeriod === 'yearly' ? 797 : 1197; // $7.97 or $11.97
+        break;
+      case 'premium_pro':
+        unitAmount = billingPeriod === 'yearly' ? 2997 : 2997; // $29.97 or $29.97
+        break;
+      case 'premium_plus':
+        unitAmount = billingPeriod === 'yearly' ? 4797 : 4797; // $47.97 or $47.97
+        break;
+      default:
+        throw new Error('Invalid subscription tier');
+    }
 
     // Create checkout session
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
-      payment_method_types: ['card'],
       line_items: [
         {
-          price: priceId,
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: `Respiro Balance ${tier.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}`,
+              description: `${tier.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())} subscription`,
+            },
+            unit_amount: unitAmount,
+            recurring: {
+              interval: billingPeriod === 'yearly' ? 'year' : 'month',
+            },
+          },
           quantity: 1,
         },
       ],
@@ -72,18 +107,14 @@ serve(async (req) => {
       metadata: {
         userId,
         tier,
+        billingPeriod,
       },
       subscription_data: {
         metadata: {
           userId,
           tier,
+          billingPeriod,
         },
-      },
-      allow_promotion_codes: true,
-      billing_address_collection: 'required',
-      customer_update: {
-        address: 'auto',
-        name: 'auto',
       },
     });
 

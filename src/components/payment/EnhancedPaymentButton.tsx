@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 
 interface EnhancedPaymentButtonProps {
   tier: string;
-  priceId: string;
+  billingPeriod: 'monthly' | 'yearly';
   children: React.ReactNode;
   className?: string;
   variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
@@ -15,7 +15,7 @@ interface EnhancedPaymentButtonProps {
 
 export const EnhancedPaymentButton: React.FC<EnhancedPaymentButtonProps> = ({
   tier,
-  priceId,
+  billingPeriod,
   children,
   className,
   variant = 'default'
@@ -28,7 +28,7 @@ export const EnhancedPaymentButton: React.FC<EnhancedPaymentButtonProps> = ({
         description: 'Please wait while we prepare your payment session.'
       });
 
-      const checkoutUrl = await createCheckoutSession(tier, priceId);
+      const checkoutUrl = await createCheckoutSession(tier, billingPeriod);
       
       if (checkoutUrl) {
         window.location.href = checkoutUrl;
