@@ -27,16 +27,23 @@ export const useMeditatePage = () => {
     const fetchMeditationContent = async () => {
       console.log('🎯 useMeditatePage: Starting to fetch meditation content...');
       try {
+        console.log('🔗 Checking Supabase client:', !!supabase);
+        
         const { data, error } = await supabase
           .from('meditation_content')
           .select('*')
           .eq('is_active', true)
           .order('created_at', { ascending: false });
-        
+
         console.log('📊 Raw meditation content from database:', { data, error, count: data?.length });
 
         if (error) {
-          console.error('❌ Error fetching meditation content:', error);
+          console.error('❌ Supabase error fetching meditation content:', error);
+          return;
+        }
+
+        if (!data || data.length === 0) {
+          console.warn('⚠️ No meditation content found in database');
           return;
         }
 
@@ -61,8 +68,9 @@ export const useMeditatePage = () => {
         console.log('📝 Sample session:', sessions[0]);
         setMeditationSessions(sessions);
       } catch (error) {
-        console.error('Error:', error);
+        console.error('💥 Exception in fetchMeditationContent:', error);
       } finally {
+        console.log('🏁 Fetch completed, setting loading to false');
         setIsLoading(false);
       }
     };
