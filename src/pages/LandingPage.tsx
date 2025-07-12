@@ -1,7 +1,7 @@
 
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import Header from "@/components/Header";
+
 import Hero from "@/components/Hero";
 import PricingTiers from "@/components/PricingTiers";
 import Footer from "@/components/Footer";
@@ -27,7 +27,6 @@ const LandingPage = () => {
   
   return (
     <div className="min-h-screen relative bg-gradient-to-b from-respiro-light/30 to-white">
-      <Header />
       <Hero />
       
       {/* Benefits Section */}
