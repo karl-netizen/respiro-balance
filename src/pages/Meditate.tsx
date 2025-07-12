@@ -28,6 +28,24 @@ const Meditate = () => {
   // State to track filtered sessions
   const [filteredSessions, setFilteredSessions] = useState<MeditationSession[]>([]);
   
+  // COMPREHENSIVE DEBUGGING SYSTEM
+  useEffect(() => {
+    const allSessions = getAllSessions();
+    console.log(`🎯 MEDITATION DEBUG: Total sessions loaded: ${allSessions.length}`);
+    
+    if (allSessions.length > 0) {
+      console.log(`🏷️ Categories in database:`, [...new Set(allSessions.map(s => s.category))]);
+      console.log(`🔍 Testing category mapping:`);
+      
+      // Test all category mappings
+      const categoryTests = ['guided', 'quick', 'deep', 'sleep'];
+      categoryTests.forEach(category => {
+        const filtered = getFilteredSessions(category);
+        console.log(`  ${category}: ${filtered.length} sessions`);
+      });
+    }
+  }, [getAllSessions, getFilteredSessions]);
+  
   // Update filtered sessions when tab changes
   useEffect(() => {
     setFilteredSessions(getFilteredSessions(activeTab));

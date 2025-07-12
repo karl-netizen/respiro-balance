@@ -137,36 +137,52 @@ export const useMeditatePage = () => {
     return meditationSessions;
   }, [meditationSessions]);
 
-  // Category mapping function - maps UI categories to database categories
-  const getCategoryMapping = useCallback((uiCategory: string): string[] => {
-    const categoryMap: Record<string, string[]> = {
-      'guided': ['Mindfulness', 'Loving Kindness', 'Body Scan'],
-      'quick': ['Focus', 'Energy'], 
-      'deep': ['Stress Relief'],
-      'sleep': ['Sleep'],
-      'breathing': ['Breathing']
-    };
-    return categoryMap[uiCategory] || [];
-  }, []);
+  // COMPREHENSIVE CATEGORY MAPPING SYSTEM
+  const CATEGORY_MAPPING = {
+    'guided': ['Mindfulness', 'Loving Kindness', 'Body Scan', 'Breathing'],
+    'quick': ['Focus', 'Energy'], 
+    'deep': ['Stress Relief'],
+    'sleep': ['Sleep']
+  };
 
-  // Get sessions for a specific category
+  // Get sessions for a specific category with comprehensive debugging
   const getFilteredSessions = useCallback((category: string): MeditationSession[] => {
-    console.log(`🔍 getFilteredSessions called for category: ${category}, total sessions: ${meditationSessions.length}`);
+    console.log(`🔍 FILTERING DEBUG: UI category '${category}', total sessions: ${meditationSessions.length}`);
     
     if (category === 'all') {
+      console.log(`📂 Returning all ${meditationSessions.length} sessions`);
       return meditationSessions;
-    } else if (category === 'favorites') {
+    } 
+    
+    if (category === 'favorites') {
       const favs = meditationSessions.filter(s => favorites.favoriteSessions.includes(s.id));
       console.log(`❤️ Found ${favs.length} favorite sessions`);
       return favs;
-    } else {
-      // Use category mapping for filtering
-      const mappedCategories = getCategoryMapping(category);
-      const filtered = meditationSessions.filter(s => mappedCategories.includes(s.category));
-      console.log(`📂 Filtered sessions for ${category}: ${filtered.length} (mapped from categories: ${mappedCategories.join(', ')})`);
-      return filtered;
     }
-  }, [meditationSessions, favorites.favoriteSessions, getCategoryMapping]);
+    
+    // Use category mapping
+    const mappedCategories = CATEGORY_MAPPING[category] || [];
+    console.log(`🗺️ Mapped categories for '${category}':`, mappedCategories);
+    
+    if (mappedCategories.length === 0) {
+      console.log(`⚠️ No mapping found for '${category}', trying direct match fallback`);
+      const directMatch = meditationSessions.filter(s => 
+        s?.category?.toLowerCase().includes(category.toLowerCase())
+      );
+      console.log(`📂 Direct match fallback result: ${directMatch.length} sessions`);
+      return directMatch;
+    }
+    
+    const filtered = meditationSessions.filter(s => 
+      mappedCategories.includes(s?.category)
+    );
+    
+    console.log(`📂 Filtered sessions for '${category}': ${filtered.length}`);
+    console.log(`📝 Sample filtered session:`, filtered[0] || 'None found');
+    console.log(`🏷️ Available categories in all sessions:`, [...new Set(meditationSessions.map(s => s.category))]);
+    
+    return filtered;
+  }, [meditationSessions, favorites.favoriteSessions]);
   
   const getFavoriteSessions = useCallback((): MeditationSession[] => {
     return meditationSessions.filter(s => favorites.favoriteSessions.includes(s.id));
