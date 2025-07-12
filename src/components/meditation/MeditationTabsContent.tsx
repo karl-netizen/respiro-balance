@@ -31,31 +31,31 @@ const MeditationTabsContent: React.FC<MeditationTabsContentProps> = ({
     setSessions(allSessions);
   }, [getFilteredSessions, activeTab]);
 
-  // Filter sessions based on category
+  // Filter sessions based on category - mapping database categories to UI categories
   const filterByCategory = (tab: string) => {
     console.log(`🔍 Filtering for tab: ${tab}, total sessions: ${sessions.length}`);
     
     if (tab === 'guided') {
       const filtered = sessions.filter(session => 
-        ['Mindfulness', 'Guided', 'guided', 'Breathing', 'Focus'].includes(session.category)
+        ['Mindfulness', 'Body Scan', 'Loving Kindness', 'Breathing'].includes(session.category)
       );
       console.log(`🎯 Guided sessions found: ${filtered.length}`);
       return filtered;
     } else if (tab === 'quick') {
       const filtered = sessions.filter(session => 
-        ['Stress Relief', 'Energy', 'quick'].includes(session.category)
+        ['Focus', 'Energy'].includes(session.category)
       );
       console.log(`⚡ Quick sessions found: ${filtered.length}`);
       return filtered;
     } else if (tab === 'deep') {
       const filtered = sessions.filter(session => 
-        ['Focus', 'Deep Focus', 'deep'].includes(session.category)
+        ['Stress Relief'].includes(session.category)
       );
       console.log(`🧘 Deep sessions found: ${filtered.length}`);
       return filtered;
     } else if (tab === 'sleep') {
       const filtered = sessions.filter(session => 
-        ['Sleep', 'sleep'].includes(session.category)
+        ['Sleep'].includes(session.category)
       );
       console.log(`🌙 Sleep sessions found: ${filtered.length}`);
       return filtered;
