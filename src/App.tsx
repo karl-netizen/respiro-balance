@@ -44,11 +44,21 @@ import TermsPage from '@/pages/TermsPage';
 import { MobilePWASetup } from '@/components/mobile/MobilePWASetup';
 import { usePerformanceMonitoring } from '@/hooks/usePerformanceMonitoring';
 
+// Global error handler for unhandled promise rejections
+window.addEventListener('unhandledrejection', (event) => {
+  console.error('Unhandled promise rejection:', event.reason);
+  event.preventDefault();
+});
+
 const queryClient = new QueryClient();
 
 function App() {
+  usePerformanceMonitoring();
+  
   return (
-    <ErrorBoundary>
+    <ErrorBoundary level="global" onError={(error, errorInfo) => {
+      console.error('Global error boundary:', error, errorInfo);
+    }}>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <NotificationsProvider>
