@@ -1,7 +1,5 @@
 
 import React, { useState } from 'react';
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useUserPreferences } from "@/context";
 import { 
@@ -56,8 +54,6 @@ const Progress = () => {
   
   return (
     <div className={`min-h-screen flex flex-col ${isMobile ? 'mobile-view' : ''}`}>
-      <Header />
-      
       <main className="flex-grow">
         <ProgressHero />
         
@@ -121,8 +117,6 @@ const Progress = () => {
           </div>
         </section>
       </main>
-      
-      <Footer />
     </div>
   );
 };

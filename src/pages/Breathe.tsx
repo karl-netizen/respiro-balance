@@ -1,7 +1,5 @@
 
 import React from 'react';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import BreathePageContent from '@/components/breathing/components/BreathePageContent';
 import { useBreathePageLogic } from './breathing/useBreathePageLogic';
 
@@ -17,8 +15,6 @@ const Breathe = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
-      
       <main className="flex-grow container mx-auto px-4 py-8">
         <BreathePageContent 
           activeTab={activeTab}
@@ -29,8 +25,6 @@ const Breathe = () => {
           onTechniqueSelect={handleTechniqueSelect}
         />
       </main>
-      
-      <Footer />
     </div>
   );
 };
