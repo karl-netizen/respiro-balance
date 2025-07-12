@@ -77,11 +77,11 @@ export const useMeditatePage = () => {
     } else {
       return meditationSessions.filter(s => s.category === category);
     }
-  }, [favorites.favoriteSessions]);
+  }, [meditationSessions, favorites.favoriteSessions]);
   
   const getFavoriteSessions = useCallback((): MeditationSession[] => {
     return meditationSessions.filter(s => favorites.favoriteSessions.includes(s.id));
-  }, [favorites.favoriteSessions]);
+  }, [meditationSessions, favorites.favoriteSessions]);
 
   const handleStartMeditation = useCallback((session: MeditationSession) => {
     // Check if session is premium and user doesn't have premium
