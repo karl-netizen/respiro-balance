@@ -1,4 +1,3 @@
-
 import { useState, useMemo } from 'react';
 import { MeditationSession } from '@/types/meditation';
 import { useMeditationFetch } from './meditation/useMeditationFetch';
@@ -6,6 +5,7 @@ import { useMeditationFavorites } from './useMeditationFavorites';
 
 export const useMeditationLibrary = () => {
   const { sessions, isLoading, error } = useMeditationFetch();
+  console.log('🏛️ useMeditationLibrary - sessions:', sessions.length, 'loading:', isLoading, 'error:', error);
   const { favorites, isFavorite, toggleFavorite, removeFavorites, getFavoriteSessions } = useMeditationFavorites();
   
   const [searchTerm, setSearchTerm] = useState('');
