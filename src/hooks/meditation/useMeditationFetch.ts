@@ -14,13 +14,10 @@ export const useMeditationFetch = () => {
     setError(null);
     
     try {
-      console.log('🔍 Fetching meditation content from database...');
       const { data, error } = await supabase
         .from('meditation_content')
         .select('*')
         .order('created_at', { ascending: false });
-      
-      console.log('📊 Raw database response:', { data, error });
       
       if (error) {
         throw new Error(error.message);
@@ -47,8 +44,6 @@ export const useMeditationFetch = () => {
         premium: session.subscription_tier === 'premium',
       }));
       
-      console.log('✅ Formatted sessions count:', formattedSessions.length);
-      console.log('📝 Sample session:', formattedSessions[0]);
       setSessions(formattedSessions);
     } catch (err: any) {
       setError(err);

@@ -23,15 +23,18 @@ export const useMeditatePage = () => {
   // Fetch meditation content from database
   useEffect(() => {
     const fetchMeditationContent = async () => {
+      console.log('🎯 useMeditatePage: Starting to fetch meditation content...');
       try {
         const { data, error } = await supabase
           .from('meditation_content')
           .select('*')
           .eq('is_active', true)
           .order('created_at', { ascending: false });
+        
+        console.log('📊 Raw meditation content from database:', { data, error, count: data?.length });
 
         if (error) {
-          console.error('Error fetching meditation content:', error);
+          console.error('❌ Error fetching meditation content:', error);
           return;
         }
 
@@ -51,7 +54,9 @@ export const useMeditatePage = () => {
           session_type: 'guided',
           level: content.difficulty_level || 'beginner'
         }));
-
+        
+        console.log('✅ Transformed sessions:', sessions.length, 'sessions created');
+        console.log('📝 Sample session:', sessions[0]);
         setMeditationSessions(sessions);
       } catch (error) {
         console.error('Error:', error);
@@ -65,17 +70,24 @@ export const useMeditatePage = () => {
 
   // Get all meditation sessions available in the system
   const getAllSessions = useCallback((): MeditationSession[] => {
+    console.log('📋 getAllSessions called, returning:', meditationSessions.length, 'sessions');
     return meditationSessions;
   }, [meditationSessions]);
 
   // Get sessions for a specific category
   const getFilteredSessions = useCallback((category: string): MeditationSession[] => {
+    console.log(`🔍 getFilteredSessions called for category: ${category}, total sessions: ${meditationSessions.length}`);
+    
     if (category === 'all') {
       return meditationSessions;
     } else if (category === 'favorites') {
-      return meditationSessions.filter(s => favorites.favoriteSessions.includes(s.id));
+      const favs = meditationSessions.filter(s => favorites.favoriteSessions.includes(s.id));
+      console.log(`❤️ Found ${favs.length} favorite sessions`);
+      return favs;
     } else {
-      return meditationSessions.filter(s => s.category === category);
+      const filtered = meditationSessions.filter(s => s.category === category);
+      console.log(`📂 Filtered sessions for ${category}:`, filtered.length);
+      return filtered;
     }
   }, [meditationSessions, favorites.favoriteSessions]);
   
