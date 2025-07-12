@@ -1,12 +1,13 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { useUserPreferences } from "@/context";
-import { Sun, Clock, Calendar } from "lucide-react";
+import { Sun, Clock, Calendar, Info } from "lucide-react";
 import { useTimeAwareness } from "@/hooks/useTimeAwareness";
 
 const RitualHero = () => {
   const { preferences } = useUserPreferences();
   const { getGreeting } = useTimeAwareness();
+  const [showDetails, setShowDetails] = useState(false);
   const morningActivities = preferences.morningActivities || [];
   const ritualsCount = preferences.morningRituals?.length || 0;
 
@@ -49,34 +50,60 @@ const RitualHero = () => {
             <div className="relative">
               <div className="absolute -top-4 -left-4 w-24 h-24 bg-primary/20 rounded-full"></div>
               <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-primary/10 rounded-full"></div>
-              <div className="relative z-10 bg-white rounded-lg shadow-xl p-6">
-                <div className="flex justify-between mb-4">
+              
+              {/* Hover trigger */}
+              <div 
+                className="relative z-10 bg-white rounded-lg shadow-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-2xl"
+                onMouseEnter={() => setShowDetails(true)}
+                onMouseLeave={() => setShowDetails(false)}
+              >
+                <div className="flex items-center justify-between mb-4">
                   <div className="text-sm text-muted-foreground">Morning Energy</div>
-                  <div className="text-sm font-medium">{preferences.morningEnergyLevel || 5}/10</div>
+                  <div className="flex items-center gap-2">
+                    <div className="text-sm font-medium">{preferences.morningEnergyLevel || 5}/10</div>
+                    <Info className="h-4 w-4 text-primary" />
+                  </div>
                 </div>
                 
                 <div className="space-y-4">
-                  <h3 className="font-medium text-lg">Your Current Morning</h3>
-                  {morningActivities.length > 0 ? (
-                    <ul className="space-y-2">
-                      {morningActivities.map((activity, i) => (
-                        <li key={i} className="flex items-center text-sm">
-                          <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center mr-3">
-                            {i + 1}
-                          </div>
-                          <span className="capitalize">
-                            {activity.replace(/_/g, ' ')}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="text-sm text-muted-foreground">
-                      You haven't set up your morning activities yet.
-                    </p>
-                  )}
+                  <h3 className="font-medium text-lg">Your Morning Setup</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Hover to view your current morning activities
+                  </p>
                 </div>
               </div>
+
+              {/* Detailed box that appears on hover */}
+              {showDetails && (
+                <div className="absolute top-0 left-0 right-0 z-20 bg-white rounded-lg shadow-2xl p-6 border animate-fade-in">
+                  <div className="flex justify-between mb-4">
+                    <div className="text-sm text-muted-foreground">Morning Energy</div>
+                    <div className="text-sm font-medium">{preferences.morningEnergyLevel || 5}/10</div>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <h3 className="font-medium text-lg">Your Current Morning</h3>
+                    {morningActivities.length > 0 ? (
+                      <ul className="space-y-2">
+                        {morningActivities.map((activity, i) => (
+                          <li key={i} className="flex items-center text-sm">
+                            <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center mr-3">
+                              {i + 1}
+                            </div>
+                            <span className="capitalize">
+                              {activity.replace(/_/g, ' ')}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">
+                        You haven't set up your morning activities yet.
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
