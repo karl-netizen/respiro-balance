@@ -102,37 +102,45 @@ const RitualHero = () => {
                       </p>
                     </div>
                   ) : (
-                    // Detailed box that appears on interaction
-                    <div className="w-full max-w-sm bg-white rounded-lg shadow-2xl p-4 sm:p-6 border animate-fade-in mx-4">
-                      <div className="flex justify-between mb-4">
-                        <div className="text-sm text-muted-foreground">Morning Energy</div>
-                        <div className="text-sm font-medium">{preferences.morningEnergyLevel || 5}/10</div>
+                    // Detailed box that appears on interaction - mobile-first sizing
+                    <div className={cn(
+                      "bg-white rounded-lg shadow-2xl border animate-fade-in",
+                      // Mobile-first responsive sizing and positioning
+                      "w-full max-w-[280px] sm:max-w-sm mx-auto p-4",
+                      // Ensure it stays within viewport on mobile
+                      "absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2",
+                      // Add some margin from screen edges on mobile
+                      "mx-2 sm:mx-4"
+                    )}>
+                      <div className="flex justify-between items-center mb-4">
+                        <div className="text-xs sm:text-sm text-muted-foreground">Morning Energy</div>
+                        <div className="text-xs sm:text-sm font-medium">{preferences.morningEnergyLevel || 5}/10</div>
                       </div>
                       
-                      <div className="space-y-4">
-                        <h3 className="font-medium text-lg">Your Current Morning</h3>
+                      <div className="space-y-3">
+                        <h3 className="font-medium text-base sm:text-lg">Your Current Morning</h3>
                         {morningActivities.length > 0 ? (
-                          <ul className="space-y-2 max-h-32 overflow-y-auto">
+                          <ul className="space-y-2 max-h-24 sm:max-h-32 overflow-y-auto">
                             {morningActivities.map((activity, i) => (
-                              <li key={i} className="flex items-center text-sm">
-                                <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center mr-3 flex-shrink-0">
+                              <li key={i} className="flex items-center text-xs sm:text-sm">
+                                <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-primary/20 flex items-center justify-center mr-2 sm:mr-3 flex-shrink-0 text-xs">
                                   {i + 1}
                                 </div>
-                                <span className="capitalize">
+                                <span className="capitalize leading-tight">
                                   {activity.replace(/_/g, ' ')}
                                 </span>
                               </li>
                             ))}
                           </ul>
                         ) : (
-                          <p className="text-sm text-muted-foreground">
+                          <p className="text-xs sm:text-sm text-muted-foreground">
                             You haven't set up your morning activities yet.
                           </p>
                         )}
                         
                         {/* Mobile close hint */}
                         {isMobile && showDetails && (
-                          <p className="text-xs text-muted-foreground text-center pt-2 border-t">
+                          <p className="text-xs text-muted-foreground text-center pt-2 border-t mt-3">
                             Tap anywhere to close
                           </p>
                         )}
