@@ -30,8 +30,25 @@ const MeditationTabsContent: React.FC<MeditationTabsContentProps> = ({
   }, [getFilteredSessions, activeTab]);
 
   // Filter sessions based on category
-  const filterByCategory = (category: string) => {
-    return sessions.filter(session => session.category === category);
+  const filterByCategory = (tab: string) => {
+    if (tab === 'guided') {
+      return sessions.filter(session => 
+        ['Mindfulness', 'Guided', 'guided', 'Breathing', 'Focus'].includes(session.category)
+      );
+    } else if (tab === 'quick') {
+      return sessions.filter(session => 
+        ['Stress Relief', 'Energy', 'quick'].includes(session.category)
+      );
+    } else if (tab === 'deep') {
+      return sessions.filter(session => 
+        ['Focus', 'Deep Focus', 'deep'].includes(session.category)
+      );
+    } else if (tab === 'sleep') {
+      return sessions.filter(session => 
+        ['Sleep', 'sleep'].includes(session.category)
+      );
+    }
+    return sessions;
   };
   
   return (
