@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
@@ -8,20 +7,18 @@ import { toast } from 'sonner';
 interface ExtendedUser extends User {
   user_metadata: Record<string, any>;
   app_metadata: Record<string, any>;
-  subscription_tier?: string;
-  email_confirmed_at?: string;
 }
 
 interface AuthContextType {
   user: ExtendedUser | null;
   session: Session | null;
-  loading: boolean;
   isLoading: boolean;
-  signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string, metadata?: any) => Promise<void>;
+  loading: boolean; // Alias for backward compatibility
+  signIn: (email: string, password: string, options?: any) => Promise<void>;
+  signUp: (email: string, password: string, options?: any) => Promise<void>;
   signOut: () => Promise<void>;
   forgotPassword: (email: string) => Promise<void>;
-  resetPassword: (email: string) => Promise<void>;
+  resetPassword: (password: string, token?: string) => Promise<void>;
   updateProfile: (data: any) => Promise<void>;
   verifyEmail: (token: string) => Promise<void>;
   resendVerificationEmail: (email: string) => Promise<void>;
@@ -55,21 +52,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     });
 
     // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setUser(session?.user as ExtendedUser ?? null);
-      setIsLoading(false);
-    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        setSession(session);
+        setUser(session?.user as ExtendedUser ?? null);
+        setIsLoading(false);
+      }
+    );
 
     return () => subscription.unsubscribe();
   }, []);
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (email: string, password: string, options?: any) => {
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
+      ...options
     });
 
     if (error) {
@@ -77,16 +75,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       throw error;
     }
 
-    toast.success('Welcome back!');
+    toast.success('Signed in successfully');
   };
 
-  const signUp = async (email: string, password: string, metadata?: any) => {
+  const signUp = async (email: string, password: string, options?: any) => {
+    const redirectUrl = options?.redirectTo || `${window.location.origin}/`;
+    
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        data: metadata,
-      },
+        emailRedirectTo: redirectUrl,
+        ...options
+      }
     });
 
     if (error) {
@@ -94,7 +95,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       throw error;
     }
 
-    toast.success('Account created! Please check your email to verify your account.');
+    toast.success('Account created! Please check your email to verify.');
   };
 
   const signOut = async () => {
@@ -119,9 +120,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     toast.success('Password reset email sent!');
   };
 
-  const resetPassword = async (password: string) => {
+  const resetPassword = async (password: string, token?: string) => {
     const { error } = await supabase.auth.updateUser({
-      password: password
+      password
     });
 
     if (error) {
@@ -162,7 +163,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const resendVerificationEmail = async (email: string) => {
     const { error } = await supabase.auth.resend({
       type: 'signup',
-      email: email
+      email,
+      options: {
+        emailRedirectTo: `${window.location.origin}/`
+      }
     });
 
     if (error) {
@@ -176,8 +180,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const value: AuthContextType = {
     user,
     session,
-    loading: isLoading,
     isLoading,
+    loading: isLoading, // Backward compatibility alias
     signIn,
     signUp,
     signOut,
@@ -191,3 +195,4 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
+export default AuthProvider;
