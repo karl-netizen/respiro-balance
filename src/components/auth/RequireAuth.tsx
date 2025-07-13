@@ -4,9 +4,9 @@ import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from 'sonner';
 
-// Check if we're in demo mode by looking at the Supabase configuration
-// This will be true when Supabase credentials are missing
-const IS_DEMO_MODE = true; // For this app, we're always in demo mode
+// Toggle between demo mode and real auth - can be changed for testing
+const IS_DEMO_MODE = localStorage.getItem('respiro-auth-mode') === 'demo' || 
+                     !localStorage.getItem('respiro-auth-mode'); // Default to demo if not set
 
 interface RequireAuthProps {
   children: ReactNode;

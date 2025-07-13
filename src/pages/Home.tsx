@@ -5,9 +5,11 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import AuthModeToggle from '@/components/auth/AuthModeToggle';
 
-// Using the same demo mode flag as in RequireAuth
-const IS_DEMO_MODE = true;
+// Dynamic demo mode check
+const IS_DEMO_MODE = localStorage.getItem('respiro-auth-mode') === 'demo' || 
+                     !localStorage.getItem('respiro-auth-mode');
 
 const Home = () => {
   const navigate = useNavigate();
@@ -56,6 +58,8 @@ const Home = () => {
           <Link to="/landing">Learn More</Link>
         </Button>
       </div>
+      
+      <AuthModeToggle />
     </div>
   );
 }
