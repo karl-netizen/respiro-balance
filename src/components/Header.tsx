@@ -9,11 +9,14 @@ import AccountSection from "./header/AccountSection";
 import BackButton from "./header/BackButton";
 import { NotificationBell } from "./notifications";
 import { MenuIcon } from "lucide-react";
+import { useDemoMode } from "@/hooks/useDemoMode";
+import { Badge } from "@/components/ui/badge";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const { isDemoMode } = useDemoMode();
   const isHomePage = location.pathname === "/" || location.pathname === "/landing";
   const isTransparent = isHomePage;
 
@@ -60,6 +63,14 @@ const Header = () => {
               size={24} 
             />
             <span className="text-respiro-dark">Respiro Balance</span>
+            {isDemoMode && (
+              <Badge 
+                variant="secondary" 
+                className="bg-amber-100 text-amber-800 text-xs px-2 py-1 ml-2"
+              >
+                DEMO
+              </Badge>
+            )}
           </button>
         </div>
 

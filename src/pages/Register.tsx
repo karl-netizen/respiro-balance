@@ -10,6 +10,7 @@ import { TouchFriendlyButton } from '@/components/responsive/TouchFriendlyButton
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import AuthModeToggle from '@/components/auth/AuthModeToggle';
+import DemoModeToggle from '@/components/auth/DemoModeToggle';
 
 const Register = () => {
   const [fullName, setFullName] = useState('');
@@ -63,6 +64,7 @@ const Register = () => {
           </CardHeader>
           
           <CardContent>
+            <DemoModeToggle />
             {error && (
               <Alert className="mb-4 border-red-200 bg-red-50">
                 <AlertDescription className="text-red-800">{error}</AlertDescription>
@@ -177,7 +179,7 @@ const Register = () => {
         </Card>
       </div>
       
-      <AuthModeToggle />
+      <DemoModeToggle />
     </div>
   );
 };

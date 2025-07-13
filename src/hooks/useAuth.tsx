@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
+import { useDemoMode } from '@/hooks/useDemoMode';
+import { DEMO_USER } from '@/lib/demoData';
 import { toast } from 'sonner';
 
 // Extend User interface to include user_metadata and app_metadata
@@ -43,8 +45,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<ExtendedUser | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { isDemoMode, getDemoSession, isLoggedInDemo } = useDemoMode();
 
   useEffect(() => {
+    // Check for demo mode first
+    if (isDemoMode) {
+      const demoSession = getDemoSession();
+      if (demoSession) {
+        setUser(DEMO_USER as ExtendedUser);
+        setSession({
+          user: DEMO_USER as User,
+          access_token: 'demo-token',
+          refresh_token: 'demo-refresh',
+          expires_in: 3600,
+          expires_at: Date.now() / 1000 + 3600,
+          token_type: 'bearer'
+        } as Session);
+      }
+      setIsLoading(false);
+      return;
+    }
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
@@ -69,7 +89,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     );
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [isDemoMode]); // Re-run when demo mode changes
 
   // Load user profile data from database
   const loadUserProfile = async (userId: string) => {
