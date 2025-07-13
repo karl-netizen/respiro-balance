@@ -19,6 +19,10 @@ const Onboarding = () => {
   };
 
   const handleDemoLogin = () => {
+    // Ensure demo mode is set before logging in
+    if (!isDemoMode) {
+      toggleDemoMode();
+    }
     loginDemo();
     navigate('/dashboard');
   };
