@@ -10,13 +10,13 @@ import { Link, Navigate } from 'react-router-dom';
 import SubscriptionPlanComparison from '@/components/subscription/SubscriptionPlanComparison';
 import SubscriptionFAQs from '@/components/subscription/SubscriptionFAQs';
 import CheckoutFlow from '@/components/subscription/CheckoutFlow';
-import { useSubscriptionContext } from '@/hooks/useSubscriptionContext';
+import { useSubscription } from '@/components/subscription/SubscriptionProvider';
 import { useNavigationHistory } from '@/context/NavigationHistoryProvider';
 import { toast } from 'sonner';
 
 const SubscriptionPage = () => {
   const { user, isLoading } = useAuth();
-  const { isPremium, tierName } = useSubscriptionContext();
+  const { isPremium } = useSubscription();
   const { canGoBack, goBack } = useNavigationHistory();
   const [showCheckout, setShowCheckout] = useState(false);
   

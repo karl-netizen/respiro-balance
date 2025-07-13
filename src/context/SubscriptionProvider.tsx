@@ -1,95 +1,36 @@
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+// This file is deprecated - using components/subscription/SubscriptionProvider.tsx instead
+// Keeping minimal export to prevent breaking changes
 
-// Define subscription data type
-interface SubscriptionData {
-  meditation_minutes_used: number;
-  meditation_minutes_limit: number;
-  subscription_period_end?: string;
-  sessions_used_weekly?: number;
-  sessions_limit_weekly?: number;
-}
+import React from 'react';
 
-interface SubscriptionContextType {
+// Mock context type for backward compatibility
+interface LegacySubscriptionContextType {
   isPremium: boolean;
   isSubscribed: boolean;
   tier: 'free' | 'premium' | 'premium-plus';
   tierName: string;
-  expiresAt: string | null;
-  minutesUsed: number;
-  minutesLimit: number;
-  sessionsUsedWeekly: number;
-  sessionsLimitWeekly: number;
-  hasExceededUsageLimit: boolean;
-  hasExceededSessionLimit: boolean;
-  updateUsage: (minutes: number) => void;
-  updateSessionUsage: (sessions: number) => void;
-  subscriptionData?: SubscriptionData;
-  startPremiumCheckout?: () => Promise<void>;
-  manageSubscription?: () => Promise<void>;
+  subscriptionData?: any;
 }
 
-const SubscriptionContext = createContext<SubscriptionContextType | undefined>(undefined);
-
-export const SubscriptionProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [minutesUsed, setMinutesUsed] = useState(0);
-  const [sessionsUsedWeekly, setSessionsUsedWeekly] = useState(2); // Mock current usage
-  
-  // Free tier limits
-  const minutesLimit = 60; // Free tier limit
-  const sessionsLimitWeekly = 3; // Free tier weekly session limit
-  
-  const updateUsage = (minutes: number) => {
-    setMinutesUsed(prev => prev + minutes);
-  };
-  
-  const updateSessionUsage = (sessions: number) => {
-    setSessionsUsedWeekly(prev => prev + sessions);
-  };
-  
-  const value: SubscriptionContextType = {
-    isPremium: false,
-    isSubscribed: false,
-    tier: 'free',
-    tierName: 'Free',
-    expiresAt: null,
-    minutesUsed,
-    minutesLimit,
-    sessionsUsedWeekly,
-    sessionsLimitWeekly,
-    hasExceededUsageLimit: minutesUsed >= minutesLimit,
-    hasExceededSessionLimit: sessionsUsedWeekly >= sessionsLimitWeekly,
-    updateUsage,
-    updateSessionUsage,
-    subscriptionData: {
-      meditation_minutes_used: minutesUsed,
-      meditation_minutes_limit: minutesLimit,
-      sessions_used_weekly: sessionsUsedWeekly,
-      sessions_limit_weekly: sessionsLimitWeekly
-    },
-    startPremiumCheckout: async () => {
-      console.log('Upgrading to premium subscription');
-      // This would be implemented with actual payment processing
-    },
-    manageSubscription: async () => {
-      console.log('Managing existing subscription');
-      // This would be implemented with actual subscription management
-    }
-  };
-  
-  return (
-    <SubscriptionContext.Provider value={value}>
-      {children}
-    </SubscriptionContext.Provider>
-  );
-};
-
-export const useSubscriptionContext = (): SubscriptionContextType => {
-  const context = useContext(SubscriptionContext);
-  if (context === undefined) {
-    throw new Error('useSubscriptionContext must be used within a SubscriptionProvider');
+const mockSubscriptionData: LegacySubscriptionContextType = {
+  isPremium: false,
+  isSubscribed: false,
+  tier: 'free',
+  tierName: 'Free',
+  subscriptionData: {
+    meditation_minutes_used: 0,
+    meditation_minutes_limit: 60
   }
-  return context;
 };
 
-export default SubscriptionContext;
+export const SubscriptionProvider = ({ children }: { children: React.ReactNode }) => {
+  return <>{children}</>;
+};
+
+export const useSubscriptionContext = (): LegacySubscriptionContextType => {
+  console.warn('useSubscriptionContext is deprecated. Use useSubscription from components/subscription/SubscriptionProvider instead');
+  return mockSubscriptionData;
+};
+
+export default { SubscriptionProvider, useSubscriptionContext };
