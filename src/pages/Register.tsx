@@ -64,7 +64,9 @@ const Register = () => {
           </CardHeader>
           
           <CardContent>
-            <DemoModeToggle />
+            <div className="mb-6">
+              <DemoModeToggle />
+            </div>
             {error && (
               <Alert className="mb-4 border-red-200 bg-red-50">
                 <AlertDescription className="text-red-800">{error}</AlertDescription>
