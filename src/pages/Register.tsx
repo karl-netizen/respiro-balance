@@ -9,6 +9,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { TouchFriendlyButton } from '@/components/responsive/TouchFriendlyButton';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
+import AuthModeToggle from '@/components/auth/AuthModeToggle';
 
 const Register = () => {
   const [fullName, setFullName] = useState('');
@@ -175,6 +176,8 @@ const Register = () => {
           </CardContent>
         </Card>
       </div>
+      
+      <AuthModeToggle />
     </div>
   );
 };
