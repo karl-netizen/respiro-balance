@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { signInWithEmail } from "@/lib/authActions";
 import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import AuthModeToggle from "@/components/auth/AuthModeToggle";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -142,6 +143,8 @@ const Login = () => {
           </div>
         </form>
       </div>
+      
+      <AuthModeToggle />
     </div>
   );
 };
