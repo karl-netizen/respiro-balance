@@ -41,6 +41,7 @@ import HelpPage from '@/pages/HelpPage';
 import ContactPage from '@/pages/ContactPage';
 import PrivacyPage from '@/pages/PrivacyPage';
 import TermsPage from '@/pages/TermsPage';
+import OnboardingPage from '@/pages/Onboarding';
 import { MobilePWASetup } from '@/components/mobile/MobilePWASetup';
 import { usePerformanceMonitoring } from '@/hooks/usePerformanceMonitoring';
 
@@ -78,6 +79,7 @@ function App() {
                         <Routes>
                           <Route path="/" element={<LandingPage />} />
                           <Route path="/landing" element={<LandingPage />} />
+                          <Route path="/onboarding" element={<OnboardingPage />} />
                           <Route path="/dashboard" element={<HomePage />} />
                           <Route path="/register" element={<RegisterPage />} />
                           <Route path="/login" element={<LoginPage />} />
