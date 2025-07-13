@@ -8,6 +8,16 @@
     <meta name="description" content="Respiro Balance helps you cultivate mindfulness and reduce stress through personalized meditation experiences tailored to your needs and schedule." />
     <meta name="author" content="Respiro Balance" />
 
+    <!-- Performance optimizations -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://api.dicebear.com">
+    <link rel="dns-prefetch" href="https://supabase.co">
+    
+    <!-- Critical resource hints -->
+    <link rel="preload" href="/src/index.css" as="style">
+    <link rel="modulepreload" href="/src/main.tsx">
+
     <meta property="og:title" content="Respiro Balance - Find Balance in Your Workday" />
     <meta property="og:description" content="Respiro Balance helps you cultivate mindfulness and reduce stress through personalized meditation experiences tailored to your needs and schedule." />
     <meta property="og:type" content="website" />
@@ -20,6 +30,22 @@
 
   <body>
     <div id="root"></div>
+    
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then(registration => {
+              console.log('SW registered: ', registration);
+            })
+            .catch(registrationError => {
+              console.log('SW registration failed: ', registrationError);
+            });
+        });
+      }
+    </script>
+    
     <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>

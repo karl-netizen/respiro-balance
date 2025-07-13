@@ -13,6 +13,7 @@ import { Toaster } from 'sonner';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import { LoadingMonitor } from '@/components/LoadingMonitor';
 import HomePage from '@/pages/HomePage';
 import LandingPage from '@/pages/LandingPage';
 import LoginPage from '@/pages/LoginPage';
@@ -72,8 +73,11 @@ function App() {
                       <div className="min-h-screen bg-background font-sans antialiased">
                       <Header />
                       
-                      {/* Mobile PWA Setup */}
-                      <MobilePWASetup />
+                       {/* Mobile PWA Setup */}
+                       <MobilePWASetup />
+                       
+                       {/* Loading Performance Monitor */}
+                       <LoadingMonitor />
                       
                       <main className="flex-1">
                         <Routes>

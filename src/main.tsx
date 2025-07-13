@@ -6,6 +6,17 @@ import './index.css'
 
 console.log('🚀 Starting Respiro Balance App...');
 
+// Performance monitoring
+const startTime = performance.now();
+
+// Error handling for missing assets
+window.addEventListener('error', (e) => {
+  if (e.filename && (e.filename.includes('.js') || e.filename.includes('.css'))) {
+    console.error('❌ Asset loading error:', e.filename);
+    // You could implement retry logic here
+  }
+});
+
 const rootElement = document.getElementById("root");
 
 if (!rootElement) {
@@ -22,6 +33,14 @@ if (!rootElement) {
       </React.StrictMode>
     );
     console.log('✅ App rendered successfully');
+    
+    // Log loading performance
+    const loadTime = performance.now() - startTime;
+    console.log(`✅ App loaded in ${Math.round(loadTime)}ms`);
+    
+    if (loadTime > 3000) {
+      console.warn('⚠️ Slow loading detected:', loadTime + 'ms');
+    }
   } catch (error) {
     console.error('❌ Error rendering app:', error);
     rootElement.innerHTML = '<div style="padding: 20px; text-align: center;"><h1>App Loading Error</h1><p>Failed to initialize app. Check console for details.</p></div>';
