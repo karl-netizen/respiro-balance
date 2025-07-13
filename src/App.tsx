@@ -29,7 +29,7 @@ import PremiumPlusPage from '@/pages/PremiumPlusPage';
 import SocialPage from '@/pages/SocialPage';
 import MeditateAdvanced from '@/pages/MeditateAdvanced';
 import PremiumProPage from '@/pages/PremiumProPage';
-import LibraryPage from '@/pages/LibraryPage';
+import UserJourneyTestingPage from '@/pages/UserJourneyTestingPage';
 import MeditationAudioManagement from '@/pages/MeditationAudioManagement';
 import MeditationSessionPage from '@/pages/MeditationSessionPage';
 import Breathe from '@/pages/Breathe';
@@ -95,7 +95,7 @@ function App() {
                           <Route path="/social" element={<SocialPage />} />
                           <Route path="/meditate-advanced" element={<MeditateAdvanced />} />
                           <Route path="/premium-pro" element={<PremiumProPage />} />
-                          <Route path="/library" element={<LibraryPage />} />
+                          <Route path="/testing" element={<UserJourneyTestingPage />} />
                           <Route path="/meditation/audio-management" element={<MeditationAudioManagement />} />
                           <Route path="/meditate/session/:sessionId" element={<MeditationSessionPage />} />
                           <Route path="/breathe" element={<Breathe />} />
