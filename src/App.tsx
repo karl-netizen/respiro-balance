@@ -45,6 +45,8 @@ import TermsPage from '@/pages/TermsPage';
 import OnboardingPage from '@/pages/Onboarding';
 import { MobilePWASetup } from '@/components/mobile/MobilePWASetup';
 import { usePerformanceMonitoring } from '@/hooks/usePerformanceMonitoring';
+import { useOnboarding } from '@/hooks/useOnboarding';
+import { useAuth } from '@/hooks/useAuth';
 
 // Global error handler for unhandled promise rejections
 window.addEventListener('unhandledrejection', (event) => {
@@ -63,58 +65,43 @@ function App() {
     }}>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <NotificationsProvider>
-            <FocusProvider>
-              <UserPreferencesProvider>
-                <SubscriptionProvider>
-                  <ThemeProvider defaultTheme="system" storageKey="respiro-ui-theme">
-                    <Router>
-                      <NavigationHistoryProvider>
-                      <div className="min-h-screen bg-background font-sans antialiased">
-                      <Header />
-                      
-                       {/* Mobile PWA Setup */}
-                       <MobilePWASetup />
-                       
-                       {/* Loading Performance Monitor */}
-                       <LoadingMonitor />
-                      
-                      <main className="flex-1">
-                        <Routes>
-                          <Route path="/" element={<LandingPage />} />
-                          <Route path="/landing" element={<LandingPage />} />
-                          <Route path="/onboarding" element={<OnboardingPage />} />
-                          <Route path="/dashboard" element={<HomePage />} />
-                          <Route path="/register" element={<RegisterPage />} />
-                          <Route path="/login" element={<LoginPage />} />
-                          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-                          <Route path="/reset-password" element={<ResetPasswordPage />} />
-                          <Route path="/profile" element={<ProfilePage />} />
-                          <Route path="/settings" element={<SettingsPage />} />
-                          <Route path="/system" element={<SystemDashboardPage />} />
-                          <Route path="/meditation" element={<Meditate />} />
-                          <Route path="/biofeedback" element={<BiofeedbackPage />} />
-                          <Route path="/subscription" element={<SubscriptionPage />} />
-                          <Route path="/premium-plus" element={<PremiumPlusPage />} />
-                          <Route path="/social" element={<SocialPage />} />
-                          <Route path="/meditate-advanced" element={<MeditateAdvanced />} />
-                          <Route path="/premium-pro" element={<PremiumProPage />} />
-                          <Route path="/testing" element={<UserJourneyTestingPage />} />
-                          <Route path="/meditation/audio-management" element={<MeditationAudioManagement />} />
-                          <Route path="/meditate/session/:sessionId" element={<MeditationSessionPage />} />
-                          <Route path="/breathe" element={<Breathe />} />
-                          <Route path="/morning-ritual" element={<MorningRitual />} />
-                          <Route path="/work-life-balance" element={<WorkLifeBalance />} />
-                          <Route path="/progress" element={<Progress />} />
-                          <Route path="/focus" element={<FocusPage />} />
-                          <Route path="/help" element={<HelpPage />} />
-                          <Route path="/contact" element={<ContactPage />} />
-                          <Route path="/privacy" element={<PrivacyPage />} />
-                          <Route path="/terms" element={<TermsPage />} />
-                        </Routes>
-                      </main>
-                      
-                      <Footer />
+          <AppContent />
+        </AuthProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
+  );
+}
+
+function AppContent() {
+  const { user, isLoading: authLoading } = useAuth();
+  const { hasCompletedOnboarding, isLoading: onboardingLoading } = useOnboarding();
+
+  // Show loading while checking auth and onboarding status
+  if (authLoading || (user && onboardingLoading)) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Redirect authenticated users to onboarding if not completed
+  if (user && !hasCompletedOnboarding) {
+    return (
+      <NotificationsProvider>
+        <FocusProvider>
+          <UserPreferencesProvider>
+            <SubscriptionProvider>
+              <ThemeProvider defaultTheme="system" storageKey="respiro-ui-theme">
+                <Router>
+                  <NavigationHistoryProvider>
+                    <div className="min-h-screen bg-background font-sans antialiased">
+                      <OnboardingPage />
+                      <MobilePWASetup />
+                      <LoadingMonitor />
                       <Toaster />
                     </div>
                   </NavigationHistoryProvider>
@@ -124,9 +111,71 @@ function App() {
           </UserPreferencesProvider>
         </FocusProvider>
       </NotificationsProvider>
-    </AuthProvider>
-      </QueryClientProvider>
-    </ErrorBoundary>
+    );
+  }
+
+  return (
+    <NotificationsProvider>
+      <FocusProvider>
+        <UserPreferencesProvider>
+          <SubscriptionProvider>
+            <ThemeProvider defaultTheme="system" storageKey="respiro-ui-theme">
+              <Router>
+                <NavigationHistoryProvider>
+                  <div className="min-h-screen bg-background font-sans antialiased">
+                    <Header />
+                    
+                    {/* Mobile PWA Setup */}
+                    <MobilePWASetup />
+                    
+                    {/* Loading Performance Monitor */}
+                    <LoadingMonitor />
+                    
+                    <main className="flex-1">
+                      <Routes>
+                        <Route path="/" element={<LandingPage />} />
+                        <Route path="/landing" element={<LandingPage />} />
+                        <Route path="/onboarding" element={<OnboardingPage />} />
+                        <Route path="/dashboard" element={<HomePage />} />
+                        <Route path="/register" element={<RegisterPage />} />
+                        <Route path="/login" element={<LoginPage />} />
+                        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                        <Route path="/reset-password" element={<ResetPasswordPage />} />
+                        <Route path="/profile" element={<ProfilePage />} />
+                        <Route path="/settings" element={<SettingsPage />} />
+                        <Route path="/system" element={<SystemDashboardPage />} />
+                        <Route path="/meditation" element={<Meditate />} />
+                        <Route path="/biofeedback" element={<BiofeedbackPage />} />
+                        <Route path="/subscription" element={<SubscriptionPage />} />
+                        <Route path="/premium-plus" element={<PremiumPlusPage />} />
+                        <Route path="/social" element={<SocialPage />} />
+                        <Route path="/meditate-advanced" element={<MeditateAdvanced />} />
+                        <Route path="/premium-pro" element={<PremiumProPage />} />
+                        <Route path="/testing" element={<UserJourneyTestingPage />} />
+                        <Route path="/meditation/audio-management" element={<MeditationAudioManagement />} />
+                        <Route path="/meditate/session/:sessionId" element={<MeditationSessionPage />} />
+                        <Route path="/breathe" element={<Breathe />} />
+                        <Route path="/morning-ritual" element={<MorningRitual />} />
+                        <Route path="/work-life-balance" element={<WorkLifeBalance />} />
+                        <Route path="/progress" element={<Progress />} />
+                        <Route path="/focus" element={<FocusPage />} />
+                        <Route path="/help" element={<HelpPage />} />
+                        <Route path="/contact" element={<ContactPage />} />
+                        <Route path="/privacy" element={<PrivacyPage />} />
+                        <Route path="/terms" element={<TermsPage />} />
+                      </Routes>
+                    </main>
+                    
+                    <Footer />
+                    <Toaster />
+                  </div>
+                </NavigationHistoryProvider>
+              </Router>
+            </ThemeProvider>
+          </SubscriptionProvider>
+        </UserPreferencesProvider>
+      </FocusProvider>
+    </NotificationsProvider>
   );
 }
 

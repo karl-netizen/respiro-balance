@@ -136,7 +136,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     toast.success('Signed in successfully');
   };
 
-  const signUp = async (email: string, password: string, options?: any) => {
+  const signUp = async (email: string, password: string, options?: any): Promise<void> => {
     const redirectUrl = options?.redirectTo || `${window.location.origin}/`;
     
     const { data, error } = await supabase.auth.signUp({
@@ -161,7 +161,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
 
     toast.success('Account created! Please check your email to verify.');
-    return data;
   };
 
   const signOut = async () => {
