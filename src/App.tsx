@@ -6,7 +6,7 @@ import { AuthProvider } from '@/hooks/useAuth.tsx';
 import { NotificationsProvider } from '@/context/NotificationsProvider';
 import { FocusProvider } from '@/context/FocusProvider';
 import { UserPreferencesProvider } from '@/context/UserPreferencesProvider';
-import { SubscriptionProvider } from '@/context/SubscriptionProvider';
+import { SubscriptionProvider } from '@/components/subscription/SubscriptionProvider';
 import { NavigationHistoryProvider } from '@/context/NavigationHistoryProvider';
 import { ThemeProvider } from 'next-themes';
 import { Toaster } from 'sonner';
