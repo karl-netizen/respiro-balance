@@ -20,8 +20,8 @@ const Hero = () => {
     if (user) {
       navigate('/dashboard');
     } else {
-      // Navigate to register for new users to start their journey
-      navigate('/register');
+      // Navigate to onboarding for new users to start their journey
+      navigate('/onboarding');
     }
   };
 
