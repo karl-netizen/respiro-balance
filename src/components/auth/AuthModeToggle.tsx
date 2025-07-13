@@ -20,7 +20,7 @@ const AuthModeToggle = () => {
   };
 
   return (
-    <Card className="fixed bottom-4 right-4 p-4 bg-background/90 backdrop-blur-sm border">
+    <Card className="fixed bottom-4 right-4 p-4 bg-background/90 backdrop-blur-sm border shadow-lg z-50">
       <div className="flex items-center gap-3">
         <div className="text-sm">
           <div className="font-medium">Auth Mode</div>
