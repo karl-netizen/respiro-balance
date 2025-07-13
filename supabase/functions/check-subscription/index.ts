@@ -41,6 +41,21 @@ serve(async (req) => {
     if (!user?.email) throw new Error("User not authenticated or email not available");
     logStep("User authenticated", { userId: user.id, email: user.email });
 
+    // Check if Stripe is configured
+    const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
+    if (!stripeKey) {
+      logStep("Stripe not configured, returning free tier");
+      // For demo users or when Stripe isn't configured, return free tier
+      return new Response(JSON.stringify({ 
+        subscribed: false, 
+        subscription_tier: 'free',
+        subscription_status: 'inactive'
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
+      });
+    }
+
     // Check for Stripe customer
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
     

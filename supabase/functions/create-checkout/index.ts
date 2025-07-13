@@ -23,7 +23,17 @@ serve(async (req) => {
     logStep("Function started");
 
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
-    if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
+    if (!stripeKey) {
+      logStep("Stripe not configured, redirecting to subscription page");
+      const origin = req.headers.get("origin") || "http://localhost:3000";
+      return new Response(JSON.stringify({ 
+        url: `${origin}/subscription?error=stripe-not-configured`,
+        message: "Payment processing not configured"
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
+      });
+    }
     logStep("Stripe key verified");
 
     // Create Supabase client using the service role key
