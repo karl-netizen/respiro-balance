@@ -2,7 +2,7 @@
 import { User } from '@supabase/supabase-js';
 
 export const DEMO_USER: any = {
-  id: 'demo-user-123',
+  id: '00000000-0000-0000-0000-000000000001',
   email: 'demo@respiro.app',
   full_name: 'Alex Demo',
   avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=demo&backgroundColor=b6e3f4',
@@ -18,7 +18,7 @@ export const DEMO_USER: any = {
 
 export const DEMO_USER_PREFERENCES = {
   id: 'demo-prefs-123',
-  user_id: 'demo-user-123',
+  user_id: '00000000-0000-0000-0000-000000000001',
   work_days: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
   work_start_time: '09:00',
   work_end_time: '17:30',
@@ -46,7 +46,7 @@ export const DEMO_USER_PREFERENCES = {
 export const DEMO_MEDITATION_SESSIONS = [
   {
     id: 'demo-session-1',
-    user_id: 'demo-user-123',
+    user_id: '00000000-0000-0000-0000-000000000001',
     title: 'Morning Clarity',
     session_type: 'guided',
     category: 'mindfulness',
@@ -63,7 +63,7 @@ export const DEMO_MEDITATION_SESSIONS = [
   },
   {
     id: 'demo-session-2',
-    user_id: 'demo-user-123',
+    user_id: '00000000-0000-0000-0000-000000000001',
     title: 'Stress Release',
     session_type: 'breathing',
     category: 'stress-relief',
@@ -80,7 +80,7 @@ export const DEMO_MEDITATION_SESSIONS = [
   },
   {
     id: 'demo-session-3',
-    user_id: 'demo-user-123',
+    user_id: '00000000-0000-0000-0000-000000000001',
     title: 'Deep Sleep Preparation',
     session_type: 'sleep',
     category: 'sleep',
@@ -100,7 +100,7 @@ export const DEMO_MEDITATION_SESSIONS = [
 export const DEMO_FOCUS_SESSIONS = [
   {
     id: 'demo-focus-1',
-    user_id: 'demo-user-123',
+    user_id: '00000000-0000-0000-0000-000000000001',
     start_time: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(), // 3 hours ago
     end_time: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
     duration: 3600, // 1 hour
@@ -114,7 +114,7 @@ export const DEMO_FOCUS_SESSIONS = [
   },
   {
     id: 'demo-focus-2',
-    user_id: 'demo-user-123',
+    user_id: '00000000-0000-0000-0000-000000000001',
     start_time: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // yesterday
     end_time: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000 + 1800 * 1000).toISOString(),
     duration: 1800, // 30 minutes
@@ -131,21 +131,21 @@ export const DEMO_FOCUS_SESSIONS = [
 export const DEMO_ACHIEVEMENTS = [
   {
     id: 'demo-achievement-1',
-    user_id: 'demo-user-123',
+    user_id: '00000000-0000-0000-0000-000000000001',
     achievement_key: 'first_meditation',
     progress: 100,
     unlocked_at: new Date(Date.now() - 40 * 24 * 60 * 60 * 1000).toISOString()
   },
   {
     id: 'demo-achievement-2',
-    user_id: 'demo-user-123',
+    user_id: '00000000-0000-0000-0000-000000000001',
     achievement_key: '7_day_streak',
     progress: 100,
     unlocked_at: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString()
   },
   {
     id: 'demo-achievement-3',
-    user_id: 'demo-user-123',
+    user_id: '00000000-0000-0000-0000-000000000001',
     achievement_key: '50_sessions',
     progress: 90,
     unlocked_at: null
@@ -154,7 +154,7 @@ export const DEMO_ACHIEVEMENTS = [
 
 export const DEMO_SOCIAL_PROFILE = {
   id: 'demo-social-123',
-  user_id: 'demo-user-123',
+  user_id: '00000000-0000-0000-0000-000000000001',
   display_name: 'Alex Demo',
   bio: 'Finding balance in a busy world 🧘‍♂️ Premium member since day one',
   avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=demo&backgroundColor=b6e3f4',
@@ -171,7 +171,7 @@ export const DEMO_SOCIAL_PROFILE = {
 
 export const DEMO_REWARDS = {
   id: 'demo-rewards-123',
-  user_id: 'demo-user-123',
+  user_id: '00000000-0000-0000-0000-000000000001',
   coin_balance: 450,
   total_coins_earned: 1250,
   total_coins_spent: 800,
@@ -189,7 +189,7 @@ export const DEMO_REWARDS = {
 export const DEMO_MORNING_RITUALS = [
   {
     id: 'demo-ritual-1',
-    user_id: 'demo-user-123',
+    user_id: '00000000-0000-0000-0000-000000000001',
     title: 'Morning Meditation',
     description: 'Start the day with 10 minutes of mindful breathing',
     start_time: '07:00',
@@ -206,7 +206,7 @@ export const DEMO_MORNING_RITUALS = [
   },
   {
     id: 'demo-ritual-2',
-    user_id: 'demo-user-123',
+    user_id: '00000000-0000-0000-0000-000000000001',
     title: 'Gratitude Journaling',
     description: 'Write down 3 things I\'m grateful for',
     start_time: '07:15',
@@ -226,7 +226,7 @@ export const DEMO_MORNING_RITUALS = [
 export const DEMO_BIOMETRIC_DATA = [
   {
     id: 'demo-bio-1',
-    user_id: 'demo-user-123',
+    user_id: '00000000-0000-0000-0000-000000000001',
     session_id: 'demo-session-1',
     recorded_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
     heart_rate: 68,
@@ -238,7 +238,7 @@ export const DEMO_BIOMETRIC_DATA = [
   },
   {
     id: 'demo-bio-2',
-    user_id: 'demo-user-123',
+    user_id: '00000000-0000-0000-0000-000000000001',
     session_id: 'demo-session-2',
     recorded_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
     heart_rate: 72,
