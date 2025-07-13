@@ -39,6 +39,20 @@ serve(async (req) => {
     
     const user = userData.user;
     if (!user?.email) throw new Error("User not authenticated or email not available");
+    
+    // Handle demo user - always return premium
+    if (user.id === '00000000-0000-0000-0000-000000000001') {
+      logStep("Demo user detected, returning premium subscription");
+      return new Response(JSON.stringify({ 
+        subscribed: true, 
+        subscription_tier: 'premium',
+        subscription_status: 'active'
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
+      });
+    }
+    
     logStep("User authenticated", { userId: user.id, email: user.email });
 
     // Check if Stripe is configured
