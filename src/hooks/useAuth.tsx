@@ -139,12 +139,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const signUp = async (email: string, password: string, options?: any) => {
     const redirectUrl = options?.redirectTo || `${window.location.origin}/`;
     
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         emailRedirectTo: redirectUrl,
-        ...options
+        data: {
+          full_name: options?.data?.full_name || ''
+        }
       }
     });
 
@@ -153,7 +155,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       throw error;
     }
 
+    // Wait briefly for trigger to complete
+    if (data.user) {
+      await new Promise(resolve => setTimeout(resolve, 500));
+    }
+
     toast.success('Account created! Please check your email to verify.');
+    return data;
   };
 
   const signOut = async () => {
