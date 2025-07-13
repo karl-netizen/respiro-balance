@@ -119,10 +119,8 @@ const ProfileAvatarUpload: React.FC<ProfileAvatarUploadProps> = ({
       {showUploadButton ? (
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className={`${sizeClasses[size]} rounded-full p-0 overflow-hidden hover:opacity-80 transition-opacity`}
+            <div
+              className={`${sizeClasses[size]} rounded-full cursor-pointer hover:opacity-80 transition-opacity`}
             >
               <Avatar className={`${sizeClasses[size]} border-2 border-background`}>
                 <AvatarImage src={displayAvatarUrl} alt="Profile picture" className="object-cover" />
@@ -130,7 +128,7 @@ const ProfileAvatarUpload: React.FC<ProfileAvatarUploadProps> = ({
                   {userInitials}
                 </AvatarFallback>
               </Avatar>
-            </Button>
+            </div>
           </DialogTrigger>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>

@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { MeditationSession } from '@/types/meditation'; 
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 import { toast } from 'sonner';
 

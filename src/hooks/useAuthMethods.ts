@@ -1,7 +1,7 @@
 
 import { NavigateFunction } from 'react-router-dom';
 import { toast } from 'sonner';
-import { isSupabaseConfigured } from '@/lib/supabase';
+import { isSupabaseConfigured } from '@/integrations/supabase/client';
 import { 
   signInWithEmail, 
   signUpWithEmail, 

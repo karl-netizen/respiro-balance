@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { Session, User } from '@supabase/supabase-js';
-import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { supabase, isSupabaseConfigured } from '@/integrations/supabase/client';
 import { DEMO_SESSION, DEMO_USER } from '@/lib/demoAuth';
 import { toast } from 'sonner';
 

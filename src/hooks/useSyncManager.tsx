@@ -2,7 +2,7 @@
 import { useEffect, useCallback, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserPreferences } from '@/context';
-import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { supabase, isSupabaseConfigured } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 export function useSyncManager() {

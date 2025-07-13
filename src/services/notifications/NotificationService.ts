@@ -1,6 +1,6 @@
 
 import { UserPreferences } from "@/context/types";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 
 export interface PushNotificationData {
   title: string;

@@ -1,5 +1,5 @@
 
-import { supabase, handleSupabaseError } from '@/lib/supabase';
+import { supabase, handleSupabaseError } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { NavigateFunction } from 'react-router-dom';
 

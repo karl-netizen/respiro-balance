@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { useUserPreferences } from '@/context';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import { 
   BreakReminder, 
   BreakType, 

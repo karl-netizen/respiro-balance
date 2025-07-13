@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { UserPreferencesData } from '@/types/supabase';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 
 interface UserData {
   preferences: UserPreferencesData;

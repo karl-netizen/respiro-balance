@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { UserPreferences } from '../types';
 import defaultPreferences from '../defaultPreferences';
-import { isSupabaseConfigured } from '@/lib/supabase';
+import { isSupabaseConfigured } from '@/integrations/supabase/client';
 import { useCleanupEffect } from '@/hooks/useCleanupEffect';
 
 export const usePreferencesSync = (

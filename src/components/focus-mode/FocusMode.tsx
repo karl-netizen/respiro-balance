@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FocusSession, FocusStats } from './types';
-import { supabase } from '../../lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '../../hooks/useAuth';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ProductivityMetrics } from './analytics/ProductivityMetrics';

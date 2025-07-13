@@ -1,6 +1,6 @@
 
 import { useCallback, useRef } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useBiometricData } from '@/hooks/useBiometricData';
 import { useSyncHandlers } from './useSyncHandlers';
