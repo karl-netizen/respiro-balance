@@ -3,13 +3,32 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Upload, Trash2, Download, Music, CloudUpload, FileAudio, Plus } from 'lucide-react';
+import { Upload, Trash2, Download, Music, CloudUpload, FileAudio, Plus, Search, Filter, Play } from 'lucide-react';
 import { uploadMeditationAudio, deleteMeditationAudio, fetchMeditationAudioFiles, getMeditationAudioUrl } from '@/lib/meditationAudioIntegration';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { AudioUpload } from '@/components/meditation/AudioUpload';
+import { EnhancedAudioPlayer } from '@/components/meditation/EnhancedAudioPlayer';
+import { useAudioUpload } from '@/hooks/useAudioUpload';
 
 interface AudioFile {
+  id: string;
+  meditation_content_id: string;
+  file_name: string;
+  file_path: string;
+  file_size: number;
+  file_type: string;
+  duration_seconds: number;
+  upload_status: string;
+  created_at: string;
+  meditation_content?: {
+    title: string;
+    description: string;
+  };
+}
+
+interface LegacyAudioFile {
   name: string;
   size: number;
   url: string;
@@ -18,50 +37,78 @@ interface AudioFile {
 
 const AudioFileManager: React.FC = () => {
   const [audioFiles, setAudioFiles] = useState<AudioFile[]>([]);
+  const [legacyFiles, setLegacyFiles] = useState<LegacyAudioFile[]>([]);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [dragActive, setDragActive] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterStatus, setFilterStatus] = useState<'all' | 'completed' | 'pending'>('all');
+  const [selectedContentId, setSelectedContentId] = useState<string>('');
+  const [showUploadForm, setShowUploadForm] = useState(false);
+  const { deleteAudio } = useAudioUpload();
 
   useEffect(() => {
     loadAudioFiles();
+    loadLegacyFiles();
   }, []);
 
   const loadAudioFiles = async () => {
     try {
-      const files = await fetchMeditationAudioFiles();
-      // Transform string[] to AudioFile[] with actual data
-      const audioFileObjects: AudioFile[] = files.map((filename) => ({
-        name: filename,
-        size: 0, // We'll fetch actual size later if needed
-        url: getMeditationAudioUrl(filename),
-        uploadedAt: new Date().toISOString()
-      }));
-      setAudioFiles(audioFileObjects);
+      const { data, error } = await supabase
+        .from('meditation_audio')
+        .select(`
+          *,
+          meditation_content (
+            title,
+            description
+          )
+        `)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setAudioFiles(data || []);
     } catch (error) {
       console.error('Error loading audio files:', error);
       toast.error('Failed to load audio files');
     }
   };
 
+  const loadLegacyFiles = async () => {
+    try {
+      const files = await fetchMeditationAudioFiles();
+      const audioFileObjects: LegacyAudioFile[] = files.map((filename) => ({
+        name: filename,
+        size: 0,
+        url: getMeditationAudioUrl(filename),
+        uploadedAt: new Date().toISOString()
+      }));
+      setLegacyFiles(audioFileObjects);
+    } catch (error) {
+      console.error('Error loading legacy audio files:', error);
+    }
+  };
+
   const handleCreateContent = async (audioFile: AudioFile) => {
     try {
-      const contentTitle = audioFile.name.replace(/\.[^/.]+$/, "").replace(/[_-]/g, " "); // Remove extension and replace _ - with spaces
+      const contentTitle = audioFile.file_name.replace(/\.[^/.]+$/, "").replace(/[_-]/g, " ");
       
       const { error } = await supabase
         .from('meditation_content')
         .insert({
           title: contentTitle,
-          description: `Meditation session created from uploaded audio: ${audioFile.name}`,
-          duration: 600, // Default 10 minutes, user can edit later
+          description: `Meditation session created from uploaded audio: ${audioFile.file_name}`,
+          duration: audioFile.duration_seconds || 600,
           category: 'Mindfulness',
           difficulty_level: 'beginner',
           subscription_tier: 'free',
-          audio_file_url: audioFile.url,
-          audio_file_path: audioFile.name,
+          audio_file_path: audioFile.file_path,
           instructor: 'Custom Content',
           tags: ['custom', 'uploaded'],
           is_featured: false,
-          is_active: true
+          is_active: true,
+          has_audio: true,
+          audio_duration: audioFile.duration_seconds,
+          audio_file_size: audioFile.file_size
         });
 
       if (error) {
@@ -70,11 +117,34 @@ const AudioFileManager: React.FC = () => {
         return;
       }
 
+      // Update the audio record to link it to the content
+      const { error: updateError } = await supabase
+        .from('meditation_audio')
+        .update({ meditation_content_id: audioFile.id })
+        .eq('id', audioFile.id);
+
+      if (updateError) {
+        console.error('Error linking audio to content:', updateError);
+      }
+
       toast.success(`Created meditation content: "${contentTitle}"`);
       toast.info('Your content is now available in the meditation library!');
+      await loadAudioFiles();
     } catch (error) {
       console.error('Error creating content:', error);
       toast.error('Failed to create meditation content');
+    }
+  };
+
+  const handleDeleteAudioFile = async (audioFile: AudioFile) => {
+    try {
+      const success = await deleteAudio(audioFile.id, audioFile.file_path);
+      if (success) {
+        await loadAudioFiles();
+      }
+    } catch (error) {
+      console.error('Delete failed:', error);
+      toast.error('Delete failed. Please try again.');
     }
   };
 
@@ -217,9 +287,9 @@ const AudioFileManager: React.FC = () => {
                   <h3 className="text-lg font-medium">
                     {dragActive ? 'Drop your audio file here' : 'Drag & drop audio files'}
                   </h3>
-                  <p className="text-sm text-muted-foreground">
-                    Supports MP3, WAV, M4A, OGG formats (max 50MB)
-                  </p>
+                   <p className="text-sm text-muted-foreground">
+                     Supports MP3, WAV, MP4, M4A, AAC formats (max 100MB)
+                   </p>
                 </div>
                 <div className="flex items-center gap-4">
                   <span className="text-sm text-muted-foreground">or</span>
@@ -281,54 +351,120 @@ const AudioFileManager: React.FC = () => {
               </p>
             </div>
           ) : (
+            <div>
+              {/* Search and Filter Controls */}
+              <div className="flex gap-4 mb-4">
+              <div className="flex-1">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search audio files..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+              <Button
+                variant="outline"
+                onClick={() => setShowUploadForm(!showUploadForm)}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                New Upload
+              </Button>
+            </div>
+
+            {/* Upload Form */}
+            {showUploadForm && (
+              <div className="mb-6">
+                <AudioUpload
+                  meditationContentId="temp-id"
+                  onUploadComplete={(data) => {
+                    setShowUploadForm(false);
+                    loadAudioFiles();
+                    toast.success('Audio uploaded successfully!');
+                  }}
+                />
+              </div>
+            )}
+
             <div className="space-y-3">
-              {audioFiles.map((file) => (
-                <div key={file.name} className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/30 transition-colors">
-                  <div className="flex items-center gap-3 flex-1">
-                    <div className="rounded-lg bg-primary/10 p-2">
-                      <FileAudio className="h-5 w-5 text-primary" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-medium text-sm truncate">{file.name}</h4>
-                      <div className="flex items-center gap-4 mt-1 text-xs text-muted-foreground">
-                        <Badge variant="secondary" className="text-xs">
-                          Audio File
-                        </Badge>
-                        <span>Uploaded {formatDate(file.uploadedAt)}</span>
+              {audioFiles
+                .filter(file => 
+                  !searchTerm || 
+                  file.file_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                  file.meditation_content?.title?.toLowerCase().includes(searchTerm.toLowerCase())
+                )
+                .filter(file => 
+                  filterStatus === 'all' || file.upload_status === filterStatus
+                )
+                .map((file) => (
+                <div key={file.id} className="p-4 border rounded-lg hover:bg-muted/30 transition-colors space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3 flex-1">
+                      <div className="rounded-lg bg-primary/10 p-2">
+                        <FileAudio className="h-5 w-5 text-primary" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-medium text-sm truncate">{file.file_name}</h4>
+                        <div className="flex items-center gap-4 mt-1 text-xs text-muted-foreground">
+                          <Badge 
+                            variant={file.upload_status === 'completed' ? 'default' : 'secondary'} 
+                            className="text-xs"
+                          >
+                            {file.file_type.toUpperCase()} • {file.upload_status}
+                          </Badge>
+                          <span>{formatFileSize(file.file_size)}</span>
+                          {file.duration_seconds && (
+                            <span>{Math.floor(file.duration_seconds / 60)}:{(file.duration_seconds % 60).toString().padStart(2, '0')}</span>
+                          )}
+                          <span>Uploaded {formatDate(file.created_at)}</span>
+                        </div>
+                        {file.meditation_content && (
+                          <p className="text-xs text-primary mt-1">
+                            Linked to: {file.meditation_content.title}
+                          </p>
+                        )}
                       </div>
                     </div>
+                    <div className="flex items-center space-x-2">
+                      {!file.meditation_content && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleCreateContent(file)}
+                          className="text-primary hover:text-primary"
+                          title="Create meditation content from this audio"
+                        >
+                          <Plus className="h-4 w-4 mr-1" />
+                          Create Content
+                        </Button>
+                      )}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleDeleteAudioFile(file)}
+                        className="text-destructive hover:text-destructive"
+                        title="Delete file"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleCreateContent(file)}
-                      className="text-primary hover:text-primary"
-                      title="Create meditation content from this audio"
-                    >
-                      <Plus className="h-4 w-4 mr-1" />
-                      Create Content
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => window.open(file.url, '_blank')}
-                      title="Download file"
-                    >
-                      <Download className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDeleteFile(file.name)}
-                      className="text-destructive hover:text-destructive"
-                      title="Delete file"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
+
+                  {/* Audio Player */}
+                  {file.upload_status === 'completed' && (
+                    <EnhancedAudioPlayer
+                      audioPath={file.file_path}
+                      title={file.file_name}
+                      duration={file.duration_seconds}
+                      showDownload={true}
+                      className="mt-3"
+                    />
+                  )}
                 </div>
               ))}
+            </div>
             </div>
           )}
         </CardContent>

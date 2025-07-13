@@ -425,10 +425,69 @@ export type Database = {
           },
         ]
       }
+      meditation_audio: {
+        Row: {
+          bitrate: number | null
+          created_at: string | null
+          duration_seconds: number | null
+          file_name: string
+          file_path: string
+          file_size: number
+          file_type: string
+          id: string
+          meditation_content_id: string | null
+          sample_rate: number | null
+          updated_at: string | null
+          upload_status: string | null
+          uploaded_by: string | null
+        }
+        Insert: {
+          bitrate?: number | null
+          created_at?: string | null
+          duration_seconds?: number | null
+          file_name: string
+          file_path: string
+          file_size: number
+          file_type: string
+          id?: string
+          meditation_content_id?: string | null
+          sample_rate?: number | null
+          updated_at?: string | null
+          upload_status?: string | null
+          uploaded_by?: string | null
+        }
+        Update: {
+          bitrate?: number | null
+          created_at?: string | null
+          duration_seconds?: number | null
+          file_name?: string
+          file_path?: string
+          file_size?: number
+          file_type?: string
+          id?: string
+          meditation_content_id?: string | null
+          sample_rate?: number | null
+          updated_at?: string | null
+          upload_status?: string | null
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meditation_audio_meditation_content_id_fkey"
+            columns: ["meditation_content_id"]
+            isOneToOne: false
+            referencedRelation: "meditation_content"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       meditation_content: {
         Row: {
+          audio_duration: number | null
           audio_file_path: string | null
+          audio_file_size: number | null
           audio_file_url: string | null
+          audio_quality: string | null
           average_rating: number | null
           background_music_type: string | null
           category: string
@@ -436,6 +495,7 @@ export type Database = {
           description: string | null
           difficulty_level: string | null
           duration: number
+          has_audio: boolean | null
           id: string
           instructor: string | null
           is_active: boolean | null
@@ -449,8 +509,11 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          audio_duration?: number | null
           audio_file_path?: string | null
+          audio_file_size?: number | null
           audio_file_url?: string | null
+          audio_quality?: string | null
           average_rating?: number | null
           background_music_type?: string | null
           category: string
@@ -458,6 +521,7 @@ export type Database = {
           description?: string | null
           difficulty_level?: string | null
           duration: number
+          has_audio?: boolean | null
           id?: string
           instructor?: string | null
           is_active?: boolean | null
@@ -471,8 +535,11 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          audio_duration?: number | null
           audio_file_path?: string | null
+          audio_file_size?: number | null
           audio_file_url?: string | null
+          audio_quality?: string | null
           average_rating?: number | null
           background_music_type?: string | null
           category?: string
@@ -480,6 +547,7 @@ export type Database = {
           description?: string | null
           difficulty_level?: string | null
           duration?: number
+          has_audio?: boolean | null
           id?: string
           instructor?: string | null
           is_active?: boolean | null
