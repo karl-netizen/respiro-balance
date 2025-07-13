@@ -53,7 +53,7 @@ const SimpleHeader = () => {
             <Link to="/login">Sign In</Link>
           </Button>
           <Button asChild>
-            <Link to="/register">Get Started</Link>
+            <Link to="/onboarding">Get Started</Link>
           </Button>
         </div>
 
@@ -93,7 +93,7 @@ const SimpleHeader = () => {
                 </Link>
               </Button>
               <Button className="w-full" asChild>
-                <Link to="/register" onClick={() => setMobileMenuOpen(false)}>
+                <Link to="/onboarding" onClick={() => setMobileMenuOpen(false)}>
                   Get Started
                 </Link>
               </Button>
