@@ -31,6 +31,69 @@ export const fetchMeditationAudioFiles = async (): Promise<string[]> => {
   }
 };
 
+// Enhanced audio loading function with validation and URL fixing
+export const loadMeditationAudio = async () => {
+  try {
+    // First, get the audio file records from database
+    const { data: audioRecords, error: dbError } = await supabase
+      .from('meditation_audio')
+      .select('*, meditation_content(title, description)')
+      .order('created_at', { ascending: false });
+    
+    if (dbError) throw dbError;
+    
+    // Import validation utilities
+    const { validateAndFixAudioUrl, getValidAudioUrl } = await import('@/utils/audioValidation');
+    
+    // Then, validate and fix audio URLs
+    const validatedAudio = await Promise.all(
+      (audioRecords || []).map(async (record) => {
+        if (!record.file_path && !record.audio_file_url) {
+          console.warn('No audio path or URL for record:', record.id);
+          return { ...record, audio_url: null, loadError: 'No audio path' };
+        }
+        
+        // Use file_path or audio_file_url
+        const audioUrl = record.audio_file_url || record.file_path;
+        
+        // Try to validate the existing URL
+        const validUrl = validateAndFixAudioUrl(audioUrl);
+        
+        if (!validUrl && record.file_path) {
+          // If URL is invalid, try to regenerate it from storage
+          const fileName = record.file_path.split('/').pop() || record.file_path;
+          const newUrl = await getValidAudioUrl(supabase, 'meditation-audio', fileName);
+          
+          return {
+            ...record,
+            audio_url: newUrl,
+            loadError: newUrl ? null : 'Cannot generate valid URL'
+          };
+        }
+        
+        return { 
+          ...record, 
+          audio_url: validUrl || audioUrl,
+          loadError: validUrl ? null : 'Invalid URL format'
+        };
+      })
+    );
+    
+    // Cache successful results
+    localStorage.setItem('cached_audio_files', JSON.stringify(validatedAudio));
+    return validatedAudio;
+    
+  } catch (error) {
+    console.error('Error loading meditation audio:', error);
+    // Try to load cached data as fallback
+    const cached = localStorage.getItem('cached_audio_files');
+    if (cached) {
+      return JSON.parse(cached);
+    }
+    throw error;
+  }
+};
+
 export const loadAudioFiles = async () => {
   try {
     // First, check if we're online
@@ -39,18 +102,7 @@ export const loadAudioFiles = async () => {
       return loadCachedAudioFiles();
     }
 
-    // Try to fetch from Supabase
-    const { data: audioFiles, error } = await supabase
-      .from('meditation_audio')
-      .select('*, meditation_content(title, description)')
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('Database query failed:', error);
-      return loadFallbackAudioFiles();
-    }
-
-    return audioFiles || [];
+    return await loadMeditationAudio();
   } catch (networkError) {
     console.error('Network error loading audio:', networkError);
     return loadFallbackAudioFiles();

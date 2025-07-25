@@ -9,7 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { AudioUpload } from '@/components/meditation/AudioUpload';
-import { EnhancedAudioPlayer } from '@/components/meditation/EnhancedAudioPlayer';
+import { RobustAudioPlayer } from '@/components/meditation/RobustAudioPlayer';
 import { useAudioUpload } from '@/hooks/useAudioUpload';
 
 interface AudioFile {
@@ -59,47 +59,16 @@ const AudioFileManager: React.FC = () => {
       setLoading(true);
       setError(null);
 
-      // Check if we're online first
-      if (!navigator.onLine) {
-        console.log('Offline - loading cached audio files');
-        const cached = localStorage.getItem('cached_audio_files');
-        if (cached) {
-          setAudioFiles(JSON.parse(cached));
-        } else {
-          setError('You are offline and no cached files are available.');
-        }
-        return;
-      }
-
-      const { data, error } = await supabase
-        .from('meditation_audio')
-        .select(`
-          *,
-          meditation_content (
-            title,
-            description
-          )
-        `)
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error('Database query failed:', error);
-        setError('Failed to load audio files from database. Please check your connection.');
-        // Try to load cached data as fallback
-        const cached = localStorage.getItem('cached_audio_files');
-        if (cached) {
-          setAudioFiles(JSON.parse(cached));
-          toast.info('Showing cached audio files (offline mode)');
-        }
-        return;
-      }
-
-      setAudioFiles(data || []);
-      // Cache the successful result
-      localStorage.setItem('cached_audio_files', JSON.stringify(data || []));
+      // Use the enhanced audio loading function
+      const { loadMeditationAudio } = await import('@/lib/meditationAudioIntegration');
+      const audioData = await loadMeditationAudio();
+      
+      setAudioFiles(audioData || []);
+      setError(null);
     } catch (networkError) {
       console.error('Network error loading audio files:', networkError);
       setError('Network error. Please check your connection and try again.');
+      
       // Try to load cached data as fallback
       const cached = localStorage.getItem('cached_audio_files');
       if (cached) {
@@ -513,10 +482,13 @@ const AudioFileManager: React.FC = () => {
 
                   {/* Audio Player */}
                   {file.upload_status === 'completed' && (
-                    <EnhancedAudioPlayer
-                      audioPath={file.file_path}
-                      title={file.file_name}
-                      duration={file.duration_seconds}
+                    <RobustAudioPlayer
+                      audioFile={{
+                        id: file.id,
+                        file_name: file.file_name,
+                        audio_url: file.file_path,
+                        title: file.meditation_content?.title || file.file_name
+                      }}
                       showDownload={true}
                       className="mt-3"
                     />
