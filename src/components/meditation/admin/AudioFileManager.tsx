@@ -45,6 +45,8 @@ const AudioFileManager: React.FC = () => {
   const [filterStatus, setFilterStatus] = useState<'all' | 'completed' | 'pending'>('all');
   const [selectedContentId, setSelectedContentId] = useState<string>('');
   const [showUploadForm, setShowUploadForm] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { deleteAudio } = useAudioUpload();
 
   useEffect(() => {
@@ -54,6 +56,21 @@ const AudioFileManager: React.FC = () => {
 
   const loadAudioFiles = async () => {
     try {
+      setLoading(true);
+      setError(null);
+
+      // Check if we're online first
+      if (!navigator.onLine) {
+        console.log('Offline - loading cached audio files');
+        const cached = localStorage.getItem('cached_audio_files');
+        if (cached) {
+          setAudioFiles(JSON.parse(cached));
+        } else {
+          setError('You are offline and no cached files are available.');
+        }
+        return;
+      }
+
       const { data, error } = await supabase
         .from('meditation_audio')
         .select(`
@@ -65,11 +82,32 @@ const AudioFileManager: React.FC = () => {
         `)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Database query failed:', error);
+        setError('Failed to load audio files from database. Please check your connection.');
+        // Try to load cached data as fallback
+        const cached = localStorage.getItem('cached_audio_files');
+        if (cached) {
+          setAudioFiles(JSON.parse(cached));
+          toast.info('Showing cached audio files (offline mode)');
+        }
+        return;
+      }
+
       setAudioFiles(data || []);
-    } catch (error) {
-      console.error('Error loading audio files:', error);
-      toast.error('Failed to load audio files');
+      // Cache the successful result
+      localStorage.setItem('cached_audio_files', JSON.stringify(data || []));
+    } catch (networkError) {
+      console.error('Network error loading audio files:', networkError);
+      setError('Network error. Please check your connection and try again.');
+      // Try to load cached data as fallback
+      const cached = localStorage.getItem('cached_audio_files');
+      if (cached) {
+        setAudioFiles(JSON.parse(cached));
+        toast.info('Showing cached audio files (offline mode)');
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -340,7 +378,28 @@ const AudioFileManager: React.FC = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {audioFiles.length === 0 ? (
+          {loading ? (
+            <div className="text-center py-8">
+              <div className="rounded-full bg-muted p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                <FileAudio className="h-8 w-8 text-muted-foreground animate-pulse" />
+              </div>
+              <p className="text-muted-foreground">Loading audio files...</p>
+            </div>
+          ) : error ? (
+            <div className="text-center py-8">
+              <div className="rounded-full bg-destructive/10 p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                <FileAudio className="h-8 w-8 text-destructive" />
+              </div>
+              <p className="text-destructive mb-2">{error}</p>
+              <Button 
+                variant="outline" 
+                onClick={loadAudioFiles}
+                className="mt-2"
+              >
+                Try Again
+              </Button>
+            </div>
+          ) : audioFiles.length === 0 ? (
             <div className="text-center py-8">
               <div className="rounded-full bg-muted p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
                 <FileAudio className="h-8 w-8 text-muted-foreground" />

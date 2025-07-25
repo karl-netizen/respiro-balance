@@ -10,11 +10,18 @@ class ServiceWorkerManager {
     }
 
     try {
-      this.serviceWorkerRegistration = await navigator.serviceWorker.register('/service-worker.js');
+      this.serviceWorkerRegistration = await navigator.serviceWorker.register('/sw.js');
       console.log('Service Worker registered successfully');
+      
+      // Add error handling for fetch events
+      this.serviceWorkerRegistration.addEventListener('updatefound', () => {
+        console.log('SW update found');
+      });
+      
       return this.serviceWorkerRegistration;
     } catch (error) {
       console.error('Service Worker registration failed:', error);
+      // Continue without SW if registration fails
       return null;
     }
   }

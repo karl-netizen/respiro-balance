@@ -43,6 +43,25 @@ self.addEventListener('fetch', (event) => {
   // Skip non-http(s) requests
   if (!event.request.url.startsWith('http')) return;
   
+  // Handle Supabase requests with proper error handling
+  if (event.request.url.includes('supabase.co')) {
+    event.respondWith(
+      fetch(event.request)
+        .catch(error => {
+          console.log('SW fetch failed, passing to network:', error);
+          // Return a proper response instead of throwing
+          return new Response(
+            JSON.stringify({ error: 'Network unavailable' }),
+            { 
+              status: 503,
+              headers: { 'Content-Type': 'application/json' }
+            }
+          );
+        })
+    );
+    return;
+  }
+  
   event.respondWith(
     caches.match(event.request)
       .then(response => {
