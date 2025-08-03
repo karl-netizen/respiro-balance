@@ -112,6 +112,28 @@ export const uploadMeditationAudio = async (file: File, fileName: string): Promi
       .from(BUCKET_NAME)
       .getPublicUrl(data.path);
     
+    console.log('Creating database record...');
+    
+    // Create database record so the file appears in the list
+    const { error: dbError } = await supabase
+      .from('meditation_audio')
+      .insert({
+        file_name: file.name,
+        file_path: data.path,
+        file_size: file.size,
+        file_type: file.type,
+        upload_status: 'completed',
+        user_id: (await supabase.auth.getUser()).data.user?.id || null,
+        uploaded_by: (await supabase.auth.getUser()).data.user?.id || null
+      });
+
+    if (dbError) {
+      console.error('Database record creation failed:', dbError);
+      toast.warning('File uploaded but may not appear in list. Try refreshing the page.');
+    } else {
+      console.log('Database record created successfully');
+    }
+    
     console.log('Upload complete:', publicUrlData.publicUrl);
     toast.success('Audio file uploaded successfully');
     return publicUrlData.publicUrl;
