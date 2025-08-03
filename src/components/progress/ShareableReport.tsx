@@ -18,7 +18,8 @@ const ShareableReport = () => {
     exportAsPDF, 
     exportAsImage, 
     printReport, 
-    shareReport 
+    shareReport,
+    isExporting
   } = useReportExport(meditationStats);
   
   const userName = user?.user_metadata?.full_name || "Respiro User";
@@ -93,6 +94,7 @@ const ShareableReport = () => {
                 onExportImage={exportAsImage}
                 onPrint={printReport}
                 onShare={shareReport}
+                isExporting={isExporting}
               />
             </TabsContent>
             
@@ -116,14 +118,23 @@ const ShareableReport = () => {
         </CardContent>
       </Card>
       
-      {/* Hidden report content for export */}
-      <div className="hidden">
-        <div ref={contentRef} className="bg-white" style={{ width: '800px' }}>
-          <ReportContent 
-            meditationStats={meditationStats} 
-            userName={userName}
-          />
-        </div>
+      {/* Export content container - positioned off-screen but renderable */}
+      <div 
+        ref={contentRef} 
+        className="bg-white shadow-lg rounded-lg"
+        style={{ 
+          display: 'none',
+          width: '800px',
+          minHeight: '600px',
+          padding: '0',
+          margin: '0',
+          boxSizing: 'border-box'
+        }}
+      >
+        <ReportContent 
+          meditationStats={meditationStats} 
+          userName={userName}
+        />
       </div>
     </div>
   );

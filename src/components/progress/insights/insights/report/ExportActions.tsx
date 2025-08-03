@@ -9,13 +9,15 @@ interface ExportActionsProps {
   onExportImage: () => Promise<void>;
   onPrint: () => Promise<void>;
   onShare: () => Promise<void>;
+  isExporting?: boolean;
 }
 
 const ExportActions: React.FC<ExportActionsProps> = ({
   onExportPDF,
   onExportImage,
   onPrint,
-  onShare
+  onShare,
+  isExporting = false
 }) => {
   const handleAction = (action: () => Promise<void>, actionName: string) => {
     toast.info(`Preparing ${actionName}...`);
@@ -35,32 +37,36 @@ const ExportActions: React.FC<ExportActionsProps> = ({
           variant="outline" 
           className="flex flex-col items-center justify-center h-24 gap-2 hover:bg-primary/5"
           onClick={() => handleAction(onExportPDF, "PDF Export")}
+          disabled={isExporting}
         >
-          <FileText className="h-8 w-8 text-primary/80" />
+          <FileText className={`h-8 w-8 ${isExporting ? 'text-muted-foreground animate-pulse' : 'text-primary/80'}`} />
           <span className="text-xs font-medium">PDF</span>
         </Button>
         <Button 
           variant="outline"
           className="flex flex-col items-center justify-center h-24 gap-2 hover:bg-primary/5"
           onClick={() => handleAction(onExportImage, "Image Export")}
+          disabled={isExporting}
         >
-          <Download className="h-8 w-8 text-primary/80" />
+          <Download className={`h-8 w-8 ${isExporting ? 'text-muted-foreground animate-pulse' : 'text-primary/80'}`} />
           <span className="text-xs font-medium">Image</span>
         </Button>
         <Button 
           variant="outline"
           className="flex flex-col items-center justify-center h-24 gap-2 hover:bg-primary/5"
           onClick={() => handleAction(onPrint, "Print")}
+          disabled={isExporting}
         >
-          <Printer className="h-8 w-8 text-primary/80" />
+          <Printer className={`h-8 w-8 ${isExporting ? 'text-muted-foreground animate-pulse' : 'text-primary/80'}`} />
           <span className="text-xs font-medium">Print</span>
         </Button>
         <Button 
           variant="outline"
           className="flex flex-col items-center justify-center h-24 gap-2 hover:bg-primary/5"
           onClick={() => handleAction(onShare, "Share")}
+          disabled={isExporting}
         >
-          <Share2 className="h-8 w-8 text-primary/80" />
+          <Share2 className={`h-8 w-8 ${isExporting ? 'text-muted-foreground animate-pulse' : 'text-primary/80'}`} />
           <span className="text-xs font-medium">Share</span>
         </Button>
       </div>
