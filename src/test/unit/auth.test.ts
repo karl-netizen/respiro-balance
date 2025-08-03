@@ -19,7 +19,16 @@ vi.mock('@/integrations/supabase/client', () => ({
   }
 }))
 
+const mockAuth = {
+  signInWithPassword: vi.fn(),
+  signUp: vi.fn(), 
+  getSession: vi.fn(),
+  resetPasswordForEmail: vi.fn(),
+  signOut: vi.fn()
+}
+
 const mockSupabase = vi.mocked(supabase)
+mockSupabase.auth = mockAuth as any
 
 describe('Authentication Flow', () => {
   beforeEach(() => {
@@ -49,10 +58,10 @@ describe('Authentication Flow', () => {
         error: null
       }
 
-      mockSupabase.auth.signInWithPassword.mockResolvedValue(mockAuthResponse as any)
+      mockAuth.signInWithPassword.mockResolvedValue(mockAuthResponse as any)
 
       // Act
-      const signInResult = await mockSupabase.auth.signInWithPassword({
+      const signInResult = await mockAuth.signInWithPassword({
         email: 'test@example.com',
         password: 'password123'
       })
