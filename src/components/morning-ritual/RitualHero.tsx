@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useUserPreferences } from "@/context";
 import { Sun, Clock, Calendar, Info } from "lucide-react";
 import { useTimeAwareness } from "@/hooks/useTimeAwareness";
-import { useDeviceDetection } from "@/hooks/useDeviceDetection";
+import { useDeviceDetection } from '@/hooks/core/useDeviceDetection';
 import { cn } from "@/lib/utils";
 
 const RitualHero = () => {

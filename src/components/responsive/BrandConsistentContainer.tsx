@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useDeviceDetection } from '@/hooks/useDeviceDetection';
+import { useDeviceDetection } from '@/hooks/core/useDeviceDetection';
 
 interface BrandConsistentContainerProps {
   children: React.ReactNode;

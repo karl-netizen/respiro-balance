@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { useDeviceDetection } from '@/hooks/useDeviceDetection';
+import { useDeviceDetection } from '@/hooks/core/useDeviceDetection';
 
 interface MobileOptimizedCardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;

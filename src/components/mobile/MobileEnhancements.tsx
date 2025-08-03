@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { useDeviceDetection } from '@/hooks/useDeviceDetection';
+import { useDeviceDetection } from '@/hooks/core/useDeviceDetection';
 
 interface TouchOptimizedProps {
   children: React.ReactNode;

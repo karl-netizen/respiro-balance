@@ -2,7 +2,7 @@
 import * as React from "react"
 import * as LabelPrimitive from "@radix-ui/react-label"
 import { cva, type VariantProps } from "class-variance-authority"
-import { useDeviceDetection } from "@/hooks/useDeviceDetection"
+import { useDeviceDetection } from '@/hooks/core/useDeviceDetection';
 
 import { cn } from "@/lib/utils"
 

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { MeditationSession } from '@/types/meditation';
 import { useOfflineStorage } from './OfflineStorageProvider';
 import { MobilePlayerLayout } from '../player/components/MobilePlayerLayout';
-import { useDeviceDetection } from '@/hooks/useDeviceDetection';
+import { useDeviceDetection } from '@/hooks/core/useDeviceDetection';
 import { useMobileAudio } from '../hooks/useMobileAudio';
 import { Card, CardContent } from '@/components/ui/card';
 import { Wifi, WifiOff, Download } from 'lucide-react';

@@ -1,7 +1,7 @@
 
 import * as React from "react"
 import { cn } from "@/lib/utils"
-import { useDeviceDetection } from "@/hooks/useDeviceDetection"
+import { useDeviceDetection } from '@/hooks/core/useDeviceDetection';
 
 interface MobileFormProps extends React.FormHTMLAttributes<HTMLFormElement> {
   children: React.ReactNode;

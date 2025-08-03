@@ -5,7 +5,7 @@ import SessionCompletionDialog from './SessionCompletionDialog';
 import { useEnhancedSessionPlayer } from './hooks/useEnhancedSessionPlayer';
 import { useMobileGestures } from './hooks/useMobileGestures';
 import { EnhancedPlayerCore } from './enhanced-player/EnhancedPlayerCore';
-import { useDeviceDetection } from '@/hooks/useDeviceDetection';
+import { useDeviceDetection } from '@/hooks/core/useDeviceDetection';
 
 interface EnhancedSessionPlayerProps {
   session: MeditationSession;

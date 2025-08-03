@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useDeviceDetection } from '@/hooks/useDeviceDetection';
+import { useDeviceDetection } from '@/hooks/core/useDeviceDetection';
 import MobileMenu from '@/components/header/MobileMenu';
 import DesktopNav from '@/components/header/DesktopNav';
 import { TouchFriendlyButton } from './TouchFriendlyButton';

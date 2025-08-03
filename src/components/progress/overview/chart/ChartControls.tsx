@@ -2,7 +2,7 @@
 import React from 'react';
 import { TouchFriendlyButton } from "@/components/responsive/TouchFriendlyButton";
 import { Calendar } from "lucide-react";
-import { useDeviceDetection } from "@/hooks/useDeviceDetection";
+import { useDeviceDetection } from '@/hooks/core/useDeviceDetection';
 
 interface ChartControlsProps {
   view: 'daily' | 'weekly';

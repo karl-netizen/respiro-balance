@@ -1,7 +1,7 @@
 import React from 'react';
 import { useMobileAudio } from '../hooks/useMobileAudio';
 import { MobilePlayerLayout } from '../player/components/MobilePlayerLayout';
-import { useDeviceDetection } from '@/hooks/useDeviceDetection';
+import { useDeviceDetection } from '@/hooks/core/useDeviceDetection';
 import LoadingState from './components/LoadingState';
 import ErrorState from './components/ErrorState';
 import PlayerControls from './components/PlayerControls';

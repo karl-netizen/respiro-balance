@@ -1,5 +1,5 @@
 
-import { useDeviceDetection } from "@/hooks/useDeviceDetection";
+import { useDeviceDetection } from '@/hooks/core/useDeviceDetection';
 
 export const useChartConfiguration = () => {
   const { deviceType } = useDeviceDetection();

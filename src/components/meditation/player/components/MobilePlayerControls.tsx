@@ -3,7 +3,7 @@ import React from 'react';
 import { TouchFriendlyButton } from '@/components/responsive/TouchFriendlyButton';
 import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX } from 'lucide-react';
 import { Slider } from '@/components/ui/slider';
-import { useDeviceDetection } from '@/hooks/useDeviceDetection';
+import { useDeviceDetection } from '@/hooks/core/useDeviceDetection';
 
 interface MobilePlayerControlsProps {
   isPlaying: boolean;

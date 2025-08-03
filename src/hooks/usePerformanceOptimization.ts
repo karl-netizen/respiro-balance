@@ -1,6 +1,6 @@
 
 import { useEffect, useState, useCallback, useMemo } from 'react';
-import { useDeviceDetection } from './useDeviceDetection';
+import { useDeviceDetection } from '@/hooks/core/useDeviceDetection';
 
 interface PerformanceMetrics {
   networkSpeed: 'slow' | 'medium' | 'fast';

@@ -2,7 +2,7 @@
 import React from 'react';
 import { MobileSkeleton } from '../mobile-skeleton';
 import { Card, CardContent, CardHeader } from '../card';
-import { useDeviceDetection } from '@/hooks/useDeviceDetection';
+import { useDeviceDetection } from '@/hooks/core/useDeviceDetection';
 
 interface LoadingVariantProps {
   itemCount?: number;

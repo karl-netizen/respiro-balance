@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { MobileLoadingState } from '@/components/ui/mobile-loading-states';
-import { useDeviceDetection } from '@/hooks/useDeviceDetection';
+import { useDeviceDetection } from '@/hooks/core/useDeviceDetection';
 
 const LoadingState: React.FC = () => {
   const { deviceType } = useDeviceDetection();

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Loader2 } from 'lucide-react';
-import { useDeviceDetection } from '@/hooks/useDeviceDetection';
+import { useDeviceDetection } from '@/hooks/core/useDeviceDetection';
 
 interface ProgressiveLoadingProps {
   title?: string;

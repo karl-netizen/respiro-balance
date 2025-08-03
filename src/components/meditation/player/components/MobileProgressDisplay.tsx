@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Slider } from '@/components/ui/slider';
-import { useDeviceDetection } from '@/hooks/useDeviceDetection';
+import { useDeviceDetection } from '@/hooks/core/useDeviceDetection';
 
 interface MobileProgressDisplayProps {
   currentTime: number;

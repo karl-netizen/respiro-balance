@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { MobilePlayerControls } from './MobilePlayerControls';
 import { MobileProgressDisplay } from './MobileProgressDisplay';
-import { useDeviceDetection } from '@/hooks/useDeviceDetection';
+import { useDeviceDetection } from '@/hooks/core/useDeviceDetection';
 
 interface MobilePlayerLayoutProps {
   title: string;

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useDeviceDetection } from './useDeviceDetection';
+import { useDeviceDetection } from '@/hooks/core/useDeviceDetection';
 
 declare global {
   interface Window {

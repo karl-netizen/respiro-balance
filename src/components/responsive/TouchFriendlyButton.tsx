@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Button, ButtonProps } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useMobileFeatures } from '@/hooks/useMobileFeatures';
-import { useDeviceDetection } from '@/hooks/useDeviceDetection';
+import { useDeviceDetection } from '@/hooks/core/useDeviceDetection';
 
 interface TouchFriendlyButtonProps extends ButtonProps {
   hapticFeedback?: boolean;

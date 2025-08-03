@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { ChartSection, StatsSection } from './monthly';
 import { MeditationStats } from '../types/meditationStats';
-import { useDeviceDetection } from '@/hooks/useDeviceDetection';
+import { useDeviceDetection } from '@/hooks/core/useDeviceDetection';
 
 interface MonthlyTrendsSectionProps {
   meditationStats: MeditationStats;

@@ -1,7 +1,7 @@
 
 import * as React from "react"
 import { cn } from "@/lib/utils"
-import { useDeviceDetection } from "@/hooks/useDeviceDetection"
+import { useDeviceDetection } from '@/hooks/core/useDeviceDetection';
 
 export interface TextareaProps
   extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {

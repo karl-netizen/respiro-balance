@@ -3,7 +3,7 @@ import React, { Component, ReactNode } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TouchFriendlyButton } from '@/components/responsive/TouchFriendlyButton';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
-import { useDeviceDetection } from '@/hooks/useDeviceDetection';
+import { useDeviceDetection } from '@/hooks/core/useDeviceDetection';
 
 interface ErrorBoundaryState {
   hasError: boolean;
