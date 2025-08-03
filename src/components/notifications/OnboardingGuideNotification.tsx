@@ -52,21 +52,21 @@ const OnboardingGuideNotification: React.FC<OnboardingGuideNotificationProps> = 
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto border-2 border-primary/20 shadow-lg">
+    <Card className="w-full h-full md:max-w-2xl md:mx-auto border-2 border-primary/20 shadow-lg">
       <CardHeader className="bg-gradient-to-r from-primary/10 to-blue-50 border-b">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-primary/20 rounded-full">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            <div className="p-2 bg-primary/20 rounded-full flex-shrink-0">
               <BookOpen className="h-5 w-5 text-primary" />
             </div>
-            <div>
-              <CardTitle className="text-xl text-primary">Getting Started Guide</CardTitle>
-              <p className="text-sm text-muted-foreground mt-1">
+            <div className="min-w-0 flex-1">
+              <CardTitle className="text-lg md:text-xl text-primary">Getting Started Guide</CardTitle>
+              <p className="text-xs md:text-sm text-muted-foreground mt-1">
                 Welcome to Respiro Balance! Here's how to begin your wellness journey
               </p>
             </div>
           </div>
-          <Badge variant="secondary" className="bg-primary/10 text-primary">
+          <Badge variant="secondary" className="bg-primary/10 text-primary flex-shrink-0 self-start md:self-center">
             {overallProgress}% Complete
           </Badge>
         </div>
@@ -80,7 +80,7 @@ const OnboardingGuideNotification: React.FC<OnboardingGuideNotificationProps> = 
         </div>
       </CardHeader>
 
-      <CardContent className="p-0 max-h-96 overflow-y-auto">
+      <CardContent className="p-0 flex-1 overflow-y-auto">
         {sections.map((section) => {
           const sectionProgress = getSectionProgress(section);
           const isCurrentPhase = section.id === progress.currentPhase;
@@ -88,30 +88,32 @@ const OnboardingGuideNotification: React.FC<OnboardingGuideNotificationProps> = 
           return (
             <div key={section.id} className="border-b last:border-b-0">
               <div
-                className={`p-4 cursor-pointer hover:bg-muted/50 transition-colors ${
+                className={`p-3 md:p-4 cursor-pointer hover:bg-muted/50 transition-colors ${
                   isCurrentPhase ? 'bg-primary/5' : ''
                 }`}
                 onClick={() => toggleSection(section.id)}
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    {section.expanded ? (
-                      <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                    ) : (
-                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                    )}
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-semibold">{section.title}</h3>
+                <div className="flex items-start md:items-center justify-between gap-2">
+                  <div className="flex items-start md:items-center gap-2 md:gap-3 min-w-0 flex-1">
+                    <div className="flex-shrink-0 mt-0.5 md:mt-0">
+                      {section.expanded ? (
+                        <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                      ) : (
+                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2">
+                        <h3 className="font-semibold text-sm md:text-base">{section.title}</h3>
                         {isCurrentPhase && (
-                          <Star className="h-4 w-4 text-yellow-500 fill-current" />
+                          <Star className="h-3 w-3 md:h-4 md:w-4 text-yellow-500 fill-current flex-shrink-0" />
                         )}
                       </div>
-                      <p className="text-sm text-muted-foreground">{section.description}</p>
+                      <p className="text-xs md:text-sm text-muted-foreground mt-1">{section.description}</p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <Badge variant={sectionProgress === 100 ? "default" : "secondary"}>
+                  <div className="flex-shrink-0">
+                    <Badge variant={sectionProgress === 100 ? "default" : "secondary"} className="text-xs">
                       {sectionProgress}%
                     </Badge>
                   </div>
@@ -119,37 +121,39 @@ const OnboardingGuideNotification: React.FC<OnboardingGuideNotificationProps> = 
               </div>
 
               {section.expanded && (
-                <div className="px-4 pb-4">
+                <div className="px-3 md:px-4 pb-3 md:pb-4">
                   {section.steps.map((step, index) => {
                     const completed = isStepCompleted(step.id);
                     
                     return (
                       <div
                         key={step.id}
-                        className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${
+                        className={`flex flex-col md:flex-row md:items-center gap-2 md:gap-3 p-2 md:p-3 rounded-lg transition-colors ${
                           completed ? 'bg-green-50' : 'bg-gray-50'
                         } mb-2 last:mb-0`}
                       >
-                        <div className="flex-shrink-0">
-                          {completed ? (
-                            <CheckCircle2 className="h-5 w-5 text-green-600" />
-                          ) : (
-                            <Circle className="h-5 w-5 text-muted-foreground" />
-                          )}
-                        </div>
-                        
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <span className="text-xs font-medium text-muted-foreground">
-                              {index + 1}.
-                            </span>
-                            <h4 className={`font-medium ${completed ? 'text-green-800' : ''}`}>
-                              {step.title}
-                            </h4>
+                        <div className="flex items-start md:items-center gap-2 md:gap-3 flex-1 min-w-0">
+                          <div className="flex-shrink-0 mt-0.5 md:mt-0">
+                            {completed ? (
+                              <CheckCircle2 className="h-4 w-4 md:h-5 md:w-5 text-green-600" />
+                            ) : (
+                              <Circle className="h-4 w-4 md:h-5 md:w-5 text-muted-foreground" />
+                            )}
                           </div>
-                          <p className="text-sm text-muted-foreground mt-1">
-                            {step.description}
-                          </p>
+                          
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs font-medium text-muted-foreground flex-shrink-0">
+                                {index + 1}.
+                              </span>
+                              <h4 className={`font-medium text-sm md:text-base ${completed ? 'text-green-800' : ''}`}>
+                                {step.title}
+                              </h4>
+                            </div>
+                            <p className="text-xs md:text-sm text-muted-foreground mt-1">
+                              {step.description}
+                            </p>
+                          </div>
                         </div>
                         
                         {!completed && step.actionUrl && (
@@ -157,9 +161,9 @@ const OnboardingGuideNotification: React.FC<OnboardingGuideNotificationProps> = 
                             size="sm"
                             variant="outline"
                             onClick={() => handleStepAction(step.id, step.actionUrl)}
-                            className="flex-shrink-0"
+                            className="flex-shrink-0 w-full md:w-auto mt-2 md:mt-0"
                           >
-                            {step.actionText}
+                            <span className="text-xs">{step.actionText}</span>
                             <ArrowRight className="h-3 w-3 ml-1" />
                           </Button>
                         )}

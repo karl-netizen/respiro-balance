@@ -75,14 +75,14 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
 
   if (showOnboardingGuide) {
     return (
-      <div className="absolute right-0 xl:-right-32 top-full mt-2 w-96 sm:w-[500px] lg:w-[600px] max-w-[90vw] bg-white dark:bg-gray-800 border rounded-lg shadow-lg z-[100]">
-        <div className="flex items-center justify-between p-4 border-b">
+      <div className="fixed inset-0 md:absolute md:right-0 md:xl:-right-32 md:top-full md:mt-2 md:inset-auto w-full h-full md:w-96 md:sm:w-[500px] md:lg:w-[600px] md:max-w-[90vw] md:h-auto bg-white dark:bg-gray-800 md:border md:rounded-lg md:shadow-lg z-[9999] md:z-[100] overflow-hidden">
+        <div className="flex items-center justify-between p-4 border-b bg-white dark:bg-gray-800 sticky top-0">
           <h3 className="font-semibold">Getting Started Guide</h3>
           <Button variant="ghost" size="sm" onClick={handleCloseOnboardingGuide}>
             <X className="h-4 w-4" />
           </Button>
         </div>
-        <div className="p-4 max-h-[80vh] overflow-y-auto">
+        <div className="p-4 h-full md:max-h-[80vh] overflow-y-auto">
           <OnboardingGuideNotification onClose={handleCloseOnboardingGuide} />
         </div>
       </div>
@@ -90,7 +90,7 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
   }
 
   return (
-    <div className="absolute right-0 top-full mt-2 w-80 bg-white dark:bg-gray-800 border rounded-lg shadow-lg z-[100]">
+    <div className="fixed inset-x-4 top-16 md:absolute md:right-0 md:top-full md:mt-2 md:inset-x-auto w-auto md:w-80 bg-white dark:bg-gray-800 border rounded-lg shadow-lg z-[100]">
       <div className="flex items-center justify-between p-4 border-b">
         <h3 className="font-semibold">Notifications</h3>
         <div className="flex items-center gap-2">
