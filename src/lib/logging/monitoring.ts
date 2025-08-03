@@ -79,12 +79,12 @@ class MonitoringService {
     switch (entry.entryType) {
       case 'navigation':
         const navEntry = entry as PerformanceNavigationTiming;
-        logger.performance('Page Load', navEntry.loadEventEnd - navEntry.navigationStart, {
+        logger.performance('Page Load', navEntry.loadEventEnd - navEntry.fetchStart, {
           component: 'PagePerformance',
           feature: 'navigation',
           page: this.currentPage,
-          domContentLoaded: navEntry.domContentLoadedEventEnd - navEntry.navigationStart,
-          firstByte: navEntry.responseStart - navEntry.navigationStart
+          domContentLoaded: navEntry.domContentLoadedEventEnd - navEntry.fetchStart,
+          firstByte: navEntry.responseStart - navEntry.fetchStart
         });
         break;
 

@@ -6,12 +6,7 @@
 export * from './core';
 
 // Domain-specific types
-export * from './meditation';
-export * from './focus';
-export * from './biofeedback';
-export * from './auth';
-export * from './progress';
-export * from './social';
+export type { MeditationSession } from './meditation';
 
 // UI and component types
 export * from './ui';

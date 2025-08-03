@@ -194,7 +194,7 @@ export function measureRender(componentName: string) {
     });
 
     MeasuredComponent.displayName = `Measured(${componentName})`;
-    return MeasuredComponent as T;
+    return MeasuredComponent as unknown as T;
   };
 }
 
