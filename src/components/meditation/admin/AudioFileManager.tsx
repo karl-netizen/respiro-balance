@@ -225,7 +225,9 @@ const AudioFileManager: React.FC = () => {
   const handleDragIn = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setDragActive(true);
+    if (e.dataTransfer.items && e.dataTransfer.items.length > 0) {
+      setDragActive(true);
+    }
   }, []);
 
   const handleDragOut = useCallback((e: React.DragEvent) => {
@@ -239,15 +241,29 @@ const AudioFileManager: React.FC = () => {
     e.stopPropagation();
     setDragActive(false);
 
+    if (uploading) {
+      toast.error('Please wait for current upload to complete');
+      return;
+    }
+
     const files = Array.from(e.dataTransfer.files);
+    console.log('Files dropped:', files.length, files.map(f => f.name));
+    
+    if (files.length === 0) {
+      toast.error('No files detected');
+      return;
+    }
+
     const audioFile = files.find(file => file.type.startsWith('audio/'));
     
     if (audioFile) {
+      console.log('Processing dropped audio file:', audioFile.name, audioFile.type);
       await handleFileUpload(audioFile);
     } else {
-      toast.error('Please drop an audio file');
+      console.log('No audio files found in drop. File types:', files.map(f => f.type));
+      toast.error('Please drop an audio file (MP3, WAV, M4A, etc.)');
     }
-  }, []);
+  }, [uploading]);
 
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return '0 Bytes';
