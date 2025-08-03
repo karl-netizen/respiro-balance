@@ -43,6 +43,7 @@ import ContactPage from '@/pages/ContactPage';
 import PrivacyPage from '@/pages/PrivacyPage';
 import TermsPage from '@/pages/TermsPage';
 import OnboardingPage from '@/pages/Onboarding';
+import SimpleAuthPage from '@/pages/SimpleAuthPage';
 import { MobilePWASetup } from '@/components/mobile/MobilePWASetup';
 import { usePerformanceMonitoring } from '@/hooks/usePerformanceMonitoring';
 import { useOnboarding } from '@/hooks/useOnboarding';
@@ -139,6 +140,7 @@ function AppContent() {
                         <Route path="/dashboard" element={<HomePage />} />
                         <Route path="/register" element={<RegisterPage />} />
                         <Route path="/login" element={<LoginPage />} />
+                        <Route path="/auth" element={user ? <HomePage /> : <SimpleAuthPage />} />
                         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                         <Route path="/reset-password" element={<ResetPasswordPage />} />
                         <Route path="/profile" element={<ProfilePage />} />
