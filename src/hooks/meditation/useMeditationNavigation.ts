@@ -50,6 +50,8 @@ export const useMeditationNavigation = () => {
 
   const handleStartMeditation = useCallback((session: MeditationSession) => {
     setDialogOpen(false);
+    // Scroll to top before navigation to ensure player is visible
+    window.scrollTo({ top: 0, behavior: 'auto' });
     navigate(`/meditate/session/${session.id}`);
   }, [navigate]);
 

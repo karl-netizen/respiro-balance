@@ -36,6 +36,11 @@ const MeditationSessionPage = () => {
   
   const audioRef = React.useRef<HTMLAudioElement>(null);
 
+  // Auto-scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }, []);
+
   useEffect(() => {
     if (sessionId) {
       fetchMeditationContent();
