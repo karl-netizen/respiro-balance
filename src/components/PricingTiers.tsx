@@ -118,15 +118,17 @@ const PricingTiers = () => {
             </CardHeader>
             <CardContent className="flex-1">
               <ul className="space-y-2">
-                <PricingFeature included={false}>3 Beginner Sessions Only</PricingFeature>
-                <PricingFeature included={false}>1 session per day (max 7/week)</PricingFeature>
-                <PricingFeature included={false}>5-10 minute sessions only</PricingFeature>
-                <PricingFeature included={false}>Box Breathing only</PricingFeature>
-                <PricingFeature included={false}>Weekly streak count only</PricingFeature>
+                <PricingFeature included={true}>3 Beginner Sessions Only</PricingFeature>
+                <PricingFeature included={true}>1 session per day (max 7/week)</PricingFeature>
+                <PricingFeature included={true}>5-10 minute sessions only</PricingFeature>
+                <PricingFeature included={true}>Box Breathing only</PricingFeature>
+                <PricingFeature included={true}>Weekly streak count only</PricingFeature>
+                <PricingFeature included={true}>1 sleep story</PricingFeature>
                 <PricingFeature included={false}>No mood tracking</PricingFeature>
                 <PricingFeature included={false}>30-60 second ads between sessions</PricingFeature>
                 <PricingFeature included={false}>Internet required for all content</PricingFeature>
                 <PricingFeature included={false}>Single device only</PricingFeature>
+                <PricingFeature included={false}>No focus tools</PricingFeature>
               </ul>
             </CardContent>
             <CardFooter>

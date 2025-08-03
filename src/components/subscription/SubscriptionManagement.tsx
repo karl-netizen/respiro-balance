@@ -49,15 +49,17 @@ export const SubscriptionManagement: React.FC<SubscriptionManagementProps> = ({
       price: 0,
       interval: 'month',
       features: [
-        '3 Beginner Sessions Only',
-        '1 session per day (max 7/week)',
-        '5-10 minute sessions only',
-        'Box Breathing only',
-        'Weekly streak count only',
-        'No mood tracking',
-        '30-60 second ads between sessions',
-        'Internet required for all content',
-        'Single device only'
+        '✓ 3 Beginner Sessions Only',
+        '✓ 1 session per day (max 7/week)',
+        '✓ 5-10 minute sessions only',
+        '✓ Box Breathing only',
+        '✓ Weekly streak count only',
+        '✓ 1 sleep story',
+        '✗ No mood tracking',
+        '✗ 30-60 second ads between sessions',
+        '✗ Internet required for all content',
+        '✗ Single device only',
+        '✗ No focus tools'
       ],
       current: currentTier === 'free'
     },
@@ -68,16 +70,17 @@ export const SubscriptionManagement: React.FC<SubscriptionManagementProps> = ({
       interval: 'month',
       discountPercent: 32,
       features: [
-        '20 Sessions',
-        '5 sessions per day',
-        '5-30 minute sessions',
-        '3 Proven Patterns + Guided Instructions',
-        'Monthly insights + basic charts',
-        'Daily mood check-ins',
-        'Completely ad-free experience',
-        'Download up to 5 sessions',
-        'Sync across 3 devices',
-        '5 sleep stories + nature sounds'
+        '✓ 20 Sessions',
+        '✓ 5 sessions per day',
+        '✓ 5-30 minute sessions',
+        '✓ 3 Proven Patterns + Guided Instructions',
+        '✓ Monthly insights + basic charts',
+        '✓ Daily mood check-ins',
+        '✓ Completely ad-free experience',
+        '✓ Download up to 5 sessions',
+        '✓ Sync across 3 devices',
+        '✓ 5 sleep stories + nature sounds',
+        '✓ Community forum + email (72h response)'
       ],
       current: currentTier === 'premium'
     },
@@ -89,15 +92,17 @@ export const SubscriptionManagement: React.FC<SubscriptionManagementProps> = ({
       discountPercent: 35,
       features: [
         'Everything in Premium, plus:',
-        '50 Sessions',
-        'Unlimited daily sessions',
-        '5-60 minute sessions',
-        'All Patterns + Custom Timing',
-        'Advanced wellness tracking + trends',
-        'Mood + sleep + energy tracking',
-        'Heart rate + stress monitoring',
-        'Download up to 20 sessions',
-        '15 sleep stories + sleep courses'
+        '✓ 50 Sessions',
+        '✓ Unlimited daily sessions',
+        '✓ 5-60 minute sessions',
+        '✓ All Patterns + Custom Timing',
+        '✓ Advanced wellness tracking + trends',
+        '✓ Mood + sleep + energy tracking',
+        '✓ Heart rate + stress monitoring',
+        '✓ Download up to 20 sessions',
+        '✓ 15 sleep stories + sleep courses',
+        '✓ Share with 1 family member',
+        '✓ Priority email support (24h response)'
       ],
       current: currentTier === 'premium-pro',
       popular: true
@@ -110,15 +115,17 @@ export const SubscriptionManagement: React.FC<SubscriptionManagementProps> = ({
       discountPercent: 40,
       features: [
         'Everything in Premium Pro, plus:',
-        '100+ Sessions + Smart Playlists',
-        'Unlimited + Session recommendations',
-        'Any length + favorite session bookmarks',
-        'All Patterns + Advanced Customization',
-        'Comprehensive dashboard + smart insights',
-        'Full wellness pattern analysis',
-        'Heart rate + stress + HRV coaching',
-        'Download entire library',
-        'Family plan for up to 6 members'
+        '✓ 100+ Sessions + Smart Playlists',
+        '✓ Unlimited + Session recommendations',
+        '✓ Any length + favorite session bookmarks',
+        '✓ All Patterns + Advanced Customization',
+        '✓ Comprehensive dashboard + smart insights',
+        '✓ Full wellness pattern analysis',
+        '✓ Heart rate + stress + HRV coaching',
+        '✓ Download entire library',
+        '✓ Unlimited devices + web access',
+        '✓ Family plan for up to 6 members',
+        '✓ Priority support + dedicated success manager'
       ],
       current: currentTier === 'premium-plus'
     }
