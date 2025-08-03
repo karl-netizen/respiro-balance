@@ -1,7 +1,9 @@
 
 import React from 'react'
 import { createRoot } from 'react-dom/client'
+import { QueryClientProvider } from '@tanstack/react-query'
 import App from './App.tsx'
+import { queryClient } from './lib/queryClient'
 import './index.css'
 
 // Initialize environment validation and security
@@ -60,7 +62,9 @@ if (!rootElement) {
     const root = createRoot(rootElement);
     root.render(
       <React.StrictMode>
-        <App />
+        <QueryClientProvider client={queryClient}>
+          <App />
+        </QueryClientProvider>
       </React.StrictMode>
     );
     console.log('✅ App rendered successfully');

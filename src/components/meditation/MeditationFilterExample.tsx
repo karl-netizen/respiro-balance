@@ -28,7 +28,9 @@ const MeditationFilterExample = () => {
           <MeditationSessionCard 
             key={session.id} 
             session={session}
-            onPlay={() => handlePlay(session)}
+            onSelectSession={handlePlay}
+            onToggleFavorite={() => {}} // Add empty handler or implement favorites
+            isFavorite={false} // Add proper favorite state
           />
         ))}
       </div>

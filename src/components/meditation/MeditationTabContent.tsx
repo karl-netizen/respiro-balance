@@ -26,7 +26,9 @@ const MeditationTabContent: React.FC<MeditationTabContentProps> = ({
           <MeditationSessionCard 
             key={session.id}
             session={session}
-            onPlay={() => onSelectSession(session)}
+            onSelectSession={onSelectSession}
+            onToggleFavorite={onToggleFavorite}
+            isFavorite={isFavorite(session.id)}
           />
         ))}
       </div>

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { memo } from 'react';
 import { MeditationSession } from '@/types/meditation';
 import MeditationSessionList from './MeditationSessionList';
 
@@ -10,24 +10,14 @@ export interface GuidedMeditationListProps {
   onToggleFavorite: (session: MeditationSession) => void;
 }
 
-const GuidedMeditationList: React.FC<GuidedMeditationListProps> = ({
+const GuidedMeditationList = memo<GuidedMeditationListProps>(({
   sessions,
   onSelectSession,
   isFavorite,
   onToggleFavorite
 }) => {
-  console.log('🎬 GuidedMeditationList received sessions:', sessions.length);
-  console.log('🎬 Session categories:', sessions.map(s => s.category));
-  
-  // REMOVE THIS BROKEN FILTERING - sessions are already correctly filtered!
-  // const guidedMeditations = sessions.filter(
-  //   (session) => session.category === 'guided'
-  // );
-  
-  // Use sessions directly since they're already filtered by category mapping
+  // Use sessions directly since they're already filtered
   const guidedMeditations = sessions;
-  
-  console.log('🎬 Final guided meditations to render:', guidedMeditations.length);
 
   if (guidedMeditations.length === 0) {
     return (
@@ -47,6 +37,8 @@ const GuidedMeditationList: React.FC<GuidedMeditationListProps> = ({
       />
     </div>
   );
-};
+});
+
+GuidedMeditationList.displayName = 'GuidedMeditationList';
 
 export default GuidedMeditationList;

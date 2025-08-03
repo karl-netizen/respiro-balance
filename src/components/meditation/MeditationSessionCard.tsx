@@ -1,30 +1,43 @@
 
-import React from 'react';
+import React, { memo, useCallback, useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Clock, User, Download, Check } from 'lucide-react';
+import { Clock, User, Download, Check, Heart, Play } from 'lucide-react';
 import { MeditationSession } from '@/types/meditation';
 import { useOfflineStorageSafe } from '@/hooks/useOfflineStorageSafe';
 import { DownloadProgressIndicator } from './offline/DownloadProgressIndicator';
 
 interface MeditationSessionCardProps {
   session: MeditationSession;
-  onPlay: () => void;
+  onSelectSession: (session: MeditationSession) => void;
+  onToggleFavorite: (session: MeditationSession) => void;
+  isFavorite: boolean;
   className?: string;
 }
 
-const MeditationSessionCard: React.FC<MeditationSessionCardProps> = ({
+const MeditationSessionCard = memo<MeditationSessionCardProps>(({
   session,
-  onPlay,
+  onSelectSession,
+  onToggleFavorite,
+  isFavorite,
   className = ""
 }) => {
   const { isSessionDownloaded, downloadSession, isAvailable } = useOfflineStorageSafe();
-  const [isDownloaded, setIsDownloaded] = React.useState(false);
-  const [isDownloading, setIsDownloading] = React.useState(false);
-  const [downloadProgress, setDownloadProgress] = React.useState(0);
+  const [isDownloaded, setIsDownloaded] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadProgress, setDownloadProgress] = useState(0);
 
-  React.useEffect(() => {
+  const handlePlay = useCallback(() => {
+    onSelectSession(session);
+  }, [session, onSelectSession]);
+
+  const handleFavorite = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    onToggleFavorite(session);
+  }, [session, onToggleFavorite]);
+
+  useEffect(() => {
     if (isAvailable) {
       checkDownloadStatus();
     }
@@ -77,14 +90,41 @@ const MeditationSessionCard: React.FC<MeditationSessionCardProps> = ({
   const showDownloadButton = isAvailable && !isDownloaded && !isDownloading && session.audio_url;
 
   return (
-    <Card className={`hover:shadow-lg transition-all duration-300 ${className}`}>
+    <Card 
+      className={`group cursor-pointer hover:shadow-lg transition-all duration-300 hover:shadow-primary/20 ${className}`}
+      onClick={handlePlay}
+    >
       <CardContent className="p-4">
+        {session.image_url && (
+          <div className="relative mb-3 overflow-hidden rounded-lg">
+            <img 
+              src={session.image_url} 
+              alt={session.title}
+              className="w-full h-32 object-cover transition-transform duration-200 group-hover:scale-105"
+              loading="lazy"
+            />
+            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+              <Play className="w-8 h-8 text-white" />
+            </div>
+          </div>
+        )}
+        
         <div className="flex items-start justify-between mb-3">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
               <h3 className="font-semibold text-sm md:text-base line-clamp-2">
                 {session.title}
               </h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleFavorite}
+                className="p-1 h-auto opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+              >
+                <Heart 
+                  className={`w-4 h-4 ${isFavorite ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} 
+                />
+              </Button>
               {isDownloaded && (
                 <Badge variant="secondary" className="text-xs" data-guide="offline-badge">
                   <Check className="h-3 w-3 mr-1" />
@@ -124,7 +164,7 @@ const MeditationSessionCard: React.FC<MeditationSessionCardProps> = ({
 
         <div className="flex items-center gap-2">
           <Button
-            onClick={onPlay}
+            onClick={handlePlay}
             className="flex-1 h-9"
             size="sm"
             data-guide="play-button"
@@ -144,9 +184,19 @@ const MeditationSessionCard: React.FC<MeditationSessionCardProps> = ({
             </Button>
           )}
         </div>
+        
+        {session.premium && (
+          <div className="flex mt-2">
+            <span className="inline-block px-2 py-1 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground text-xs rounded-full">
+              Premium
+            </span>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
-};
+});
+
+MeditationSessionCard.displayName = 'MeditationSessionCard';
 
 export default MeditationSessionCard;
