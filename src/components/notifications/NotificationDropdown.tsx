@@ -18,12 +18,14 @@ interface Notification {
 interface NotificationDropdownProps {
   notifications: Notification[];
   markAllAsRead: () => void;
+  markAsRead: (id: string) => void;
   onClose: () => void;
 }
 
 const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
   notifications = [],
   markAllAsRead,
+  markAsRead,
   onClose
 }) => {
   const [showOnboardingGuide, setShowOnboardingGuide] = useState(false);
@@ -54,6 +56,12 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
       }
     } catch (error) {
       console.error('Error closing dropdown:', error);
+    }
+  };
+
+  const handleNotificationClick = (notification: Notification) => {
+    if (!notification.read) {
+      markAsRead(notification.id);
     }
   };
 
@@ -131,7 +139,8 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
               return (
                 <div
                   key={notification.id}
-                  className={`p-3 rounded-md mb-2 ${
+                  onClick={() => handleNotificationClick(notification)}
+                  className={`p-3 rounded-md mb-2 cursor-pointer transition-colors hover:bg-gray-100 dark:hover:bg-gray-600 ${
                     notification.read ? 'bg-gray-50 dark:bg-gray-700' : 'bg-blue-50 dark:bg-blue-900/20'
                   }`}
                 >

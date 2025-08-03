@@ -15,12 +15,14 @@ export function NotificationBell() {
   let notifications = [];
   let unreadCount = 0;
   let markAllAsRead = () => {};
+  let markAsRead = (id: string) => {};
   
   try {
     const notificationContext = useNotifications();
     notifications = notificationContext?.notifications || [];
     unreadCount = notificationContext?.unreadCount || 0;
     markAllAsRead = notificationContext?.markAllAsRead || (() => {});
+    markAsRead = notificationContext?.markAsRead || ((id: string) => {});
     
     console.log('Notifications context:', { 
       notifications: notifications.length, 
@@ -75,9 +77,10 @@ export function NotificationBell() {
       </Button>
       
       {isOpen && (
-        <NotificationDropdown 
+        <NotificationDropdown
           notifications={notifications}
           markAllAsRead={markAllAsRead}
+          markAsRead={markAsRead}
           onClose={() => setIsOpen(false)}
         />
       )}
