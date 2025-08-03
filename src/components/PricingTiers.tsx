@@ -354,9 +354,9 @@ const PricingFeature = ({ children, included = true, highlighted = false }: {
   included?: boolean; 
   highlighted?: boolean;
 }) => (
-  <li className={`flex items-start ${highlighted ? 'text-respiro-dark font-medium dark:text-respiro-light' : 'text-gray-700 dark:text-gray-300'}`}>
+  <li className="flex items-start text-respiro-dark font-medium dark:text-respiro-light">
     {included ? (
-      <Check className={`h-5 w-5 mr-2 mt-0.5 flex-shrink-0 ${highlighted ? 'text-respiro-dark dark:text-respiro-light' : 'text-green-500'}`} />
+      <Check className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0 text-respiro-dark dark:text-respiro-light" />
     ) : (
       <X className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0 text-red-500" />
     )}
