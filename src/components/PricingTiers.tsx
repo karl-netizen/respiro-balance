@@ -35,13 +35,33 @@ const PricingTiers = () => {
   };
 
   const getPricing = (monthlyPrice: number, discountPercent: number) => {
-    if (monthlyPrice === 0) return { price: 0, period: 'month', savings: 0 };
+    if (monthlyPrice === 0) return { 
+      price: 0, 
+      period: 'month', 
+      savings: 0, 
+      monthlyEquivalent: 0,
+      savingsAmount: 0 
+    };
     
     const annualPrice = Math.round(monthlyPrice * 12 * (1 - discountPercent / 100) * 100) / 100;
+    const monthlyEquivalent = Math.round((annualPrice / 12) * 100) / 100;
+    const savingsAmount = Math.round((monthlyPrice * 12 - annualPrice) * 100) / 100;
     
     return isAnnual 
-      ? { price: annualPrice, period: 'year', savings: discountPercent } 
-      : { price: monthlyPrice, period: 'month', savings: 0 };
+      ? { 
+          price: annualPrice, 
+          period: 'year', 
+          savings: discountPercent,
+          monthlyEquivalent,
+          savingsAmount
+        } 
+      : { 
+          price: monthlyPrice, 
+          period: 'month', 
+          savings: 0,
+          monthlyEquivalent: monthlyPrice,
+          savingsAmount: 0
+        };
   };
   
   return (
@@ -138,10 +158,18 @@ const PricingTiers = () => {
                   /{getPricing(11.97, 32).period}
                 </span>
                 {isAnnual && (
-                  <div className="mt-1">
-                    <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-medium">
-                      Save {getPricing(11.97, 32).savings}%
-                    </span>
+                  <div className="mt-2 space-y-1">
+                    <div className="text-sm text-muted-foreground dark:text-gray-400">
+                      That's ${getPricing(11.97, 32).monthlyEquivalent}/month
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-medium">
+                        Save {getPricing(11.97, 32).savings}%
+                      </span>
+                      <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-medium">
+                        Save ${getPricing(11.97, 32).savingsAmount}/year
+                      </span>
+                    </div>
                   </div>
                 )}
               </div>
@@ -190,10 +218,18 @@ const PricingTiers = () => {
                   /{getPricing(29.97, 35).period}
                 </span>
                 {isAnnual && (
-                  <div className="mt-1">
-                    <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-medium">
-                      Save {getPricing(29.97, 35).savings}%
-                    </span>
+                  <div className="mt-2 space-y-1">
+                    <div className="text-sm text-muted-foreground dark:text-gray-400">
+                      That's ${getPricing(29.97, 35).monthlyEquivalent}/month
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-medium">
+                        Save {getPricing(29.97, 35).savings}%
+                      </span>
+                      <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-medium">
+                        Save ${getPricing(29.97, 35).savingsAmount}/year
+                      </span>
+                    </div>
                   </div>
                 )}
               </div>
@@ -246,10 +282,18 @@ const PricingTiers = () => {
                   /{getPricing(47.97, 40).period}
                 </span>
                 {isAnnual && (
-                  <div className="mt-1">
-                    <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-medium">
-                      Save {getPricing(47.97, 40).savings}%
-                    </span>
+                  <div className="mt-2 space-y-1">
+                    <div className="text-sm text-muted-foreground dark:text-gray-400">
+                      That's ${getPricing(47.97, 40).monthlyEquivalent}/month
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-medium">
+                        Save {getPricing(47.97, 40).savings}%
+                      </span>
+                      <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-medium">
+                        Save ${getPricing(47.97, 40).savingsAmount}/year
+                      </span>
+                    </div>
                   </div>
                 )}
               </div>
