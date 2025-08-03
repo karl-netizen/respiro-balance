@@ -49,10 +49,15 @@ export const SubscriptionManagement: React.FC<SubscriptionManagementProps> = ({
       price: 0,
       interval: 'month',
       features: [
-        '3 Core Sessions - Essential meditation basics',
-        'Basic Breathing Techniques - 3 fundamental patterns',
-        'Simple Progress Tracking - Basic streaks only',
-        'Weekly Session Limit - Up to 2 sessions per week'
+        '3 Beginner Sessions Only',
+        '1 session per day (max 7/week)',
+        '5-10 minute sessions only',
+        'Box Breathing only',
+        'Weekly streak count only',
+        'No mood tracking',
+        '30-60 second ads between sessions',
+        'Internet required for all content',
+        'Single device only'
       ],
       current: currentTier === 'free'
     },
@@ -63,28 +68,36 @@ export const SubscriptionManagement: React.FC<SubscriptionManagementProps> = ({
       interval: 'month',
       discountPercent: 32,
       features: [
-        '14 Meditation Sessions - Comprehensive guided library',
-        'Advanced Breathing Techniques - All patterns and customizations',
-        'Unlimited Sessions - No weekly limits or restrictions',
-        'Full Progress Analytics - Detailed insights and trends',
-        'Ad-Free Experience - No interruptions',
-        'Offline Mode - Download and use anywhere'
+        '20 Sessions',
+        '5 sessions per day',
+        '5-30 minute sessions',
+        '3 Proven Patterns + Guided Instructions',
+        'Monthly insights + basic charts',
+        'Daily mood check-ins',
+        'Completely ad-free experience',
+        'Download up to 5 sessions',
+        'Sync across 3 devices',
+        '5 sleep stories + nature sounds'
       ],
       current: currentTier === 'premium'
     },
     {
       id: 'premium-pro',
       name: 'Premium Pro',
-      price: 19.97,
+      price: 29.97,
       interval: 'month',
       discountPercent: 35,
       features: [
-        'Everything in Premium',
-        '18 Meditation Sessions - Extended library with variety',
-        'Advanced Habit Tracking - Detailed streaks and rewards',
-        'Basic Biofeedback Integration - Heart rate monitoring',
-        'Sleep Stories Library - 15+ exclusive stories',
-        'Group Challenges - Join community meditation challenges'
+        'Everything in Premium, plus:',
+        '50 Sessions',
+        'Unlimited daily sessions',
+        '5-60 minute sessions',
+        'All Patterns + Custom Timing',
+        'Advanced wellness tracking + trends',
+        'Mood + sleep + energy tracking',
+        'Heart rate + stress monitoring',
+        'Download up to 20 sessions',
+        '15 sleep stories + sleep courses'
       ],
       current: currentTier === 'premium-pro',
       popular: true
@@ -92,16 +105,20 @@ export const SubscriptionManagement: React.FC<SubscriptionManagementProps> = ({
     {
       id: 'premium-plus',
       name: 'Premium Plus',
-      price: 29.97,
+      price: 47.97,
       interval: 'month',
       discountPercent: 40,
       features: [
-        'Everything in Premium Pro',
-        'Complete Library - All 22+ sessions + monthly new releases',
-        '1-on-1 Expert Sessions - 2 monthly video calls with meditation experts',
-        'Advanced Biofeedback Coaching - Real-time guidance and insights',
-        'AI-Powered Personalization - Custom meditation plans generated monthly',
-        'Family Sharing - Up to 4 accounts included'
+        'Everything in Premium Pro, plus:',
+        '100+ Sessions + Smart Playlists',
+        'Unlimited + Session recommendations',
+        'Any length + favorite session bookmarks',
+        'All Patterns + Advanced Customization',
+        'Comprehensive dashboard + smart insights',
+        'Full wellness pattern analysis',
+        'Heart rate + stress + HRV coaching',
+        'Download entire library',
+        'Family plan for up to 6 members'
       ],
       current: currentTier === 'premium-plus'
     }

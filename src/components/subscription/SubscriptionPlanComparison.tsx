@@ -107,13 +107,15 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
           title="Free"
           description="Essential meditation basics"
           features={[
-            "3 Core Sessions - Essential meditation basics",
-            "Basic Breathing Techniques - 3 fundamental patterns",
-            "Simple Progress Tracking - Basic streaks only",
-            "Weekly Session Limit - Up to 2 sessions per week",
-            "Ads between sessions",
-            "Community access (view announcements only)",
-            "No offline access"
+            "3 Beginner Sessions Only",
+            "1 session per day (max 7/week)",
+            "5-10 minute sessions only",
+            "Box Breathing only",
+            "Weekly streak count only",
+            "No mood tracking",
+            "30-60 second ads between sessions",
+            "Internet required for all content",
+            "Single device only"
           ]}
           price={0}
           subscription={currentTier === 'free' ? {
@@ -130,16 +132,16 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
           title="Premium"
           description="Comprehensive meditation toolkit"
           features={[
-            "14 Meditation Sessions - Comprehensive guided library",
-            "Advanced Breathing Techniques - All patterns and customizations",
-            "Unlimited Sessions - No weekly limits or restrictions",
-            "Full Progress Analytics - Detailed insights and trends",
-            "Ad-Free Experience - No interruptions",
-            "Offline Mode - Download and use anywhere",
-            "Community Access - Join discussions and share progress",
-            "Sleep Stories - 5 exclusive bedtime stories",
-            "Mood Tracking - Daily check-ins with meditation correlation",
-            "Focus Mode - Advanced Pomodoro timer with analytics"
+            "20 Sessions",
+            "5 sessions per day",
+            "5-30 minute sessions",
+            "3 Proven Patterns + Guided Instructions",
+            "Monthly insights + basic charts",
+            "Daily mood check-ins",
+            "Completely ad-free experience",
+            "Download up to 5 sessions",
+            "Sync across 3 devices",
+            "5 sleep stories + nature sounds"
           ]}
           price={11.97}
           subscription={currentTier === 'premium' ? {
@@ -158,16 +160,17 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
           description="Advanced features + biofeedback"
           features={[
             "Everything in Premium, plus:",
-            "18 Meditation Sessions - Extended library with variety",
-            "Advanced Habit Tracking - Detailed streaks and rewards",
-            "Basic Biofeedback Integration - Heart rate monitoring",
-            "Sleep Stories Library - 15+ exclusive stories",
-            "Group Challenges - Join community meditation challenges",
-            "Email Support - 48-hour response time",
-            "Custom Breathing Patterns - Create your own techniques",
-            "Advanced Progress Metrics - Detailed wellness insights"
+            "50 Sessions",
+            "Unlimited daily sessions", 
+            "5-60 minute sessions",
+            "All Patterns + Custom Timing",
+            "Advanced wellness tracking + trends",
+            "Mood + sleep + energy tracking",
+            "Heart rate + stress monitoring",
+            "Download up to 20 sessions",
+            "15 sleep stories + sleep courses"
           ]}
-          price={19.97}
+          price={29.97}
           highlighted={true}
           subscription={currentTier === 'premium-pro' ? {
             status: 'active',
@@ -185,16 +188,17 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
           description="Complete platform with AI & biofeedback coaching"
           features={[
             "Everything in Premium Pro, plus:",
-            "Complete Library - All 50+ sessions + monthly new releases",
-            "Advanced Biofeedback Coaching - Real-time guidance and insights",
-            "AI-Powered Personalization - Custom meditation plans generated monthly",
-            "Family Sharing - Up to 4 accounts included",
-            "Exclusive Masterclasses - Monthly expert-led sessions",
-            "Priority Support - 24-hour response time",
-            "White-label Experience - Customize app branding",
-            "Comprehensive Wellness Dashboard - Full health integration"
+            "100+ Sessions + Smart Playlists",
+            "Unlimited + Session recommendations",
+            "Any length + favorite session bookmarks",
+            "All Patterns + Advanced Customization",
+            "Comprehensive dashboard + smart insights",
+            "Full wellness pattern analysis",
+            "Heart rate + stress + HRV coaching",
+            "Download entire library",
+            "Family plan for up to 6 members"
           ]}
-          price={29.97}
+          price={47.97}
           subscription={currentTier === 'premium-plus' ? {
             status: 'active',
             tier: 'premium-plus',
