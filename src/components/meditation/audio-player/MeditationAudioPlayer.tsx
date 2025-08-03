@@ -82,7 +82,7 @@ const MeditationAudioPlayer: React.FC<MeditationAudioPlayerProps> = ({
   }
 
   if (error) {
-    return <ErrorState error={error} />;
+    return <ErrorState error={error} audioUrl={audioUrl} />;
   }
 
   if (deviceType === 'mobile') {

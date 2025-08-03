@@ -26,10 +26,11 @@ export const useSessionPlayer = ({
   // Get audio URL when session changes
   useEffect(() => {
     if (session.audio_url) {
-      const url = getMeditationAudioUrl(session.audio_url);
-      setAudioUrl(url);
-      console.log("Using session's audio_url:", session.audio_url, "resolved to:", url);
+      // Use the audio_url directly since it's already a complete URL from the database
+      setAudioUrl(session.audio_url);
+      console.log("Using session's audio_url directly:", session.audio_url);
     } else {
+      // Fallback to generating URL from session ID
       const url = getMeditationAudioUrl(`${session.id}.mp3`);
       setAudioUrl(url);
       console.log("Using session ID for audio:", session.id, "resolved to:", url);
