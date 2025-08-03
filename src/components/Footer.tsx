@@ -1,9 +1,19 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Circle, Heart } from 'lucide-react';
 
 const Footer = () => {
+  const navigate = useNavigate();
+
+  const handleNavClick = (path: string) => {
+    navigate(path);
+    // Scroll to top after navigation with slight delay for mobile
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 300);
+  };
+
   return (
     <footer className="bg-gray-50 border-t border-gray-200 mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -29,24 +39,36 @@ const Footer = () => {
             <h3 className="font-semibold text-gray-900 mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/meditation" className="text-gray-600 hover:text-respiro-dark transition-colors">
+                <button 
+                  onClick={() => handleNavClick("/meditation")} 
+                  className="text-gray-600 hover:text-respiro-dark transition-colors text-left"
+                >
                   Meditation
-                </Link>
+                </button>
               </li>
               <li>
-                <Link to="/focus" className="text-gray-600 hover:text-respiro-dark transition-colors">
+                <button 
+                  onClick={() => handleNavClick("/focus")} 
+                  className="text-gray-600 hover:text-respiro-dark transition-colors text-left"
+                >
                   Focus Mode
-                </Link>
+                </button>
               </li>
               <li>
-                <Link to="/biofeedback" className="text-gray-600 hover:text-respiro-dark transition-colors">
+                <button 
+                  onClick={() => handleNavClick("/biofeedback")} 
+                  className="text-gray-600 hover:text-respiro-dark transition-colors text-left"
+                >
                   Biofeedback
-                </Link>
+                </button>
               </li>
               <li>
-                <Link to="/social" className="text-gray-600 hover:text-respiro-dark transition-colors">
+                <button 
+                  onClick={() => handleNavClick("/social")} 
+                  className="text-gray-600 hover:text-respiro-dark transition-colors text-left"
+                >
                   Community
-                </Link>
+                </button>
               </li>
             </ul>
           </div>
@@ -56,24 +78,36 @@ const Footer = () => {
             <h3 className="font-semibold text-gray-900 mb-4">Support</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/help" className="text-gray-600 hover:text-respiro-dark transition-colors">
+                <button 
+                  onClick={() => handleNavClick("/help")} 
+                  className="text-gray-600 hover:text-respiro-dark transition-colors text-left"
+                >
                   Help Center
-                </Link>
+                </button>
               </li>
               <li>
-                <Link to="/contact" className="text-gray-600 hover:text-respiro-dark transition-colors">
+                <button 
+                  onClick={() => handleNavClick("/contact")} 
+                  className="text-gray-600 hover:text-respiro-dark transition-colors text-left"
+                >
                   Contact Us
-                </Link>
+                </button>
               </li>
               <li>
-                <Link to="/privacy" className="text-gray-600 hover:text-respiro-dark transition-colors">
+                <button 
+                  onClick={() => handleNavClick("/privacy")} 
+                  className="text-gray-600 hover:text-respiro-dark transition-colors text-left"
+                >
                   Privacy Policy
-                </Link>
+                </button>
               </li>
               <li>
-                <Link to="/terms" className="text-gray-600 hover:text-respiro-dark transition-colors">
+                <button 
+                  onClick={() => handleNavClick("/terms")} 
+                  className="text-gray-600 hover:text-respiro-dark transition-colors text-left"
+                >
                   Terms of Service
-                </Link>
+                </button>
               </li>
             </ul>
           </div>
