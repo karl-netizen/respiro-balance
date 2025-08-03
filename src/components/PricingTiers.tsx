@@ -118,17 +118,34 @@ const PricingTiers = () => {
             </CardHeader>
             <CardContent className="flex-1">
               <ul className="space-y-2">
+                {/* Core Sessions & Access */}
                 <PricingFeature included={true}>3 Beginner Sessions Only</PricingFeature>
                 <PricingFeature included={true}>1 session per day (max 7/week)</PricingFeature>
                 <PricingFeature included={true}>5-10 minute sessions only</PricingFeature>
                 <PricingFeature included={true}>Box Breathing only</PricingFeature>
+                
+                {/* Tracking & Insights */}
                 <PricingFeature included={true}>Weekly streak count only</PricingFeature>
-                <PricingFeature included={true}>1 sleep story</PricingFeature>
                 <PricingFeature included={false}>No mood tracking</PricingFeature>
+                
+                {/* App Experience */}
                 <PricingFeature included={false}>30-60 second ads between sessions</PricingFeature>
                 <PricingFeature included={false}>Internet required for all content</PricingFeature>
                 <PricingFeature included={false}>Single device only</PricingFeature>
+                
+                {/* Premium Content & Features */}
+                <PricingFeature included={true}>1 sleep story</PricingFeature>
                 <PricingFeature included={false}>No focus tools</PricingFeature>
+                
+                {/* Community & Social */}
+                <PricingFeature included={false} highlighted>View-only community feed</PricingFeature>
+                
+                {/* Support & Sharing */}
+                <PricingFeature included={false} highlighted>FAQ & help articles only</PricingFeature>
+                <PricingFeature included={false} highlighted>Single user only</PricingFeature>
+                <PricingFeature included={false}>Basic app experience</PricingFeature>
+                <PricingFeature included={false}>Standard releases only</PricingFeature>
+                <PricingFeature included={false}>No data export</PricingFeature>
               </ul>
             </CardContent>
             <CardFooter>
@@ -183,16 +200,35 @@ const PricingTiers = () => {
             </CardHeader>
             <CardContent className="flex-1">
               <ul className="space-y-2">
-                <PricingFeature included highlighted>20 Sessions</PricingFeature>
-                <PricingFeature included highlighted>5 sessions per day</PricingFeature>
-                <PricingFeature included highlighted>5-30 minute sessions</PricingFeature>
-                <PricingFeature included highlighted>3 Proven Patterns + Guided Instructions</PricingFeature>
-                <PricingFeature included highlighted>Monthly insights + basic charts</PricingFeature>
-                <PricingFeature included highlighted>Daily mood check-ins</PricingFeature>
-                <PricingFeature included highlighted>Completely ad-free experience</PricingFeature>
-                <PricingFeature included highlighted>Download up to 5 sessions</PricingFeature>
-                <PricingFeature included highlighted>Sync across 3 devices</PricingFeature>
-                <PricingFeature included highlighted>5 sleep stories + nature sounds</PricingFeature>
+                {/* Core Sessions & Access */}
+                <PricingFeature included>20 Sessions</PricingFeature>
+                <PricingFeature included>5 sessions per day</PricingFeature>
+                <PricingFeature included>5-30 minute sessions</PricingFeature>
+                <PricingFeature included>3 Proven Patterns + Guided Instructions</PricingFeature>
+                
+                {/* Tracking & Insights */}
+                <PricingFeature included>Monthly insights + basic charts</PricingFeature>
+                <PricingFeature included>Daily mood check-ins</PricingFeature>
+                
+                {/* App Experience */}
+                <PricingFeature included>Completely ad-free experience</PricingFeature>
+                <PricingFeature included>Download up to 5 sessions</PricingFeature>
+                <PricingFeature included>Sync across 3 devices</PricingFeature>
+                
+                {/* Premium Content & Features */}
+                <PricingFeature included>5 sleep stories + nature sounds</PricingFeature>
+                <PricingFeature included>Basic Pomodoro timer</PricingFeature>
+                <PricingFeature included>Weekly new content releases</PricingFeature>
+                
+                {/* Community & Social */}
+                <PricingFeature included>Join discussions + buddy system</PricingFeature>
+                
+                {/* Support & Sharing */}
+                <PricingFeature included>Community forum + email (72h response)</PricingFeature>
+                <PricingFeature included={false} highlighted>Single user only</PricingFeature>
+                <PricingFeature included={false}>Standard theme only</PricingFeature>
+                <PricingFeature included={false}>Standard releases only</PricingFeature>
+                <PricingFeature included={false} highlighted>Basic stats sharing</PricingFeature>
               </ul>
             </CardContent>
             <CardFooter>
@@ -244,15 +280,34 @@ const PricingTiers = () => {
             <CardContent className="flex-1">
               <div className="mb-3 text-sm font-medium text-respiro-dark">Everything in Premium, plus:</div>
               <ul className="space-y-2">
-                <PricingFeature included highlighted>50 Sessions</PricingFeature>
-                <PricingFeature included highlighted>Unlimited daily sessions</PricingFeature>
-                <PricingFeature included highlighted>5-60 minute sessions</PricingFeature>
-                <PricingFeature included highlighted>All Patterns + Custom Timing</PricingFeature>
-                <PricingFeature included highlighted>Advanced wellness tracking + trends</PricingFeature>
-                <PricingFeature included highlighted>Mood + sleep + energy tracking</PricingFeature>
-                <PricingFeature included highlighted>Heart rate + stress monitoring</PricingFeature>
-                <PricingFeature included highlighted>Download up to 20 sessions</PricingFeature>
-                <PricingFeature included highlighted>15 sleep stories + sleep courses</PricingFeature>
+                {/* Core Sessions & Access */}
+                <PricingFeature included>50 Sessions</PricingFeature>
+                <PricingFeature included>Unlimited daily sessions</PricingFeature>
+                <PricingFeature included>5-60 minute sessions</PricingFeature>
+                <PricingFeature included>All Patterns + Custom Timing</PricingFeature>
+                
+                {/* Tracking & Insights */}
+                <PricingFeature included>Advanced wellness tracking + trends</PricingFeature>
+                <PricingFeature included>Mood + sleep + energy tracking</PricingFeature>
+                <PricingFeature included>Heart rate + stress monitoring</PricingFeature>
+                
+                {/* App Experience */}
+                <PricingFeature included>Download up to 20 sessions</PricingFeature>
+                
+                {/* Premium Content & Features */}
+                <PricingFeature included>15 sleep stories + sleep courses</PricingFeature>
+                <PricingFeature included>Advanced focus tracking + break reminders</PricingFeature>
+                <PricingFeature included>Expert-led courses + workshops</PricingFeature>
+                
+                {/* Community & Social */}
+                <PricingFeature included>Weekly group challenges + leaderboards</PricingFeature>
+                
+                {/* Support & Sharing */}
+                <PricingFeature included>Priority email support (24h response)</PricingFeature>
+                <PricingFeature included>Share with 1 family member</PricingFeature>
+                <PricingFeature included>Dark mode + theme options</PricingFeature>
+                <PricingFeature included>Early access to new features</PricingFeature>
+                <PricingFeature included>Full CSV export</PricingFeature>
               </ul>
             </CardContent>
             <CardFooter>
@@ -309,15 +364,33 @@ const PricingTiers = () => {
             <CardContent className="flex-1">
               <div className="mb-3 text-sm font-medium text-respiro-dark">Everything in Premium Pro, plus:</div>
               <ul className="space-y-2">
+                {/* Core Sessions & Access */}
                 <PricingFeature included>100+ Sessions + Smart Playlists</PricingFeature>
                 <PricingFeature included>Unlimited + Session recommendations</PricingFeature>
                 <PricingFeature included>Any length + favorite session bookmarks</PricingFeature>
                 <PricingFeature included>All Patterns + Advanced Customization</PricingFeature>
+                
+                {/* Tracking & Insights */}
                 <PricingFeature included>Comprehensive dashboard + smart insights</PricingFeature>
                 <PricingFeature included>Full wellness pattern analysis</PricingFeature>
                 <PricingFeature included>Heart rate + stress + HRV coaching</PricingFeature>
+                
+                {/* App Experience */}
                 <PricingFeature included>Download entire library</PricingFeature>
+                
+                {/* Premium Content & Features */}
+                <PricingFeature included>Focus analytics + productivity insights</PricingFeature>
+                <PricingFeature included>Early access + exclusive masterclasses</PricingFeature>
+                
+                {/* Community & Social */}
+                <PricingFeature included>Private groups + exclusive content</PricingFeature>
+                
+                {/* Support & Sharing */}
+                <PricingFeature included>Priority support + dedicated success manager</PricingFeature>
                 <PricingFeature included>Family plan for up to 6 members</PricingFeature>
+                <PricingFeature included>Custom colors + personal branding</PricingFeature>
+                <PricingFeature included>Beta testing + feature voting rights</PricingFeature>
+                <PricingFeature included>JSON/CSV export + backup restore</PricingFeature>
               </ul>
             </CardContent>
             <CardFooter>
