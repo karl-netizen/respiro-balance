@@ -217,9 +217,10 @@ const AudioFileManager: React.FC = () => {
   };
 
   // Drag and drop handlers
-  const handleDrag = useCallback((e: React.DragEvent) => {
+  const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    e.dataTransfer.dropEffect = 'copy';
     console.log('Drag over detected');
   }, []);
 
@@ -304,7 +305,7 @@ const AudioFileManager: React.FC = () => {
               )}
               onDragEnter={handleDragIn}
               onDragLeave={handleDragOut}
-              onDragOver={handleDrag}
+              onDragOver={handleDragOver}
               onDrop={handleDrop}
             >
               <div className="flex flex-col items-center gap-4">
