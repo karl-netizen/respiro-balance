@@ -351,20 +351,88 @@ const PricingMatrix: React.FC<PricingMatrixProps> = ({
   };
 
   return (
-    <div className={cn("w-full", className)}>
+    <div className={cn("w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8", className)}>
       {/* Header */}
-      <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-foreground mb-4">
+      <div className="text-center mb-6 md:mb-8">
+        <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3 md:mb-4">
           Choose Your Meditation Journey
         </h2>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+        <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto px-4">
           Compare our comprehensive feature matrix to find the perfect plan for your wellness goals
         </p>
       </div>
 
-      {/* Pricing Matrix Container */}
-      <div className="relative w-full overflow-x-auto">
-        <div className="min-w-[1200px] bg-card rounded-lg shadow-lg border border-border">
+      {/* Mobile View - Stacked Cards */}
+      <div className="block lg:hidden space-y-6">
+        {plans.map((plan, planIndex) => (
+          <div key={plan.name} className="bg-card rounded-lg shadow-lg border border-border overflow-hidden">
+            {/* Mobile Plan Header */}
+            <div className={getPlanHeaderClass(plan.buttonStyle, plan.popular)}>
+              {plan.popular && (
+                <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground">
+                  Most Popular
+                </Badge>
+              )}
+              <div className="text-center">
+                <h3 className="text-xl font-bold text-foreground mb-2">{plan.name}</h3>
+                <div className="mb-2">
+                  <span className="text-3xl font-bold text-foreground">{plan.price}</span>
+                  <span className="text-muted-foreground">{plan.period}</span>
+                </div>
+                <p className="text-sm text-muted-foreground mb-4">{plan.description}</p>
+                <Button
+                  className={cn("w-full min-h-[44px]", getButtonClassName(plan.buttonStyle))}
+                  variant={getButtonVariant(plan.buttonStyle)}
+                  onClick={() => onPlanSelect?.(plan.name.toLowerCase())}
+                >
+                  {plan.buttonText}
+                </Button>
+              </div>
+            </div>
+
+            {/* Mobile Features */}
+            <div className="divide-y divide-border">
+              {featureCategories.map((category) => (
+                <div key={category.title}>
+                  <div className="bg-muted/50 p-3">
+                    <h4 className="font-semibold text-foreground text-sm tracking-wide">
+                      {category.title}
+                    </h4>
+                  </div>
+                  {category.features.map((feature) => {
+                    const planFeature = planIndex === 0 ? feature.free : 
+                                      planIndex === 1 ? feature.premium :
+                                      planIndex === 2 ? feature.premiumPro : feature.premiumPlus;
+                    return (
+                      <div key={feature.name} className="p-4 border-b border-border last:border-b-0">
+                        <div className="font-medium text-sm text-foreground mb-2">
+                          {feature.name}
+                        </div>
+                         <div className="flex items-start gap-2">
+                          <FeatureIcon type={planFeature.type} />
+                          <span className={cn(
+                            "text-sm leading-relaxed",
+                            planFeature.type === 'not-included' && "text-muted-foreground",
+                            planFeature.type === 'included' && "text-foreground font-medium",
+                            planFeature.type === 'limited' && "text-foreground",
+                            planFeature.type === 'upgrade' && "text-blue-600 font-medium"
+                          )}>
+                            {planFeature.text}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop/Tablet View - Horizontal Scroll Table */}
+      <div className="hidden lg:block relative w-full overflow-x-auto">
+        <div className="min-w-[1000px] bg-card rounded-lg shadow-lg border border-border">
           
           {/* Plan Headers */}
           <div className="grid grid-cols-4 border-b border-border">
