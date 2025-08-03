@@ -118,13 +118,15 @@ const PricingTiers = () => {
             </CardHeader>
             <CardContent className="flex-1">
               <ul className="space-y-2">
-                <PricingFeature included>3 Core Sessions - Essential meditation basics</PricingFeature>
-                <PricingFeature included>Basic Breathing Techniques - 3 fundamental patterns</PricingFeature>
-                <PricingFeature included>Simple Progress Tracking - Basic streaks only</PricingFeature>
-                <PricingFeature included>Weekly Session Limit - Up to 2 sessions per week</PricingFeature>
-                <PricingFeature included={false}>Ads between sessions</PricingFeature>
-                <PricingFeature included={false}>Community access (view announcements only)</PricingFeature>
-                <PricingFeature included={false}>No offline access</PricingFeature>
+                <PricingFeature included={false}>3 Beginner Sessions Only</PricingFeature>
+                <PricingFeature included={false}>1 session per day (max 7/week)</PricingFeature>
+                <PricingFeature included={false}>5-10 minute sessions only</PricingFeature>
+                <PricingFeature included={false}>Box Breathing only</PricingFeature>
+                <PricingFeature included={false}>Weekly streak count only</PricingFeature>
+                <PricingFeature included={false}>No mood tracking</PricingFeature>
+                <PricingFeature included={false}>30-60 second ads between sessions</PricingFeature>
+                <PricingFeature included={false}>Internet required for all content</PricingFeature>
+                <PricingFeature included={false}>Single device only</PricingFeature>
               </ul>
             </CardContent>
             <CardFooter>
@@ -179,16 +181,16 @@ const PricingTiers = () => {
             </CardHeader>
             <CardContent className="flex-1">
               <ul className="space-y-2">
-                <PricingFeature included highlighted>14 Meditation Sessions - Comprehensive guided library</PricingFeature>
-                <PricingFeature included highlighted>Advanced Breathing Techniques - All patterns and customizations</PricingFeature>
-                <PricingFeature included highlighted>Unlimited Sessions - No weekly limits or restrictions</PricingFeature>
-                <PricingFeature included highlighted>Full Progress Analytics - Detailed insights and trends</PricingFeature>
-                <PricingFeature included highlighted>Ad-Free Experience - No interruptions</PricingFeature>
-                <PricingFeature included highlighted>Offline Mode - Download and use anywhere</PricingFeature>
-                <PricingFeature included highlighted>Community Access - Join discussions and share progress</PricingFeature>
-                <PricingFeature included highlighted>Sleep Stories - 5 exclusive bedtime stories</PricingFeature>
-                <PricingFeature included highlighted>Mood Tracking - Daily check-ins with meditation correlation</PricingFeature>
-                <PricingFeature included highlighted>Focus Mode - Advanced Pomodoro timer with analytics</PricingFeature>
+                <PricingFeature included highlighted>20 Sessions</PricingFeature>
+                <PricingFeature included highlighted>5 sessions per day</PricingFeature>
+                <PricingFeature included highlighted>5-30 minute sessions</PricingFeature>
+                <PricingFeature included highlighted>3 Proven Patterns + Guided Instructions</PricingFeature>
+                <PricingFeature included highlighted>Monthly insights + basic charts</PricingFeature>
+                <PricingFeature included highlighted>Daily mood check-ins</PricingFeature>
+                <PricingFeature included highlighted>Completely ad-free experience</PricingFeature>
+                <PricingFeature included highlighted>Download up to 5 sessions</PricingFeature>
+                <PricingFeature included highlighted>Sync across 3 devices</PricingFeature>
+                <PricingFeature included highlighted>5 sleep stories + nature sounds</PricingFeature>
               </ul>
             </CardContent>
             <CardFooter>
@@ -240,14 +242,15 @@ const PricingTiers = () => {
             <CardContent className="flex-1">
               <div className="mb-3 text-sm font-medium text-respiro-dark">Everything in Premium, plus:</div>
               <ul className="space-y-2">
-                <PricingFeature included highlighted>18 Meditation Sessions - Extended library with variety</PricingFeature>
-                <PricingFeature included highlighted>Advanced Habit Tracking - Detailed streaks and rewards</PricingFeature>
-                <PricingFeature included highlighted>Basic Biofeedback Integration - Heart rate monitoring</PricingFeature>
-                <PricingFeature included highlighted>Sleep Stories Library - 15+ exclusive stories</PricingFeature>
-                <PricingFeature included highlighted>Group Challenges - Join community meditation challenges</PricingFeature>
-                <PricingFeature included highlighted>Email Support - 48-hour response time</PricingFeature>
-                <PricingFeature included highlighted>Custom Breathing Patterns - Create your own techniques</PricingFeature>
-                <PricingFeature included highlighted>Advanced Progress Metrics - Detailed wellness insights</PricingFeature>
+                <PricingFeature included highlighted>50 Sessions</PricingFeature>
+                <PricingFeature included highlighted>Unlimited daily sessions</PricingFeature>
+                <PricingFeature included highlighted>5-60 minute sessions</PricingFeature>
+                <PricingFeature included highlighted>All Patterns + Custom Timing</PricingFeature>
+                <PricingFeature included highlighted>Advanced wellness tracking + trends</PricingFeature>
+                <PricingFeature included highlighted>Mood + sleep + energy tracking</PricingFeature>
+                <PricingFeature included highlighted>Heart rate + stress monitoring</PricingFeature>
+                <PricingFeature included highlighted>Download up to 20 sessions</PricingFeature>
+                <PricingFeature included highlighted>15 sleep stories + sleep courses</PricingFeature>
               </ul>
             </CardContent>
             <CardFooter>
@@ -304,14 +307,15 @@ const PricingTiers = () => {
             <CardContent className="flex-1">
               <div className="mb-3 text-sm font-medium text-respiro-dark">Everything in Premium Pro, plus:</div>
               <ul className="space-y-2">
-                <PricingFeature included>Complete Library - All 50+ sessions + monthly new releases</PricingFeature>
-                <PricingFeature included>Advanced Biofeedback Coaching - Real-time guidance and insights</PricingFeature>
-                <PricingFeature included>AI-Powered Personalization - Custom meditation plans generated monthly</PricingFeature>
-                <PricingFeature included>Family Sharing - Up to 4 accounts included</PricingFeature>
-                <PricingFeature included>Exclusive Masterclasses - Monthly expert-led sessions</PricingFeature>
-                <PricingFeature included>Priority Support - 24-hour response time</PricingFeature>
-                <PricingFeature included>White-label Experience - Customize app branding</PricingFeature>
-                <PricingFeature included>Comprehensive Wellness Dashboard - Full health integration</PricingFeature>
+                <PricingFeature included>100+ Sessions + Smart Playlists</PricingFeature>
+                <PricingFeature included>Unlimited + Session recommendations</PricingFeature>
+                <PricingFeature included>Any length + favorite session bookmarks</PricingFeature>
+                <PricingFeature included>All Patterns + Advanced Customization</PricingFeature>
+                <PricingFeature included>Comprehensive dashboard + smart insights</PricingFeature>
+                <PricingFeature included>Full wellness pattern analysis</PricingFeature>
+                <PricingFeature included>Heart rate + stress + HRV coaching</PricingFeature>
+                <PricingFeature included>Download entire library</PricingFeature>
+                <PricingFeature included>Family plan for up to 6 members</PricingFeature>
               </ul>
             </CardContent>
             <CardFooter>
