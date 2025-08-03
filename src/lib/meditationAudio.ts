@@ -47,33 +47,85 @@ export const initMeditationAudioBucket = async () => {
  */
 export const uploadMeditationAudio = async (file: File, fileName: string): Promise<string | null> => {
   try {
-    // Ensure the bucket exists
-    await initMeditationAudioBucket();
+    // Check network connectivity first
+    if (!navigator.onLine) {
+      toast.error('No internet connection. Please check your network and try again.');
+      console.error('Upload failed: No internet connection');
+      return null;
+    }
+
+    console.log('Starting upload process for:', fileName);
     
-    // Upload the file
-    const { data, error } = await supabase.storage
+    // Test Supabase connection first
+    try {
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      console.log('Auth check result:', user ? 'authenticated' : 'anonymous', authError);
+    } catch (authCheckError) {
+      console.error('Auth check failed:', authCheckError);
+      toast.error('Unable to connect to server. Please check your connection.');
+      return null;
+    }
+    
+    // Ensure the bucket exists
+    const bucketReady = await initMeditationAudioBucket();
+    if (!bucketReady) {
+      toast.error('Storage not available. Please try again later.');
+      return null;
+    }
+    
+    console.log('Starting file upload...');
+    
+    // Upload the file with timeout
+    const uploadPromise = supabase.storage
       .from(BUCKET_NAME)
       .upload(`${fileName}`, file, {
         cacheControl: '3600',
         upsert: true
       });
+
+    // Add timeout to upload
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Upload timeout after 30 seconds')), 30000)
+    );
+
+    const { data, error } = await Promise.race([uploadPromise, timeoutPromise]) as any;
     
     if (error) {
-      toast.error('Failed to upload audio file');
-      console.error('Error uploading audio file:', error);
+      console.error('Storage upload error:', error);
+      
+      if (error.message?.includes('network') || error.message?.includes('fetch')) {
+        toast.error('Network error during upload. Please check your connection and try again.');
+      } else if (error.message?.includes('size')) {
+        toast.error('File too large. Please use a smaller file.');
+      } else if (error.message?.includes('policy')) {
+        toast.error('Permission denied. Please sign in and try again.');
+      } else {
+        toast.error(`Upload failed: ${error.message}`);
+      }
       return null;
     }
+    
+    console.log('File uploaded successfully, getting public URL...');
     
     // Get the public URL
     const { data: publicUrlData } = supabase.storage
       .from(BUCKET_NAME)
       .getPublicUrl(data.path);
     
+    console.log('Upload complete:', publicUrlData.publicUrl);
     toast.success('Audio file uploaded successfully');
     return publicUrlData.publicUrl;
-  } catch (error) {
-    toast.error('Something went wrong with the upload');
-    console.error('Unexpected error uploading audio file:', error);
+    
+  } catch (error: any) {
+    console.error('Upload error:', error);
+    
+    if (error.message?.includes('timeout')) {
+      toast.error('Upload timed out. Please try with a smaller file or check your connection.');
+    } else if (error.message?.includes('network') || error.message?.includes('fetch')) {
+      toast.error('Network error. Please check your internet connection and try again.');
+    } else {
+      toast.error('Upload failed. Please try again.');
+    }
     return null;
   }
 };
