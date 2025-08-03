@@ -220,11 +220,13 @@ const AudioFileManager: React.FC = () => {
   const handleDrag = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    console.log('Drag over detected');
   }, []);
 
   const handleDragIn = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    console.log('Drag enter detected');
     if (e.dataTransfer.items && e.dataTransfer.items.length > 0) {
       setDragActive(true);
     }
@@ -233,12 +235,14 @@ const AudioFileManager: React.FC = () => {
   const handleDragOut = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    console.log('Drag leave detected');
     setDragActive(false);
   }, []);
 
   const handleDrop = useCallback(async (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    console.log('Drop detected!');
     setDragActive(false);
 
     if (uploading) {
@@ -247,7 +251,7 @@ const AudioFileManager: React.FC = () => {
     }
 
     const files = Array.from(e.dataTransfer.files);
-    console.log('Files dropped:', files.length, files.map(f => f.name));
+    console.log('Files dropped:', files.length, files.map(f => ({ name: f.name, type: f.type, size: f.size })));
     
     if (files.length === 0) {
       toast.error('No files detected');
@@ -258,12 +262,13 @@ const AudioFileManager: React.FC = () => {
     
     if (audioFile) {
       console.log('Processing dropped audio file:', audioFile.name, audioFile.type);
+      toast.info(`Processing ${audioFile.name}...`);
       await handleFileUpload(audioFile);
     } else {
       console.log('No audio files found in drop. File types:', files.map(f => f.type));
       toast.error('Please drop an audio file (MP3, WAV, M4A, etc.)');
     }
-  }, [uploading]);
+  }, [uploading, handleFileUpload]);
 
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return '0 Bytes';
