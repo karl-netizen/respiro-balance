@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instanciate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "12.2.3 (519615d)"
+    PostgrestVersion: "12.2.12 (cd3cf9e)"
   }
   public: {
     Tables: {
@@ -440,6 +440,7 @@ export type Database = {
           updated_at: string | null
           upload_status: string | null
           uploaded_by: string | null
+          user_id: string | null
         }
         Insert: {
           bitrate?: number | null
@@ -455,6 +456,7 @@ export type Database = {
           updated_at?: string | null
           upload_status?: string | null
           uploaded_by?: string | null
+          user_id?: string | null
         }
         Update: {
           bitrate?: number | null
@@ -470,6 +472,7 @@ export type Database = {
           updated_at?: string | null
           upload_status?: string | null
           uploaded_by?: string | null
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -491,6 +494,7 @@ export type Database = {
           average_rating: number | null
           background_music_type: string | null
           category: string
+          content: string | null
           created_at: string | null
           description: string | null
           difficulty_level: string | null
@@ -507,6 +511,7 @@ export type Database = {
           title: string
           transcript: string | null
           updated_at: string | null
+          user_id: string | null
         }
         Insert: {
           audio_duration?: number | null
@@ -517,6 +522,7 @@ export type Database = {
           average_rating?: number | null
           background_music_type?: string | null
           category: string
+          content?: string | null
           created_at?: string | null
           description?: string | null
           difficulty_level?: string | null
@@ -533,6 +539,7 @@ export type Database = {
           title: string
           transcript?: string | null
           updated_at?: string | null
+          user_id?: string | null
         }
         Update: {
           audio_duration?: number | null
@@ -543,6 +550,7 @@ export type Database = {
           average_rating?: number | null
           background_music_type?: string | null
           category?: string
+          content?: string | null
           created_at?: string | null
           description?: string | null
           difficulty_level?: string | null
@@ -559,6 +567,7 @@ export type Database = {
           title?: string
           transcript?: string | null
           updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
