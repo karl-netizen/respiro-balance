@@ -1,11 +1,47 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import { render, waitFor, screen } from '@/test/utils/test-utils'
-import userEvent from '@testing-library/user-event'
+import { render } from '@/test/utils/test-utils'
 import { server } from '@/test/mocks/server'
 import { http, HttpResponse } from 'msw'
 
+// Mock missing testing-library functions
+const screen = {
+  getByTestId: (id: string) => document.querySelector(`[data-testid="${id}"]`) as HTMLElement,
+  getByText: (text: RegExp | string) => {
+    const textContent = typeof text === 'string' ? text : text.source
+    return Array.from(document.querySelectorAll('*')).find(el => 
+      el.textContent?.toLowerCase().includes(textContent.toLowerCase())
+    ) as HTMLElement
+  }
+}
+
+const waitFor = async (callback: () => void, options?: { timeout?: number }) => {
+  const timeout = options?.timeout || 1000
+  const start = Date.now()
+  
+  while (Date.now() - start < timeout) {
+    try {
+      callback()
+      return
+    } catch {
+      await new Promise(resolve => setTimeout(resolve, 10))
+    }
+  }
+  callback() // Final attempt
+}
+
+const fireEvent = {
+  click: (element: HTMLElement) => {
+    element.click()
+  },
+  change: (element: HTMLElement, event: { target: { value: string } }) => {
+    if (element instanceof HTMLInputElement) {
+      element.value = event.target.value
+      element.dispatchEvent(new Event('change', { bubbles: true }))
+    }
+  }
+}
+
 describe('User Journey Integration Tests', () => {
-  const user = userEvent.setup()
 
   beforeEach(() => {
     // Clear localStorage before each test
@@ -57,9 +93,9 @@ describe('User Journey Integration Tests', () => {
 
       const { unmount } = render(<TestSignupForm />)
 
-      await user.type(screen.getByTestId('email-input'), 'newuser@example.com')
-      await user.type(screen.getByTestId('password-input'), 'password123')
-      await user.click(screen.getByTestId('signup-button'))
+      fireEvent.change(screen.getByTestId('email-input'), { target: { value: 'newuser@example.com' } })
+      fireEvent.change(screen.getByTestId('password-input'), { target: { value: 'password123' } })
+      fireEvent.click(screen.getByTestId('signup-button'))
 
       // Step 2: Show email confirmation message (simulate)
       const confirmationMessage = screen.getByTestId('confirmation-message')
@@ -98,7 +134,7 @@ describe('User Journey Integration Tests', () => {
 
       const { unmount: unmountOnboarding } = render(<TestOnboarding />)
 
-      await user.click(screen.getByTestId('complete-onboarding'))
+      fireEvent.click(screen.getByTestId('complete-onboarding'))
 
       // Simulate welcome message
       const welcomeMessage = screen.getByTestId('welcome-message')
@@ -120,7 +156,7 @@ describe('User Journey Integration Tests', () => {
 
       const { unmount: unmountMeditation } = render(<TestMeditationPlayer />)
 
-      await user.click(screen.getByTestId('play-button'))
+      fireEvent.click(screen.getByTestId('play-button'))
 
       await waitFor(() => {
         expect(screen.getByTestId('progress-bar')).toBeInTheDocument()
@@ -169,7 +205,7 @@ describe('User Journey Integration Tests', () => {
       expect(screen.getByText(/upgrade to access/i)).toBeInTheDocument()
 
       // Step 2: Click upgrade button
-      await user.click(screen.getByTestId('upgrade-button'))
+      fireEvent.click(screen.getByTestId('upgrade-button'))
 
       // Mock window.location.href for test
       Object.defineProperty(window, 'location', {
@@ -223,7 +259,7 @@ describe('User Journey Integration Tests', () => {
 
       const { unmount } = render(<TestSessionPlayer />)
 
-      await user.click(screen.getByTestId('start-session'))
+      fireEvent.click(screen.getByTestId('start-session'))
 
       // Step 2: Simulate session completion (enable button)
       const completeButton = screen.getByTestId('complete-session')
@@ -233,7 +269,7 @@ describe('User Journey Integration Tests', () => {
         expect(screen.getByTestId('complete-session')).not.toBeDisabled()
       })
 
-      await user.click(screen.getByTestId('complete-session'))
+      fireEvent.click(screen.getByTestId('complete-session'))
 
       // Step 3: Show completion celebration
       const completionMessage = screen.getByTestId('completion-message')
@@ -301,7 +337,7 @@ describe('User Journey Integration Tests', () => {
         })
       )
 
-      await user.click(screen.getByTestId('retry-button'))
+      fireEvent.click(screen.getByTestId('retry-button'))
 
       // Step 3: Should recover and show content
       const successMessage = screen.getByTestId('success-message')

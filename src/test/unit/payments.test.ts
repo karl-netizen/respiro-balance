@@ -10,7 +10,9 @@ vi.mock('@/integrations/supabase/client', () => ({
   }
 }))
 
-const mockSupabase = vi.mocked(supabase)
+const mockFunctions = {
+  invoke: vi.fn()
+}
 
 describe('Payment & Subscription Flow', () => {
   beforeEach(() => {
@@ -27,10 +29,10 @@ describe('Payment & Subscription Flow', () => {
         error: null
       }
 
-      mockSupabase.functions.invoke.mockResolvedValue(mockCheckoutResponse)
+      mockFunctions.invoke.mockResolvedValue(mockCheckoutResponse)
 
       // Act
-      const result = await mockSupabase.functions.invoke('create-checkout', {
+      const result = await mockFunctions.invoke('create-checkout', {
         body: {
           priceId: 'price_premium_monthly',
           successUrl: 'http://localhost:3000/success',
@@ -41,7 +43,7 @@ describe('Payment & Subscription Flow', () => {
       // Assert
       expect(result.error).toBeNull()
       expect(result.data?.url).toBe('https://checkout.stripe.com/session-123')
-      expect(mockSupabase.functions.invoke).toHaveBeenCalledWith('create-checkout', {
+      expect(mockFunctions.invoke).toHaveBeenCalledWith('create-checkout', {
         body: {
           priceId: 'price_premium_monthly',
           successUrl: 'http://localhost:3000/success',
@@ -60,10 +62,10 @@ describe('Payment & Subscription Flow', () => {
         }
       }
 
-      mockSupabase.functions.invoke.mockResolvedValue(mockErrorResponse)
+      mockFunctions.invoke.mockResolvedValue(mockErrorResponse)
 
       // Act
-      const result = await mockSupabase.functions.invoke('create-checkout', {
+      const result = await mockFunctions.invoke('create-checkout', {
         body: { priceId: 'invalid-price-id' }
       })
 
@@ -87,10 +89,10 @@ describe('Payment & Subscription Flow', () => {
         error: null
       }
 
-      mockSupabase.functions.invoke.mockResolvedValue(mockResponse)
+      mockFunctions.invoke.mockResolvedValue(mockResponse)
 
       // Act
-      const result = await mockSupabase.functions.invoke('check-subscription')
+      const result = await mockFunctions.invoke('check-subscription')
 
       // Assert
       expect(result.error).toBeNull()
@@ -111,10 +113,10 @@ describe('Payment & Subscription Flow', () => {
         error: null
       }
 
-      mockSupabase.functions.invoke.mockResolvedValue(mockResponse)
+      mockFunctions.invoke.mockResolvedValue(mockResponse)
 
       // Act
-      const result = await mockSupabase.functions.invoke('check-subscription')
+      const result = await mockFunctions.invoke('check-subscription')
 
       // Assert
       expect(result.error).toBeNull()
@@ -133,10 +135,10 @@ describe('Payment & Subscription Flow', () => {
         error: null
       }
 
-      mockSupabase.functions.invoke.mockResolvedValue(mockPortalResponse)
+      mockFunctions.invoke.mockResolvedValue(mockPortalResponse)
 
       // Act
-      const result = await mockSupabase.functions.invoke('customer-portal')
+      const result = await mockFunctions.invoke('customer-portal')
 
       // Assert
       expect(result.error).toBeNull()
@@ -152,10 +154,10 @@ describe('Payment & Subscription Flow', () => {
         }
       }
 
-      mockSupabase.functions.invoke.mockResolvedValue(mockErrorResponse)
+      mockFunctions.invoke.mockResolvedValue(mockErrorResponse)
 
       // Act
-      const result = await mockSupabase.functions.invoke('customer-portal')
+      const result = await mockFunctions.invoke('customer-portal')
 
       // Assert
       expect(result.data).toBeNull()
@@ -166,13 +168,13 @@ describe('Payment & Subscription Flow', () => {
   describe('Payment Error Handling', () => {
     it('should handle payment processing failures', async () => {
       // Arrange
-      mockSupabase.functions.invoke.mockRejectedValue(
+      mockFunctions.invoke.mockRejectedValue(
         new Error('Payment processing failed')
       )
 
       // Act & Assert
       await expect(
-        mockSupabase.functions.invoke('create-checkout', {
+        mockFunctions.invoke('create-checkout', {
           body: { priceId: 'price_test' }
         })
       ).rejects.toThrow('Payment processing failed')
@@ -180,13 +182,13 @@ describe('Payment & Subscription Flow', () => {
 
     it('should handle network errors during payment', async () => {
       // Arrange
-      mockSupabase.functions.invoke.mockRejectedValue(
+      mockFunctions.invoke.mockRejectedValue(
         new Error('Network request failed')
       )
 
       // Act & Assert
       await expect(
-        mockSupabase.functions.invoke('check-subscription')
+        mockFunctions.invoke('check-subscription')
       ).rejects.toThrow('Network request failed')
     })
   })

@@ -82,10 +82,10 @@ describe('Authentication Flow', () => {
         }
       }
 
-      mockSupabase.auth.signInWithPassword.mockResolvedValue(mockErrorResponse as any)
+      mockAuth.signInWithPassword.mockResolvedValue(mockErrorResponse as any)
 
       // Act
-      const signInResult = await mockSupabase.auth.signInWithPassword({
+      const signInResult = await mockAuth.signInWithPassword({
         email: 'wrong@example.com',
         password: 'wrongpassword'
       })
@@ -98,13 +98,13 @@ describe('Authentication Flow', () => {
 
     it('should handle network errors during authentication', async () => {
       // Arrange
-      mockSupabase.auth.signInWithPassword.mockRejectedValue(
+      mockAuth.signInWithPassword.mockRejectedValue(
         new Error('Network error')
       )
 
       // Act & Assert
       await expect(
-        mockSupabase.auth.signInWithPassword({
+        mockAuth.signInWithPassword({
           email: 'test@example.com',
           password: 'password123'
         })
@@ -129,10 +129,10 @@ describe('Authentication Flow', () => {
         error: null
       }
 
-      mockSupabase.auth.signUp.mockResolvedValue(mockSignUpResponse as any)
+      mockAuth.signUp.mockResolvedValue(mockSignUpResponse as any)
 
       // Act
-      const signUpResult = await mockSupabase.auth.signUp({
+      const signUpResult = await mockAuth.signUp({
         email: 'newuser@example.com',
         password: 'newpassword123',
         options: {
@@ -156,10 +156,10 @@ describe('Authentication Flow', () => {
         }
       }
 
-      mockSupabase.auth.signUp.mockResolvedValue(mockErrorResponse as any)
+      mockAuth.signUp.mockResolvedValue(mockErrorResponse as any)
 
       // Act
-      const signUpResult = await mockSupabase.auth.signUp({
+      const signUpResult = await mockAuth.signUp({
         email: 'existing@example.com',
         password: 'password123'
       })
@@ -190,10 +190,10 @@ describe('Authentication Flow', () => {
         error: null
       }
 
-      mockSupabase.auth.getSession.mockResolvedValue(mockSessionResponse as any)
+      mockAuth.getSession.mockResolvedValue(mockSessionResponse as any)
 
       // Act
-      const sessionResult = await mockSupabase.auth.getSession()
+      const sessionResult = await mockAuth.getSession()
 
       // Assert
       expect(sessionResult.error).toBeNull()
@@ -211,10 +211,10 @@ describe('Authentication Flow', () => {
         }
       }
 
-      mockSupabase.auth.getSession.mockResolvedValue(mockExpiredResponse as any)
+      mockAuth.getSession.mockResolvedValue(mockExpiredResponse as any)
 
       // Act
-      const sessionResult = await mockSupabase.auth.getSession()
+      const sessionResult = await mockAuth.getSession()
 
       // Assert
       expect(sessionResult.data.session).toBeNull()
@@ -230,17 +230,17 @@ describe('Authentication Flow', () => {
         error: null
       }
 
-      mockSupabase.auth.resetPasswordForEmail.mockResolvedValue(mockResetResponse as any)
+      mockAuth.resetPasswordForEmail.mockResolvedValue(mockResetResponse as any)
 
       // Act
-      const resetResult = await mockSupabase.auth.resetPasswordForEmail(
+      const resetResult = await mockAuth.resetPasswordForEmail(
         'test@example.com',
         { redirectTo: 'http://localhost:3000/reset-password' }
       )
 
       // Assert
       expect(resetResult.error).toBeNull()
-      expect(mockSupabase.auth.resetPasswordForEmail).toHaveBeenCalledWith(
+      expect(mockAuth.resetPasswordForEmail).toHaveBeenCalledWith(
         'test@example.com',
         { redirectTo: 'http://localhost:3000/reset-password' }
       )
