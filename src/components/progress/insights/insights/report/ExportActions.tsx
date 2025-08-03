@@ -32,41 +32,41 @@ const ExportActions: React.FC<ExportActionsProps> = ({
       <p className="text-sm text-muted-foreground">
         Export your meditation progress report in various formats:
       </p>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
         <Button 
           variant="outline" 
-          className="flex flex-col items-center justify-center h-24 gap-2 hover:bg-primary/5"
+          className="flex flex-col items-center justify-center h-16 md:h-24 gap-1 md:gap-2 hover:bg-primary/5 active:bg-primary/10 transition-colors min-h-[64px] touch-manipulation"
           onClick={() => handleAction(onExportPDF, "PDF Export")}
           disabled={isExporting}
         >
-          <FileText className={`h-8 w-8 ${isExporting ? 'text-muted-foreground animate-pulse' : 'text-primary/80'}`} />
+          <FileText className={`h-6 w-6 md:h-8 md:w-8 ${isExporting ? 'text-muted-foreground animate-pulse' : 'text-primary/80'}`} />
           <span className="text-xs font-medium">PDF</span>
         </Button>
         <Button 
           variant="outline"
-          className="flex flex-col items-center justify-center h-24 gap-2 hover:bg-primary/5"
+          className="flex flex-col items-center justify-center h-16 md:h-24 gap-1 md:gap-2 hover:bg-primary/5 active:bg-primary/10 transition-colors min-h-[64px] touch-manipulation"
           onClick={() => handleAction(onExportImage, "Image Export")}
           disabled={isExporting}
         >
-          <Download className={`h-8 w-8 ${isExporting ? 'text-muted-foreground animate-pulse' : 'text-primary/80'}`} />
+          <Download className={`h-6 w-6 md:h-8 md:w-8 ${isExporting ? 'text-muted-foreground animate-pulse' : 'text-primary/80'}`} />
           <span className="text-xs font-medium">Image</span>
         </Button>
         <Button 
           variant="outline"
-          className="flex flex-col items-center justify-center h-24 gap-2 hover:bg-primary/5"
+          className="flex flex-col items-center justify-center h-16 md:h-24 gap-1 md:gap-2 hover:bg-primary/5 active:bg-primary/10 transition-colors min-h-[64px] touch-manipulation"
           onClick={() => handleAction(onPrint, "Print")}
           disabled={isExporting}
         >
-          <Printer className={`h-8 w-8 ${isExporting ? 'text-muted-foreground animate-pulse' : 'text-primary/80'}`} />
+          <Printer className={`h-6 w-6 md:h-8 md:w-8 ${isExporting ? 'text-muted-foreground animate-pulse' : 'text-primary/80'}`} />
           <span className="text-xs font-medium">Print</span>
         </Button>
         <Button 
           variant="outline"
-          className="flex flex-col items-center justify-center h-24 gap-2 hover:bg-primary/5"
+          className="flex flex-col items-center justify-center h-16 md:h-24 gap-1 md:gap-2 hover:bg-primary/5 active:bg-primary/10 transition-colors min-h-[64px] touch-manipulation"
           onClick={() => handleAction(onShare, "Share")}
           disabled={isExporting}
         >
-          <Share2 className={`h-8 w-8 ${isExporting ? 'text-muted-foreground animate-pulse' : 'text-primary/80'}`} />
+          <Share2 className={`h-6 w-6 md:h-8 md:w-8 ${isExporting ? 'text-muted-foreground animate-pulse' : 'text-primary/80'}`} />
           <span className="text-xs font-medium">Share</span>
         </Button>
       </div>
