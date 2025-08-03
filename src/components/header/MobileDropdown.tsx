@@ -37,6 +37,10 @@ const MobileDropdown = ({ title, items, toggleMainMenu, icon, className }: Mobil
     const isExternalLink = href.startsWith('http');
     if (!isExternalLink) {
       navigate(href);
+      // Scroll to top after navigation
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 100);
     }
   };
 

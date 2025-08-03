@@ -142,7 +142,9 @@ function AppContent() {
                         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                         <Route path="/reset-password" element={<ResetPasswordPage />} />
                         <Route path="/profile" element={<ProfilePage />} />
+                        <Route path="/account" element={<ProfilePage />} />
                         <Route path="/settings" element={<SettingsPage />} />
+                        <Route path="/meditate" element={<Meditate />} />
                         <Route path="/system" element={<SystemDashboardPage />} />
                         <Route path="/meditation" element={<Meditate />} />
                         <Route path="/biofeedback" element={<BiofeedbackPage />} />

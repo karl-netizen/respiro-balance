@@ -45,12 +45,20 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
     return deviceType === 'mobile' ? 'text-base' : 'text-sm';
   };
 
+  const handleLinkClick = (path: string) => {
+    toggleMenu();
+    // Scroll to top after navigation
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
+  };
+
   return (
     <div className="flex-1 overflow-auto py-2 space-y-1 z-50">
       <Link
         to="/landing"
         className={getLinkClasses(isActive('/landing') || isActive('/'))}
-        onClick={toggleMenu}
+        onClick={() => handleLinkClick('/landing')}
       >
         <Home className={getIconSize()} />
         <span className={getTextSize()}>Home</span>
@@ -60,7 +68,7 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
         <Link
           to="/dashboard"
           className={getLinkClasses(isActive('/dashboard'))}
-          onClick={toggleMenu}
+          onClick={() => handleLinkClick('/dashboard')}
         >
           <Gauge className={getIconSize()} />
           <span className={getTextSize()}>Dashboard</span>
@@ -73,19 +81,19 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
         items={[
           {
             label: "Guided Meditation",
-            href: "/meditate?tab=guided",
+            href: "/meditation?tab=guided",
           },
           {
             label: "Quick Sessions",
-            href: "/meditate?tab=quick",
+            href: "/meditation?tab=quick",
           },
           {
             label: "Deep Focus",
-            href: "/meditate?tab=deep",
+            href: "/meditation?tab=deep",
           },
           {
             label: "Sleep",
-            href: "/meditate?tab=sleep",
+            href: "/meditation?tab=sleep",
           }
         ]}
         toggleMainMenu={toggleMenu}
@@ -149,7 +157,7 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
       <Link
         to="/morning-ritual"
         className={getLinkClasses(isActive('/morning-ritual'))}
-        onClick={toggleMenu}
+        onClick={() => handleLinkClick('/morning-ritual')}
       >
         <Sunrise className={getIconSize()} />
         <span className={getTextSize()}>Morning Ritual</span>
@@ -158,7 +166,7 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
       <Link
         to="/progress"
         className={getLinkClasses(isActive('/progress'))}
-        onClick={toggleMenu}
+        onClick={() => handleLinkClick('/progress')}
       >
         <LineChart className={getIconSize()} />
         <span className={getTextSize()}>Progress</span>
@@ -167,7 +175,7 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
       <Link
         to="/account"
         className={getLinkClasses(isActive('/account'))}
-        onClick={toggleMenu}
+        onClick={() => handleLinkClick('/account')}
       >
         <Settings className={getIconSize()} />
         <span className={getTextSize()}>Account</span>
@@ -176,7 +184,7 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
       <Link
         to="/landing#pricing"
         className={getLinkClasses(location.hash === '#pricing')}
-        onClick={toggleMenu}
+        onClick={() => handleLinkClick('/landing#pricing')}
       >
         <Clock className={getIconSize()} />
         <span className={getTextSize()}>Pricing</span>
