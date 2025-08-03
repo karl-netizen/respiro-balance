@@ -9,10 +9,13 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { Palette, Accessibility, Target, Clock, Calendar, Sun, Moon, Monitor } from 'lucide-react';
+import { Palette, Accessibility, Target, Clock, Calendar, Sun, Moon, Monitor, HelpCircle, RotateCcw } from 'lucide-react';
 import { toast } from 'sonner';
+import { useUserGuideProgress } from '@/components/guide/hooks/useUserGuideProgress';
 
 const AccountPreferencesSettings = () => {
+  const { userPreferences, updatePreferences, resetProgress, getCompletionPercentage, completedTours } = useUserGuideProgress();
+  
   const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('system');
   const [darkModeOverride, setDarkModeOverride] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -397,6 +400,125 @@ const AccountPreferencesSettings = () => {
                 />
               </div>
             )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Guided Tours & Tips */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <HelpCircle className="h-5 w-5" />
+            Guided Tours & Tips
+          </CardTitle>
+          <CardDescription>
+            Configure in-app tutorials, tooltips, and guided experiences
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label>Enable Tooltips & Tours</Label>
+              <p className="text-sm text-muted-foreground">
+                Show helpful tips and guided tours throughout the app
+              </p>
+            </div>
+            <Switch 
+              checked={userPreferences.enableTooltips} 
+              onCheckedChange={(enabled) => updatePreferences({ enableTooltips: enabled })} 
+            />
+          </div>
+
+          <Separator />
+
+          <div className="space-y-4">
+            <h4 className="font-medium">Tour Settings</h4>
+            
+            <div className="space-y-3">
+              <Label>Tour Speed</Label>
+              <Select 
+                value={userPreferences.tourSpeed} 
+                onValueChange={(speed: 'slow' | 'medium' | 'fast') => updatePreferences({ tourSpeed: speed })}
+                disabled={!userPreferences.enableTooltips}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="slow">Slow - Extended explanations</SelectItem>
+                  <SelectItem value="medium">Medium - Standard pace</SelectItem>
+                  <SelectItem value="fast">Fast - Quick overview</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-sm text-muted-foreground">
+                Controls the pacing and detail level of guided tours
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <Label>Trigger Preference</Label>
+              <Select 
+                value={userPreferences.preferredTrigger} 
+                onValueChange={(trigger: 'auto' | 'manual') => updatePreferences({ preferredTrigger: trigger })}
+                disabled={!userPreferences.enableTooltips}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="auto">Auto - Show tips automatically</SelectItem>
+                  <SelectItem value="manual">Manual - Only when requested</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-sm text-muted-foreground">
+                Choose when tooltips and hints should appear
+              </p>
+            </div>
+          </div>
+
+          <Separator />
+
+          <div className="space-y-4">
+            <h4 className="font-medium">Progress & Reset</h4>
+            
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <Label>Completed Tours</Label>
+                <span className="text-sm text-muted-foreground">
+                  {completedTours.length} tours completed
+                </span>
+              </div>
+              
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span>Progress</span>
+                  <span>{getCompletionPercentage(10)}%</span>
+                </div>
+                <div className="w-full bg-secondary rounded-full h-2">
+                  <div 
+                    className="bg-primary rounded-full h-2 transition-all duration-300" 
+                    style={{ width: `${getCompletionPercentage(10)}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  resetProgress();
+                  toast.success("Tour progress reset", {
+                    description: "All tooltips and tours will be shown again."
+                  });
+                }}
+                disabled={completedTours.length === 0}
+              >
+                <RotateCcw className="h-4 w-4 mr-2" />
+                Reset Progress
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
