@@ -6,7 +6,7 @@ import { BiofeedbackControls } from './components/BiofeedbackControls';
 import { BiometricSummary } from './components/BiometricSummary';
 import { TabsContainer } from './components/TabsContainer';
 import { DataConverter } from './components/DataConverter';
-import { useDeviceDetection } from '@/hooks/useDeviceDetection';
+import { useDeviceDetection } from '@/hooks/core/useDeviceDetection';
 
 // Define the props interface
 export interface BiofeedbackDisplayProps {

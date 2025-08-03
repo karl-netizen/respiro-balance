@@ -5,7 +5,7 @@ import { BarChart3 } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { useFocus } from '@/context/FocusProvider';
 import { FocusActivityEntry } from './types';
-import { useDeviceDetection } from '@/hooks/useDeviceDetection';
+import { useDeviceDetection } from '@/hooks/core/useDeviceDetection';
 
 export const FocusInsights: React.FC = () => {
   const { stats } = useFocus();

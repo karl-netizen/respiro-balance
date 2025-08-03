@@ -6,7 +6,7 @@ import MobileMenuHeader from "./MobileMenuHeader";
 import MobileMenuLinks from "./MobileMenuLinks";
 import MobileMenuUserActions from "./MobileMenuUserActions";
 import { useAuth } from "@/hooks/useAuth";
-import { useDeviceDetection } from "@/hooks/useDeviceDetection";
+import { useDeviceDetection } from '@/hooks/core/useDeviceDetection';
 
 interface MobileMenuProps {
   isOpen: boolean;

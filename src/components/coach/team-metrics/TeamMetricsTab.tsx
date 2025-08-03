@@ -11,7 +11,7 @@ import SessionCompletionChart from "./SessionCompletionChart";
 import { DateRange } from "react-day-picker";
 import { addDays, format } from "date-fns";
 import { DateRangePicker } from "./DateRangePicker";
-import { useDeviceDetection } from "@/hooks/useDeviceDetection";
+import { useDeviceDetection } from '@/hooks/core/useDeviceDetection';
 
 const TeamMetricsTab = () => {
   const [timeRange, setTimeRange] = useState("7days");

@@ -1,6 +1,6 @@
 
 import React, { useEffect, useRef, ReactNode } from 'react';
-import { useDeviceDetection } from '@/hooks/useDeviceDetection';
+import { useDeviceDetection } from '@/hooks/core/useDeviceDetection';
 
 interface FocusManagerProps {
   children: ReactNode;

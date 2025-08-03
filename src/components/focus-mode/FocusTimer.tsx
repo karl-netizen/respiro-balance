@@ -4,7 +4,7 @@ import { useFocus } from '@/context/FocusProvider';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Clock } from 'lucide-react';
-import { useDeviceDetection } from '@/hooks/useDeviceDetection';
+import { useDeviceDetection } from '@/hooks/core/useDeviceDetection';
 
 export const FocusTimer: React.FC = () => {
   const { 
