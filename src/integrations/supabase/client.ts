@@ -1,12 +1,9 @@
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-
-// Use direct values since VITE_* variables aren't supported in this environment
-const supabaseUrl = 'https://tlwlxlthrcgscwgmsamo.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRsd2x4bHRocmNnc2N3Z21zYW1vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDMwNjU1NjgsImV4cCI6MjA1ODY0MTU2OH0.9clmPPt5LNlyO-dE6HN6kHSegiCxeJi1WmUgLx_CbmM';
+import { supabaseConfig } from '@/config/environment';
 
 export const isSupabaseConfigured = () => {
-  return !!(supabaseUrl && supabaseAnonKey);
+  return !!(supabaseConfig.url && supabaseConfig.anonKey);
 };
 
 export const handleSupabaseError = (error: any) => {
@@ -22,7 +19,11 @@ let supabaseInstance: SupabaseClient | null = null;
 
 export const supabase = (() => {
   if (!supabaseInstance) {
-    supabaseInstance = createClient(supabaseUrl, supabaseAnonKey, {
+    if (!isSupabaseConfigured()) {
+      throw new Error('Supabase configuration is missing. Please check your environment variables.');
+    }
+    
+    supabaseInstance = createClient(supabaseConfig.url, supabaseConfig.anonKey, {
       auth: {
         storage: localStorage,
         persistSession: true,

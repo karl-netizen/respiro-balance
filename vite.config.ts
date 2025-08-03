@@ -10,7 +10,13 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
     fs: {
       strict: false
-    }
+    },
+    // Security headers in development
+    headers: mode === 'development' ? {
+      'X-Content-Type-Options': 'nosniff',
+      'X-Frame-Options': 'DENY',
+      'X-XSS-Protection': '1; mode=block'
+    } : {}
   },
   plugins: [
     react(),
