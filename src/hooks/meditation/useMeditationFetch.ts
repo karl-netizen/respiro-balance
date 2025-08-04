@@ -44,7 +44,9 @@ export const useMeditationFetch = () => {
         premium: session.subscription_tier === 'premium',
       }));
       
+      console.log('Raw meditation data from Supabase:', data);
       setSessions(formattedSessions);
+      console.log('Formatted meditation sessions:', formattedSessions);
     } catch (err: any) {
       setError(err);
       toast.error('Failed to fetch meditation sessions');
