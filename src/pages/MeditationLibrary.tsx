@@ -17,7 +17,11 @@ const MeditationLibrary = () => {
   const [activeTab, setActiveTab] = useState('all');
   
   const { isPremium } = useSubscriptionContext();
-  const { sessions: meditationSessions, isLoading } = useMeditationFetch();
+  const { sessions: meditationSessions, isLoading, error } = useMeditationFetch();
+  
+  console.log('MeditationLibrary - Sessions:', meditationSessions);
+  console.log('MeditationLibrary - IsLoading:', isLoading);
+  console.log('MeditationLibrary - Error:', error);
   const { 
     durationFilter, 
     setDurationFilter,
