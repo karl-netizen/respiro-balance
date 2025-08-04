@@ -13,6 +13,74 @@ import { MeditationSession } from '@/types/meditation';
 import { useMeditationFilters } from '@/hooks/useMeditationFilters';
 import { useMeditationFetch } from '@/hooks/meditation/useMeditationFetch';
 
+// Add this mock data temporarily to test if your components work with data
+const mockSessions: MeditationSession[] = [
+  {
+    id: '1',
+    title: 'Morning Mindfulness',
+    duration: 10,
+    category: 'mindfulness',
+    description: 'Start your day with calm awareness',
+    premium: false,
+    audio_url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav', // Sample audio URL
+    session_type: 'mindfulness',
+    level: 'beginner',
+    instructor: 'Test Instructor',
+    tags: ['mindfulness'],
+    started_at: new Date().toISOString(),
+    completed: false,
+    favorite: false
+  },
+  {
+    id: '2',
+    title: 'Quick Stress Relief',
+    duration: 5,
+    category: 'stress relief',
+    description: 'Brief session to release tension',
+    premium: false,
+    audio_url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav',
+    session_type: 'stress relief',
+    level: 'beginner',
+    instructor: 'Test Instructor',
+    tags: ['stress'],
+    started_at: new Date().toISOString(),
+    completed: false,
+    favorite: false
+  },
+  {
+    id: '3',
+    title: 'Deep Body Scan',
+    duration: 20,
+    category: 'body scan',
+    description: 'Comprehensive body awareness practice',
+    premium: true,
+    audio_url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav',
+    session_type: 'body scan',
+    level: 'intermediate',
+    instructor: 'Test Instructor',
+    tags: ['body scan'],
+    started_at: new Date().toISOString(),
+    completed: false,
+    favorite: false
+  },
+  {
+    id: '4',
+    title: 'Sleep Preparation',
+    duration: 15,
+    category: 'sleep',
+    description: 'Wind down for peaceful rest',
+    premium: false,
+    audio_url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav',
+    session_type: 'sleep',
+    level: 'beginner',
+    instructor: 'Test Instructor',
+    tags: ['sleep'],
+    started_at: new Date().toISOString(),
+    completed: false,
+    favorite: false
+  }
+];
+
 const MeditationLibrary = () => {
   const [selectedSession, setSelectedSession] = useState<MeditationSession | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -22,7 +90,12 @@ const MeditationLibrary = () => {
   const [userSessions, setUserSessions] = useState<MeditationSession[]>([]);
   
   const { isPremium } = useSubscriptionContext();
-  const { sessions: meditationSessions, isLoading, error } = useMeditationFetch();
+  
+  // Replace your useMeditationFetch temporarily:
+  // const { sessions: meditationSessions, isLoading, error } = useMeditationFetch();
+  const meditationSessions = mockSessions;
+  const isLoading = false;
+  const error = null;
   
   // Debug: Check session structure
   useEffect(() => {
