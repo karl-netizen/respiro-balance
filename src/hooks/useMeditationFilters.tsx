@@ -32,8 +32,23 @@ export const useMeditationFilters = () => {
   };
   
   const filterSessionsByCategory = (sessions: MeditationSession[], category: 'guided' | 'quick' | 'deep' | 'sleep') => {
-    // First filter by category
-    const categoryFilteredSessions = sessions.filter(session => session.category === category);
+    // Map the category filter to database categories
+    const categoryFilteredSessions = sessions.filter(session => {
+      const sessionCategory = session.category.toLowerCase();
+      
+      switch (category) {
+        case 'guided':
+          return ['mindfulness', 'stress relief', 'body scan', 'energy'].includes(sessionCategory);
+        case 'quick':
+          return session.duration <= 10; // Quick sessions are short duration
+        case 'deep':
+          return ['mindfulness', 'body scan'].includes(sessionCategory) && session.duration > 15;
+        case 'sleep':
+          return sessionCategory === 'sleep';
+        default:
+          return true;
+      }
+    });
     
     // Then apply duration filter
     return applyFilters(categoryFilteredSessions);
