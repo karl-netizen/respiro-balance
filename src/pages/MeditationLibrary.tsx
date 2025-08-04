@@ -8,7 +8,7 @@ import { useSubscriptionContext } from '@/hooks/useSubscriptionContext';
 import SubscriptionBanner from '@/components/subscription/SubscriptionBanner';
 import { MeditationSession } from '@/types/meditation';
 import { useMeditationFilters } from '@/hooks/useMeditationFilters';
-import { meditationSessions } from '@/data/meditationSessions';
+import { useMeditationFetch } from '@/hooks/meditation/useMeditationFetch';
 
 const MeditationLibrary = () => {
   const [selectedSession, setSelectedSession] = useState<MeditationSession | null>(null);
@@ -17,6 +17,7 @@ const MeditationLibrary = () => {
   const [activeTab, setActiveTab] = useState('all');
   
   const { isPremium } = useSubscriptionContext();
+  const { sessions: meditationSessions, isLoading } = useMeditationFetch();
   const { 
     durationFilter, 
     setDurationFilter,
@@ -75,6 +76,18 @@ const MeditationLibrary = () => {
     return filterSessionsByCategory(meditationSessions, category);
   };
   
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <main className="flex-grow container mx-auto px-4 py-8">
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
       
