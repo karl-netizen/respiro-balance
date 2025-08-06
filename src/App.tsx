@@ -31,6 +31,7 @@ import SocialPage from '@/pages/SocialPage';
 import MeditateAdvanced from '@/pages/MeditateAdvanced';
 import PremiumProPage from '@/pages/PremiumProPage';
 import UserJourneyTestingPage from '@/pages/UserJourneyTestingPage';
+import MeditationLibrary from '@/pages/MeditationLibrary';
 import MeditationAudioManagement from '@/pages/MeditationAudioManagement';
 import MeditationSessionPage from '@/pages/MeditationSessionPage';
 import Breathe from '@/pages/Breathe';
@@ -148,7 +149,7 @@ function AppContent() {
                         <Route path="/settings" element={<SettingsPage />} />
                         <Route path="/meditate" element={<Meditate />} />
                         <Route path="/system" element={<SystemDashboardPage />} />
-                        <Route path="/meditation" element={<Meditate />} />
+                        <Route path="/meditation" element={<MeditationLibrary />} />
                         <Route path="/biofeedback" element={<BiofeedbackPage />} />
                         <Route path="/subscription" element={<SubscriptionPage />} />
                         <Route path="/premium-plus" element={<PremiumPlusPage />} />
