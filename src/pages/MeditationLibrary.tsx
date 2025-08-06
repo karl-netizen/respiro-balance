@@ -186,10 +186,41 @@ const MeditationLibrary = () => {
     return favorites;
   };
   
-  // Wrapper function to match the expected signature
+  // Wrapper function to match the expected signature with proper category mapping
   const filterByCategory = (category: 'guided' | 'quick' | 'deep' | 'sleep') => {
-    const filtered = filterSessionsByCategory(meditationSessions, category);
-    console.log(`🏷️ Filtered by ${category}:`, filtered.length);
+    let filtered: MeditationSession[] = [];
+    
+    switch (category) {
+      case 'guided':
+        // Include mindfulness, body scan sessions
+        filtered = meditationSessions.filter(s => 
+          ['mindfulness', 'body scan'].includes(s.category.toLowerCase())
+        );
+        break;
+      case 'quick':
+        // Include short sessions (under 10 minutes) or stress relief
+        filtered = meditationSessions.filter(s => 
+          s.duration <= 10 || s.category.toLowerCase() === 'stress relief'
+        );
+        break;
+      case 'deep':
+        // Include longer mindfulness sessions or stress relief
+        filtered = meditationSessions.filter(s => 
+          (s.category.toLowerCase() === 'mindfulness' && s.duration > 10) ||
+          s.category.toLowerCase() === 'stress relief'
+        );
+        break;
+      case 'sleep':
+        // Include sleep category sessions
+        filtered = meditationSessions.filter(s => 
+          s.category.toLowerCase() === 'sleep'
+        );
+        break;
+      default:
+        filtered = meditationSessions;
+    }
+    
+    console.log(`🏷️ Filtered by ${category}:`, filtered.length, filtered.map(s => s.title));
     return filtered;
   };
   
