@@ -112,12 +112,6 @@ const mockMeditationSessions: MeditationSession[] = [
 const MeditationLibrary = () => {
   // ADD THESE LINES RIGHT AT THE TOP:
   console.log('🔥 MeditationLibrary component is rendering!');
-  
-  // Test with hardcoded data first
-  const testSessions = [
-    { id: '1', title: 'Test Session', duration: 10, category: 'mindfulness', description: 'Test description', premium: false, audioUrl: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav', session_type: 'mindfulness', level: 'beginner', instructor: 'Test', tags: ['test'], started_at: new Date().toISOString(), completed: false, favorite: false }
-  ];
-  console.log('🔥 Test sessions created:', testSessions);
 
   const [selectedSession, setSelectedSession] = useState<MeditationSession | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
