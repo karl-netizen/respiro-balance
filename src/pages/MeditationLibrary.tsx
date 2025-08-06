@@ -1,277 +1,310 @@
-// Replace your MeditationLibrary component with this version that includes audio playback
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Play, Heart, Clock, User, Crown, Headphones } from 'lucide-react';
+import { useMeditationContent } from '@/hooks/useMeditationContent';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
-// Mock meditation data for testing
-const mockSessions = [
-  {
-    id: '1',
-    title: 'Morning Mindfulness',
-    duration: 10,
-    category: 'mindfulness',
-    description: 'Start your day with calm awareness',
-    premium: false,
-    audioUrl: 'test-audio.mp3'
-  },
-  {
-    id: '2',
-    title: 'Quick Stress Relief',
-    duration: 5,
-    category: 'stress relief', 
-    description: 'Quick 5-minute break',
-    premium: false,
-    audioUrl: 'test-audio2.mp3'
-  },
-  {
-    id: '3',
-    title: 'Deep Focus Session',
-    duration: 20,
-    category: 'body scan',
-    description: 'Deep concentration practice',
-    premium: true,
-    audioUrl: 'test-audio3.mp3'
-  }
-];
+interface AudioFile {
+  name: string;
+  url: string;
+  size: number;
+}
 
 const MeditationLibrary = () => {
-  const [selectedSession, setSelectedSession] = useState<any>(null);
-  const [audioFile, setAudioFile] = useState<File | null>(null);
-  const [audioUrl, setAudioUrl] = useState<string | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const audioRef = useRef<HTMLAudioElement>(null);
+  const { 
+    content, 
+    categories, 
+    isLoading, 
+    getContentByCategory, 
+    toggleFavorite, 
+    getProgressForContent,
+    incrementPlayCount
+  } = useMeditationContent();
+  
+  const [audioFiles, setAudioFiles] = useState<AudioFile[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedContent, setSelectedContent] = useState<any>(null);
+  const [audioLoading, setAudioLoading] = useState(false);
 
-  console.log('🔥 MEDITATION LIBRARY WITH AUDIO PLAYER LOADED');
+  // Fetch audio files from Supabase storage
+  const fetchAudioFiles = async () => {
+    try {
+      setAudioLoading(true);
+      const { data, error } = await supabase.storage
+        .from('meditation-audio')
+        .list('', {
+          limit: 100,
+          offset: 0
+        });
 
-  const handleAudioUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file && file.type.startsWith('audio/')) {
-      setAudioFile(file);
-      // Create a URL for the audio file so we can play it
-      const url = URL.createObjectURL(file);
-      setAudioUrl(url);
-      console.log('✅ Audio file selected:', file.name);
-      alert(`Audio file "${file.name}" selected successfully! You can now play it.`);
-    } else {
-      alert('Please select a valid audio file (.mp3, .wav, .m4a, etc.)');
+      if (error) throw error;
+
+      const audioFilesData = await Promise.all(
+        (data || []).map(async (file) => {
+          const { data: signedUrl } = await supabase.storage
+            .from('meditation-audio')
+            .createSignedUrl(file.name, 60 * 60 * 24); // 24 hours
+
+          return {
+            name: file.name,
+            url: signedUrl?.signedUrl || '',
+            size: file.metadata?.size || 0
+          };
+        })
+      );
+
+      setAudioFiles(audioFilesData);
+      console.log('✅ Loaded audio files from Supabase:', audioFilesData.length);
+    } catch (error) {
+      console.error('Failed to fetch audio files:', error);
+      toast.error('Failed to load audio files from storage');
+    } finally {
+      setAudioLoading(false);
     }
   };
 
-  const handleSessionClick = (session: any) => {
-    setSelectedSession(session);
-    console.log('🎯 Session selected:', session);
+  useEffect(() => {
+    fetchAudioFiles();
+  }, []);
+
+  const filteredContent = selectedCategory === 'all' 
+    ? content 
+    : getContentByCategory(selectedCategory);
+
+  const categoryTabs = [
+    { value: 'all', label: 'All Sessions', count: content.length },
+    { value: 'guided', label: 'Guided', count: getContentByCategory('Mindfulness').length },
+    { value: 'quick', label: 'Quick Breaks', count: getContentByCategory('Focus').length },
+    { value: 'deep', label: 'Deep Focus', count: getContentByCategory('Body Scan').length },
+    { value: 'sleep', label: 'Sleep', count: getContentByCategory('Sleep').length }
+  ];
+
+  const handlePlayContent = async (contentItem: any) => {
+    setSelectedContent(contentItem);
+    await incrementPlayCount(contentItem.id);
+    toast.success(`Playing: ${contentItem.title}`);
   };
 
-  const togglePlayPause = () => {
-    if (!audioUrl) {
-      alert('Please select an audio file first!');
-      return;
-    }
-
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-        setIsPlaying(false);
-        console.log('⏸️ Audio paused');
-      } else {
-        audioRef.current.play();
-        setIsPlaying(true);
-        console.log('▶️ Audio playing');
-      }
-    }
-  };
-
-  const stopAudio = () => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
-      setIsPlaying(false);
-      console.log('⏹️ Audio stopped');
-    }
-  };
+  if (isLoading) {
+    return (
+      <div className="container mx-auto p-6 space-y-6">
+        <div className="animate-pulse">
+          <div className="h-8 bg-muted rounded-md w-1/3 mb-4"></div>
+          <div className="h-4 bg-muted rounded-md w-2/3 mb-8"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div key={i} className="h-48 bg-muted rounded-lg"></div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'system-ui' }}>
-      <div style={{ marginBottom: '30px' }}>
-        <h1 style={{ fontSize: '2rem', marginBottom: '10px' }}>🧘‍♀️ Meditation Library</h1>
-        <p style={{ color: '#666' }}>Found {mockSessions.length} meditation sessions</p>
+    <div className="container mx-auto p-6 space-y-8">
+      {/* Header */}
+      <div className="text-center space-y-4">
+        <h1 className="text-4xl font-bold text-foreground">Meditation Library</h1>
+        <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+          Explore our diverse collection of guided meditations, quick breaks, and deep focus sessions
+          designed to help you find balance in your busy day.
+        </p>
       </div>
 
-      {/* Audio File Upload Section */}
-      <div style={{ 
-        background: '#f0f8ff', 
-        padding: '20px', 
-        borderRadius: '8px', 
-        marginBottom: '30px',
-        border: '2px dashed #007bff'
-      }}>
-        <h2 style={{ marginBottom: '15px' }}>📁 Upload & Play Your Audio File</h2>
-        <input
-          type="file"
-          accept="audio/*"
-          onChange={handleAudioUpload}
-          style={{
-            padding: '10px',
-            border: '1px solid #ccc',
-            borderRadius: '4px',
-            marginBottom: '15px',
-            display: 'block'
-          }}
-        />
-        
-        {audioFile && (
-          <div style={{ marginBottom: '15px' }}>
-            <div style={{ color: '#28a745', marginBottom: '10px' }}>
-              ✅ Selected: {audioFile.name} ({Math.round(audioFile.size / 1024)} KB)
-            </div>
-            
-            {/* Audio Player Controls */}
-            <div style={{ 
-              background: '#fff', 
-              padding: '15px', 
-              borderRadius: '5px',
-              border: '1px solid #ddd'
-            }}>
-              <h3 style={{ margin: '0 0 10px 0' }}>🎵 Audio Player</h3>
-              
-              {/* HTML5 Audio Element */}
-              <audio 
-                ref={audioRef}
-                src={audioUrl || undefined}
-                onPlay={() => setIsPlaying(true)}
-                onPause={() => setIsPlaying(false)}
-                onEnded={() => setIsPlaying(false)}
-                controls
-                style={{ width: '100%', marginBottom: '10px' }}
-              />
-              
-              {/* Custom Controls */}
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <button 
-                  onClick={togglePlayPause}
-                  style={{
-                    padding: '8px 15px',
-                    background: isPlaying ? '#ffc107' : '#28a745',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: 'pointer'
-                  }}
-                >
-                  {isPlaying ? '⏸️ Pause' : '▶️ Play'}
-                </button>
-                
-                <button 
-                  onClick={stopAudio}
-                  style={{
-                    padding: '8px 15px',
-                    background: '#dc3545',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: 'pointer'
-                  }}
-                >
-                  ⏹️ Stop
-                </button>
-              </div>
+      {/* Premium Upgrade Banner */}
+      <Card className="bg-gradient-to-r from-primary/10 to-accent/10 border-primary/20">
+        <CardContent className="flex items-center justify-between p-6">
+          <div className="flex items-center space-x-4">
+            <Crown className="h-8 w-8 text-primary" />
+            <div>
+              <h3 className="font-semibold text-lg">Upgrade to Premium</h3>
+              <p className="text-muted-foreground">
+                Unlock advanced analytics, data export, and more meditation content.
+              </p>
             </div>
           </div>
-        )}
-        
-        {!audioFile && (
-          <p style={{ color: '#666', fontStyle: 'italic' }}>
-            Select an audio file to see the player controls
-          </p>
-        )}
-      </div>
+          <Button className="bg-primary hover:bg-primary/90">
+            View Plans
+          </Button>
+        </CardContent>
+      </Card>
 
-      {/* Session List */}
-      <div style={{ marginBottom: '30px' }}>
-        <h2 style={{ marginBottom: '20px' }}>Available Sessions</h2>
-        <div style={{ display: 'grid', gap: '15px' }}>
-          {mockSessions.map(session => (
-            <div 
-              key={session.id}
-              onClick={() => handleSessionClick(session)}
-              style={{
-                padding: '20px',
-                border: '1px solid #ddd',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                background: selectedSession?.id === session.id ? '#e6f3ff' : '#fff',
-                transition: 'all 0.2s'
-              }}
-              onMouseOver={(e) => (e.target as HTMLElement).style.background = '#f5f5f5'}
-              onMouseOut={(e) => (e.target as HTMLElement).style.background = selectedSession?.id === session.id ? '#e6f3ff' : '#fff'}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
-                  <h3 style={{ margin: '0 0 5px 0', fontSize: '1.2rem' }}>{session.title}</h3>
-                  <p style={{ margin: '0 0 10px 0', color: '#666' }}>{session.description}</p>
-                  <div style={{ display: 'flex', gap: '15px', fontSize: '0.9rem' }}>
-                    <span>⏱️ {session.duration} min</span>
-                    <span>🏷️ {session.category}</span>
-                    {session.premium && <span style={{ color: '#ff6b35' }}>👑 Premium</span>}
+      {/* Audio Files from Supabase Storage */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Headphones className="h-5 w-5" />
+            Audio Files from Storage
+          </CardTitle>
+          <CardDescription>
+            {audioLoading ? 'Loading audio files...' : `${audioFiles.length} audio files available`}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {audioLoading ? (
+            <div className="grid grid-cols-1 gap-3">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-16 bg-muted rounded-md animate-pulse"></div>
+              ))}
+            </div>
+          ) : audioFiles.length > 0 ? (
+            <div className="grid grid-cols-1 gap-3">
+              {audioFiles.map((file, index) => (
+                <div key={index} className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <Play className="h-4 w-4 text-primary" />
+                    <div>
+                      <p className="font-medium">{file.name.replace(/\.[^/.]+$/, "")}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {(file.size / (1024 * 1024)).toFixed(1)} MB
+                      </p>
+                    </div>
                   </div>
+                  <Button size="sm" variant="outline">
+                    Play
+                  </Button>
                 </div>
-                <div style={{ fontSize: '1.5rem' }}>🎧</div>
-              </div>
+              ))}
             </div>
+          ) : (
+            <p className="text-center text-muted-foreground py-8">
+              No audio files found in storage bucket
+            </p>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Category Tabs */}
+      <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className="w-full">
+        <TabsList className="grid w-full grid-cols-5">
+          {categoryTabs.map((tab) => (
+            <TabsTrigger key={tab.value} value={tab.value} className="text-sm">
+              {tab.label}
+            </TabsTrigger>
           ))}
-        </div>
-      </div>
+        </TabsList>
 
-      {/* Selected Session Details */}
-      {selectedSession && (
-        <div style={{
-          background: '#fff3cd',
-          padding: '20px',
-          borderRadius: '8px',
-          border: '1px solid #ffeaa7'
-        }}>
-          <h2>🎯 Selected Session: {selectedSession.title}</h2>
-          <p><strong>Duration:</strong> {selectedSession.duration} minutes</p>
-          <p><strong>Category:</strong> {selectedSession.category}</p>
-          
-          <div style={{ marginTop: '15px' }}>
-            <button 
-              style={{
-                padding: '10px 20px',
-                background: '#28a745',
-                color: 'white',
-                border: 'none',
-                borderRadius: '5px',
-                cursor: 'pointer',
-                marginRight: '10px'
-              }}
-              onClick={() => {
-                if (audioFile) {
-                  alert(`Starting "${selectedSession.title}" with your audio file: ${audioFile.name}`);
-                  togglePlayPause();
-                } else {
-                  alert('Please select an audio file first to start the meditation session!');
+        <TabsContent value={selectedCategory} className="mt-6">
+          {filteredContent.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredContent.map((item) => {
+                const progress = getProgressForContent(item.id);
+                
+                return (
+                  <Card key={item.id} className="group hover:shadow-lg transition-all duration-300">
+                    <CardHeader className="pb-4">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <CardTitle className="text-lg mb-2">{item.title}</CardTitle>
+                          <CardDescription className="line-clamp-2">
+                            {item.description}
+                          </CardDescription>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => toggleFavorite(item.id)}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <Heart 
+                            className={`h-4 w-4 ${progress?.is_favorite ? 'fill-red-500 text-red-500' : ''}`} 
+                          />
+                        </Button>
+                      </div>
+                    </CardHeader>
+                    
+                    <CardContent className="space-y-4">
+                      <div className="flex items-center justify-between text-sm text-muted-foreground">
+                        <div className="flex items-center gap-4">
+                          <div className="flex items-center gap-1">
+                            <Clock className="h-4 w-4" />
+                            <span>{item.duration} min</span>
+                          </div>
+                          {item.instructor && (
+                            <div className="flex items-center gap-1">
+                              <User className="h-4 w-4" />
+                              <span>{item.instructor}</span>
+                            </div>
+                          )}
+                        </div>
+                        {item.subscription_tier !== 'free' && (
+                          <Badge variant="secondary" className="text-xs">
+                            <Crown className="h-3 w-3 mr-1" />
+                            Premium
+                          </Badge>
+                        )}
+                      </div>
+
+                      <div className="flex flex-wrap gap-1">
+                        <Badge variant="outline" className="text-xs">
+                          {item.category}
+                        </Badge>
+                        <Badge variant="outline" className="text-xs">
+                          {item.difficulty_level}
+                        </Badge>
+                      </div>
+
+                      {progress && progress.progress_seconds > 0 && (
+                        <div className="w-full bg-muted rounded-full h-1.5">
+                          <div 
+                            className="bg-primary h-1.5 rounded-full transition-all"
+                            style={{ 
+                              width: `${Math.min((progress.progress_seconds / (item.duration * 60)) * 100, 100)}%`
+                            }}
+                          />
+                        </div>
+                      )}
+
+                      <Button 
+                        onClick={() => handlePlayContent(item)}
+                        className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+                        variant={selectedContent?.id === item.id ? "default" : "outline"}
+                      >
+                        <Play className="h-4 w-4 mr-2" />
+                        {selectedContent?.id === item.id ? 'Now Playing' : 'Start Session'}
+                      </Button>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground text-lg">
+                {selectedCategory === 'sleep' 
+                  ? 'No sleep meditations available' 
+                  : `No ${selectedCategory} sessions found`
                 }
-              }}
-            >
-              🎯 Start Session with My Audio
-            </button>
-          </div>
-        </div>
-      )}
+              </p>
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
 
-      {/* Debug & Status Info */}
-      <div style={{
-        marginTop: '30px',
-        padding: '15px',
-        background: '#f8f9fa',
-        borderRadius: '5px',
-        fontSize: '0.9rem'
-      }}>
-        <h3>🔧 Status:</h3>
-        <p>✅ Sessions loaded: {mockSessions.length}</p>
-        <p>✅ Audio file: {audioFile ? `${audioFile.name} (Ready to play!)` : 'None selected'}</p>
-        <p>✅ Selected session: {selectedSession ? selectedSession.title : 'None'}</p>
-        <p>✅ Audio status: {isPlaying ? '🔊 Playing' : '🔇 Stopped'}</p>
-      </div>
+      {/* Selected Content Player */}
+      {selectedContent && (
+        <Card className="border-primary/50 bg-primary/5">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Play className="h-5 w-5 text-primary" />
+              Now Playing: {selectedContent.title}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground mb-4">{selectedContent.description}</p>
+            <div className="flex items-center gap-4 text-sm">
+              <span>Duration: {selectedContent.duration} minutes</span>
+              <span>Category: {selectedContent.category}</span>
+              <span>Instructor: {selectedContent.instructor}</span>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };
