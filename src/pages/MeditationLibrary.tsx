@@ -126,16 +126,61 @@ const MeditationLibrary = () => {
   
   const { isPremium } = useSubscriptionContext();
   
-  // COMMENT OUT THE REAL FETCH AND USE TEST DATA:
-  // const { sessions: meditationSessions, isLoading, error } = useMeditationFetch();
-  
-  // REPLACE WITH THIS:
-  const meditationSessions = testSessions;
+  /*
+  const { sessions: meditationSessions, isLoading, error } = useMeditationFetch();
+  */
+
+  // TEMPORARY TEST DATA - ADD THESE LINES:
+  console.log('🔥🔥🔥 MEDITATION LIBRARY LOADED WITH TEST DATA');
+
+  const TEST_SESSIONS: MeditationSession[] = [
+    {
+      id: '1',
+      title: 'Morning Mindfulness',
+      duration: 10,
+      category: 'mindfulness',
+      description: 'Start your day with calm awareness',
+      premium: false,
+      audio_url: 'test-audio-url',
+      session_type: 'mindfulness',
+      level: 'beginner',
+      instructor: 'Test Instructor',
+      tags: ['mindfulness']
+    },
+    {
+      id: '2',
+      title: 'Quick Break',
+      duration: 5,
+      category: 'stress relief',
+      description: 'Quick 5-minute break',
+      premium: false,
+      audio_url: 'test-audio-url',
+      session_type: 'stress relief',
+      level: 'beginner',
+      instructor: 'Test Instructor',
+      tags: ['stress']
+    },
+    {
+      id: '3',
+      title: 'Deep Focus',
+      duration: 20,
+      category: 'body scan',
+      description: 'Deep meditation session',
+      premium: true,
+      audio_url: 'test-audio-url',
+      session_type: 'body scan',
+      level: 'intermediate',
+      instructor: 'Test Instructor',
+      tags: ['focus']
+    }
+  ];
+
+  const meditationSessions = TEST_SESSIONS;
   const isLoading = false;
   const error = null;
-  
-  console.log('🔥 Final meditationSessions to be used:', meditationSessions);
-  console.log('🔥 Session count:', meditationSessions.length);
+
+  console.log('🔥 TEST SESSIONS CREATED:', meditationSessions);
+  console.log('🔥 SESSION COUNT:', meditationSessions.length);
   
   const { 
     durationFilter, 
