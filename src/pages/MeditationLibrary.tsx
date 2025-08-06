@@ -1,5 +1,5 @@
-// Replace your MeditationLibrary component with this working version
-import React, { useState } from 'react';
+// Replace your MeditationLibrary component with this version that includes audio playback
+import React, { useState, useRef } from 'react';
 
 // Mock meditation data for testing
 const mockSessions = [
@@ -33,25 +33,59 @@ const mockSessions = [
 ];
 
 const MeditationLibrary = () => {
-  const [selectedSession, setSelectedSession] = useState(null);
-  const [audioFile, setAudioFile] = useState(null);
+  const [selectedSession, setSelectedSession] = useState<any>(null);
+  const [audioFile, setAudioFile] = useState<File | null>(null);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
-  console.log('🔥 MEDITATION LIBRARY LOADED WITH', mockSessions.length, 'SESSIONS');
+  console.log('🔥 MEDITATION LIBRARY WITH AUDIO PLAYER LOADED');
 
-  const handleAudioUpload = (event) => {
+  const handleAudioUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file && file.type.startsWith('audio/')) {
       setAudioFile(file);
+      // Create a URL for the audio file so we can play it
+      const url = URL.createObjectURL(file);
+      setAudioUrl(url);
       console.log('✅ Audio file selected:', file.name);
-      alert(`Audio file "${file.name}" selected successfully!`);
+      alert(`Audio file "${file.name}" selected successfully! You can now play it.`);
     } else {
-      alert('Please select a valid audio file');
+      alert('Please select a valid audio file (.mp3, .wav, .m4a, etc.)');
     }
   };
 
-  const handleSessionClick = (session) => {
+  const handleSessionClick = (session: any) => {
     setSelectedSession(session);
     console.log('🎯 Session selected:', session);
+  };
+
+  const togglePlayPause = () => {
+    if (!audioUrl) {
+      alert('Please select an audio file first!');
+      return;
+    }
+
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+        setIsPlaying(false);
+        console.log('⏸️ Audio paused');
+      } else {
+        audioRef.current.play();
+        setIsPlaying(true);
+        console.log('▶️ Audio playing');
+      }
+    }
+  };
+
+  const stopAudio = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      setIsPlaying(false);
+      console.log('⏹️ Audio stopped');
+    }
   };
 
   return (
@@ -69,7 +103,7 @@ const MeditationLibrary = () => {
         marginBottom: '30px',
         border: '2px dashed #007bff'
       }}>
-        <h2 style={{ marginBottom: '15px' }}>📁 Upload Your Audio File</h2>
+        <h2 style={{ marginBottom: '15px' }}>📁 Upload & Play Your Audio File</h2>
         <input
           type="file"
           accept="audio/*"
@@ -78,13 +112,75 @@ const MeditationLibrary = () => {
             padding: '10px',
             border: '1px solid #ccc',
             borderRadius: '4px',
-            marginRight: '10px'
+            marginBottom: '15px',
+            display: 'block'
           }}
         />
+        
         {audioFile && (
-          <div style={{ marginTop: '10px', color: '#28a745' }}>
-            ✅ Selected: {audioFile.name} ({Math.round(audioFile.size / 1024)} KB)
+          <div style={{ marginBottom: '15px' }}>
+            <div style={{ color: '#28a745', marginBottom: '10px' }}>
+              ✅ Selected: {audioFile.name} ({Math.round(audioFile.size / 1024)} KB)
+            </div>
+            
+            {/* Audio Player Controls */}
+            <div style={{ 
+              background: '#fff', 
+              padding: '15px', 
+              borderRadius: '5px',
+              border: '1px solid #ddd'
+            }}>
+              <h3 style={{ margin: '0 0 10px 0' }}>🎵 Audio Player</h3>
+              
+              {/* HTML5 Audio Element */}
+              <audio 
+                ref={audioRef}
+                src={audioUrl || undefined}
+                onPlay={() => setIsPlaying(true)}
+                onPause={() => setIsPlaying(false)}
+                onEnded={() => setIsPlaying(false)}
+                controls
+                style={{ width: '100%', marginBottom: '10px' }}
+              />
+              
+              {/* Custom Controls */}
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <button 
+                  onClick={togglePlayPause}
+                  style={{
+                    padding: '8px 15px',
+                    background: isPlaying ? '#ffc107' : '#28a745',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '4px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {isPlaying ? '⏸️ Pause' : '▶️ Play'}
+                </button>
+                
+                <button 
+                  onClick={stopAudio}
+                  style={{
+                    padding: '8px 15px',
+                    background: '#dc3545',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '4px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  ⏹️ Stop
+                </button>
+              </div>
+            </div>
           </div>
+        )}
+        
+        {!audioFile && (
+          <p style={{ color: '#666', fontStyle: 'italic' }}>
+            Select an audio file to see the player controls
+          </p>
         )}
       </div>
 
@@ -135,7 +231,6 @@ const MeditationLibrary = () => {
           <h2>🎯 Selected Session: {selectedSession.title}</h2>
           <p><strong>Duration:</strong> {selectedSession.duration} minutes</p>
           <p><strong>Category:</strong> {selectedSession.category}</p>
-          <p><strong>Audio URL:</strong> {selectedSession.audioUrl}</p>
           
           <div style={{ marginTop: '15px' }}>
             <button 
@@ -148,29 +243,22 @@ const MeditationLibrary = () => {
                 cursor: 'pointer',
                 marginRight: '10px'
               }}
-              onClick={() => alert('Starting meditation: ' + selectedSession.title)}
-            >
-              🎯 Start Session
-            </button>
-            
-            <button 
-              style={{
-                padding: '10px 20px',
-                background: '#007bff',
-                color: 'white',
-                border: 'none',
-                borderRadius: '5px',
-                cursor: 'pointer'
+              onClick={() => {
+                if (audioFile) {
+                  alert(`Starting "${selectedSession.title}" with your audio file: ${audioFile.name}`);
+                  togglePlayPause();
+                } else {
+                  alert('Please select an audio file first to start the meditation session!');
+                }
               }}
-              onClick={() => alert('Audio file functionality - attach your uploaded file here!')}
             >
-              📎 Use My Audio File
+              🎯 Start Session with My Audio
             </button>
           </div>
         </div>
       )}
 
-      {/* Debug Info */}
+      {/* Debug & Status Info */}
       <div style={{
         marginTop: '30px',
         padding: '15px',
@@ -178,11 +266,11 @@ const MeditationLibrary = () => {
         borderRadius: '5px',
         fontSize: '0.9rem'
       }}>
-        <h3>🔧 Debug Info:</h3>
-        <p>Sessions loaded: {mockSessions.length}</p>
-        <p>Audio file selected: {audioFile ? audioFile.name : 'None'}</p>
-        <p>Selected session: {selectedSession ? selectedSession.title : 'None'}</p>
-        <p>Page status: ✅ Working properly!</p>
+        <h3>🔧 Status:</h3>
+        <p>✅ Sessions loaded: {mockSessions.length}</p>
+        <p>✅ Audio file: {audioFile ? `${audioFile.name} (Ready to play!)` : 'None selected'}</p>
+        <p>✅ Selected session: {selectedSession ? selectedSession.title : 'None'}</p>
+        <p>✅ Audio status: {isPlaying ? '🔊 Playing' : '🔇 Stopped'}</p>
       </div>
     </div>
   );
