@@ -46,7 +46,7 @@ export const useAudioStorage = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, []); // No external dependencies needed
 
   const uploadAudioFile = useCallback(async (file: File) => {
     try {

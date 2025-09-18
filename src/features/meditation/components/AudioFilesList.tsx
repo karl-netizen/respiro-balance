@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Play, Headphones } from 'lucide-react';
@@ -10,7 +10,38 @@ interface AudioFilesListProps {
   onPlayAudio?: (file: AudioFile) => void;
 }
 
-export const AudioFilesList: React.FC<AudioFilesListProps> = ({
+// Memoized audio file item component
+const AudioFileItem = React.memo<{
+  file: AudioFile;
+  onPlay: (file: AudioFile) => void;
+}>(({ file, onPlay }) => {
+  const handlePlay = useCallback(() => onPlay(file), [file, onPlay]);
+  
+  return (
+    <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
+      <div className="flex items-center gap-3">
+        <Play className="h-4 w-4 text-primary" />
+        <div>
+          <p className="font-medium">{file.name.replace(/\.[^/.]+$/, "")}</p>
+          <p className="text-sm text-muted-foreground">
+            {(file.size / (1024 * 1024)).toFixed(1)} MB
+          </p>
+        </div>
+      </div>
+      <Button 
+        size="sm" 
+        variant="outline"
+        onClick={handlePlay}
+      >
+        Play
+      </Button>
+    </div>
+  );
+});
+
+AudioFileItem.displayName = 'AudioFileItem';
+
+export const AudioFilesList: React.FC<AudioFilesListProps> = React.memo(({
   audioFiles,
   loading,
   onPlayAudio
@@ -36,24 +67,11 @@ export const AudioFilesList: React.FC<AudioFilesListProps> = ({
         ) : audioFiles.length > 0 ? (
           <div className="grid grid-cols-1 gap-3">
             {audioFiles.map((file, index) => (
-              <div key={index} className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <Play className="h-4 w-4 text-primary" />
-                  <div>
-                    <p className="font-medium">{file.name.replace(/\.[^/.]+$/, "")}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {(file.size / (1024 * 1024)).toFixed(1)} MB
-                    </p>
-                  </div>
-                </div>
-                <Button 
-                  size="sm" 
-                  variant="outline"
-                  onClick={() => onPlayAudio?.(file)}
-                >
-                  Play
-                </Button>
-              </div>
+              <AudioFileItem
+                key={`${file.name}-${index}`}
+                file={file}
+                onPlay={onPlayAudio || (() => {})}
+              />
             ))}
           </div>
         ) : (
@@ -64,4 +82,6 @@ export const AudioFilesList: React.FC<AudioFilesListProps> = ({
       </CardContent>
     </Card>
   );
-};
+});
+
+AudioFilesList.displayName = 'AudioFilesList';

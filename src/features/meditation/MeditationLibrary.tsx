@@ -1,7 +1,8 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useMeditationContent } from '@/hooks/useMeditationContent';
 import { useAudioStorage } from './hooks/useAudioStorage';
 import { useAudioPlayer } from './hooks/useAudioPlayer';
+import { usePerformanceMonitor } from './hooks/usePerformanceMonitor';
 import { MeditationHeader } from './components/MeditationHeader';
 import { PremiumBanner } from './components/PremiumBanner';
 import { AudioFilesList } from './components/AudioFilesList';
@@ -9,6 +10,7 @@ import { CategoryTabs } from './components/CategoryTabs';
 import { MeditationGrid } from './components/MeditationGrid';
 import { NowPlayingCard } from './components/NowPlayingCard';
 import { MeditationLibrarySkeleton } from './components/MeditationLibrarySkeleton';
+import { MeditationErrorBoundary } from './components/MeditationErrorBoundary';
 import { CategoryTab, MeditationContent, AudioFile } from './types/meditation.types';
 
 export const MeditationLibrary = () => {
@@ -23,15 +25,16 @@ export const MeditationLibrary = () => {
   
   const audioStorage = useAudioStorage();
   const audioPlayer = useAudioPlayer();
+  const { measureAsyncOperation } = usePerformanceMonitor('MeditationLibrary');
   const [selectedCategory, setSelectedCategory] = useState('all');
 
-  // Memoized filtered content
-  const filteredContent = useMemo(() => 
-    selectedCategory === 'all' ? content : getContentByCategory(selectedCategory),
-    [content, selectedCategory, getContentByCategory]
-  );
+  // Memoized filtered content with stable dependency
+  const filteredContent = useMemo(() => {
+    if (selectedCategory === 'all') return content;
+    return getContentByCategory(selectedCategory);
+  }, [content, selectedCategory, getContentByCategory]);
 
-  // Memoized category tabs
+  // Memoized category tabs with stable calculations
   const categoryTabs = useMemo<CategoryTab[]>(() => [
     { value: 'all', label: 'All Sessions', count: content.length },
     { value: 'guided', label: 'Guided', count: getContentByCategory('Mindfulness').length },
@@ -40,11 +43,17 @@ export const MeditationLibrary = () => {
     { value: 'sleep', label: 'Sleep', count: getContentByCategory('Sleep').length }
   ], [content.length, getContentByCategory]);
 
-  // Event handlers
+  // Optimized event handlers with useCallback and performance monitoring
   const handlePlayContent = useCallback(async (contentItem: MeditationContent) => {
-    await audioPlayer.play(contentItem);
-    await incrementPlayCount(contentItem.id);
-  }, [audioPlayer, incrementPlayCount]);
+    await measureAsyncOperation(async () => {
+      try {
+        await audioPlayer.play(contentItem);
+        await incrementPlayCount(contentItem.id);
+      } catch (error) {
+        console.error('Failed to play content:', error);
+      }
+    }, `PlayContent-${contentItem.title}`);
+  }, [audioPlayer, incrementPlayCount, measureAsyncOperation]);
 
   const handlePlayAudioFile = useCallback((file: AudioFile) => {
     // Create a temporary meditation content object for the audio file
@@ -52,7 +61,7 @@ export const MeditationLibrary = () => {
       id: `audio-${file.name}`,
       title: file.name.replace(/\.[^/.]+$/, ""),
       description: `Playing audio file: ${file.name}`,
-      duration: 0, // We don't know the duration yet
+      duration: 0,
       category: 'custom',
       difficulty_level: 'beginner',
       subscription_tier: 'free',
@@ -74,6 +83,10 @@ export const MeditationLibrary = () => {
     toggleFavorite(id);
   }, [toggleFavorite]);
 
+  const handleCategoryChange = useCallback((category: string) => {
+    setSelectedCategory(category);
+  }, []);
+
   // Audio event setup
   React.useEffect(() => {
     const audio = audioPlayer.audioRef.current;
@@ -93,37 +106,39 @@ export const MeditationLibrary = () => {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-8">
-      <audio ref={audioPlayer.audioRef} />
-      
-      <MeditationHeader />
-      <PremiumBanner />
-      
-      <AudioFilesList 
-        audioFiles={audioStorage.audioFiles}
-        loading={audioStorage.loading}
-        onPlayAudio={handlePlayAudioFile}
-      />
-
-      <CategoryTabs
-        categories={categoryTabs}
-        selectedCategory={selectedCategory}
-        onCategoryChange={setSelectedCategory}
-      >
-        <MeditationGrid
-          content={filteredContent}
-          currentlyPlayingId={audioPlayer.playbackState.currentContent?.id}
-          onPlay={handlePlayContent}
-          onToggleFavorite={handleToggleFavorite}
-          getProgressForContent={getProgressForContent}
-          selectedCategory={selectedCategory}
+    <MeditationErrorBoundary>
+      <div className="container mx-auto p-6 space-y-8">
+        <audio ref={audioPlayer.audioRef} />
+        
+        <MeditationHeader />
+        <PremiumBanner />
+        
+        <AudioFilesList 
+          audioFiles={audioStorage.audioFiles}
+          loading={audioStorage.loading}
+          onPlayAudio={handlePlayAudioFile}
         />
-      </CategoryTabs>
 
-      {audioPlayer.playbackState.currentContent && (
-        <NowPlayingCard content={audioPlayer.playbackState.currentContent} />
-      )}
-    </div>
+        <CategoryTabs
+          categories={categoryTabs}
+          selectedCategory={selectedCategory}
+          onCategoryChange={handleCategoryChange}
+        >
+          <MeditationGrid
+            content={filteredContent}
+            currentlyPlayingId={audioPlayer.playbackState.currentContent?.id}
+            onPlay={handlePlayContent}
+            onToggleFavorite={handleToggleFavorite}
+            getProgressForContent={getProgressForContent}
+            selectedCategory={selectedCategory}
+          />
+        </CategoryTabs>
+
+        {audioPlayer.playbackState.currentContent && (
+          <NowPlayingCard content={audioPlayer.playbackState.currentContent} />
+        )}
+      </div>
+    </MeditationErrorBoundary>
   );
 };
 
