@@ -4,19 +4,28 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Play, Heart, Clock, User, Crown, Headphones } from 'lucide-react';
-import { useMeditationContent, MeditationContent } from '@/hooks/useMeditationContent';
+// Import from the hook to use the correct type
+import { useMeditationContent, MeditationContent as HookMeditationContent, UserProgress } from '@/hooks/useMeditationContent';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
-// Types
-interface AudioFile {
-  name: string;
-  url: string;
-  size: number;
-}
+// Import typed interfaces and utilities
+import {
+  AudioFile,
+  LoadingState,
+  CategoryTab
+} from './types/meditation.types';
 
-interface LoadingState {
+// Use the hook's MeditationContent type for compatibility
+type ComponentMeditationContent = HookMeditationContent;
+import { SupabaseStorageResponse, SupabaseFileObject } from './types/supabase.types';
+import { handleError, withErrorHandling } from './utils/errorHandlers';
+import { isValidAudioFileType, isValidFileSize } from './utils/typeGuards';
+
+// Types are now imported from dedicated type files
+
+interface LocalLoadingState {
   audioFiles: boolean;
   uploadingFile: boolean;
 }
@@ -24,21 +33,45 @@ interface LoadingState {
 // Lazy-loaded components for better performance
 const PremiumBanner = React.lazy(() => import('./components/PremiumBanner'));
 
-// Memoized child components
-const MeditationCard = React.memo(({ 
+// Memoized child components with proper typing
+const MeditationCard = React.memo<{
+  item: ComponentMeditationContent;
+  progress: UserProgress | undefined;
+  selectedContent: ComponentMeditationContent | null;
+  onPlay: (item: ComponentMeditationContent) => Promise<void>;
+  onToggleFavorite: (id: string) => Promise<void>;
+}>(({ 
   item, 
   progress, 
   selectedContent, 
   onPlay, 
   onToggleFavorite 
-}: {
-  item: MeditationContent;
-  progress: any;
-  selectedContent: MeditationContent | null;
-  onPlay: (item: MeditationContent) => void;
-  onToggleFavorite: (id: string) => void;
 }) => {
   const isSelected = selectedContent?.id === item.id;
+  
+  const handlePlay = useCallback(async () => {
+    try {
+      await onPlay(item);
+    } catch (error) {
+      handleError(error, { 
+        component: 'MeditationCard', 
+        action: 'play',
+        contentId: item.id 
+      });
+    }
+  }, [item, onPlay]);
+
+  const handleToggleFavorite = useCallback(async () => {
+    try {
+      await onToggleFavorite(item.id);
+    } catch (error) {
+      handleError(error, { 
+        component: 'MeditationCard', 
+        action: 'toggleFavorite',
+        contentId: item.id 
+      });
+    }
+  }, [item.id, onToggleFavorite]);
   
   return (
     <Card className="group hover:shadow-lg transition-all duration-300">
@@ -53,7 +86,7 @@ const MeditationCard = React.memo(({
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => onToggleFavorite(item.id)}
+            onClick={handleToggleFavorite}
             className="opacity-0 group-hover:opacity-100 transition-opacity"
           >
             <Heart 
@@ -109,7 +142,7 @@ const MeditationCard = React.memo(({
         )}
 
         <Button 
-          onClick={() => onPlay(item)}
+          onClick={handlePlay}
           className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
           variant={isSelected ? "default" : "outline"}
         >
@@ -121,15 +154,19 @@ const MeditationCard = React.memo(({
   );
 });
 
-const AudioFileItem = React.memo(({ 
-  file, 
-  onPlay 
-}: {
+const AudioFileItem = React.memo<{
   file: AudioFile;
   onPlay: (file: AudioFile) => void;
-}) => {
+}>(({ file, onPlay }) => {
   const handlePlay = useCallback(() => {
-    onPlay(file);
+    try {
+      onPlay(file);
+    } catch (error) {
+      handleError(error, { 
+        component: 'AudioFileItem', 
+        action: 'play' 
+      });
+    }
   }, [file, onPlay]);
 
   return (
@@ -150,15 +187,11 @@ const AudioFileItem = React.memo(({
   );
 });
 
-const CategoryTabs = React.memo(({
-  categories,
-  selectedCategory,
-  onCategoryChange
-}: {
-  categories: Array<{ value: string; label: string; count: number }>;
+const CategoryTabs = React.memo<{
+  categories: CategoryTab[];
   selectedCategory: string;
   onCategoryChange: (category: string) => void;
-}) => (
+}>(({ categories, selectedCategory, onCategoryChange }) => (
   <TabsList className="grid w-full grid-cols-5">
     {categories.map((tab) => (
       <TabsTrigger 
@@ -173,11 +206,9 @@ const CategoryTabs = React.memo(({
   </TabsList>
 ));
 
-const NowPlayingCard = React.memo(({ 
-  content 
-}: { 
-  content: MeditationContent 
-}) => (
+const NowPlayingCard = React.memo<{ 
+  content: ComponentMeditationContent;
+}>(({ content }) => (
   <Card className="border-primary/50 bg-primary/5">
     <CardHeader>
       <CardTitle className="flex items-center gap-2">
@@ -210,29 +241,30 @@ const LoadingSkeleton = React.memo(() => (
   </div>
 ));
 
-// Custom hook for loading state management
+// Custom hook for loading state management with proper typing
 const useLoadingState = () => {
-  const [loading, setLoading] = useState<LoadingState>({
+  const [loading, setLoading] = useState<LocalLoadingState>({
     audioFiles: false,
     uploadingFile: false
   });
 
-  const setLoadingState = useCallback((key: keyof LoadingState, value: boolean) => {
+  const setLoadingState = useCallback((key: keyof LocalLoadingState, value: boolean) => {
     setLoading(prev => ({ ...prev, [key]: value }));
   }, []);
 
   return { loading, setLoadingState };
 };
 
-// Custom hook for audio file management
+// Custom hook for audio file management with comprehensive typing
 const useAudioFiles = () => {
   const [audioFiles, setAudioFiles] = useState<AudioFile[]>([]);
   const { loading, setLoadingState } = useLoadingState();
 
-  const fetchAudioFiles = useCallback(async () => {
-    try {
+  const fetchAudioFiles = useCallback(async (): Promise<void> => {
+    await withErrorHandling(async () => {
       setLoadingState('audioFiles', true);
-      const { data, error } = await supabase.storage
+      
+      const { data, error }: SupabaseStorageResponse = await supabase.storage
         .from('meditation-audio')
         .list('', {
           limit: 100,
@@ -240,29 +272,31 @@ const useAudioFiles = () => {
         });
 
       if (error) throw error;
+      if (!data) return;
 
-      const audioFilesData = await Promise.all(
-        (data || []).map(async (file) => {
+      const audioFilesData: AudioFile[] = await Promise.all(
+        data.map(async (file: SupabaseFileObject): Promise<AudioFile> => {
           const { data: signedUrl } = await supabase.storage
             .from('meditation-audio')
             .createSignedUrl(file.name, 60 * 60 * 24);
 
           return {
+            id: file.id || crypto.randomUUID(),
             name: file.name,
             url: signedUrl?.signedUrl || '',
-            size: file.metadata?.size || 0
+            size: file.metadata?.size || 0,
+            type: file.metadata?.mimetype || 'audio/unknown',
+            uploadDate: new Date(file.created_at || Date.now()),
+            isProcessing: false
           };
         })
       );
 
       setAudioFiles(audioFilesData);
       console.log('✅ Loaded audio files from Supabase:', audioFilesData.length);
-    } catch (error) {
-      console.error('Failed to fetch audio files:', error);
-      toast.error('Failed to load audio files from storage');
-    } finally {
-      setLoadingState('audioFiles', false);
-    }
+    }, { component: 'useAudioFiles', action: 'fetchAudioFiles' })();
+    
+    setLoadingState('audioFiles', false);
   }, [setLoadingState]);
 
   useEffect(() => {
@@ -299,7 +333,7 @@ const MeditationLibrary: React.FC = () => {
   
   const { audioFiles, loading: audioLoading } = useAudioFiles();
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [selectedContent, setSelectedContent] = useState<MeditationContent | null>(null);
+  const [selectedContent, setSelectedContent] = useState<ComponentMeditationContent | null>(null);
 
   // Memoized filtered content to prevent unnecessary recalculations
   const filteredContent = useMemo(() => {
@@ -307,8 +341,8 @@ const MeditationLibrary: React.FC = () => {
     return getContentByCategory(selectedCategory);
   }, [content, selectedCategory, getContentByCategory]);
 
-  // Memoized category tabs to prevent recalculation
-  const categoryTabs = useMemo(() => [
+  // Memoized category tabs with proper typing to prevent recalculation
+  const categoryTabs = useMemo((): CategoryTab[] => [
     { value: 'all', label: 'All Sessions', count: content.length },
     { value: 'guided', label: 'Guided', count: getContentByCategory('Mindfulness').length },
     { value: 'quick', label: 'Quick Breaks', count: getContentByCategory('Focus').length },
@@ -316,24 +350,43 @@ const MeditationLibrary: React.FC = () => {
     { value: 'sleep', label: 'Sleep', count: getContentByCategory('Sleep').length }
   ], [content.length, getContentByCategory]);
 
-  // Memoized event handlers to prevent child re-renders
-  const handlePlayContent = useCallback(async (contentItem: MeditationContent) => {
-    setSelectedContent(contentItem);
-    await incrementPlayCount(contentItem.id);
-    toast.success(`Playing: ${contentItem.title}`);
+  // Memoized event handlers with proper error handling
+  const handlePlayContent = useCallback(async (contentItem: ComponentMeditationContent): Promise<void> => {
+    await withErrorHandling(async () => {
+      setSelectedContent(contentItem);
+      await incrementPlayCount(contentItem.id);
+      toast.success(`Playing: ${contentItem.title}`);
+    }, { 
+      component: 'MeditationLibrary', 
+      action: 'playContent',
+      contentId: contentItem.id 
+    })();
   }, [incrementPlayCount]);
 
-  const handleToggleFavorite = useCallback((contentId: string) => {
-    toggleFavorite(contentId);
+  const handleToggleFavorite = useCallback(async (contentId: string): Promise<void> => {
+    await withErrorHandling(async () => {
+      await toggleFavorite(contentId);
+    }, { 
+      component: 'MeditationLibrary', 
+      action: 'toggleFavorite',
+      contentId 
+    })();
   }, [toggleFavorite]);
 
-  const handleCategoryChange = useCallback((category: string) => {
+  const handleCategoryChange = useCallback((category: string): void => {
     setSelectedCategory(category);
   }, []);
 
-  const handlePlayAudioFile = useCallback((file: AudioFile) => {
-    toast.success(`Playing: ${file.name}`);
-    console.log('Playing audio file:', file);
+  const handlePlayAudioFile = useCallback((file: AudioFile): void => {
+    try {
+      toast.success(`Playing: ${file.name}`);
+      console.log('Playing audio file:', file);
+    } catch (error) {
+      handleError(error, { 
+        component: 'MeditationLibrary', 
+        action: 'playAudioFile' 
+      });
+    }
   }, []);
 
   // Early return for loading state

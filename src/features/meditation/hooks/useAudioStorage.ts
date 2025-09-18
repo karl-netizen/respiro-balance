@@ -22,7 +22,7 @@ export const useAudioStorage = () => {
 
       if (error) throw error;
 
-      const audioFilesData = await Promise.all(
+      const rawAudioFiles = await Promise.all(
         (data || []).map(async (file) => {
           const { data: signedUrl } = await supabase.storage
             .from('meditation-audio')
@@ -36,8 +36,16 @@ export const useAudioStorage = () => {
         })
       );
 
-      setAudioFiles(audioFilesData);
-      console.log('✅ Loaded audio files from Supabase:', audioFilesData.length);
+      setAudioFiles(rawAudioFiles.map(file => ({
+        id: crypto.randomUUID(),
+        name: file.name,
+        url: file.url,
+        size: file.size,
+        type: 'audio/unknown',
+        uploadDate: new Date(),
+        isProcessing: false
+      })));
+      console.log('✅ Loaded audio files from Supabase:', rawAudioFiles.length);
     } catch (error) {
       console.error('Failed to fetch audio files:', error);
       const errorMessage = 'Failed to load audio files from storage';
