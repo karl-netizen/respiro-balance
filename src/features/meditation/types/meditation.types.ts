@@ -56,6 +56,7 @@ export interface MeditationProgress {
 
 // Enums for better type safety
 export enum MeditationCategory {
+  ALL = 'all',
   MINDFULNESS = 'mindfulness',
   STRESS_RELIEF = 'stress_relief',
   BODY_SCAN = 'body_scan',

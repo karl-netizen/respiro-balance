@@ -497,3 +497,6 @@ const MeditationLibrary: React.FC = () => {
 MeditationLibrary.displayName = 'MeditationLibrary';
 
 export default MeditationLibrary;
+
+// Export the advanced version as well
+export { default as AdvancedMeditationLibrary } from './AdvancedMeditationLibrary';
