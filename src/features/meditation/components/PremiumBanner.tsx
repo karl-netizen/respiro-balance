@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Crown } from 'lucide-react';
 
-const PremiumBanner = () => {
+const PremiumBanner: React.FC = () => {
   return (
     <Card className="bg-gradient-to-r from-primary/10 to-accent/10 border-primary/20">
       <CardContent className="flex items-center justify-between p-6">
