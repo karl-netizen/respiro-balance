@@ -1,68 +1,129 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 
 interface Props {
   children: ReactNode;
+  fallback?: ReactNode;
 }
 
 interface State {
   hasError: boolean;
   error: Error | null;
+  errorInfo: ErrorInfo | null;
 }
 
-export class MeditationErrorBoundary extends Component<Props, State> {
+class MeditationErrorBoundary extends Component<Props, State> {
   public state: State = {
     hasError: false,
-    error: null
+    error: null,
+    errorInfo: null
   };
 
   public static getDerivedStateFromError(error: Error): State {
-    return { hasError: true, error };
+    return { 
+      hasError: true, 
+      error,
+      errorInfo: null
+    };
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('MeditationLibrary Error:', error, errorInfo);
-    // TODO: Log to error reporting service
+    
+    this.setState({
+      error,
+      errorInfo
+    });
+
+    // Here you could log to an error reporting service
+    // Example: logErrorToService(error, errorInfo);
   }
 
   private handleReset = () => {
-    this.setState({ hasError: false, error: null });
+    this.setState({ 
+      hasError: false, 
+      error: null, 
+      errorInfo: null 
+    });
   };
 
   public render() {
     if (this.state.hasError) {
+      // Custom fallback UI
+      if (this.props.fallback) {
+        return this.props.fallback;
+      }
+
       return (
-        <Card className="mx-auto max-w-md">
-          <CardHeader className="text-center">
-            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10">
-              <AlertTriangle className="h-6 w-6 text-destructive" />
-            </div>
-            <CardTitle className="text-destructive">Something went wrong</CardTitle>
-          </CardHeader>
-          <CardContent className="text-center space-y-4">
-            <p className="text-muted-foreground">
-              Unable to load meditation library. Please try refreshing the page.
-            </p>
-            {process.env.NODE_ENV === 'development' && this.state.error && (
-              <details className="text-left text-xs bg-muted p-2 rounded">
-                <summary className="cursor-pointer">Error Details</summary>
-                <pre className="mt-2 whitespace-pre-wrap">{this.state.error.message}</pre>
-              </details>
-            )}
-            <Button 
-              onClick={this.handleReset}
-              className="gap-2"
-            >
-              <RefreshCw className="h-4 w-4" />
-              Try Again
-            </Button>
-          </CardContent>
-        </Card>
+        <div className="container mx-auto p-6">
+          <Card className="border-destructive/50 bg-destructive/5">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-destructive">
+                <AlertTriangle className="h-5 w-5" />
+                Something went wrong
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-muted-foreground">
+                We encountered an error while loading the meditation library. 
+                This might be a temporary issue.
+              </p>
+              
+              <div className="flex gap-2">
+                <Button 
+                  onClick={this.handleReset}
+                  variant="outline"
+                  className="flex items-center gap-2"
+                >
+                  <RefreshCw className="h-4 w-4" />
+                  Try Again
+                </Button>
+                
+                <Button 
+                  onClick={() => window.location.reload()}
+                  variant="default"
+                >
+                  Refresh Page
+                </Button>
+              </div>
+
+              {/* Show error details in development */}
+              {process.env.NODE_ENV === 'development' && this.state.error && (
+                <details className="mt-4 p-4 bg-muted rounded-lg text-sm">
+                  <summary className="cursor-pointer font-medium mb-2">
+                    Error Details (Development)
+                  </summary>
+                  <div className="space-y-2">
+                    <div>
+                      <strong>Error:</strong> {this.state.error.message}
+                    </div>
+                    <div>
+                      <strong>Stack:</strong>
+                      <pre className="mt-1 text-xs overflow-auto">
+                        {this.state.error.stack}
+                      </pre>
+                    </div>
+                    {this.state.errorInfo && (
+                      <div>
+                        <strong>Component Stack:</strong>
+                        <pre className="mt-1 text-xs overflow-auto">
+                          {this.state.errorInfo.componentStack}
+                        </pre>
+                      </div>
+                    )}
+                  </div>
+                </details>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       );
     }
 
     return this.props.children;
   }
 }
+
+export default MeditationErrorBoundary;
