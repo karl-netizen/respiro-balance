@@ -46,6 +46,7 @@ import TermsPage from '@/pages/TermsPage';
 import SecuritySystemDemo from '@/components/security/SecuritySystemDemo';
 import SecureFormsDemo from '@/components/security/SecureFormsDemo';
 import { ComprehensiveTestingDemo } from '@/test/demo/comprehensive-testing-demo';
+import { TestingFrameworkSummary } from '@/test/demo/testing-framework-summary';
 import OnboardingPage from '@/pages/Onboarding';
 import SimpleAuthPage from '@/pages/SimpleAuthPage';
 import { MobilePWASetup } from '@/components/mobile/MobilePWASetup';
@@ -173,7 +174,8 @@ function AppContent() {
                          <Route path="/terms" element={<TermsPage />} />
                          <Route path="/security-demo" element={<SecuritySystemDemo />} />
                          <Route path="/secure-forms" element={<SecureFormsDemo />} />
-                         <Route path="/testing-demo" element={<ComprehensiveTestingDemo />} />
+        <Route path="/testing-demo" element={<ComprehensiveTestingDemo />} />
+        <Route path="/testing-summary" element={<TestingFrameworkSummary />} />
                       </Routes>
                     </main>
                     

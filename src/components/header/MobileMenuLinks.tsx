@@ -189,6 +189,15 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
         <Clock className={getIconSize()} />
         <span className={getTextSize()}>🧪 Testing</span>
       </Link>
+
+      <Link
+        to="/testing-summary"
+        className={getLinkClasses(isActive('/testing-summary'))}
+        onClick={() => handleLinkClick('/testing-summary')}
+      >
+        <Clock className={getIconSize()} />
+        <span className={getTextSize()}>📊 Test Overview</span>
+      </Link>
     </div>
   );
 };
