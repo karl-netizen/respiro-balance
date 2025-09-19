@@ -5,6 +5,8 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { useAIPersonalization } from '@/hooks/useAIPersonalization';
 import { SessionRecommendation } from '@/lib/ai-personalization/types';
+import { PersonalizedSessionCard } from './PersonalizedSessionCard';
+import { AIInsightsPanel } from './AIInsightsPanel';
 import { 
   Brain, 
   Target, 
@@ -15,7 +17,8 @@ import {
   RefreshCw,
   User,
   Heart,
-  Zap
+  Zap,
+  Sparkles
 } from 'lucide-react';
 
 interface AIPersonalizationDashboardProps {
@@ -90,11 +93,12 @@ export const AIPersonalizationDashboard: React.FC<AIPersonalizationDashboardProp
   return (
     <div className="space-y-6">
       {/* Contextual Input Panel */}
-      <Card>
+      <Card className="border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-secondary/5">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <User className="w-5 h-5" />
             Tell AI About Your Current State
+            <Sparkles className="w-4 h-4 text-primary" />
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -194,20 +198,41 @@ export const AIPersonalizationDashboard: React.FC<AIPersonalizationDashboardProp
         </CardContent>
       </Card>
 
+      {/* AI Insights Panel */}
+      <AIInsightsPanel 
+        userContext={{
+          currentMood: contextualInputs.currentMood,
+          stressLevel: contextualInputs.currentStress,
+          energyLevel: Math.max(1, Math.min(10, 10 - contextualInputs.currentStress + contextualInputs.currentMood - 5)),
+          availableTime: contextualInputs.availableTime,
+          timeOfDay: new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 18 ? 'afternoon' : 'evening'
+        }}
+        personalityProfile={{
+          preferredSessions: ['meditation', 'breathing', 'focus'],
+          optimalTimes: ['morning', 'evening'],
+          averageCompletion: 0.85,
+          stressPatterns: ['Work deadlines increase stress', 'Evening sessions most effective', 'Prefers shorter sessions when stressed']
+        }}
+      />
+
       {/* Recommendations Display */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <TrendingUp className="w-5 h-5" />
             Personalized Recommendations
+            <Badge className="ml-2 bg-primary/10 text-primary">
+              AI Powered
+            </Badge>
           </CardTitle>
         </CardHeader>
         <CardContent>
           {isLoading && (
             <div className="text-center py-8">
-              <p className="text-muted-foreground">
+              <div className="inline-flex items-center gap-2 text-muted-foreground">
+                <Brain className="w-5 h-5 animate-pulse" />
                 AI is analyzing your data to create personalized recommendations...
-              </p>
+              </div>
             </div>
           )}
 
@@ -219,117 +244,19 @@ export const AIPersonalizationDashboard: React.FC<AIPersonalizationDashboardProp
 
           {recommendations.length > 0 && (
             <div className="space-y-4">
-              {recommendations.map((recommendation) => {
-                const IconComponent = getSessionTypeIcon(recommendation.sessionType);
-                
-                return (
-                  <div key={recommendation.id} className="border border-border rounded-lg p-4">
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 bg-primary/10 rounded-lg">
-                          <IconComponent className="w-5 h-5 text-primary" />
-                        </div>
-                        <div>
-                          <h4 className="font-semibold">{recommendation.title}</h4>
-                          <p className="text-sm text-muted-foreground">
-                            {recommendation.description}
-                          </p>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-2">
-                        <div 
-                          className={`w-3 h-3 rounded-full ${getConfidenceColor(recommendation.confidence)}`}
-                          title={`${Math.round(recommendation.confidence * 100)}% confidence`}
-                        />
-                        <Badge variant="secondary">
-                          {recommendation.difficulty}
-                        </Badge>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
-                      <div className="flex items-center gap-2">
-                        <Clock className="w-4 h-4 text-muted-foreground" />
-                        <span className="text-sm">{recommendation.duration} minutes</span>
-                      </div>
-                      
-                      <div className="flex items-center gap-2">
-                        <Star className="w-4 h-4 text-muted-foreground" />
-                        <span className="text-sm">
-                          {Math.round(recommendation.confidence * 100)}% match
-                        </span>
-                      </div>
-                      
-                      <div className="flex gap-1">
-                        {recommendation.tags.slice(0, 3).map(tag => (
-                          <Badge key={tag} variant="outline" className="text-xs">
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="mb-3">
-                      <h5 className="text-sm font-medium mb-2">Expected Benefits:</h5>
-                      <div className="grid grid-cols-3 gap-2 text-sm">
-                        <div>
-                          <span className="text-muted-foreground">Mood:</span>
-                          <span className="ml-1 font-medium">
-                            +{recommendation.expectedBenefit.moodImprovement}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground">Stress:</span>
-                          <span className="ml-1 font-medium">
-                            -{recommendation.expectedBenefit.stressReduction}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground">Focus:</span>
-                          <span className="ml-1 font-medium">
-                            +{recommendation.expectedBenefit.focusImprovement}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {recommendation.reasoning.length > 0 && (
-                      <div className="mb-3">
-                        <h5 className="text-sm font-medium mb-2">Why this recommendation?</h5>
-                        <ul className="text-sm text-muted-foreground space-y-1">
-                          {recommendation.reasoning.slice(0, 3).map((reason, index) => (
-                            <li key={index} className="flex items-start gap-2">
-                              <span className="text-primary mt-1">•</span>
-                              {reason}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-
-                    <Separator className="my-3" />
-
-                    <div className="flex justify-between items-center">
-                      <div className="text-sm text-muted-foreground">
-                        Personalized for you
-                      </div>
-                      <Button
-                        onClick={() => onSessionStart?.(recommendation)}
-                        className="flex items-center gap-2"
-                      >
-                        <Play className="w-4 h-4" />
-                        Start Session
-                      </Button>
-                    </div>
-                  </div>
-                );
-              })}
+              {recommendations.map((recommendation) => (
+                <PersonalizedSessionCard
+                  key={recommendation.id}
+                  recommendation={recommendation}
+                  onStartSession={onSessionStart || (() => {})}
+                />
+              ))}
             </div>
           )}
 
           {!isLoading && !error && recommendations.length === 0 && (
             <div className="text-center py-8">
+              <Brain className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
               <p className="text-muted-foreground mb-4">
                 No recommendations yet. Click "Generate AI Recommendations" to get started.
               </p>
