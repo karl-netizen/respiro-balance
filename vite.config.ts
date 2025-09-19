@@ -31,21 +31,61 @@ export default defineConfig(({ mode }) => ({
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
-    sourcemap: false,
+    sourcemap: mode === 'development',
     minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: mode === 'production',
+        drop_debugger: mode === 'production',
+      },
+    },
     rollupOptions: {
       output: {
         manualChunks: {
-          vendor: ['react', 'react-dom'],
-          router: ['react-router-dom'],
-          ui: ['@radix-ui/react-dialog', '@radix-ui/react-tabs', '@radix-ui/react-slot'],
+          // Core vendor chunks
+          'vendor-react': ['react', 'react-dom'],
+          'vendor-router': ['react-router-dom'],
+          'vendor-query': ['@tanstack/react-query'],
+          
+          // UI component chunks
+          'ui-radix': [
+            '@radix-ui/react-dialog', 
+            '@radix-ui/react-tabs', 
+            '@radix-ui/react-slot',
+            '@radix-ui/react-avatar',
+            '@radix-ui/react-button',
+            '@radix-ui/react-dropdown-menu'
+          ],
+          'ui-components': [
+            'lucide-react',
+            'framer-motion'
+          ],
+          
+          // Security and performance chunks
+          'security-features': [
+            // Security-related modules would be auto-detected
+          ],
+          'performance-features': [
+            'web-vitals'
+          ],
+          
+          // Charts and analytics
+          'charts': ['recharts'],
+          
+          // Utilities
+          'utils': [
+            'clsx',
+            'class-variance-authority',
+            'tailwind-merge',
+            'date-fns'
+          ]
         },
         assetFileNames: 'assets/[name]-[hash][extname]',
-        chunkFileNames: 'assets/[name]-[hash].js',
-        entryFileNames: 'assets/[name]-[hash].js',
+        chunkFileNames: 'assets/js/[name]-[hash].js',
+        entryFileNames: 'assets/js/[name]-[hash].js',
       },
     },
-    chunkSizeWarningLimit: 1000,
+    chunkSizeWarningLimit: 500, // Lower threshold for better performance
   },
   optimizeDeps: {
     include: ['react', 'react-dom', 'react-router-dom'],
