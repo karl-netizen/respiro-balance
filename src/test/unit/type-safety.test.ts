@@ -20,12 +20,12 @@ const hasPermission = (userPermissions: readonly string[], requiredPermission: s
 const sanitizeUserInput = (input: string) => {
   // Check for XSS attempts
   const maliciousPatterns = [
-    /<script\\b[^<]*(?:(?!<\\/script>)<[^<]*)*<\\/script>/gi,
+    /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
     /javascript:/gi,
-    /onerror\\s*=/gi,
-    /onload\\s*=/gi,
-    /eval\\s*\\(/gi,
-    /<svg\\b[^>]+\\bonload\\s*=/gi
+    /onerror\s*=/gi,
+    /onload\s*=/gi,
+    /eval\s*\(/gi,
+    /<svg\b[^>]*\bonload\s*=/gi
   ];
 
   for (const pattern of maliciousPatterns) {

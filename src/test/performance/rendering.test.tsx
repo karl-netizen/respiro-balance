@@ -5,24 +5,28 @@ import React from 'react';
 import { createTestWrapper, TestDataFactory, performanceHelpers } from '../utils/comprehensive-test-utils';
 
 // Mock components for performance testing
-const MockButton = ({ children, onClick, disabled }: any) => 
-  React.createElement('button', { onClick, disabled }, children);
+const MockButton = ({ children, onClick, disabled }: any) => (
+  <button onClick={onClick} disabled={disabled}>
+    {children}
+  </button>
+);
 
-const MockGrid = ({ children, columns }: any) => 
-  React.createElement('div', { 
-    style: { 
-      display: 'grid', 
-      gridTemplateColumns: `repeat(${columns?.lg || 3}, 1fr)`,
-      gap: '1rem'
-    }
-  }, children);
+const MockGrid = ({ children, columns }: any) => (
+  <div style={{ 
+    display: 'grid', 
+    gridTemplateColumns: `repeat(${columns?.lg || 3}, 1fr)`,
+    gap: '1rem'
+  }}>
+    {children}
+  </div>
+);
 
 // Mock authentication hook
 const mockUseAuth = () => {
   const [authState] = React.useState(TestDataFactory.createMockAuthState());
   
   const hasPermission = React.useCallback((permission: string) => {
-    return authState.user?.permissions?.includes(permission) || false;
+    return authState.user?.permissions?.includes(permission as any) || false;
   }, [authState]);
 
   return {
@@ -65,11 +69,11 @@ describe('Performance Tests', () => {
     it('renders large lists efficiently', () => {
       const renderTime = performanceHelpers.measureRenderTime(() => {
         render(
-          React.createElement(MockGrid, { columns: { lg: 6 } },
-            Array.from({ length: 1000 }, (_, i) => 
-              React.createElement(MockButton, { key: i }, `Button ${i}`)
-            )
-          )
+          <MockGrid columns={{ lg: 6 }}>
+            {Array.from({ length: 1000 }, (_, i) => (
+              <MockButton key={i}>Button {i}</MockButton>
+            ))}
+          </MockGrid>
         );
       });
 
@@ -417,8 +421,6 @@ describe('Performance Tests', () => {
       global.fetch = mockFetch;
 
       const useBatchedRequests = () => {
-        const [requests] = React.useState<string[]>([]);
-        
         const batchedFetch = React.useCallback(async (urls: string[]) => {
           // Simulate request batching
           const startTime = performance.now();
@@ -519,7 +521,7 @@ describe('Performance Tests', () => {
       expect(loadTime).toBeLessThan(100);
     });
 
-    it('code splitting reduces initial bundle size', () => {
+    it('code splitting reduces initial bundle size', async () => {
       // Mock dynamic imports
       const dynamicImport = async (module: string) => {
         const startTime = performance.now();
@@ -532,7 +534,7 @@ describe('Performance Tests', () => {
       };
 
       // Simulate loading multiple chunks
-      const loadTime = performanceHelpers.measureAsyncOperation(async () => {
+      const loadTime = await performanceHelpers.measureAsyncOperation(async () => {
         await Promise.all([
           dynamicImport('auth-module'),
           dynamicImport('dashboard-module'),
@@ -541,7 +543,7 @@ describe('Performance Tests', () => {
       });
 
       // Dynamic imports should be fast
-      expect(loadTime).resolves.toBeLessThan(100);
+      expect(loadTime).toBeLessThan(100);
     });
   });
 

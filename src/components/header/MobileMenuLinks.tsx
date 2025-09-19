@@ -182,12 +182,12 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
       </Link>
       
       <Link
-        to="/landing#pricing"
-        className={getLinkClasses(location.hash === '#pricing')}
-        onClick={() => handleLinkClick('/landing#pricing')}
+        to="/testing-demo"
+        className={getLinkClasses(isActive('/testing-demo'))}
+        onClick={() => handleLinkClick('/testing-demo')}
       >
         <Clock className={getIconSize()} />
-        <span className={getTextSize()}>Pricing</span>
+        <span className={getTextSize()}>🧪 Testing</span>
       </Link>
     </div>
   );

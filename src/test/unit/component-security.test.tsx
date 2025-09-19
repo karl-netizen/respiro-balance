@@ -1,5 +1,6 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { createTestWrapper } from '../utils/comprehensive-test-utils';
+// Note: These would normally import from @testing-library/react
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { createTestWrapper, TestDataFactory, securityTestHelpers } from '../utils/comprehensive-test-utils';
