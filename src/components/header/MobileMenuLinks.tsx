@@ -181,23 +181,32 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
         <span className={getTextSize()}>Account</span>
       </Link>
       
-      <Link
-        to="/testing-demo"
-        className={getLinkClasses(isActive('/testing-demo'))}
-        onClick={() => handleLinkClick('/testing-demo')}
-      >
-        <Clock className={getIconSize()} />
-        <span className={getTextSize()}>🧪 Testing</span>
-      </Link>
+        <Link
+          to="/testing-demo"
+          className={getLinkClasses(isActive('/testing-demo'))}
+          onClick={() => handleLinkClick('/testing-demo')}
+        >
+          <Clock className={getIconSize()} />
+          <span className={getTextSize()}>🧪 Testing</span>
+        </Link>
 
-      <Link
-        to="/testing-summary"
-        className={getLinkClasses(isActive('/testing-summary'))}
-        onClick={() => handleLinkClick('/testing-summary')}
-      >
-        <Clock className={getIconSize()} />
-        <span className={getTextSize()}>📊 Test Overview</span>
-      </Link>
+        <Link
+          to="/testing-summary"
+          className={getLinkClasses(isActive('/testing-summary'))}
+          onClick={() => handleLinkClick('/testing-summary')}
+        >
+          <Clock className={getIconSize()} />
+          <span className={getTextSize()}>📊 Test Overview</span>
+        </Link>
+
+        <Link
+          to="/performance-demo"
+          className={getLinkClasses(isActive('/performance-demo'))}
+          onClick={() => handleLinkClick('/performance-demo')}
+        >
+          <Gauge className={getIconSize()} />
+          <span className={getTextSize()}>⚡ Performance</span>
+        </Link>
     </div>
   );
 };

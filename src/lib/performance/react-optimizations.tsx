@@ -1,6 +1,5 @@
 import React, { memo, useMemo, useCallback, lazy, Suspense, CSSProperties } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { FixedSizeList as List } from 'react-window';
 
 // ===================================================================
 // COMPONENT-LEVEL OPTIMIZATIONS
@@ -80,9 +79,13 @@ export const LazyDashboard = lazy(() => import('@/pages/Dashboard'));
 export const LazyUserProfile = lazy(() => import('@/pages/ProfilePage'));
 export const LazyAdminPanel = lazy(() => import('@/pages/SystemDashboardPage'));
 
-// Heavy component lazy loading
-export const LazyChart = lazy(() => import('@/components/charts/HeavyChart'));
-export const LazyAnalytics = lazy(() => import('@/components/analytics/Analytics'));
+// Heavy component lazy loading - using placeholder components for now
+export const LazyChart = lazy(() => Promise.resolve({ 
+  default: () => <div className="p-8 border rounded-lg bg-muted">Chart Component Placeholder</div> 
+}));
+export const LazyAnalytics = lazy(() => Promise.resolve({ 
+  default: () => <div className="p-8 border rounded-lg bg-muted">Analytics Component Placeholder</div> 
+}));
 
 // Performance-aware loading component
 export const PerformanceAwareLoader: React.FC<{ variant?: string }> = ({ variant = 'default' }) => {
@@ -116,7 +119,7 @@ export const OptimizedDashboard = () => {
 };
 
 // ===================================================================
-// VIRTUALIZED LIST COMPONENTS
+// OPTIMIZED LIST COMPONENTS (without react-window for now)
 // ===================================================================
 
 interface User {
@@ -130,51 +133,47 @@ export const VirtualizedUserList: React.FC<{
   users: User[];
   onUserSelect?: (user: User) => void;
 }> = ({ users, onUserSelect }) => {
-  const Row = ({ index, style }: { index: number; style: CSSProperties }) => {
-    const user = users[index];
-    
-    const handleClick = useCallback(() => {
-      onUserSelect?.(user);
-    }, [user]);
+  // Simple optimized list without virtualization for now
+  const visibleUsers = useMemo(() => users.slice(0, 100), [users]); // Limit to 100 items for performance
 
-    return (
-      <div style={style} className="p-2">
-        <div 
-          className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 cursor-pointer transition-colors"
-          onClick={handleClick}
-        >
-          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-            {user.avatar ? (
-              <img 
-                src={user.avatar} 
-                alt={user.name}
-                className="w-full h-full rounded-full object-cover"
-              />
-            ) : (
-              <span className="text-sm font-medium">
-                {user.name.charAt(0).toUpperCase()}
-              </span>
-            )}
-          </div>
-          <div className="flex-1 min-w-0">
-            <h4 className="font-medium truncate">{user.name}</h4>
-            <p className="text-sm text-muted-foreground truncate">{user.email}</p>
-          </div>
-        </div>
-      </div>
-    );
-  };
+  const handleUserClick = useCallback((user: User) => {
+    onUserSelect?.(user);
+  }, [onUserSelect]);
 
   return (
-    <div className="border rounded-lg">
-      <List
-        height={600}
-        itemCount={users.length}
-        itemSize={80}
-        overscanCount={5} // Render 5 extra items for smooth scrolling
-      >
-        {Row}
-      </List>
+    <div className="border rounded-lg max-h-96 overflow-y-auto">
+      <div className="space-y-1 p-2">
+        {visibleUsers.map(user => (
+          <div 
+            key={user.id}
+            className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 cursor-pointer transition-colors"
+            onClick={() => handleUserClick(user)}
+          >
+            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+              {user.avatar ? (
+                <img 
+                  src={user.avatar} 
+                  alt={user.name}
+                  className="w-full h-full rounded-full object-cover"
+                />
+              ) : (
+                <span className="text-sm font-medium">
+                  {user.name.charAt(0).toUpperCase()}
+                </span>
+              )}
+            </div>
+            <div className="flex-1 min-w-0">
+              <h4 className="font-medium truncate">{user.name}</h4>
+              <p className="text-sm text-muted-foreground truncate">{user.email}</p>
+            </div>
+          </div>
+        ))}
+        {users.length > 100 && (
+          <div className="text-center text-sm text-muted-foreground p-2">
+            Showing first 100 of {users.length} users
+          </div>
+        )}
+      </div>
     </div>
   );
 };

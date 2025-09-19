@@ -74,9 +74,7 @@ export class OptimizedWebSocketClient {
           };
           
           this.emit('statusChange', this.connectionState);
-          this.emit('connected');
-          this.startHeartbeat();
-          this.processMessageQueue();
+        this.emit('connected', {});
           
           resolve();
           
@@ -180,12 +178,16 @@ export class OptimizedWebSocketClient {
   }
 
   // Emit event to listeners
-  private emit(event: string, ...args: any[]): void {
+  private emit(event: string, data?: any): void {
     const listeners = this.eventListeners.get(event);
     if (listeners) {
       listeners.forEach(callback => {
         try {
-          callback(...args);
+          if (data !== undefined) {
+            callback(data);
+          } else {
+            callback();
+          }
         } catch (error) {
           console.error(`Error in WebSocket event listener for ${event}:`, error);
         }
