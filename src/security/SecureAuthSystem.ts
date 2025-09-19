@@ -7,6 +7,7 @@ import {
   Result,
   Ok,
   Err,
+  Failure,
   AuthState,
   UserId,
   Email,
@@ -627,10 +628,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
     
     if (!result.success) {
+      const error = (result as Failure<SecurityError>).error;
       setState({ 
         type: 'error', 
-        error: result.error, 
-        canRetry: result.error.type !== 'account_locked' 
+        error: error, 
+        canRetry: error.type !== 'account_locked' 
       });
       
       return result as Result<void, SecurityError>;

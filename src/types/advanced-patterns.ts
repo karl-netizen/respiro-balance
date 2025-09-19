@@ -63,7 +63,7 @@ export const mapError = <T, E, F>(
   if (result.success) {
     return result as Success<T>;
   }
-  return Err(fn(result.error));
+  return Err(fn((result as Failure<E>).error));
 };
 
 export const chainResult = <T, U, E>(
@@ -164,7 +164,7 @@ export const all = <T>(...validators: Validator<T>[]): Validator<T> => {
     for (const validator of validators) {
       const result = validator(input);
       if (!result.success) {
-        errors.push(...result.error);
+        errors.push(...(result as Failure<ValidationError[]>).error);
       }
     }
     
