@@ -6,7 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useDeviceDetection } from '@/hooks/core/useDeviceDetection';
 import { 
   Home, Gauge, LineChart, Settings, BookOpen, Heart, 
-  Clock, Sunrise, Briefcase
+  Clock, Sunrise, Briefcase, Brain
 } from "lucide-react";
 import MobileDropdown from "./MobileDropdown";
 
@@ -206,6 +206,15 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
         >
           <Gauge className={getIconSize()} />
           <span className={getTextSize()}>⚡ Performance</span>
+        </Link>
+
+        <Link
+          to="/ai-personalization"
+          className={getLinkClasses(isActive('/ai-personalization'))}
+          onClick={() => handleLinkClick('/ai-personalization')}
+        >
+          <Brain className={getIconSize()} />
+          <span className={getTextSize()}>🧠 AI Engine</span>
         </Link>
     </div>
   );

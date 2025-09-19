@@ -43,6 +43,10 @@ import HelpPage from '@/pages/HelpPage';
 import ContactPage from '@/pages/ContactPage';
 import PrivacyPage from '@/pages/PrivacyPage';
 import TermsPage from '@/pages/TermsPage';
+
+// Lazy-loaded demo components
+const PerformanceDemo = lazy(() => import('@/components/performance/PerformanceDemo'));
+const AIPersonalizationDemo = lazy(() => import('@/components/ai-personalization/AIPersonalizationDemo'));
 import SecuritySystemDemo from '@/components/security/SecuritySystemDemo';
 import SecureFormsDemo from '@/components/security/SecureFormsDemo';
 import AdvancedSecurityDemo from '@/components/security/advanced/AdvancedSecurityDemo';
@@ -172,7 +176,9 @@ function AppContent() {
                         <Route path="/help" element={<HelpPage />} />
                         <Route path="/contact" element={<ContactPage />} />
                         <Route path="/privacy" element={<PrivacyPage />} />
-                         <Route path="/terms" element={<TermsPage />} />
+                        <Route path="/terms" element={<TermsPage />} />
+                        <Route path="/performance-demo" element={<PerformanceDemo />} />
+                        <Route path="/ai-personalization" element={<AIPersonalizationDemo />} />
                           <Route path="/security-demo" element={<SecuritySystemDemo />} />
                           <Route path="/secure-forms" element={<SecureFormsDemo />} />
                          <Route path="/advanced-security" element={<AdvancedSecurityDemo />} />
