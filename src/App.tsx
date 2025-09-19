@@ -44,6 +44,7 @@ import ContactPage from '@/pages/ContactPage';
 import PrivacyPage from '@/pages/PrivacyPage';
 import TermsPage from '@/pages/TermsPage';
 import SecuritySystemDemo from '@/components/security/SecuritySystemDemo';
+import SecureFormsDemo from '@/components/security/SecureFormsDemo';
 import OnboardingPage from '@/pages/Onboarding';
 import SimpleAuthPage from '@/pages/SimpleAuthPage';
 import { MobilePWASetup } from '@/components/mobile/MobilePWASetup';
@@ -170,6 +171,7 @@ function AppContent() {
                         <Route path="/privacy" element={<PrivacyPage />} />
                          <Route path="/terms" element={<TermsPage />} />
                          <Route path="/security-demo" element={<SecuritySystemDemo />} />
+                         <Route path="/secure-forms" element={<SecureFormsDemo />} />
                       </Routes>
                     </main>
                     
