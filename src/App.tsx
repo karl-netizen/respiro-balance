@@ -45,6 +45,7 @@ import PrivacyPage from '@/pages/PrivacyPage';
 import TermsPage from '@/pages/TermsPage';
 import SecuritySystemDemo from '@/components/security/SecuritySystemDemo';
 import SecureFormsDemo from '@/components/security/SecureFormsDemo';
+import AdvancedSecurityDemo from '@/components/security/advanced/AdvancedSecurityDemo';
 import { ComprehensiveTestingDemo } from '@/test/demo/comprehensive-testing-demo';
 import { TestingFrameworkSummary } from '@/test/demo/testing-framework-summary';
 import OnboardingPage from '@/pages/Onboarding';
@@ -172,8 +173,9 @@ function AppContent() {
                         <Route path="/contact" element={<ContactPage />} />
                         <Route path="/privacy" element={<PrivacyPage />} />
                          <Route path="/terms" element={<TermsPage />} />
-                         <Route path="/security-demo" element={<SecuritySystemDemo />} />
-                         <Route path="/secure-forms" element={<SecureFormsDemo />} />
+                          <Route path="/security-demo" element={<SecuritySystemDemo />} />
+                          <Route path="/secure-forms" element={<SecureFormsDemo />} />
+                          <Route path="/advanced-security" element={<AdvancedSecurityDemo />} />
         <Route path="/testing-demo" element={<ComprehensiveTestingDemo />} />
         <Route path="/testing-summary" element={<TestingFrameworkSummary />} />
                       </Routes>
