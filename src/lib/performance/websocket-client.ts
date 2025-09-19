@@ -183,11 +183,7 @@ export class OptimizedWebSocketClient {
     if (listeners) {
       listeners.forEach(callback => {
         try {
-          if (data !== undefined) {
-            callback(data);
-          } else {
-            callback();
-          }
+          callback(data);
         } catch (error) {
           console.error(`Error in WebSocket event listener for ${event}:`, error);
         }
