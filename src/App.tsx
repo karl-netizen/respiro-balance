@@ -179,12 +179,11 @@ function AppContent() {
                         <Route path="/terms" element={<TermsPage />} />
                         <Route path="/performance-demo" element={<PerformanceDemo />} />
                         <Route path="/ai-personalization" element={<AIPersonalizationDemo />} />
-                          <Route path="/security-demo" element={<SecuritySystemDemo />} />
-                          <Route path="/secure-forms" element={<SecureFormsDemo />} />
-                         <Route path="/advanced-security" element={<AdvancedSecurityDemo />} />
-        <Route path="/testing-demo" element={<ComprehensiveTestingDemo />} />
-        <Route path="/testing-summary" element={<TestingFrameworkSummary />} />
-        <Route path="/performance-demo" element={React.createElement(React.lazy(() => import('@/components/performance/PerformanceDemo')))} />
+                        <Route path="/security-demo" element={<SecuritySystemDemo />} />
+                        <Route path="/secure-forms" element={<SecureFormsDemo />} />
+                        <Route path="/advanced-security" element={<AdvancedSecurityDemo />} />
+                        <Route path="/testing-demo" element={<ComprehensiveTestingDemo />} />
+                        <Route path="/testing-summary" element={<TestingFrameworkSummary />} />
                       </Routes>
                     </main>
                     
