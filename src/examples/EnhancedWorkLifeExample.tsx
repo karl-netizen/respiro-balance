@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { EnhancedWorkLifeSettings } from '@/components/work-life-balance/EnhancedWorkLifeSettings';
 import { SmartBreathingWidget } from '@/components/work-life-balance/SmartBreathingWidget';
-import { Code, FileText, Zap } from 'lucide-react';
+import { WellnessAssessment } from '@/components/wellness/WellnessAssessment';
+import { Code, FileText, Zap, Heart, Activity } from 'lucide-react';
 
 /**
  * Example component demonstrating the enhanced work-life balance data structure
@@ -22,22 +23,21 @@ export const EnhancedWorkLifeExample: React.FC = () => {
     lunchBreak: { duration: 60, time: '12:00' }
   };
 
-  // Example of the enhanced data structure
+  // Example of the enhanced data structure with wellness assessment
   const enhancedStructure = {
     // Existing core structure (unchanged)
     workingDays: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
     workingHours: { start: '09:00', end: '17:00' },
     lunchBreak: { duration: 60, time: '12:00' },
 
-    // NEW: Breathing technique context
+    // Work context (from previous implementation)
     workStressors: ['deadlines', 'meetings', 'multitasking', 'interruptions'],
     stressfulTimes: ['morning-rush', 'pre-meetings', 'end-of-day'],
     currentCopingMethods: ['coffee', 'short-walks', 'deep-breaths'],
     preferredBreakLength: '2-minutes',
 
-    // NEW: Additional context for personalization
+    // Work environment context
     workEnvironment: 'hybrid',
-    stressLevel: 'moderate',
     energyPatterns: {
       morningEnergy: 'low',
       afternoonDip: true,
@@ -48,6 +48,27 @@ export const EnhancedWorkLifeExample: React.FC = () => {
       guidedVsUnguided: 'guided',
       backgroundSounds: true,
       voicePreference: 'female'
+    },
+
+    // NEW: Health and wellness assessment
+    stressAssessment: {
+      currentStressLevel: 7,
+      stressFrequency: 'daily',
+      physicalStressSymptoms: ['tension', 'headaches', 'fatigue', 'shallow-breathing'],
+      assessmentDate: '2024-01-15T10:00:00Z'
+    },
+    breathingAwareness: {
+      breathingAwareness: 'sometimes-notice',
+      breathingIssues: ['shallow', 'irregular', 'breath-holding'],
+      previousBreathingExperience: 'beginner',
+      assessmentDate: '2024-01-15T10:00:00Z'
+    },
+    wellnessGoals: {
+      primaryGoals: ['reduce-stress', 'improve-focus', 'better-sleep'],
+      secondaryGoals: ['increase-energy', 'anxiety-management'],
+      timeframe: 'medium-term',
+      motivationLevel: 'motivated',
+      goalSetDate: '2024-01-15T10:00:00Z'
     }
   };
 
@@ -105,6 +126,8 @@ export const EnhancedWorkLifeExample: React.FC = () => {
                 <Badge>Stress Context</Badge>
                 <Badge>Breathing Preferences</Badge>
                 <Badge>Energy Patterns</Badge>
+                <Badge>Health Assessment</Badge>
+                <Badge>Wellness Goals</Badge>
                 <Badge>Personalization</Badge>
               </div>
             </div>
@@ -121,7 +144,7 @@ export const EnhancedWorkLifeExample: React.FC = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-4 gap-6">
             <div className="space-y-2">
               <h4 className="font-semibold text-primary">Stress Context</h4>
               <ul className="text-sm space-y-1 text-muted-foreground">
@@ -132,16 +155,25 @@ export const EnhancedWorkLifeExample: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <h4 className="font-semibold text-primary">Smart Recommendations</h4>
+              <h4 className="font-semibold text-primary">Health Assessment</h4>
               <ul className="text-sm space-y-1 text-muted-foreground">
-                <li>• Context-aware technique selection</li>
-                <li>• Timing-based suggestions</li>
-                <li>• Personalized duration preferences</li>
+                <li>• Stress level tracking (1-10 scale)</li>
+                <li>• Physical symptom monitoring</li>
+                <li>• Breathing pattern analysis</li>
               </ul>
             </div>
 
             <div className="space-y-2">
-              <h4 className="font-semibold text-primary">Learning & Adaptation</h4>
+              <h4 className="font-semibold text-primary">Goal-Based AI</h4>
+              <ul className="text-sm space-y-1 text-muted-foreground">
+                <li>• Personalized wellness goals</li>
+                <li>• Context-aware recommendations</li>
+                <li>• Progress-driven adaptations</li>
+              </ul>
+            </div>
+
+            <div className="space-y-2">
+              <h4 className="font-semibold text-primary">Learning System</h4>
               <ul className="text-sm space-y-1 text-muted-foreground">
                 <li>• Effectiveness tracking</li>
                 <li>• Preference learning</li>
@@ -203,6 +235,54 @@ export const EnhancedWorkLifeExample: React.FC = () => {
               </div>
             </div>
           </div>
+        </div>
+
+        <Separator />
+
+        {/* Wellness Assessment */}
+        <div>
+          <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+            <Heart className="h-5 w-5 text-red-500" />
+            Comprehensive Wellness Assessment
+          </h3>
+          <p className="text-muted-foreground mb-4">
+            Complete health and wellness assessment to enable personalized breathing recommendations based on stress levels, breathing patterns, and personal goals.
+          </p>
+
+          <Card className="bg-gradient-to-r from-blue-50 to-green-50 border-blue-200 mb-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Activity className="h-5 w-5" />
+                Assessment Features
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid md:grid-cols-3 gap-4">
+                <div className="text-center">
+                  <div className="text-2xl mb-2">😰 → 😌</div>
+                  <h4 className="font-semibold">Stress Assessment</h4>
+                  <p className="text-sm text-muted-foreground">1-10 stress scale with physical symptom tracking</p>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl mb-2">💨</div>
+                  <h4 className="font-semibold">Breathing Analysis</h4>
+                  <p className="text-sm text-muted-foreground">Awareness levels and breathing pattern issues</p>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl mb-2">🎯</div>
+                  <h4 className="font-semibold">Goal Setting</h4>
+                  <p className="text-sm text-muted-foreground">Primary and secondary wellness objectives</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <WellnessAssessment
+            onComplete={(assessment) => {
+              console.log('Assessment completed:', assessment);
+              // In a real app, this would save to user preferences
+            }}
+          />
         </div>
 
         <Separator />

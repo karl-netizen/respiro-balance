@@ -5,7 +5,16 @@ import {
   StressfulTime,
   CopingMethod,
   BreakLength,
-  BreathingTechnique
+  BreathingTechnique,
+  StressAssessment,
+  BreathingAwareness,
+  WellnessGoals,
+  StressFrequency,
+  PhysicalStressSymptom,
+  BreathingAwarenessLevel,
+  BreathingIssue,
+  ExperienceLevel,
+  WellnessGoal
 } from '@/types/workLifeBalance';
 
 /**
@@ -64,6 +73,11 @@ export function migrateToEnhancedWorkLife(
       backgroundSounds: preferences.meditation?.backgroundSounds ?? true,
       voicePreference: preferences.meditation?.guidedVoice || 'female',
     },
+
+    // NEW: Health and wellness assessment (inferred from existing data)
+    stressAssessment: inferStressAssessment(preferences),
+    breathingAwareness: inferBreathingAwareness(preferences),
+    wellnessGoals: inferWellnessGoals(preferences),
   };
 }
 
@@ -271,4 +285,168 @@ export function generateBreakRecommendations(
   }
 
   return recommendations;
+}
+
+/**
+ * Infers stress assessment from existing user data
+ */
+function inferStressAssessment(preferences: UserPreferences): StressAssessment {
+  // Map existing stress level to numeric scale
+  let currentStressLevel = 5; // default moderate
+  switch (preferences.stressLevel) {
+    case 'low': currentStressLevel = 3; break;
+    case 'moderate': currentStressLevel = 5; break;
+    case 'high': currentStressLevel = 7; break;
+    default: currentStressLevel = 5;
+  }
+
+  // Infer stress frequency from existing patterns
+  let stressFrequency: StressFrequency = 'weekly';
+  if (preferences.stressLevel === 'high') {
+    stressFrequency = 'daily';
+  } else if (preferences.stressLevel === 'low') {
+    stressFrequency = 'rarely';
+  }
+
+  // Infer physical symptoms from existing challenges
+  const physicalStressSymptoms: PhysicalStressSymptom[] = [];
+
+  if (preferences.focusChallenges?.includes('fatigue')) {
+    physicalStressSymptoms.push('fatigue');
+  }
+
+  if (preferences.timeChallenges?.includes('sleep')) {
+    physicalStressSymptoms.push('sleep-problems');
+  }
+
+  // Common symptoms based on stress level
+  if (preferences.stressLevel === 'high') {
+    physicalStressSymptoms.push('tension', 'headaches');
+  }
+
+  if (physicalStressSymptoms.length === 0) {
+    physicalStressSymptoms.push('none');
+  }
+
+  return {
+    currentStressLevel,
+    stressFrequency,
+    physicalStressSymptoms: [...new Set(physicalStressSymptoms)], // Remove duplicates
+    assessmentDate: new Date().toISOString(),
+  };
+}
+
+/**
+ * Infers breathing awareness from existing meditation experience
+ */
+function inferBreathingAwareness(preferences: UserPreferences): BreathingAwareness {
+  // Map meditation experience to breathing awareness
+  let breathingAwareness: BreathingAwarenessLevel = 'sometimes-notice';
+  let previousBreathingExperience: ExperienceLevel = 'beginner';
+
+  switch (preferences.meditationExperience || preferences.meditation_experience) {
+    case 'beginner':
+      breathingAwareness = 'sometimes-notice';
+      previousBreathingExperience = 'beginner';
+      break;
+    case 'intermediate':
+      breathingAwareness = 'often-aware';
+      previousBreathingExperience = 'some-experience';
+      break;
+    case 'advanced':
+      breathingAwareness = 'very-aware';
+      previousBreathingExperience = 'experienced';
+      break;
+    default:
+      breathingAwareness = 'sometimes-notice';
+      previousBreathingExperience = 'beginner';
+  }
+
+  // Infer breathing issues from stress level and existing challenges
+  const breathingIssues: BreathingIssue[] = [];
+
+  if (preferences.stressLevel === 'high') {
+    breathingIssues.push('shallow', 'irregular');
+  }
+
+  if (preferences.focusChallenges?.includes('concentration')) {
+    breathingIssues.push('breath-holding');
+  }
+
+  if (breathingIssues.length === 0) {
+    breathingIssues.push('none');
+  }
+
+  return {
+    breathingAwareness,
+    breathingIssues: [...new Set(breathingIssues)], // Remove duplicates
+    previousBreathingExperience,
+    assessmentDate: new Date().toISOString(),
+  };
+}
+
+/**
+ * Infers wellness goals from existing meditation goals and preferences
+ */
+function inferWellnessGoals(preferences: UserPreferences): WellnessGoals {
+  const primaryGoals: WellnessGoal[] = [];
+  const secondaryGoals: WellnessGoal[] = [];
+
+  // Map existing meditation goals to wellness goals
+  const existingGoals = preferences.meditationGoals || preferences.meditation_goals || [];
+
+  existingGoals.forEach(goal => {
+    const goalLower = goal.toLowerCase();
+
+    if (goalLower.includes('stress')) {
+      primaryGoals.push('reduce-stress');
+    } else if (goalLower.includes('focus') || goalLower.includes('concentration')) {
+      primaryGoals.push('improve-focus');
+    } else if (goalLower.includes('sleep')) {
+      primaryGoals.push('better-sleep');
+    } else if (goalLower.includes('energy')) {
+      primaryGoals.push('increase-energy');
+    } else if (goalLower.includes('anxiety')) {
+      primaryGoals.push('anxiety-management');
+    }
+  });
+
+  // Add defaults based on stress level if no specific goals found
+  if (primaryGoals.length === 0) {
+    switch (preferences.stressLevel) {
+      case 'high':
+        primaryGoals.push('reduce-stress', 'anxiety-management');
+        break;
+      case 'moderate':
+        primaryGoals.push('improve-focus', 'better-sleep');
+        break;
+      case 'low':
+        primaryGoals.push('general-wellness', 'increase-energy');
+        break;
+      default:
+        primaryGoals.push('reduce-stress', 'improve-focus');
+    }
+  }
+
+  // Add secondary goals based on preferences
+  if (preferences.timeChallenges?.includes('sleep')) {
+    if (!primaryGoals.includes('better-sleep')) {
+      secondaryGoals.push('better-sleep');
+    }
+  }
+
+  if (preferences.meditation?.sessionReminders) {
+    secondaryGoals.push('habit-formation');
+  }
+
+  // Remove duplicates
+  const uniquePrimaryGoals = [...new Set(primaryGoals)];
+  const uniqueSecondaryGoals = [...new Set(secondaryGoals.filter(goal => !uniquePrimaryGoals.includes(goal)))];
+
+  return {
+    primaryGoals: uniquePrimaryGoals,
+    secondaryGoals: uniqueSecondaryGoals,
+    timeframe: 'medium-term', // 1-3 months default
+    goalSetDate: new Date().toISOString(),
+  };
 }

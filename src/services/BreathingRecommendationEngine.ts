@@ -26,25 +26,30 @@ export class BreathingRecommendationEngine {
     timeUntilNextMeeting?: number; // minutes
     workloadLevel?: 'light' | 'moderate' | 'heavy';
     userRequested?: boolean;
+    reportedPhysicalSymptoms?: string[]; // NEW: Physical symptoms user is experiencing
+    currentGoalFocus?: string; // NEW: What goal user wants to focus on right now
   } = {}): BreakRecommendation[] {
     const recommendations: BreakRecommendation[] = [];
     const now = context.currentTime || new Date();
-    const hour = now.getHours();
-    const minute = now.getMinutes();
-    const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
 
-    // Context-aware recommendations
+    // Core context-aware recommendations
     recommendations.push(...this.getTimeBasedRecommendations(now, context));
     recommendations.push(...this.getStressorBasedRecommendations(context.detectedStressors || []));
     recommendations.push(...this.getWorkloadBasedRecommendations(context.workloadLevel || 'moderate'));
     recommendations.push(...this.getMeetingBasedRecommendations(context.timeUntilNextMeeting));
 
-    // Apply user preferences and filter
+    // NEW: Health and goal-based recommendations
+    recommendations.push(...this.getHealthBasedRecommendations(context));
+    recommendations.push(...this.getGoalBasedRecommendations(context));
+    recommendations.push(...this.getStressLevelBasedRecommendations(context.currentStressLevel));
+
+    // Apply user preferences and personalization
     const filtered = this.filterByPreferences(recommendations);
     const personalized = this.personalizeWithHistory(filtered);
+    const goalAligned = this.alignWithWellnessGoals(personalized, context.currentGoalFocus);
 
     // Sort by priority and relevance
-    return personalized.sort((a, b) => {
+    return goalAligned.sort((a, b) => {
       const priorityOrder = { urgent: 4, high: 3, medium: 2, low: 1 };
       return priorityOrder[b.priority] - priorityOrder[a.priority];
     }).slice(0, 3); // Return top 3 recommendations
@@ -267,6 +272,350 @@ export class BreathingRecommendationEngine {
     }
 
     return recommendations;
+  }
+
+  /**
+   * Get recommendations based on reported physical symptoms
+   */
+  private getHealthBasedRecommendations(context: any): BreakRecommendation[] {
+    const recommendations: BreakRecommendation[] = [];
+    const symptoms = context.reportedPhysicalSymptoms || [];
+    const stressAssessment = this.preferences.stressAssessment;
+
+    // Recommendations based on current stress level
+    if (stressAssessment && context.currentStressLevel !== undefined) {
+      const stressLevel = context.currentStressLevel;
+
+      if (stressLevel >= 8) {
+        recommendations.push({
+          id: `high-stress-${Date.now()}`,
+          triggerType: 'stress-detected',
+          suggestedTechnique: 'physiological-sigh',
+          duration: 1,
+          reasoning: 'Emergency stress relief - double inhale for immediate calm',
+          priority: 'urgent',
+          context: {
+            timeOfDay: this.getCurrentTimeOfDay(),
+          },
+        });
+      } else if (stressLevel >= 6) {
+        recommendations.push({
+          id: `elevated-stress-${Date.now()}`,
+          triggerType: 'stress-detected',
+          suggestedTechnique: 'four-seven-eight',
+          duration: 3,
+          reasoning: 'Elevated stress detected - calming exhale focus',
+          priority: 'high',
+          context: {
+            timeOfDay: this.getCurrentTimeOfDay(),
+          },
+        });
+      }
+    }
+
+    // Recommendations based on physical symptoms
+    symptoms.forEach(symptom => {
+      const symptomLower = symptom.toLowerCase();
+
+      if (symptomLower.includes('tension') || symptomLower.includes('muscle')) {
+        recommendations.push({
+          id: `tension-${Date.now()}`,
+          triggerType: 'stress-detected',
+          suggestedTechnique: 'belly-breathing',
+          duration: 5,
+          reasoning: 'Deep diaphragmatic breathing to release physical tension',
+          priority: 'high',
+          context: {
+            timeOfDay: this.getCurrentTimeOfDay(),
+          },
+        });
+      }
+
+      if (symptomLower.includes('headache') || symptomLower.includes('head')) {
+        recommendations.push({
+          id: `headache-${Date.now()}`,
+          triggerType: 'stress-detected',
+          suggestedTechnique: 'coherent-breathing',
+          duration: 5,
+          reasoning: 'Rhythmic breathing to ease tension headaches',
+          priority: 'high',
+          context: {
+            timeOfDay: this.getCurrentTimeOfDay(),
+          },
+        });
+      }
+
+      if (symptomLower.includes('shallow') || symptomLower.includes('breath')) {
+        recommendations.push({
+          id: `breathing-${Date.now()}`,
+          triggerType: 'user-requested',
+          suggestedTechnique: 'belly-breathing',
+          duration: 3,
+          reasoning: 'Retrain breathing pattern with deep diaphragmatic breaths',
+          priority: 'medium',
+          context: {
+            timeOfDay: this.getCurrentTimeOfDay(),
+          },
+        });
+      }
+
+      if (symptomLower.includes('heart') || symptomLower.includes('racing')) {
+        recommendations.push({
+          id: `heart-rate-${Date.now()}`,
+          triggerType: 'stress-detected',
+          suggestedTechnique: 'box-breathing',
+          duration: 4,
+          reasoning: 'Structured breathing to regulate heart rate',
+          priority: 'high',
+          context: {
+            timeOfDay: this.getCurrentTimeOfDay(),
+          },
+        });
+      }
+    });
+
+    return recommendations;
+  }
+
+  /**
+   * Get recommendations based on wellness goals
+   */
+  private getGoalBasedRecommendations(context: any): BreakRecommendation[] {
+    const recommendations: BreakRecommendation[] = [];
+    const wellnessGoals = this.preferences.wellnessGoals;
+
+    if (!wellnessGoals) return recommendations;
+
+    // Prioritize current goal focus if specified
+    const focusGoal = context.currentGoalFocus;
+    const goalsToConsider = focusGoal ? [focusGoal] : wellnessGoals.primaryGoals;
+
+    goalsToConsider.forEach(goal => {
+      switch (goal) {
+        case 'reduce-stress':
+          recommendations.push({
+            id: `goal-stress-${Date.now()}`,
+            triggerType: 'user-requested',
+            suggestedTechnique: 'four-seven-eight',
+            duration: this.getPreferredDuration(),
+            reasoning: 'Working toward your stress reduction goal',
+            priority: 'medium',
+            context: {
+              timeOfDay: this.getCurrentTimeOfDay(),
+            },
+          });
+          break;
+
+        case 'improve-focus':
+          recommendations.push({
+            id: `goal-focus-${Date.now()}`,
+            triggerType: 'user-requested',
+            suggestedTechnique: 'box-breathing',
+            duration: this.getPreferredDuration(),
+            reasoning: 'Building focus and concentration abilities',
+            priority: 'medium',
+            context: {
+              timeOfDay: this.getCurrentTimeOfDay(),
+            },
+          });
+          break;
+
+        case 'better-sleep':
+          if (this.getCurrentTimeOfDay() === 'evening') {
+            recommendations.push({
+              id: `goal-sleep-${Date.now()}`,
+              triggerType: 'scheduled',
+              suggestedTechnique: 'four-seven-eight',
+              duration: 5,
+              reasoning: 'Evening practice for better sleep preparation',
+              priority: 'medium',
+              context: {
+                timeOfDay: this.getCurrentTimeOfDay(),
+              },
+            });
+          }
+          break;
+
+        case 'increase-energy':
+          if (this.getCurrentTimeOfDay() === 'morning' || this.getCurrentTimeOfDay() === 'afternoon') {
+            recommendations.push({
+              id: `goal-energy-${Date.now()}`,
+              triggerType: 'scheduled',
+              suggestedTechnique: 'coherent-breathing',
+              duration: 3,
+              reasoning: 'Energizing breath work to boost vitality',
+              priority: 'medium',
+              context: {
+                timeOfDay: this.getCurrentTimeOfDay(),
+              },
+            });
+          }
+          break;
+
+        case 'anxiety-management':
+          recommendations.push({
+            id: `goal-anxiety-${Date.now()}`,
+            triggerType: 'user-requested',
+            suggestedTechnique: 'physiological-sigh',
+            duration: 2,
+            reasoning: 'Quick anxiety relief with calming breath technique',
+            priority: 'high',
+            context: {
+              timeOfDay: this.getCurrentTimeOfDay(),
+            },
+          });
+          break;
+
+        case 'athletic-performance':
+          recommendations.push({
+            id: `goal-performance-${Date.now()}`,
+            triggerType: 'user-requested',
+            suggestedTechnique: 'tactical-breathing',
+            duration: 3,
+            reasoning: 'Performance breathing for optimal mind-body state',
+            priority: 'medium',
+            context: {
+              timeOfDay: this.getCurrentTimeOfDay(),
+            },
+          });
+          break;
+      }
+    });
+
+    return recommendations;
+  }
+
+  /**
+   * Get recommendations based on specific stress level
+   */
+  private getStressLevelBasedRecommendations(currentStressLevel?: number): BreakRecommendation[] {
+    const recommendations: BreakRecommendation[] = [];
+
+    if (currentStressLevel === undefined) return recommendations;
+
+    if (currentStressLevel >= 9) {
+      recommendations.push({
+        id: `crisis-stress-${Date.now()}`,
+        triggerType: 'stress-detected',
+        suggestedTechnique: 'physiological-sigh',
+        duration: 1,
+        reasoning: 'Crisis-level stress - immediate nervous system reset needed',
+        priority: 'urgent',
+        context: {
+          timeOfDay: this.getCurrentTimeOfDay(),
+        },
+      });
+    } else if (currentStressLevel >= 7) {
+      recommendations.push({
+        id: `high-stress-intervention-${Date.now()}`,
+        triggerType: 'stress-detected',
+        suggestedTechnique: 'four-seven-eight',
+        duration: 3,
+        reasoning: 'High stress intervention - extended calming exhale',
+        priority: 'high',
+        context: {
+          timeOfDay: this.getCurrentTimeOfDay(),
+        },
+      });
+    } else if (currentStressLevel >= 5) {
+      recommendations.push({
+        id: `moderate-stress-${Date.now()}`,
+        triggerType: 'stress-detected',
+        suggestedTechnique: 'box-breathing',
+        duration: this.getPreferredDuration(),
+        reasoning: 'Moderate stress - structured breathing for balance',
+        priority: 'medium',
+        context: {
+          timeOfDay: this.getCurrentTimeOfDay(),
+        },
+      });
+    } else if (currentStressLevel <= 3) {
+      recommendations.push({
+        id: `maintenance-${Date.now()}`,
+        triggerType: 'scheduled',
+        suggestedTechnique: 'coherent-breathing',
+        duration: this.getPreferredDuration(),
+        reasoning: 'Low stress - maintenance practice for continued wellness',
+        priority: 'low',
+        context: {
+          timeOfDay: this.getCurrentTimeOfDay(),
+        },
+      });
+    }
+
+    return recommendations;
+  }
+
+  /**
+   * Align recommendations with user's wellness goals
+   */
+  private alignWithWellnessGoals(
+    recommendations: BreakRecommendation[],
+    currentGoalFocus?: string
+  ): BreakRecommendation[] {
+    const wellnessGoals = this.preferences.wellnessGoals;
+    if (!wellnessGoals) return recommendations;
+
+    return recommendations.map(rec => {
+      // Boost priority if recommendation aligns with primary goals
+      const primaryGoals = wellnessGoals.primaryGoals;
+      const isAlignedWithPrimaryGoal = this.isRecommendationAlignedWithGoal(rec, primaryGoals);
+
+      if (isAlignedWithPrimaryGoal) {
+        // Boost priority
+        if (rec.priority === 'low') rec.priority = 'medium';
+        else if (rec.priority === 'medium') rec.priority = 'high';
+
+        rec.reasoning += ' (Aligned with your primary wellness goals)';
+      }
+
+      // Extra boost if it matches current focus goal
+      if (currentGoalFocus && this.isRecommendationAlignedWithGoal(rec, [currentGoalFocus as any])) {
+        rec.priority = 'high';
+        rec.reasoning = rec.reasoning.replace(' (Aligned with your primary wellness goals)', '');
+        rec.reasoning += ` (Supporting your focus on ${currentGoalFocus.replace('-', ' ')})`;
+      }
+
+      return rec;
+    });
+  }
+
+  /**
+   * Check if recommendation aligns with wellness goals
+   */
+  private isRecommendationAlignedWithGoal(
+    recommendation: BreakRecommendation,
+    goals: any[]
+  ): boolean {
+    const technique = recommendation.suggestedTechnique;
+    const reasoning = recommendation.reasoning.toLowerCase();
+
+    return goals.some(goal => {
+      switch (goal) {
+        case 'reduce-stress':
+          return ['four-seven-eight', 'physiological-sigh'].includes(technique) ||
+                 reasoning.includes('stress') || reasoning.includes('calm');
+
+        case 'improve-focus':
+          return ['box-breathing', 'tactical-breathing'].includes(technique) ||
+                 reasoning.includes('focus') || reasoning.includes('concentration');
+
+        case 'better-sleep':
+          return ['four-seven-eight', 'belly-breathing'].includes(technique) ||
+                 reasoning.includes('sleep') || reasoning.includes('evening');
+
+        case 'increase-energy':
+          return ['coherent-breathing', 'quick-coherence'].includes(technique) ||
+                 reasoning.includes('energy') || reasoning.includes('alertness');
+
+        case 'anxiety-management':
+          return ['physiological-sigh', 'four-seven-eight'].includes(technique) ||
+                 reasoning.includes('anxiety') || reasoning.includes('calm');
+
+        default:
+          return false;
+      }
+    });
   }
 
   /**
