@@ -215,6 +215,7 @@ function AppContent() {
                         } />
                         <Route path="/testing-demo" element={<ComprehensiveTestingDemo />} />
                         <Route path="/testing-summary" element={<TestingFrameworkSummary />} />
+                        <Route path="/enhanced-work-life" element={React.createElement(React.lazy(() => import('@/examples/EnhancedWorkLifeExample').then(m => ({ default: m.EnhancedWorkLifeExample }))))} />
                       </Routes>
                     </main>
                     
