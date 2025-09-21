@@ -53,7 +53,6 @@ export default defineConfig(({ mode }) => ({
             '@radix-ui/react-tabs', 
             '@radix-ui/react-slot',
             '@radix-ui/react-avatar',
-            '@radix-ui/react-button',
             '@radix-ui/react-dropdown-menu'
           ],
           'ui-components': [
