@@ -1,7 +1,7 @@
 
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useUserPreferences } from '@/context';
+import { useUserPreferences } from '@/context/UserPreferencesProvider';
 import { useAuth } from './useAuth';
 
 export const useOnboardingTrigger = () => {
