@@ -1,126 +1,6 @@
-import React, { memo, useMemo, useCallback, lazy, Suspense, CSSProperties } from 'react';
-import { ErrorBoundary } from 'react-error-boundary';
-
-// ===================================================================
-// COMPONENT-LEVEL OPTIMIZATIONS
-// ===================================================================
-
-// Memoize expensive components
-export const ExpensiveComponent = memo<{
-  data: any[];
-  onAction: (id: string) => void;
-}>(({ data, onAction }) => {
-  // Memoize expensive calculations
-  const processedData = useMemo(() => {
-    return data.map(item => ({
-      ...item,
-      computed: expensiveCalculation(item)
-    }));
-  }, [data]);
-
-  // Memoize callback functions
-  const handleClick = useCallback((id: string) => {
-    onAction(id);
-  }, [onAction]);
-
-  return (
-    <div className="space-y-4">
-      {processedData.map(item => (
-        <ItemComponent 
-          key={item.id}
-          item={item}
-          onClick={handleClick}
-        />
-      ))}
-    </div>
-  );
-});
-
-ExpensiveComponent.displayName = 'ExpensiveComponent';
-
-// Performance-optimized item component
-const ItemComponent = memo<{
-  item: any;
-  onClick: (id: string) => void;
-}>(({ item, onClick }) => {
-  const handleClick = useCallback(() => {
-    onClick(item.id);
-  }, [onClick, item.id]);
-
-  return (
-    <div 
-      className="p-4 border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors"
-      onClick={handleClick}
-    >
-      <h3 className="font-semibold">{item.title}</h3>
-      <p className="text-muted-foreground">{item.computed}</p>
-    </div>
-  );
-});
-
-ItemComponent.displayName = 'ItemComponent';
-
-// Expensive calculation function (example)
-function expensiveCalculation(item: any): string {
-  // Simulate expensive computation
-  let result = '';
-  for (let i = 0; i < 1000; i++) {
-    result += item.id;
-  }
-  return result.slice(0, 20) + '...';
-}
-
-// ===================================================================
-// LAZY LOADING COMPONENTS
-// ===================================================================
-
-// Route-level lazy loading
-export const LazyDashboard = lazy(() => import('@/pages/Dashboard'));
-export const LazyUserProfile = lazy(() => import('@/pages/ProfilePage'));
-export const LazyAdminPanel = lazy(() => import('@/pages/SystemDashboardPage'));
-
-// Heavy component lazy loading - using placeholder components for now
-export const LazyChart = lazy(() => Promise.resolve({ 
-  default: () => <div className="p-8 border rounded-lg bg-muted">Chart Component Placeholder</div> 
-}));
-export const LazyAnalytics = lazy(() => Promise.resolve({ 
-  default: () => <div className="p-8 border rounded-lg bg-muted">Analytics Component Placeholder</div> 
-}));
-
-// Performance-aware loading component
-export const PerformanceAwareLoader: React.FC<{ variant?: string }> = ({ variant = 'default' }) => {
-  return (
-    <div className="flex items-center justify-center p-8">
-      <div className="space-y-4 text-center">
-        <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto"></div>
-        <p className="text-sm text-muted-foreground">
-          {variant === 'heavy' ? 'Loading advanced features...' : 'Loading...'}
-        </p>
-      </div>
-    </div>
-  );
-};
-
-// Enhanced dashboard with lazy loading
-export const OptimizedDashboard = () => {
-  return (
-    <ErrorBoundary fallback={<ErrorFallback />}>
-      <div className="container mx-auto p-6 space-y-6">
-        <Suspense fallback={<PerformanceAwareLoader />}>
-          <LazyChart />
-        </Suspense>
-        
-        <Suspense fallback={<PerformanceAwareLoader variant="heavy" />}>
-          <LazyAnalytics />
-        </Suspense>
-      </div>
-    </ErrorBoundary>
-  );
-};
-
-// ===================================================================
-// OPTIMIZED LIST COMPONENTS (without react-window for now)
-// ===================================================================
+import React, { memo, useMemo } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 interface User {
   id: string;
@@ -129,129 +9,87 @@ interface User {
   avatar?: string;
 }
 
-export const VirtualizedUserList: React.FC<{ 
-  users: User[];
-  onUserSelect?: (user: User) => void;
-}> = ({ users, onUserSelect }) => {
-  // Simple optimized list without virtualization for now
-  const visibleUsers = useMemo(() => users.slice(0, 100), [users]); // Limit to 100 items for performance
+interface ExpensiveComponentProps {
+  data: any[];
+  onAction: (id: string | number) => void;
+}
 
-  const handleUserClick = useCallback((user: User) => {
-    onUserSelect?.(user);
-  }, [onUserSelect]);
+export const ExpensiveComponent = memo<ExpensiveComponentProps>(({ data, onAction }) => {
+  const computedValues = useMemo(() => {
+    return data.map(item => ({
+      ...item,
+      processed: item.value * Math.PI,
+      category: item.value > 500 ? 'high' : 'low'
+    }));
+  }, [data]);
 
   return (
-    <div className="border rounded-lg max-h-96 overflow-y-auto">
-      <div className="space-y-1 p-2">
-        {visibleUsers.map(user => (
-          <div 
-            key={user.id}
-            className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 cursor-pointer transition-colors"
-            onClick={() => handleUserClick(user)}
-          >
-            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-              {user.avatar ? (
-                <img 
-                  src={user.avatar} 
-                  alt={user.name}
-                  className="w-full h-full rounded-full object-cover"
-                />
-              ) : (
-                <span className="text-sm font-medium">
-                  {user.name.charAt(0).toUpperCase()}
-                </span>
-              )}
+    <div className="space-y-2 max-h-64 overflow-y-auto">
+      {computedValues.slice(0, 10).map((item) => (
+        <Card key={item.id} className="p-3">
+          <div className="flex justify-between items-center">
+            <div>
+              <div className="font-medium">Item {item.id}</div>
+              <div className="text-sm text-muted-foreground">
+                Value: {item.value.toFixed(2)} | Category: {item.category}
+              </div>
             </div>
-            <div className="flex-1 min-w-0">
-              <h4 className="font-medium truncate">{user.name}</h4>
-              <p className="text-sm text-muted-foreground truncate">{user.email}</p>
-            </div>
+            <Button size="sm" variant="outline" onClick={() => onAction(item.id)}>
+              Action
+            </Button>
           </div>
-        ))}
-        {users.length > 100 && (
-          <div className="text-center text-sm text-muted-foreground p-2">
-            Showing first 100 of {users.length} users
-          </div>
-        )}
-      </div>
+        </Card>
+      ))}
     </div>
   );
-};
+});
 
-// ===================================================================
-// ERROR BOUNDARIES
-// ===================================================================
+ExpensiveComponent.displayName = 'ExpensiveComponent';
 
-const ErrorFallback: React.FC<{ error?: Error }> = ({ error }) => (
-  <div className="flex flex-col items-center justify-center p-8 text-center space-y-4">
-    <div className="text-destructive">
-      <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.732 13.5c-.77.833.192 2.5 1.732 2.5z" />
-      </svg>
+interface VirtualizedUserListProps {
+  users: User[];
+  onUserSelect: (user: User) => void;
+}
+
+export const VirtualizedUserList = memo<VirtualizedUserListProps>(({ users, onUserSelect }) => {
+  return (
+    <div className="h-80 border rounded-lg overflow-y-auto">
+      {users.slice(0, 50).map((user) => (
+        <div key={user.id} className="p-2">
+          <Card>
+            <CardContent className="p-3 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
+                  <span className="text-xs font-medium">
+                    {user.name.split(' ').map(n => n[0]).join('')}
+                  </span>
+                </div>
+                <div>
+                  <div className="font-medium text-sm">{user.name}</div>
+                  <div className="text-xs text-muted-foreground">{user.email}</div>
+                </div>
+              </div>
+              <Button size="sm" variant="outline" onClick={() => onUserSelect(user)}>
+                Select
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      ))}
     </div>
-    <div>
-      <h3 className="text-lg font-semibold">Something went wrong</h3>
-      <p className="text-muted-foreground mt-1">
-        {error?.message || 'An unexpected error occurred'}
-      </p>
-    </div>
-    <button 
-      onClick={() => window.location.reload()} 
-      className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
-    >
-      Reload page
-    </button>
+  );
+});
+
+VirtualizedUserList.displayName = 'VirtualizedUserList';
+
+export const LazyChart: React.FC = () => (
+  <div className="h-32 bg-muted rounded flex items-center justify-center">
+    <p className="text-sm text-muted-foreground">Chart component loaded</p>
   </div>
 );
 
-// ===================================================================
-// PERFORMANCE HOOKS
-// ===================================================================
-
-// Hook for memoizing expensive calculations
-export const useExpensiveCalculation = <T,>(
-  calculation: () => T,
-  dependencies: React.DependencyList
-): T => {
-  return useMemo(calculation, dependencies);
-};
-
-// Hook for stable callbacks
-export const useStableCallback = <T extends (...args: any[]) => any>(
-  callback: T,
-  dependencies: React.DependencyList
-): T => {
-  return useCallback(callback, dependencies);
-};
-
-// Hook for intersection observer (lazy loading)
-export const useIntersectionObserver = (options?: IntersectionObserverInit) => {
-  const [isIntersecting, setIsIntersecting] = React.useState(false);
-  const ref = React.useRef<HTMLDivElement>(null);
-
-  React.useEffect(() => {
-    if (!ref.current) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => setIsIntersecting(entry.isIntersecting),
-      options
-    );
-
-    observer.observe(ref.current);
-
-    return () => observer.disconnect();
-  }, [options]);
-
-  return [ref, isIntersecting] as const;
-};
-
-export default {
-  ExpensiveComponent,
-  OptimizedDashboard,
-  VirtualizedUserList,
-  LazyChart,
-  LazyAnalytics,
-  useExpensiveCalculation,
-  useStableCallback,
-  useIntersectionObserver
-};
+export const LazyAnalytics: React.FC = () => (
+  <div className="h-32 bg-muted rounded flex items-center justify-center">
+    <p className="text-sm text-muted-foreground">Analytics component loaded</p>
+  </div>
+);
