@@ -140,8 +140,7 @@ export const EnhancedWorkLifeSettings: React.FC = () => {
         preferredBreakLength: enhancedPrefs.preferredBreakLength,
         breathingPreferences: enhancedPrefs.breathingPreferences,
         energyPatterns: enhancedPrefs.energyPatterns,
-        workEnvironment: enhancedPrefs.workEnvironment,
-        stressLevel: enhancedPrefs.stressLevel,
+      workEnvironment: enhancedPrefs.workEnvironment as 'office' | 'home' | 'hybrid',
       });
 
       toast.success('Work-life balance preferences updated', {

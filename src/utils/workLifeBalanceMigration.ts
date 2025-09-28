@@ -59,7 +59,6 @@ export function migrateToEnhancedWorkLife(
 
     // Additional context
     workEnvironment: preferences.workEnvironment || 'office',
-    stressLevel: preferences.stressLevel || 'moderate',
 
     energyPatterns: preferences.energyPatterns || {
       morningEnergy: preferences.morningEnergyLevel || 'medium',
@@ -67,9 +66,14 @@ export function migrateToEnhancedWorkLife(
       eveningEnergy: 'medium',
     },
 
-    breathingPreferences: preferences.breathingPreferences || {
+    breathingPreferences: preferences.breathingPreferences ? {
+      preferredTechniques: (preferences.breathingPreferences.preferredTechniques as BreathingTechnique[]) || getDefaultBreathingTechniques(preferences),
+      guidedVsUnguided: preferences.breathingPreferences.guidedVsUnguided || 'guided' as const,
+      backgroundSounds: preferences.breathingPreferences.backgroundSounds ?? preferences.meditation?.backgroundSounds ?? true,
+      voicePreference: preferences.breathingPreferences.voicePreference || preferences.meditation?.guidedVoice || 'female',
+    } : {
       preferredTechniques: getDefaultBreathingTechniques(preferences),
-      guidedVsUnguided: 'guided',
+      guidedVsUnguided: 'guided' as const,
       backgroundSounds: preferences.meditation?.backgroundSounds ?? true,
       voicePreference: preferences.meditation?.guidedVoice || 'female',
     },

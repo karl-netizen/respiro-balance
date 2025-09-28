@@ -56,7 +56,7 @@ class LRUCache<K, V> {
   }
 }
 
-export function memoize<T extends (...args: unknown[]) => unknown>(
+export function memoize<T extends (...args: any[]) => any>(
   fn: T,
   options: MemoizeOptions = {}
 ): T {
@@ -81,7 +81,7 @@ export function memoize<T extends (...args: unknown[]) => unknown>(
   }) as T;
 }
 
-export function memoizeAsync<T extends (...args: unknown[]) => Promise<unknown>>(
+export function memoizeAsync<T extends (...args: any[]) => Promise<any>>(
   fn: T,
   options: MemoizeOptions = {}
 ): T {
