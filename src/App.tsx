@@ -188,6 +188,7 @@ function AppContent() {
                         <Route path="/contact" element={<ContactPage />} />
                         <Route path="/privacy" element={<PrivacyPage />} />
                         <Route path="/terms" element={<TermsPage />} />
+
                         <Route path="/performance-demo" element={
                           <React.Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div></div>}>
                             <PerformanceDemo />
@@ -216,6 +217,7 @@ function AppContent() {
                         <Route path="/testing-demo" element={<ComprehensiveTestingDemo />} />
                         <Route path="/testing-summary" element={<TestingFrameworkSummary />} />
                         <Route path="/enhanced-work-life" element={React.createElement(React.lazy(() => import('@/examples/EnhancedWorkLifeExample').then(m => ({ default: m.EnhancedWorkLifeExample }))))} />
+
                       </Routes>
                     </main>
                     

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { useUserPreferences } from '@/context';
+import { useUserPreferences } from '@/context/UserPreferencesProvider';
 import { aiPersonalizationEngine } from '@/lib/ai-personalization/AIPersonalizationEngine';
 import { SessionRecommendation, SessionFeedback, SessionActivity } from '@/lib/ai-personalization/types';
 

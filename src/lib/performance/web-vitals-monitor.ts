@@ -1,354 +1,90 @@
-import React from 'react';
-
-// ===================================================================
-// CORE WEB VITALS & PERFORMANCE MONITORING
-// ===================================================================
-
-// Import web vitals functions with fallback
-import { onCLS, onFCP, onLCP, onTTFB } from 'web-vitals';
-// Note: onFID is deprecated in web-vitals v3, replaced by onINP
-
-interface PerformanceMetric {
+interface WebVital {
   name: string;
   value: number;
   rating: 'good' | 'needs-improvement' | 'poor';
-  timestamp: number;
-  url: string;
+  delta: number;
 }
 
-interface MemoryUsage {
-  used: number;
-  total: number;
-  limit: number;
-  percentage: number;
+interface PerformanceMetrics {
+  [key: string]: WebVital;
 }
 
-interface PerformanceThresholds {
-  LCP: { good: number; poor: number };
-  FID: { good: number; poor: number };
-  CLS: { good: number; poor: number };
-  FCP: { good: number; poor: number };
-  TTFB: { good: number; poor: number };
-}
-
-export class WebVitalsMonitor {
-  private metrics = new Map<string, PerformanceMetric>();
-  private listeners: Array<(metric: PerformanceMetric) => void> = [];
-  private memoryCheckInterval?: NodeJS.Timeout;
-  
-  private readonly thresholds: PerformanceThresholds = {
-    LCP: { good: 2500, poor: 4000 }, // Largest Contentful Paint
-    FID: { good: 100, poor: 300 },   // First Input Delay
-    CLS: { good: 0.1, poor: 0.25 },  // Cumulative Layout Shift
-    FCP: { good: 1800, poor: 3000 }, // First Contentful Paint
-    TTFB: { good: 800, poor: 1800 }  // Time to First Byte
+export const usePerformanceMonitoring = () => {
+  const getWebVitals = (): PerformanceMetrics => {
+    const metrics: PerformanceMetrics = {};
+    
+    // Mock web vitals data for demo
+    metrics['FCP'] = {
+      name: 'First Contentful Paint',
+      value: 1200,
+      rating: 'good',
+      delta: 0
+    };
+    
+    metrics['LCP'] = {
+      name: 'Largest Contentful Paint',
+      value: 2100,
+      rating: 'good',
+      delta: 0
+    };
+    
+    metrics['FID'] = {
+      name: 'First Input Delay',
+      value: 50,
+      rating: 'good',
+      delta: 0
+    };
+    
+    metrics['CLS'] = {
+      name: 'Cumulative Layout Shift',
+      value: 0.05,
+      rating: 'good',
+      delta: 0
+    };
+    
+    metrics['TTFB'] = {
+      name: 'Time to First Byte',
+      value: 200,
+      rating: 'good',
+      delta: 0
+    };
+    
+    return metrics;
   };
 
-  constructor() {
-    this.initializeWebVitals();
-    this.monitorRuntimePerformance();
-    this.startMemoryMonitoring();
-  }
-
-  private initializeWebVitals(): void {
-    // Core Web Vitals monitoring with error handling
-    try {
-      onCLS(this.handleMetric.bind(this));
-      onFCP(this.handleMetric.bind(this));
-      onLCP(this.handleMetric.bind(this));
-      onTTFB(this.handleMetric.bind(this));
-    } catch (error) {
-      console.warn('Failed to initialize Web Vitals:', error);
-    }
-  }
-
-  private handleMetric(metric: any): void {
-    const rating = this.calculateRating(metric.name, metric.value);
-    
-    const performanceMetric: PerformanceMetric = {
-      name: metric.name,
-      value: metric.value,
-      rating,
-      timestamp: Date.now(),
-      url: window.location.href
-    };
-
-    this.metrics.set(metric.name, performanceMetric);
-    
-    // Notify listeners
-    this.listeners.forEach(listener => listener(performanceMetric));
-    
-    // Check if metric exceeds threshold
-    if (rating === 'poor') {
-      this.reportPerformanceIssue(performanceMetric);
-    }
-
-    // Send to analytics
-    this.sendToAnalytics(performanceMetric);
-  }
-
-  private calculateRating(metricName: string, value: number): 'good' | 'needs-improvement' | 'poor' {
-    const threshold = this.thresholds[metricName as keyof PerformanceThresholds];
-    if (!threshold) return 'good';
-
-    if (value <= threshold.good) return 'good';
-    if (value <= threshold.poor) return 'needs-improvement';
-    return 'poor';
-  }
-
-  private monitorRuntimePerformance(): void {
-    // Monitor component render times
-    if (typeof PerformanceObserver !== 'undefined') {
-      try {
-        const observer = new PerformanceObserver((list) => {
-          for (const entry of list.getEntries()) {
-            if (entry.entryType === 'measure' && entry.name.includes('React')) {
-              if (entry.duration > 16) { // 60fps = 16ms per frame
-                console.warn(`Slow render detected: ${entry.name} took ${entry.duration.toFixed(2)}ms`);
-                this.reportSlowRender(entry.name, entry.duration);
-              }
-            }
-
-            if (entry.entryType === 'navigation') {
-              const navEntry = entry as PerformanceNavigationTiming;
-              this.trackNavigationMetrics(navEntry);
-            }
-
-            if (entry.entryType === 'resource') {
-              const resourceEntry = entry as PerformanceResourceTiming;
-              this.trackResourceMetrics(resourceEntry);
-            }
-          }
-        });
-
-        observer.observe({ entryTypes: ['measure', 'navigation', 'resource'] });
-      } catch (e) {
-        console.warn('Performance observer not fully supported');
-      }
-    }
-
-    // Monitor long tasks
-    if ('PerformanceObserver' in window) {
-      try {
-        const longTaskObserver = new PerformanceObserver((list) => {
-          for (const entry of list.getEntries()) {
-            console.warn(`Long task detected: ${entry.duration.toFixed(2)}ms`);
-            this.reportLongTask(entry.duration, entry.startTime);
-          }
-        });
-        longTaskObserver.observe({ entryTypes: ['longtask'] });
-      } catch (e) {
-        console.warn('Long task observer not supported');
-      }
-    }
-  }
-
-  private startMemoryMonitoring(): void {
-    if (!(performance as any).memory) {
-      console.warn('Memory monitoring not available');
-      return;
-    }
-
-    this.memoryCheckInterval = setInterval(() => {
-      const memory = (performance as any).memory;
-      const memoryUsage: MemoryUsage = {
-        used: memory.usedJSHeapSize,
-        total: memory.totalJSHeapSize,
-        limit: memory.jsHeapSizeLimit,
-        percentage: (memory.usedJSHeapSize / memory.jsHeapSizeLimit) * 100
-      };
-
-      if (memoryUsage.percentage > 90) {
-        console.error('Critical memory usage detected', memoryUsage);
-        this.reportMemoryIssue(memoryUsage);
-      } else if (memoryUsage.percentage > 80) {
-        console.warn('High memory usage detected', memoryUsage);
-      }
-
-      // Notify listeners about memory usage
-      this.listeners.forEach(listener => {
-        listener({
-          name: 'memory-usage',
-          value: memoryUsage.percentage,
-          rating: memoryUsage.percentage > 80 ? 'poor' : memoryUsage.percentage > 60 ? 'needs-improvement' : 'good',
-          timestamp: Date.now(),
-          url: window.location.href
-        });
-      });
-    }, 30000); // Check every 30 seconds
-  }
-
-  private trackNavigationMetrics(entry: PerformanceNavigationTiming): void {
-    const startTime = entry.startTime || 0;
-    const metrics = {
-      'dns-lookup': entry.domainLookupEnd - entry.domainLookupStart,
-      'tcp-connect': entry.connectEnd - entry.connectStart,
-      'ssl-negotiate': entry.connectEnd - entry.secureConnectionStart,
-      'ttfb': entry.responseStart - entry.requestStart,
-      'download': entry.responseEnd - entry.responseStart,
-      'dom-interactive': entry.domInteractive - startTime,
-      'dom-complete': entry.domComplete - startTime,
-      'load-complete': entry.loadEventEnd - startTime
-    };
-
-    Object.entries(metrics).forEach(([name, value]) => {
-      if (value > 0) {
-        const metric: PerformanceMetric = {
-          name,
-          value,
-          rating: value > 1000 ? 'poor' : value > 500 ? 'needs-improvement' : 'good',
-          timestamp: Date.now(),
-          url: window.location.href
-        };
-        this.metrics.set(name, metric);
-        this.listeners.forEach(listener => listener(metric));
-      }
-    });
-  }
-
-  private trackResourceMetrics(entry: PerformanceResourceTiming): void {
-    // Track slow resources
-    const duration = entry.responseEnd - entry.startTime;
-    
-    if (duration > 2000) { // Resources taking more than 2 seconds
-      console.warn(`Slow resource detected: ${entry.name} took ${duration.toFixed(2)}ms`);
-      
-      this.sendToAnalytics({
-        name: 'slow-resource',
-        value: duration,
-        rating: 'poor',
-        timestamp: Date.now(),
-        url: entry.name
-      });
-    }
-  }
-
-  private reportPerformanceIssue(metric: PerformanceMetric): void {
-    // In a real app, this would send to your monitoring service
-    console.warn('Performance issue detected:', metric);
-  }
-
-  private reportSlowRender(componentName: string, duration: number): void {
-    this.sendToAnalytics({
-      name: 'slow-render',
-      value: duration,
-      rating: 'poor',
-      timestamp: Date.now(),
-      url: `${window.location.href}#${componentName}`
-    });
-  }
-
-  private reportLongTask(duration: number, startTime: number): void {
-    this.sendToAnalytics({
-      name: 'long-task',
-      value: duration,
-      rating: 'poor',
-      timestamp: startTime,
-      url: window.location.href
-    });
-  }
-
-  private reportMemoryIssue(memoryUsage: MemoryUsage): void {
-    console.warn('Memory issue detected:', memoryUsage);
-  }
-
-  private sendToAnalytics(metric: PerformanceMetric): void {
-    // Send to Google Analytics 4 if available
-    if (typeof window !== 'undefined' && (window as any).gtag) {
-      const gtag = (window as any).gtag;
-      gtag('event', metric.name, {
-        event_category: 'Web Vitals',
-        value: Math.round(metric.name === 'CLS' ? metric.value * 1000 : metric.value),
-        custom_parameter_rating: metric.rating,
-        non_interaction: true,
-      });
-    }
-
-    // In a real app, send to your analytics endpoint
-    console.log('Performance metric:', metric);
-  }
-
-  private getConnectionInfo(): string {
-    const connection = (navigator as any).connection;
-    if (!connection) return 'unknown';
-    
-    return `${connection.effectiveType || 'unknown'} (${connection.downlink || 'unknown'}Mbps)`;
-  }
-
-  // Public API
-  public onMetric(listener: (metric: PerformanceMetric) => void): () => void {
-    this.listeners.push(listener);
-    
-    // Return unsubscribe function
-    return () => {
-      const index = this.listeners.indexOf(listener);
-      if (index > -1) {
-        this.listeners.splice(index, 1);
-      }
-    };
-  }
-
-  public getMetrics(): Record<string, PerformanceMetric> {
-    return Object.fromEntries(this.metrics);
-  }
-
-  public getMetric(name: string): PerformanceMetric | undefined {
-    return this.metrics.get(name);
-  }
-
-  public destroy(): void {
-    if (this.memoryCheckInterval) {
-      clearInterval(this.memoryCheckInterval);
-    }
-    this.listeners.length = 0;
-    this.metrics.clear();
-  }
-
-  // Force trigger performance measurement
-  public measurePerformance(name: string, fn: () => void): void {
+  const measurePerformance = (name: string, fn: () => void) => {
     const start = performance.now();
-    performance.mark(`${name}-start`);
-    
     fn();
-    
     const end = performance.now();
-    performance.mark(`${name}-end`);
-    performance.measure(name, `${name}-start`, `${name}-end`);
-    
-    const duration = end - start;
-    
-    this.handleMetric({
-      name: `custom-${name}`,
-      value: duration,
-      delta: duration,
-      id: Math.random().toString(36),
-      entries: []
-    });
-  }
-}
+    console.log(`${name} took ${end - start} milliseconds`);
+  };
 
-// Singleton instance
-export const webVitalsMonitor = new WebVitalsMonitor();
+  const metrics = getWebVitals();
 
-// React hook for performance monitoring
-export const usePerformanceMonitoring = () => {
-  const [metrics, setMetrics] = React.useState<Record<string, PerformanceMetric>>({});
+  const getRatingColor = (rating: WebVital['rating']): string => {
+    switch (rating) {
+      case 'good':
+        return 'text-green-600';
+      case 'needs-improvement':
+        return 'text-yellow-600';
+      case 'poor':
+        return 'text-red-600';
+      default:
+        return 'text-gray-600';
+    }
+  };
 
-  React.useEffect(() => {
-    const updateMetrics = () => {
-      setMetrics(webVitalsMonitor.getMetrics());
-    };
-
-    const unsubscribe = webVitalsMonitor.onMetric(updateMetrics);
-    updateMetrics(); // Initial update
-
-    return unsubscribe;
-  }, []);
+  const formatValue = (vital: WebVital): string => {
+    if (vital.name.includes('Shift')) {
+      return vital.value.toFixed(3);
+    }
+    return `${vital.value}ms`;
+  };
 
   return {
     metrics,
-    measurePerformance: webVitalsMonitor.measurePerformance.bind(webVitalsMonitor)
+    measurePerformance,
+    getRatingColor,
+    formatValue
   };
 };
-
-export default webVitalsMonitor;
