@@ -86,7 +86,24 @@ export interface UserPreferences {
   lunch_break: boolean;
   exercise_time: string;
   bed_time: string;
-  
+
+  // Enhanced work-life balance with breathing integration
+  workStressors?: string[];
+  stressfulTimes?: string[];
+  currentCopingMethods?: string[];
+  preferredBreakLength?: string;
+  breathingPreferences?: {
+    preferredTechniques: string[];
+    guidedVsUnguided: 'guided' | 'unguided' | 'both';
+    backgroundSounds: boolean;
+    voicePreference?: 'male' | 'female' | 'neutral';
+  };
+  energyPatterns?: {
+    morningEnergy: 'low' | 'medium' | 'high';
+    afternoonDip: boolean;
+    eveningEnergy: 'low' | 'medium' | 'high';
+  };
+
   // Legacy compatibility
   workDays: WorkDay[];
   workStartTime: string;

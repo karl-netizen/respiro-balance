@@ -47,9 +47,9 @@ import TermsPage from '@/pages/TermsPage';
 // Lazy-loaded demo components
 const PerformanceDemo = lazy(() => import('@/components/performance/PerformanceDemo'));
 const AIPersonalizationDemo = lazy(() => import('@/components/ai-personalization/AIPersonalizationDemo'));
-import SecuritySystemDemo from '@/components/security/SecuritySystemDemo';
-import SecureFormsDemo from '@/components/security/SecureFormsDemo';
-import AdvancedSecurityDemo from '@/components/security/advanced/AdvancedSecurityDemo';
+const SecuritySystemDemo = lazy(() => import('@/components/security/SecuritySystemDemo'));
+const SecureFormsDemo = lazy(() => import('@/components/security/SecureFormsDemo'));
+const AdvancedSecurityDemo = lazy(() => import('@/components/security/advanced/AdvancedSecurityDemo'));
 import { ComprehensiveTestingDemo } from '@/test/demo/comprehensive-testing-demo';
 import { TestingFrameworkSummary } from '@/test/demo/testing-framework-summary';
 import OnboardingPage from '@/pages/Onboarding';
@@ -65,7 +65,18 @@ window.addEventListener('unhandledrejection', (event) => {
   event.preventDefault();
 });
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      retry: 2,
+      refetchOnWindowFocus: false,
+    },
+    mutations: {
+      retry: 1,
+    },
+  },
+});
 
 function App() {
   usePerformanceMonitoring();
@@ -177,13 +188,36 @@ function AppContent() {
                         <Route path="/contact" element={<ContactPage />} />
                         <Route path="/privacy" element={<PrivacyPage />} />
                         <Route path="/terms" element={<TermsPage />} />
-                        <Route path="/performance-demo" element={<PerformanceDemo />} />
-                        <Route path="/ai-personalization" element={<AIPersonalizationDemo />} />
-                        <Route path="/security-demo" element={<SecuritySystemDemo />} />
-                        <Route path="/secure-forms" element={<SecureFormsDemo />} />
-                        <Route path="/advanced-security" element={<AdvancedSecurityDemo />} />
+
+                        <Route path="/performance-demo" element={
+                          <React.Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div></div>}>
+                            <PerformanceDemo />
+                          </React.Suspense>
+                        } />
+                        <Route path="/ai-personalization" element={
+                          <React.Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div></div>}>
+                            <AIPersonalizationDemo />
+                          </React.Suspense>
+                        } />
+                        <Route path="/security-demo" element={
+                          <React.Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div></div>}>
+                            <SecuritySystemDemo />
+                          </React.Suspense>
+                        } />
+                        <Route path="/secure-forms" element={
+                          <React.Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div></div>}>
+                            <SecureFormsDemo />
+                          </React.Suspense>
+                        } />
+                        <Route path="/advanced-security" element={
+                          <React.Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div></div>}>
+                            <AdvancedSecurityDemo />
+                          </React.Suspense>
+                        } />
                         <Route path="/testing-demo" element={<ComprehensiveTestingDemo />} />
                         <Route path="/testing-summary" element={<TestingFrameworkSummary />} />
+                        <Route path="/enhanced-work-life" element={React.createElement(React.lazy(() => import('@/examples/EnhancedWorkLifeExample').then(m => ({ default: m.EnhancedWorkLifeExample }))))} />
+
                       </Routes>
                     </main>
                     
