@@ -3,6 +3,7 @@ import React from 'react';
 import { useBiofeedback } from '@/hooks/biofeedback';
 import BiofeedbackLayout from '@/components/biofeedback/layout/BiofeedbackLayout';
 import HeartRateDisplay from '@/components/biofeedback/HeartRateDisplay';
+import { BrowserCompatibilityCheck } from '@/components/biofeedback/BrowserCompatibilityCheck';
 
 const BiofeedbackPage: React.FC = () => {
   const { 
@@ -66,8 +67,7 @@ const BiofeedbackPage: React.FC = () => {
   };
   
   return (
-    <>
-      
+    <BrowserCompatibilityCheck>
       <main className="container mx-auto py-8 px-4 space-y-8">
         {/* New Simplified Heart Rate Monitor */}
         <HeartRateDisplay />
@@ -87,8 +87,7 @@ const BiofeedbackPage: React.FC = () => {
           onStopScan={handleStopScan}
         />
       </main>
-      
-    </>
+    </BrowserCompatibilityCheck>
   );
 };
 
