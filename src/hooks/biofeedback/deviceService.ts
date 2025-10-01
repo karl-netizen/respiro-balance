@@ -35,18 +35,18 @@ export const scanForDevices = async (): Promise<BluetoothDevice[]> => {
   }
 
   try {
-    // Request device with heart rate service and Fitbit name filters
+    // Request device with heart rate service, including Fitbit Inspire 2 and other Fitbit wearables
     const device = await navigator.bluetooth.requestDevice({
       filters: [
-        { services: [HEART_RATE_SERVICE] },
-        { namePrefix: 'Fitbit' },
-        { namePrefix: 'Charge' },
-        { namePrefix: 'Versa' },
-        { namePrefix: 'Sense' },
-        { namePrefix: 'Inspire' },
-        { name: 'Ionic' }
+        { services: [HEART_RATE_SERVICE], namePrefix: 'Fitbit' },
+        { services: [HEART_RATE_SERVICE], namePrefix: 'Inspire' },
+        { services: [HEART_RATE_SERVICE], namePrefix: 'Charge' },
+        { services: [HEART_RATE_SERVICE], namePrefix: 'Versa' },
+        { services: [HEART_RATE_SERVICE], namePrefix: 'Sense' },
+        { services: [HEART_RATE_SERVICE], name: 'Ionic' },
+        { services: [HEART_RATE_SERVICE] }
       ],
-      optionalServices: [BATTERY_SERVICE, HEART_RATE_SERVICE]
+      optionalServices: [BATTERY_SERVICE]
     });
 
     return [{
