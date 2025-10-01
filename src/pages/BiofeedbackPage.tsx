@@ -4,6 +4,8 @@ import { useBiofeedback } from '@/hooks/biofeedback';
 import BiofeedbackLayout from '@/components/biofeedback/layout/BiofeedbackLayout';
 import HeartRateDisplay from '@/components/biofeedback/HeartRateDisplay';
 import { BrowserCompatibilityCheck } from '@/components/biofeedback/BrowserCompatibilityCheck';
+import { MeditationSession } from '@/components/biofeedback/MeditationSession';
+import { useHeartRateMonitor } from '@/hooks/useHeartRateMonitor';
 
 const BiofeedbackPage: React.FC = () => {
   const { 
@@ -19,6 +21,11 @@ const BiofeedbackPage: React.FC = () => {
     isSimulating = false,
     stopScan
   } = useBiofeedback();
+
+  const { 
+    heartRate: liveHeartRate, 
+    isConnected: hrMonitorConnected 
+  } = useHeartRateMonitor();
 
   // Updated to return Promise<void> explicitly
   const handleScanForDevices = async (deviceType?: string, options?: any): Promise<void> => {
@@ -71,6 +78,12 @@ const BiofeedbackPage: React.FC = () => {
       <main className="container mx-auto py-8 px-4 space-y-8">
         {/* New Simplified Heart Rate Monitor */}
         <HeartRateDisplay />
+        
+        {/* Meditation Session with Real-time Analysis */}
+        <MeditationSession 
+          heartRate={liveHeartRate || heartRate} 
+          isConnected={hrMonitorConnected || devices.some(d => d.connected)}
+        />
         
         {/* Existing Biofeedback Layout */}
         <BiofeedbackLayout
