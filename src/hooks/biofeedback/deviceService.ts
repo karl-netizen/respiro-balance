@@ -35,12 +35,18 @@ export const scanForDevices = async (): Promise<BluetoothDevice[]> => {
   }
 
   try {
-    // Request device with heart rate service
+    // Request device with heart rate service and Fitbit name filters
     const device = await navigator.bluetooth.requestDevice({
       filters: [
-        { services: [HEART_RATE_SERVICE] }
+        { services: [HEART_RATE_SERVICE] },
+        { namePrefix: 'Fitbit' },
+        { namePrefix: 'Charge' },
+        { namePrefix: 'Versa' },
+        { namePrefix: 'Sense' },
+        { namePrefix: 'Inspire' },
+        { name: 'Ionic' }
       ],
-      optionalServices: [BATTERY_SERVICE]
+      optionalServices: [BATTERY_SERVICE, HEART_RATE_SERVICE]
     });
 
     return [{
