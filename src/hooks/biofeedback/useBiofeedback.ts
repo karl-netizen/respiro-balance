@@ -6,6 +6,7 @@ import * as DeviceService from './deviceService';
 import { useBiometricData } from './useBiometricData';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import * as CapacitorBluetooth from './capacitorBluetooth';
 
 export const useBiofeedback = (): BiofeedbackHookReturn => {
   const [devices, setDevices] = useState<DeviceInfo[]>([]);
@@ -15,6 +16,13 @@ export const useBiofeedback = (): BiofeedbackHookReturn => {
   
   const { isSimulating, simulatedData, startSimulation, stopSimulation } = useSimulation();
   const { heartRate: liveHeartRate, stress: liveStress, restingHeartRate: liveRestingHR, startDataReading } = useBiometricData();
+
+  // Initialize Capacitor Bluetooth on mount
+  useEffect(() => {
+    if (CapacitorBluetooth.isCapacitor()) {
+      CapacitorBluetooth.initializeCapacitorBluetooth();
+    }
+  }, []);
 
   // Use live data if device is connected, otherwise use simulated
   const heartRate = connectedDeviceId ? liveHeartRate : simulatedData.heartRate;

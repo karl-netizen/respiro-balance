@@ -1,8 +1,9 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Bluetooth, Heart, Activity, Chrome, AlertCircle } from 'lucide-react';
+import { Bluetooth, Heart, Activity, Chrome, AlertCircle, Smartphone } from 'lucide-react';
 import * as DeviceService from '@/hooks/biofeedback/deviceService';
+import { Capacitor } from '@capacitor/core';
 
 interface NoDevicesViewProps {
   onScanForDevices: (deviceType?: string, options?: any) => Promise<void>;
@@ -11,6 +12,7 @@ interface NoDevicesViewProps {
 
 const NoDevicesView: React.FC<NoDevicesViewProps> = ({ onScanForDevices, disabled = false }) => {
   const isBluetoothAvailable = DeviceService.isBluetoothAvailable();
+  const isNativeMobile = Capacitor.isNativePlatform();
   
   return (
     <div className="text-center py-6">
@@ -32,7 +34,7 @@ const NoDevicesView: React.FC<NoDevicesViewProps> = ({ onScanForDevices, disable
         </p>
       </div>
       
-      {!isBluetoothAvailable && (
+      {!isBluetoothAvailable && !isNativeMobile && (
         <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg max-w-md mx-auto">
           <div className="flex items-start gap-3">
             <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
@@ -49,10 +51,25 @@ const NoDevicesView: React.FC<NoDevicesViewProps> = ({ onScanForDevices, disable
           </div>
         </div>
       )}
+
+      {isNativeMobile && (
+        <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg max-w-md mx-auto">
+          <div className="flex items-start gap-3">
+            <Smartphone className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+            <div className="text-left">
+              <div className="font-medium text-blue-900 text-sm mb-1">Native Mobile App</div>
+              <div className="text-xs text-blue-700">
+                You're using the native app! Bluetooth devices will connect using native capabilities for best performance.
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       
       <div className="space-y-3 mb-6">
         <div className="text-xs text-muted-foreground">Supported devices:</div>
         <div className="flex flex-wrap justify-center gap-2">
+          <span className="px-2 py-1 bg-secondary rounded text-xs">Fitbit Inspire 2</span>
           <span className="px-2 py-1 bg-secondary rounded text-xs">Polar H10</span>
           <span className="px-2 py-1 bg-secondary rounded text-xs">Garmin HRM</span>
           <span className="px-2 py-1 bg-secondary rounded text-xs">Wahoo TICKR</span>
@@ -71,7 +88,9 @@ const NoDevicesView: React.FC<NoDevicesViewProps> = ({ onScanForDevices, disable
       
       {isBluetoothAvailable && (
         <p className="text-xs text-muted-foreground mt-3">
-          Make sure your device is turned on and in pairing mode
+          {isNativeMobile 
+            ? 'Make sure Bluetooth is enabled and your device is in pairing mode'
+            : 'Make sure your device is turned on and in pairing mode'}
         </p>
       )}
     </div>

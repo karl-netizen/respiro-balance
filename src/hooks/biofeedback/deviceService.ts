@@ -1,5 +1,6 @@
 // Device service for handling Bluetooth connections
 import { BluetoothDevice } from '@/types/supabase';
+import * as CapacitorBluetooth from './capacitorBluetooth';
 
 // Bluetooth Service UUIDs
 const HEART_RATE_SERVICE = 0x180D;
@@ -28,6 +29,12 @@ const mockDevices: BluetoothDevice[] = [
 
 // Scan for available Bluetooth devices
 export const scanForDevices = async (): Promise<BluetoothDevice[]> => {
+  // Use Capacitor Bluetooth on native mobile platforms
+  if (CapacitorBluetooth.isCapacitor()) {
+    console.log('Using Capacitor Bluetooth for native mobile');
+    return await CapacitorBluetooth.scanForCapacitorDevices();
+  }
+  
   // Check if Web Bluetooth API is available
   if (!navigator.bluetooth) {
     console.log('Web Bluetooth API not available, using simulated devices');
@@ -78,7 +85,12 @@ export const connectToDevice = async (deviceId: string): Promise<BluetoothDevice
       return null;
     }
 
-    // Real Bluetooth connection
+    // Use Capacitor Bluetooth on native mobile platforms
+    if (CapacitorBluetooth.isCapacitor()) {
+      return await CapacitorBluetooth.connectToCapacitorDevice(deviceId);
+    }
+
+    // Real Bluetooth connection using Web Bluetooth API
     if (!navigator.bluetooth) {
       throw new Error('Web Bluetooth API not available');
     }
@@ -148,6 +160,11 @@ export const disconnectFromDevice = async (deviceId: string): Promise<boolean> =
         return true;
       }
       return false;
+    }
+
+    // Use Capacitor Bluetooth on native mobile platforms
+    if (CapacitorBluetooth.isCapacitor()) {
+      return await CapacitorBluetooth.disconnectFromCapacitorDevice(deviceId);
     }
 
     const connection = connectedDevicesMap.get(deviceId);
@@ -282,7 +299,12 @@ export const deviceSupportsFeature = (device: BluetoothDevice, feature: string):
   return featureMap[feature]?.includes(device.type) || false;
 };
 
-// Check if Bluetooth is available
+// Check if Bluetooth is available (Web Bluetooth or Capacitor)
 export const isBluetoothAvailable = (): boolean => {
+  // Native mobile support via Capacitor
+  if (CapacitorBluetooth.isCapacitor()) {
+    return true;
+  }
+  // Web Bluetooth API support
   return typeof navigator !== 'undefined' && 'bluetooth' in navigator;
 };
