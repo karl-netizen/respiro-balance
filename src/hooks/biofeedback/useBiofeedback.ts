@@ -55,10 +55,10 @@ export const useBiofeedback = (): BiofeedbackHookReturn => {
   const connectDevice = async (deviceId: string, options?: any): Promise<boolean> => {
     setIsConnecting(true);
     try {
-      // Check Bluetooth availability
-      if (!DeviceService.isBluetoothAvailable()) {
-        toast.error('Bluetooth not available', {
-          description: 'Your browser does not support Web Bluetooth API. Please use Chrome or Edge.'
+      // Check Bluetooth availability for real devices
+      if (!DeviceService.isBluetoothAvailable() && !deviceId.startsWith('sim-')) {
+        toast.error('Bluetooth not supported', {
+          description: 'Please use Chrome, Edge, or Opera browser to connect real devices.'
         });
         setIsConnecting(false);
         return false;
@@ -135,11 +135,7 @@ export const useBiofeedback = (): BiofeedbackHookReturn => {
     try {
       // Check Bluetooth availability
       if (!DeviceService.isBluetoothAvailable()) {
-        toast.info('Using simulated devices', {
-          description: 'Web Bluetooth API not available. Showing demo devices.'
-        });
-        
-        // Show simulated devices
+        // Show simulated devices without alarming the user
         const mockDevices: DeviceInfo[] = [
           {
             id: 'sim-hr-001',
@@ -153,6 +149,11 @@ export const useBiofeedback = (): BiofeedbackHookReturn => {
         
         setDevices(mockDevices);
         setIsScanning(false);
+        
+        toast.success('Demo device ready', {
+          description: 'Connect the demo device to test features. Use Chrome/Edge for real devices.'
+        });
+        
         return true;
       }
 
