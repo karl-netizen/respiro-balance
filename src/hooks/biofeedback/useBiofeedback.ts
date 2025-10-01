@@ -1,7 +1,6 @@
 
 import { useState, useEffect } from 'react';
 import { DeviceInfo, BiofeedbackHookReturn } from './types';
-import { useSimulation } from './useSimulation';
 import * as DeviceService from './deviceService';
 import { useBiometricData } from './useBiometricData';
 import { supabase } from '@/integrations/supabase/client';
@@ -14,7 +13,6 @@ export const useBiofeedback = (): BiofeedbackHookReturn => {
   const [isConnecting, setIsConnecting] = useState(false);
   const [connectedDeviceId, setConnectedDeviceId] = useState<string | null>(null);
   
-  const { isSimulating, simulatedData, startSimulation, stopSimulation } = useSimulation();
   const { heartRate: liveHeartRate, stress: liveStress, restingHeartRate: liveRestingHR, startDataReading } = useBiometricData();
 
   // Initialize Capacitor Bluetooth on mount
@@ -24,10 +22,10 @@ export const useBiofeedback = (): BiofeedbackHookReturn => {
     }
   }, []);
 
-  // Use live data if device is connected, otherwise use simulated
-  const heartRate = connectedDeviceId ? liveHeartRate : simulatedData.heartRate;
-  const stress = connectedDeviceId ? liveStress : simulatedData.stress;
-  const restingHeartRate = connectedDeviceId ? liveRestingHR : simulatedData.restingHeartRate;
+  // Use live data if device is connected, otherwise show 0
+  const heartRate = connectedDeviceId ? liveHeartRate : 0;
+  const stress = connectedDeviceId ? liveStress : 0;
+  const restingHeartRate = connectedDeviceId ? liveRestingHR : 0;
 
   // Save biometric data to Supabase
   const saveBiometricData = async (data: { heart_rate: number; stress_level: number }) => {
@@ -63,10 +61,10 @@ export const useBiofeedback = (): BiofeedbackHookReturn => {
   const connectDevice = async (deviceId: string, options?: any): Promise<boolean> => {
     setIsConnecting(true);
     try {
-      // Check Bluetooth availability for real devices
-      if (!DeviceService.isBluetoothAvailable() && !deviceId.startsWith('sim-')) {
+      // Check Bluetooth availability
+      if (!DeviceService.isBluetoothAvailable()) {
         toast.error('Bluetooth not supported', {
-          description: 'Please use Chrome, Edge, or Opera browser to connect real devices.'
+          description: 'Please use Chrome, Edge, or Opera browser, or install the native mobile app to connect real devices.'
         });
         setIsConnecting(false);
         return false;
@@ -91,11 +89,6 @@ export const useBiofeedback = (): BiofeedbackHookReturn => {
       
       // Start reading data from the device
       const cleanup = startDataReading(deviceId);
-      
-      // If simulated device, start simulation
-      if (deviceId.startsWith('sim-')) {
-        startSimulation();
-      }
 
       toast.success('Device connected', {
         description: `Successfully connected to ${connectedDevice.name}`
@@ -125,7 +118,6 @@ export const useBiofeedback = (): BiofeedbackHookReturn => {
         ));
         
         setConnectedDeviceId(null);
-        stopSimulation();
         
         toast.info('Device disconnected');
         return true;
@@ -143,26 +135,11 @@ export const useBiofeedback = (): BiofeedbackHookReturn => {
     try {
       // Check Bluetooth availability
       if (!DeviceService.isBluetoothAvailable()) {
-        // Show simulated devices without alarming the user
-        const mockDevices: DeviceInfo[] = [
-          {
-            id: 'sim-hr-001',
-            name: 'Simulated HR Monitor',
-            type: 'heart_rate',
-            connected: false,
-            batteryLevel: 85,
-            signalStrength: -45
-          }
-        ];
-        
-        setDevices(mockDevices);
-        setIsScanning(false);
-        
-        toast.success('Demo device ready', {
-          description: 'Connect the demo device to test features. Use Chrome/Edge for real devices.'
+        toast.error('Bluetooth not supported', {
+          description: 'Please use Chrome, Edge, or Opera browser, or install the native mobile app to connect real devices.'
         });
-        
-        return true;
+        setIsScanning(false);
+        return false;
       }
 
       toast.info('Scanning for devices', {
@@ -216,6 +193,6 @@ export const useBiofeedback = (): BiofeedbackHookReturn => {
     disconnectDevice,
     scanForDevices,
     stopScan,
-    isSimulating: isSimulating || connectedDeviceId?.startsWith('sim-') || false
+    isSimulating: false
   };
 };

@@ -59,7 +59,7 @@ const BluetoothHelp: React.FC = () => {
             </li>
             <li className="flex items-start gap-2">
               <span className="font-medium min-w-[120px]">Browser not supported:</span>
-              <span>Use demo mode with simulated data for testing features</span>
+              <span>Use Chrome, Edge, or Opera browser, or install the native mobile app for iOS/Android</span>
             </li>
           </ul>
         </div>

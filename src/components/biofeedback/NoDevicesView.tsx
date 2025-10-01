@@ -79,11 +79,11 @@ const NoDevicesView: React.FC<NoDevicesViewProps> = ({ onScanForDevices, disable
       
       <Button 
         onClick={() => onScanForDevices()}
-        disabled={disabled}
+        disabled={disabled || !isBluetoothAvailable}
         className="w-full sm:w-auto"
       >
         <Bluetooth className="h-4 w-4 mr-2" />
-        {isBluetoothAvailable ? 'Scan for Devices' : 'Show Demo Devices'}
+        Scan for Devices
       </Button>
       
       {isBluetoothAvailable && (

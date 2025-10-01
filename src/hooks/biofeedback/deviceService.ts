@@ -17,16 +17,6 @@ const connectedDevicesMap = new Map<string, {
   batteryCharacteristic?: BluetoothRemoteGATTCharacteristic;
 }>();
 
-// Mock data for simulation mode
-const mockDevices: BluetoothDevice[] = [
-  {
-    id: 'sim-hr-001',
-    name: 'Simulated HR Monitor',
-    type: 'heart-rate',
-    connected: false
-  }
-];
-
 // Scan for available Bluetooth devices
 export const scanForDevices = async (): Promise<BluetoothDevice[]> => {
   // Use Capacitor Bluetooth on native mobile platforms
@@ -37,8 +27,7 @@ export const scanForDevices = async (): Promise<BluetoothDevice[]> => {
   
   // Check if Web Bluetooth API is available
   if (!navigator.bluetooth) {
-    console.log('Web Bluetooth API not available, using simulated devices');
-    return mockDevices;
+    throw new Error('Bluetooth not supported. Please use Chrome, Edge, or Opera browser, or install the native mobile app.');
   }
 
   try {
@@ -65,26 +54,17 @@ export const scanForDevices = async (): Promise<BluetoothDevice[]> => {
   } catch (error: any) {
     if (error.name === 'NotFoundError') {
       console.log('No device selected');
+      return [];
     } else {
       console.error('Bluetooth scan error:', error);
+      throw error;
     }
-    return mockDevices;
   }
 };
 
 // Connect to a specific device
 export const connectToDevice = async (deviceId: string): Promise<BluetoothDevice | null> => {
   try {
-    // Check if using simulated device
-    if (deviceId.startsWith('sim-')) {
-      const device = mockDevices.find(d => d.id === deviceId);
-      if (device) {
-        device.connected = true;
-        return { ...device };
-      }
-      return null;
-    }
-
     // Use Capacitor Bluetooth on native mobile platforms
     if (CapacitorBluetooth.isCapacitor()) {
       return await CapacitorBluetooth.connectToCapacitorDevice(deviceId);
@@ -92,7 +72,7 @@ export const connectToDevice = async (deviceId: string): Promise<BluetoothDevice
 
     // Real Bluetooth connection using Web Bluetooth API
     if (!navigator.bluetooth) {
-      throw new Error('Web Bluetooth API not available');
+      throw new Error('Bluetooth not supported. Please use Chrome, Edge, or Opera browser, or install the native mobile app.');
     }
 
     const gattDevice = await navigator.bluetooth.requestDevice({
@@ -152,16 +132,6 @@ export const connectToDevice = async (deviceId: string): Promise<BluetoothDevice
 // Disconnect from a device
 export const disconnectFromDevice = async (deviceId: string): Promise<boolean> => {
   try {
-    // Check if using simulated device
-    if (deviceId.startsWith('sim-')) {
-      const device = mockDevices.find(d => d.id === deviceId);
-      if (device) {
-        device.connected = false;
-        return true;
-      }
-      return false;
-    }
-
     // Use Capacitor Bluetooth on native mobile platforms
     if (CapacitorBluetooth.isCapacitor()) {
       return await CapacitorBluetooth.disconnectFromCapacitorDevice(deviceId);
@@ -203,11 +173,6 @@ const parseHeartRateMeasurement = (value: DataView): number => {
 
 // Get heart rate data from connected device
 export const getHeartRateData = async (deviceId: string): Promise<number> => {
-  // Check if using simulated device
-  if (deviceId.startsWith('sim-')) {
-    return Math.floor(Math.random() * (90 - 60) + 60);
-  }
-
   const connection = connectedDevicesMap.get(deviceId);
   if (!connection?.characteristic) {
     throw new Error('Device not connected');
@@ -218,8 +183,7 @@ export const getHeartRateData = async (deviceId: string): Promise<number> => {
     return parseHeartRateMeasurement(value);
   } catch (error) {
     console.error('Error reading heart rate:', error);
-    // Return simulated data as fallback
-    return Math.floor(Math.random() * (90 - 60) + 60);
+    throw error;
   }
 };
 
@@ -232,10 +196,6 @@ export const getStressLevelData = async (deviceId: string): Promise<number> => {
 
 // Get battery level
 export const getBatteryLevel = async (deviceId: string): Promise<number | undefined> => {
-  if (deviceId.startsWith('sim-')) {
-    return 85;
-  }
-
   const connection = connectedDevicesMap.get(deviceId);
   if (!connection?.batteryCharacteristic) {
     return undefined;
@@ -255,10 +215,6 @@ export const subscribeToHeartRate = (
   deviceId: string,
   callback: (heartRate: number) => void
 ): (() => void) | null => {
-  if (deviceId.startsWith('sim-')) {
-    return null;
-  }
-
   const connection = connectedDevicesMap.get(deviceId);
   if (!connection?.characteristic) {
     return null;

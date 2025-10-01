@@ -69,7 +69,6 @@ const ConnectedDevicesList: React.FC<ConnectedDevicesListProps> = ({
       
       {devices.map((device) => {
         const batteryLevel = batteryLevels[device.id];
-        const isSimulated = device.id.startsWith('sim-');
         
         return (
           <div key={device.id} className="flex items-center justify-between p-3 bg-success/10 border border-success/20 rounded-lg">
@@ -78,11 +77,6 @@ const ConnectedDevicesList: React.FC<ConnectedDevicesListProps> = ({
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <span className="font-medium text-sm">{device.name}</span>
-                  {isSimulated && (
-                    <Badge variant="secondary" className="text-xs">
-                      Demo
-                    </Badge>
-                  )}
                 </div>
                 <div className="text-xs text-muted-foreground capitalize">
                   {device.type.replace('_', ' ')} Monitor
@@ -121,7 +115,7 @@ const ConnectedDevicesList: React.FC<ConnectedDevicesListProps> = ({
           <div>
             <div className="font-medium text-amber-900">Bluetooth Not Available</div>
             <div className="text-amber-700 mt-0.5">
-              Please use Chrome or Edge browser to connect real devices. Currently showing demo devices.
+              Please use Chrome, Edge, or Opera browser to connect real devices, or install the native mobile app for iOS/Android.
             </div>
           </div>
         </div>
