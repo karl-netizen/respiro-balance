@@ -10,24 +10,38 @@ export function useBiometricData() {
 
   // Start reading data from connected device
   const startDataReading = (deviceId: string) => {
-    // For heart rate
-    const heartRateInterval = setInterval(async () => {
-      try {
-        const heartRateValue = await DeviceService.getHeartRateData(deviceId);
-        setHeartRate(heartRateValue);
-        setHeartRateHistory(prev => [...prev.slice(-19), heartRateValue]);
-        
-        // Update resting heart rate calculation
-        if (heartRateHistory.length > 10) {
-          const restingHr = DeviceService.calculateRestingHeartRate(heartRateHistory);
-          setRestingHeartRate(restingHr);
-        }
-      } catch (error) {
-        console.error('Error reading heart rate:', error);
+    // Try to use real-time notifications first
+    const unsubscribe = DeviceService.subscribeToHeartRate(deviceId, (heartRateValue) => {
+      setHeartRate(heartRateValue);
+      setHeartRateHistory(prev => [...prev.slice(-19), heartRateValue]);
+      
+      // Update resting heart rate calculation
+      if (heartRateHistory.length > 10) {
+        const restingHr = DeviceService.calculateRestingHeartRate(heartRateHistory);
+        setRestingHeartRate(restingHr);
       }
-    }, 1000);
+    });
+
+    // Fallback to polling if notifications not available
+    let heartRateInterval: NodeJS.Timeout | null = null;
+    if (!unsubscribe) {
+      heartRateInterval = setInterval(async () => {
+        try {
+          const heartRateValue = await DeviceService.getHeartRateData(deviceId);
+          setHeartRate(heartRateValue);
+          setHeartRateHistory(prev => [...prev.slice(-19), heartRateValue]);
+          
+          if (heartRateHistory.length > 10) {
+            const restingHr = DeviceService.calculateRestingHeartRate(heartRateHistory);
+            setRestingHeartRate(restingHr);
+          }
+        } catch (error) {
+          console.error('Error reading heart rate:', error);
+        }
+      }, 1000);
+    }
     
-    // For stress level
+    // For stress level (always polled)
     const stressInterval = setInterval(async () => {
       try {
         const stressValue = await DeviceService.getStressLevelData(deviceId);
@@ -38,7 +52,8 @@ export function useBiometricData() {
     }, 5000);
     
     return () => {
-      clearInterval(heartRateInterval);
+      if (unsubscribe) unsubscribe();
+      if (heartRateInterval) clearInterval(heartRateInterval);
       clearInterval(stressInterval);
     };
   };

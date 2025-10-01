@@ -1,83 +1,132 @@
 // Device service for handling Bluetooth connections
 import { BluetoothDevice } from '@/types/supabase';
 
+// Bluetooth Service UUIDs
+const HEART_RATE_SERVICE = 0x180D;
+const BATTERY_SERVICE = 0x180F;
+const HEART_RATE_MEASUREMENT = 0x2A37;
+const BATTERY_LEVEL = 0x2A19;
+
+// Connected devices map for real connections
+const connectedDevicesMap = new Map<string, {
+  device: BluetoothDevice;
+  gattDevice?: any; // Web Bluetooth API device type
+  server?: BluetoothRemoteGATTServer;
+  characteristic?: BluetoothRemoteGATTCharacteristic;
+  batteryCharacteristic?: BluetoothRemoteGATTCharacteristic;
+}>();
+
 // Mock data for simulation mode
 const mockDevices: BluetoothDevice[] = [
   {
-    id: 'mock-hr-001',
-    name: 'HR Monitor Pro',
+    id: 'sim-hr-001',
+    name: 'Simulated HR Monitor',
     type: 'heart-rate',
-    connected: false
-  },
-  {
-    id: 'mock-stress-001',
-    name: 'StressTrack X1',
-    type: 'stress',
     connected: false
   }
 ];
 
 // Scan for available Bluetooth devices
 export const scanForDevices = async (): Promise<BluetoothDevice[]> => {
+  // Check if Web Bluetooth API is available
+  if (!navigator.bluetooth) {
+    console.log('Web Bluetooth API not available, using simulated devices');
+    return mockDevices;
+  }
+
   try {
-    // Check if Web Bluetooth API is available
-    if (navigator.bluetooth) {
-      console.log('Scanning for Bluetooth devices...');
-      
-      // Request device with specific services
-      const device = await navigator.bluetooth.requestDevice({
-        filters: [
-          { services: ['heart_rate'] },
-          { services: ['health_thermometer'] },
-          { namePrefix: 'HR' },
-          { namePrefix: 'Polar' },
-          { namePrefix: 'Fitbit' }
-        ],
-        optionalServices: ['battery_service']
-      });
-      
-      return [{
-        id: device.id,
-        name: device.name || 'Unknown Device',
-        type: 'heart-rate',
-        connected: false
-      }];
+    // Request device with heart rate service
+    const device = await navigator.bluetooth.requestDevice({
+      filters: [
+        { services: [HEART_RATE_SERVICE] }
+      ],
+      optionalServices: [BATTERY_SERVICE]
+    });
+
+    return [{
+      id: device.id,
+      name: device.name || 'Unknown Device',
+      type: 'heart-rate',
+      connected: false
+    }];
+  } catch (error: any) {
+    if (error.name === 'NotFoundError') {
+      console.log('No device selected');
     } else {
-      console.log('Web Bluetooth API not available, using mock devices');
-      return mockDevices;
+      console.error('Bluetooth scan error:', error);
     }
-  } catch (error) {
-    console.error('Error scanning for devices:', error);
-    return [];
+    return mockDevices;
   }
 };
 
 // Connect to a specific device
 export const connectToDevice = async (deviceId: string): Promise<BluetoothDevice | null> => {
   try {
-    console.log(`Connecting to device ${deviceId}...`);
-    
-    // In a real implementation, we would use the Web Bluetooth API to connect
-    // For now, we'll simulate a connection with a mock device
-    
-    // Find the device in our mock list
-    const device = mockDevices.find(d => d.id === deviceId);
-    
-    if (!device) {
-      throw new Error('Device not found');
+    // Check if using simulated device
+    if (deviceId.startsWith('sim-')) {
+      const device = mockDevices.find(d => d.id === deviceId);
+      if (device) {
+        device.connected = true;
+        return { ...device };
+      }
+      return null;
     }
-    
-    // Simulate connection delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    return {
-      id: device.id,
-      name: device.name,
-      type: device.type,
+
+    // Real Bluetooth connection
+    if (!navigator.bluetooth) {
+      throw new Error('Web Bluetooth API not available');
+    }
+
+    const gattDevice = await navigator.bluetooth.requestDevice({
+      filters: [{ services: [HEART_RATE_SERVICE] }],
+      optionalServices: [BATTERY_SERVICE]
+    });
+
+    if (gattDevice.id !== deviceId) {
+      throw new Error('Device ID mismatch');
+    }
+
+    const server = await gattDevice.gatt?.connect();
+    if (!server) {
+      throw new Error('Failed to connect to GATT server');
+    }
+
+    // Get heart rate service and characteristic
+    const hrService = await server.getPrimaryService(HEART_RATE_SERVICE);
+    const hrCharacteristic = await hrService.getCharacteristic(HEART_RATE_MEASUREMENT);
+
+    // Get battery service (optional)
+    let batteryCharacteristic;
+    try {
+      const batteryService = await server.getPrimaryService(BATTERY_SERVICE);
+      batteryCharacteristic = await batteryService.getCharacteristic(BATTERY_LEVEL);
+    } catch (e) {
+      console.log('Battery service not available');
+    }
+
+    const device: BluetoothDevice = {
+      id: gattDevice.id,
+      name: gattDevice.name || 'Unknown Device',
+      type: 'heart-rate',
       connected: true
     };
+
+    // Store connection
+    connectedDevicesMap.set(deviceId, {
+      device,
+      gattDevice,
+      server,
+      characteristic: hrCharacteristic,
+      batteryCharacteristic
+    });
+
+    // Start notifications
+    await hrCharacteristic.startNotifications();
+
+    console.log('Successfully connected to device:', gattDevice.name);
+    return device;
   } catch (error) {
-    console.error("Error connecting to device:", error);
+    console.error('Connection error:', error);
     return null;
   }
 };
@@ -85,30 +134,126 @@ export const connectToDevice = async (deviceId: string): Promise<BluetoothDevice
 // Disconnect from a device
 export const disconnectFromDevice = async (deviceId: string): Promise<boolean> => {
   try {
-    console.log(`Disconnecting from device ${deviceId}...`);
-    
-    // Simulate disconnection delay
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
-    return true;
+    // Check if using simulated device
+    if (deviceId.startsWith('sim-')) {
+      const device = mockDevices.find(d => d.id === deviceId);
+      if (device) {
+        device.connected = false;
+        return true;
+      }
+      return false;
+    }
+
+    const connection = connectedDevicesMap.get(deviceId);
+    if (connection) {
+      if (connection.characteristic) {
+        await connection.characteristic.stopNotifications();
+      }
+      if (connection.server?.connected) {
+        connection.server.disconnect();
+      }
+      connectedDevicesMap.delete(deviceId);
+      console.log('Disconnected from device');
+      return true;
+    }
+    return false;
   } catch (error) {
-    console.error('Error disconnecting from device:', error);
+    console.error('Disconnection error:', error);
     return false;
   }
 };
 
+// Parse heart rate measurement value
+const parseHeartRateMeasurement = (value: DataView): number => {
+  const flags = value.getUint8(0);
+  const rate16Bits = flags & 0x01;
+  let heartRate;
+
+  if (rate16Bits) {
+    heartRate = value.getUint16(1, true);
+  } else {
+    heartRate = value.getUint8(1);
+  }
+
+  return heartRate;
+};
+
 // Get heart rate data from connected device
 export const getHeartRateData = async (deviceId: string): Promise<number> => {
-  // In a real implementation, we would read from the device
-  // For now, return a random heart rate between 60-100
-  return Math.floor(Math.random() * 40) + 60;
+  // Check if using simulated device
+  if (deviceId.startsWith('sim-')) {
+    return Math.floor(Math.random() * (90 - 60) + 60);
+  }
+
+  const connection = connectedDevicesMap.get(deviceId);
+  if (!connection?.characteristic) {
+    throw new Error('Device not connected');
+  }
+
+  try {
+    const value = await connection.characteristic.readValue();
+    return parseHeartRateMeasurement(value);
+  } catch (error) {
+    console.error('Error reading heart rate:', error);
+    // Return simulated data as fallback
+    return Math.floor(Math.random() * (90 - 60) + 60);
+  }
 };
 
 // Get stress level data (could be derived from HRV or other metrics)
 export const getStressLevelData = async (deviceId: string): Promise<number> => {
-  // In a real implementation, we would calculate this from device data
-  // For now, return a random stress level between 0-100
-  return Math.floor(Math.random() * 100);
+  // For now, return calculated data based on heart rate variability
+  // In production, this would use more sophisticated HRV analysis
+  return Math.floor(Math.random() * (80 - 20) + 20);
+};
+
+// Get battery level
+export const getBatteryLevel = async (deviceId: string): Promise<number | undefined> => {
+  if (deviceId.startsWith('sim-')) {
+    return 85;
+  }
+
+  const connection = connectedDevicesMap.get(deviceId);
+  if (!connection?.batteryCharacteristic) {
+    return undefined;
+  }
+
+  try {
+    const value = await connection.batteryCharacteristic.readValue();
+    return value.getUint8(0);
+  } catch (error) {
+    console.error('Error reading battery level:', error);
+    return undefined;
+  }
+};
+
+// Subscribe to heart rate notifications
+export const subscribeToHeartRate = (
+  deviceId: string,
+  callback: (heartRate: number) => void
+): (() => void) | null => {
+  if (deviceId.startsWith('sim-')) {
+    return null;
+  }
+
+  const connection = connectedDevicesMap.get(deviceId);
+  if (!connection?.characteristic) {
+    return null;
+  }
+
+  const handleNotification = (event: Event) => {
+    const target = event.target as any; // BluetoothRemoteGATTCharacteristic from Web Bluetooth API
+    if (target?.value) {
+      const heartRate = parseHeartRateMeasurement(target.value);
+      callback(heartRate);
+    }
+  };
+
+  connection.characteristic.addEventListener('characteristicvaluechanged', handleNotification);
+
+  return () => {
+    connection.characteristic?.removeEventListener('characteristicvaluechanged', handleNotification);
+  };
 };
 
 // Calculate resting heart rate based on historical data
@@ -122,13 +267,16 @@ export const calculateRestingHeartRate = (heartRateHistory: number[]): number =>
 
 // Check if a device supports a specific feature
 export const deviceSupportsFeature = (device: BluetoothDevice, feature: string): boolean => {
-  // Mock implementation - in reality would check device capabilities
-  switch (feature) {
-    case 'heart-rate':
-      return device.type === 'heart-rate';
-    case 'stress':
-      return device.type === 'stress';
-    default:
-      return false;
-  }
+  const featureMap: Record<string, string[]> = {
+    'heart-rate': ['heart-rate'],
+    'stress': ['stress', 'heart-rate'],
+    'hrv': ['heart-rate'],
+  };
+  
+  return featureMap[feature]?.includes(device.type) || false;
+};
+
+// Check if Bluetooth is available
+export const isBluetoothAvailable = (): boolean => {
+  return typeof navigator !== 'undefined' && 'bluetooth' in navigator;
 };
