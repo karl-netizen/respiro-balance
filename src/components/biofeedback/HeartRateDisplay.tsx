@@ -5,6 +5,9 @@ import { Heart, Bluetooth, Power } from 'lucide-react';
 import { useHeartRateMonitor } from '@/hooks/useHeartRateMonitor';
 import { Badge } from '@/components/ui/badge';
 
+// PRODUCTION MODE: Real devices only - no demo/simulation
+console.log('🎯 HeartRateDisplay: PRODUCTION MODE - Live connections only');
+
 export const HeartRateDisplay: React.FC = () => {
   const {
     isConnected,
@@ -125,13 +128,17 @@ export const HeartRateDisplay: React.FC = () => {
             </Button>
             
             <div className="text-xs text-center text-muted-foreground space-y-1">
+              <p><strong>🎯 PRODUCTION MODE:</strong> Real devices only</p>
               <p>Make sure your device is:</p>
               <ul className="list-disc list-inside">
                 <li>Turned on and charged</li>
-                <li>In pairing mode</li>
+                <li>In pairing mode (not connected to other devices)</li>
                 <li>Within 10 meters range</li>
-                <li>For Fitbit: Start an Exercise first</li>
+                <li>For Fitbit: Start an Exercise session first</li>
               </ul>
+              <p className="text-xs pt-2 opacity-75">
+                Supported: Fitbit Inspire 2, Polar, Garmin, and most BLE HR monitors
+              </p>
             </div>
           </div>
         )}

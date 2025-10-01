@@ -122,22 +122,24 @@ export const useHeartRateMonitor = () => {
           });
         }
         
-        toast.success('Connected', {
-          description: result.message
+        toast.success('Real Device Connected', {
+          description: `✓ ${result.message}`
         });
         return true;
       } else {
-        if (result.error !== 'No device selected') {
-          toast.error('Connection failed', {
-            description: result.message
+        if (result.error !== 'No device selected' && !result.error?.includes('cancelled')) {
+          toast.error('Connection Failed', {
+            description: result.message,
+            duration: 5000
           });
         }
         return false;
       }
     } catch (error: any) {
-      console.error('Connection error:', error);
-      toast.error('Connection failed', {
-        description: error.message
+      console.error('❌ Connection error:', error);
+      toast.error('Connection Failed', {
+        description: error.message || 'Unable to connect to device',
+        duration: 5000
       });
       return false;
     } finally {
@@ -158,7 +160,7 @@ export const useHeartRateMonitor = () => {
     setHeartRate(0);
     setLastUpdate(null);
     
-    toast.info('Disconnected');
+    toast.info('Disconnected from device');
   }, [isNativeMobile, deviceInfo]);
 
   // Get current heart rate reading
