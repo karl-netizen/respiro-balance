@@ -1,9 +1,8 @@
 
 import React from 'react';
-
-
 import { useBiofeedback } from '@/hooks/biofeedback';
 import BiofeedbackLayout from '@/components/biofeedback/layout/BiofeedbackLayout';
+import HeartRateDisplay from '@/components/biofeedback/HeartRateDisplay';
 
 const BiofeedbackPage: React.FC = () => {
   const { 
@@ -70,6 +69,10 @@ const BiofeedbackPage: React.FC = () => {
     <>
       
       <main className="container mx-auto py-8 px-4 space-y-8">
+        {/* New Simplified Heart Rate Monitor */}
+        <HeartRateDisplay />
+        
+        {/* Existing Biofeedback Layout */}
         <BiofeedbackLayout
           devices={devices}
           isScanning={isScanning}
