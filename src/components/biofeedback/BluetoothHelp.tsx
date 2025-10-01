@@ -54,6 +54,10 @@ const BluetoothHelp: React.FC = () => {
               <span>Check device battery, reconnect, verify device is properly worn</span>
             </li>
             <li className="flex items-start gap-2">
+              <span className="font-medium min-w-[120px]">Fitbit devices:</span>
+              <span>Start an Exercise (e.g., Run, Bike) on your Fitbit to enable heart rate broadcasting</span>
+            </li>
+            <li className="flex items-start gap-2">
               <span className="font-medium min-w-[120px]">Browser not supported:</span>
               <span>Use demo mode with simulated data for testing features</span>
             </li>
@@ -63,16 +67,29 @@ const BluetoothHelp: React.FC = () => {
         {/* Supported Devices */}
         <div>
           <h4 className="font-medium text-sm mb-2">Supported Devices</h4>
-          <div className="text-sm text-muted-foreground">
+          <div className="text-sm text-muted-foreground mb-2">
             Any Bluetooth Low Energy (BLE) heart rate monitor using standard Heart Rate Service (0x180D):
           </div>
-          <div className="flex flex-wrap gap-2 mt-2">
+          <div className="flex flex-wrap gap-2 mb-3">
             <span className="px-2 py-1 bg-secondary rounded-md text-xs">Polar H10/H9</span>
             <span className="px-2 py-1 bg-secondary rounded-md text-xs">Garmin HRM-Dual</span>
             <span className="px-2 py-1 bg-secondary rounded-md text-xs">Wahoo TICKR</span>
             <span className="px-2 py-1 bg-secondary rounded-md text-xs">Suunto</span>
             <span className="px-2 py-1 bg-secondary rounded-md text-xs">CooSpo</span>
             <span className="px-2 py-1 bg-secondary rounded-md text-xs">Most BLE HR monitors</span>
+          </div>
+          <div className="text-sm text-muted-foreground mb-2">
+            <strong>Fitbit devices</strong> (requires Exercise Mode):
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <span className="px-2 py-1 bg-primary/10 border border-primary/20 rounded-md text-xs">Fitbit Inspire 2</span>
+            <span className="px-2 py-1 bg-primary/10 border border-primary/20 rounded-md text-xs">Fitbit Charge 5/6</span>
+            <span className="px-2 py-1 bg-primary/10 border border-primary/20 rounded-md text-xs">Fitbit Versa</span>
+            <span className="px-2 py-1 bg-primary/10 border border-primary/20 rounded-md text-xs">Fitbit Sense</span>
+            <span className="px-2 py-1 bg-primary/10 border border-primary/20 rounded-md text-xs">Fitbit Ionic</span>
+          </div>
+          <div className="text-xs text-muted-foreground mt-2 italic">
+            Note: Fitbit devices only broadcast heart rate during active Exercise sessions. Start an Exercise on your Fitbit before scanning.
           </div>
         </div>
 
