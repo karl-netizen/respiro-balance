@@ -1,7 +1,8 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Bluetooth, Heart, Activity } from 'lucide-react';
+import { Bluetooth, Heart, Activity, Chrome, AlertCircle } from 'lucide-react';
+import * as DeviceService from '@/hooks/biofeedback/deviceService';
 
 interface NoDevicesViewProps {
   onScanForDevices: (deviceType?: string, options?: any) => Promise<void>;
@@ -9,33 +10,53 @@ interface NoDevicesViewProps {
 }
 
 const NoDevicesView: React.FC<NoDevicesViewProps> = ({ onScanForDevices, disabled = false }) => {
+  const isBluetoothAvailable = DeviceService.isBluetoothAvailable();
+  
   return (
     <div className="text-center py-6">
       <div className="mb-6">
         <div className="flex justify-center gap-4 mb-4">
-          <div className="p-3 bg-blue-50 rounded-full">
-            <Heart className="h-6 w-6 text-blue-600" />
+          <div className="p-3 bg-primary/10 rounded-full">
+            <Heart className="h-6 w-6 text-primary" />
           </div>
-          <div className="p-3 bg-green-50 rounded-full">
-            <Activity className="h-6 w-6 text-green-600" />
+          <div className="p-3 bg-success/10 rounded-full">
+            <Activity className="h-6 w-6 text-success" />
           </div>
-          <div className="p-3 bg-purple-50 rounded-full">
-            <Bluetooth className="h-6 w-6 text-purple-600" />
+          <div className="p-3 bg-accent/20 rounded-full">
+            <Bluetooth className="h-6 w-6 text-accent-foreground" />
           </div>
         </div>
         <h3 className="text-lg font-medium mb-2">Connect Your Wearable</h3>
         <p className="text-muted-foreground text-sm max-w-md mx-auto mb-4">
-          Connect compatible devices like Apple Watch, Fitbit, Polar, or other heart rate monitors to get real-time biometric feedback during meditation.
+          Connect compatible Bluetooth heart rate monitors to get real-time biometric feedback during meditation sessions.
         </p>
       </div>
+      
+      {!isBluetoothAvailable && (
+        <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg max-w-md mx-auto">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+            <div className="text-left">
+              <div className="font-medium text-amber-900 text-sm mb-1">Browser Not Supported</div>
+              <div className="text-xs text-amber-700 mb-2">
+                Web Bluetooth API is not available in your browser. Please use Chrome or Edge to connect real devices.
+              </div>
+              <div className="flex items-center gap-1 text-xs text-amber-600">
+                <Chrome className="h-3 w-3" />
+                <span>Chrome or Edge required for Bluetooth</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       
       <div className="space-y-3 mb-6">
         <div className="text-xs text-muted-foreground">Supported devices:</div>
         <div className="flex flex-wrap justify-center gap-2">
-          <span className="px-2 py-1 bg-gray-100 rounded text-xs">Apple Watch</span>
-          <span className="px-2 py-1 bg-gray-100 rounded text-xs">Fitbit</span>
-          <span className="px-2 py-1 bg-gray-100 rounded text-xs">Polar H10</span>
-          <span className="px-2 py-1 bg-gray-100 rounded text-xs">Garmin</span>
+          <span className="px-2 py-1 bg-secondary rounded text-xs">Polar H10</span>
+          <span className="px-2 py-1 bg-secondary rounded text-xs">Garmin HRM</span>
+          <span className="px-2 py-1 bg-secondary rounded text-xs">Wahoo TICKR</span>
+          <span className="px-2 py-1 bg-secondary rounded text-xs">Any BLE Heart Rate</span>
         </div>
       </div>
       
@@ -45,8 +66,14 @@ const NoDevicesView: React.FC<NoDevicesViewProps> = ({ onScanForDevices, disable
         className="w-full sm:w-auto"
       >
         <Bluetooth className="h-4 w-4 mr-2" />
-        Scan for Devices
+        {isBluetoothAvailable ? 'Scan for Devices' : 'Show Demo Devices'}
       </Button>
+      
+      {isBluetoothAvailable && (
+        <p className="text-xs text-muted-foreground mt-3">
+          Make sure your device is turned on and in pairing mode
+        </p>
+      )}
     </div>
   );
 };

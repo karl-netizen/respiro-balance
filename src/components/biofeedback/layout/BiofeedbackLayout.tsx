@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Bluetooth, Heart, Activity, Brain } from 'lucide-react';
 import { DeviceInfo } from '@/hooks/biofeedback/types';
+import BluetoothHelp from '../BluetoothHelp';
 
 interface BiofeedbackLayoutProps {
   devices: DeviceInfo[];
@@ -171,6 +172,9 @@ const BiofeedbackLayout: React.FC<BiofeedbackLayoutProps> = ({
           </Card>
         </div>
       )}
+
+      {/* Bluetooth Help Guide */}
+      <BluetoothHelp />
     </div>
   );
 };
