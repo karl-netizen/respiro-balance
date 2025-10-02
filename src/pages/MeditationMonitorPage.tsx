@@ -294,14 +294,24 @@ const MeditationMonitorPage: React.FC = () => {
                     <strong>Fitbit devices</strong> require app sync with 15-30 second delay. 
                     For <strong>real-time meditation</strong>, we recommend Bluetooth chest straps like Polar H10 or CooSpo H6.
                   </div>
-                  <Button
-                    onClick={() => setShowCompatibility(true)}
-                    variant="link"
-                    size="sm"
-                    className="p-0 h-auto"
-                  >
-                    See full device compatibility guide →
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() => setShowCompatibility(true)}
+                      variant="link"
+                      size="sm"
+                      className="p-0 h-auto"
+                    >
+                      Device compatibility →
+                    </Button>
+                    <Button
+                      onClick={() => window.open('/setup-guide', '_blank')}
+                      variant="link"
+                      size="sm"
+                      className="p-0 h-auto"
+                    >
+                      Full setup guide →
+                    </Button>
+                  </div>
                 </div>
               </div>
             </CardContent>
