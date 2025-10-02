@@ -36,6 +36,7 @@ import MeditationAudioManagement from '@/pages/MeditationAudioManagement';
 import MeditationSessionPage from '@/pages/MeditationSessionPage';
 import Breathe from '@/pages/Breathe';
 import MorningRitual from '@/pages/MorningRitual';
+import FitbitCallback from '@/pages/FitbitCallback';
 import WorkLifeBalance from '@/pages/WorkLifeBalance';
 import Progress from '@/pages/Progress';
 import FocusPage from '@/pages/FocusPage';
@@ -179,6 +180,7 @@ function AppContent() {
                         <Route path="/testing" element={<UserJourneyTestingPage />} />
                         <Route path="/meditation/audio-management" element={<MeditationAudioManagement />} />
                         <Route path="/meditate/session/:sessionId" element={<MeditationSessionPage />} />
+                        <Route path="/fitbit-callback" element={<FitbitCallback />} />
                         <Route path="/breathe" element={<Breathe />} />
                         <Route path="/morning-ritual" element={<MorningRitual />} />
                         <Route path="/work-life-balance" element={<WorkLifeBalance />} />
