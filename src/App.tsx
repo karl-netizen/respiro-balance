@@ -53,6 +53,9 @@ const AIPersonalizationDemo = lazy(() => import('@/components/ai-personalization
 const SecuritySystemDemo = lazy(() => import('@/components/security/SecuritySystemDemo'));
 const SecureFormsDemo = lazy(() => import('@/components/security/SecureFormsDemo'));
 const AdvancedSecurityDemo = lazy(() => import('@/components/security/advanced/AdvancedSecurityDemo'));
+
+// Module Library Page
+const ModuleLibraryPage = lazy(() => import('@/pages/ModuleLibraryPage'));
 import { ComprehensiveTestingDemo } from '@/test/demo/comprehensive-testing-demo';
 import { TestingFrameworkSummary } from '@/test/demo/testing-framework-summary';
 import OnboardingPage from '@/pages/Onboarding';
@@ -61,6 +64,7 @@ import { MobilePWASetup } from '@/components/mobile/MobilePWASetup';
 import { usePerformanceMonitoring } from '@/hooks/usePerformanceMonitoring';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { useAuth } from '@/hooks/useAuth';
+import { useModuleSync } from '@/hooks/useModuleSync';
 
 // Global error handler for unhandled promise rejections
 window.addEventListener('unhandledrejection', (event) => {
@@ -100,6 +104,9 @@ function App() {
 function AppContent() {
   const { user, isLoading: authLoading } = useAuth();
   const { hasCompletedOnboarding, isLoading: onboardingLoading } = useOnboarding();
+  
+  // Sync module store with subscription tier
+  useModuleSync();
 
   // Show loading while checking auth and onboarding status
   if (authLoading || (user && onboardingLoading)) {
@@ -184,6 +191,11 @@ function AppContent() {
                         <Route path="/meditate/session/:sessionId" element={<MeditationSessionPage />} />
                         <Route path="/meditation-monitor" element={<MeditationMonitorPage />} />
                         <Route path="/setup-guide" element={<SetupGuidePage />} />
+                        <Route path="/modules" element={
+                          <React.Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div></div>}>
+                            <ModuleLibraryPage />
+                          </React.Suspense>
+                        } />
                         <Route path="/fitbit-callback" element={<FitbitCallback />} />
                         <Route path="/breathe" element={<Breathe />} />
                         <Route path="/morning-ritual" element={<MorningRitual />} />
