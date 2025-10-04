@@ -43,7 +43,7 @@ export const CheckoutDialog: React.FC<CheckoutDialogProps> = ({
   const [cardholderName, setCardholderName] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const amount = getPricing(tier, billingCycle);
+  const amount = tier !== 'free' ? getPricing(tier, billingCycle) : 0;
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -82,13 +82,13 @@ export const CheckoutDialog: React.FC<CheckoutDialogProps> = ({
         cvc,
         cardholderName,
         amount,
-        tier,
+        tier as any, // Cast for mock service
         billingCycle
       );
 
       if (result.success) {
         // Update subscription in store
-        upgradeTier(tier, billingCycle);
+        await upgradeTier(tier as 'standard' | 'premium', billingCycle);
         
         // Update module store
         setSubscriptionTier(tier);

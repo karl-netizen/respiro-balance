@@ -14,19 +14,27 @@ export interface PaymentMethod {
   expiryYear: number;
 }
 
+export interface BillingHistoryItem {
+  id: string;
+  date: string;
+  amount: number;
+  status: 'paid' | 'pending' | 'failed';
+  invoiceUrl: string;
+}
+
 /**
  * Mock Stripe service for demo purposes
  * In production, this would integrate with actual Stripe API
  */
-export const mockStripeService = {
+export class MockStripeService {
   /**
    * Simulates creating a payment intent
    */
-  createPaymentIntent: async (
+  async createPaymentIntent(
     amount: number,
     tier: SubscriptionTier,
     cycle: BillingCycle
-  ): Promise<PaymentIntent> => {
+  ): Promise<PaymentIntent> {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 1500));
     
@@ -37,12 +45,12 @@ export const mockStripeService = {
       currency: 'usd',
       status: 'succeeded'
     };
-  },
+  }
 
   /**
    * Simulates processing a payment
    */
-  processPayment: async (
+  async processPayment(
     cardNumber: string,
     expiry: string,
     cvc: string,
@@ -50,7 +58,7 @@ export const mockStripeService = {
     amount: number,
     tier: SubscriptionTier,
     cycle: BillingCycle
-  ): Promise<{ success: boolean; paymentIntent?: PaymentIntent; error?: string }> => {
+  ): Promise<{ success: boolean; paymentIntent?: PaymentIntent; error?: string }> {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 2000));
     
@@ -72,18 +80,41 @@ export const mockStripeService = {
     }
     
     // Create payment intent
-    const paymentIntent = await mockStripeService.createPaymentIntent(amount, tier, cycle);
+    const paymentIntent = await this.createPaymentIntent(amount, tier, cycle);
     
     return {
       success: true,
       paymentIntent
     };
-  },
+  }
+
+  /**
+   * Simulates creating a subscription
+   */
+  async createSubscription(
+    customerId: string,
+    priceId: string
+  ): Promise<{ subscriptionId: string; status: string }> {
+    await new Promise(resolve => setTimeout(resolve, 1500));
+
+    return {
+      subscriptionId: `sub_${Date.now()}`,
+      status: 'active'
+    };
+  }
+
+  /**
+   * Simulates canceling a subscription
+   */
+  async cancelSubscription(subscriptionId: string): Promise<boolean> {
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    return true;
+  }
 
   /**
    * Simulates getting payment method
    */
-  getPaymentMethod: async (): Promise<PaymentMethod> => {
+  async getPaymentMethod(): Promise<PaymentMethod> {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 500));
     
@@ -93,16 +124,16 @@ export const mockStripeService = {
       expiryMonth: 12,
       expiryYear: 2025
     };
-  },
+  }
 
   /**
    * Simulates updating payment method
    */
-  updatePaymentMethod: async (
+  async updatePaymentMethod(
     cardNumber: string,
     expiry: string,
     cvc: string
-  ): Promise<{ success: boolean; error?: string }> => {
+  ): Promise<{ success: boolean; error?: string }> {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 1500));
     
@@ -112,12 +143,14 @@ export const mockStripeService = {
     }
     
     return { success: true };
-  },
+  }
 
   /**
    * Mock billing history
    */
-  getBillingHistory: async () => {
+  async getBillingHistory(): Promise<BillingHistoryItem[]> {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
     return [
       {
         id: '1',
@@ -142,4 +175,7 @@ export const mockStripeService = {
       }
     ];
   }
-};
+}
+
+export const mockStripeService = new MockStripeService();
+export const stripeService = mockStripeService;

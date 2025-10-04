@@ -18,7 +18,7 @@ interface UpgradePromptDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   featureName: string;
-  requiredTier: SubscriptionTier;
+  requiredTier: 'standard' | 'premium';
   benefits?: string[];
 }
 
