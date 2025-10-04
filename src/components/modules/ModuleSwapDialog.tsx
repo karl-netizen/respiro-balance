@@ -36,11 +36,12 @@ export function ModuleSwapDialog({ currentModuleId }: ModuleSwapDialogProps) {
   );
 
   const handleSwap = () => {
-    if (selectedModule && swapModule(currentModuleId, selectedModule)) {
+    if (selectedModule) {
+      swapModule(currentModuleId, selectedModule);
       const newModule = MODULE_REGISTRY[selectedModule];
       toast({
         title: 'Module Swapped!',
-        description: `${currentModule?.name} replaced with ${newModule?.name}. Next swap available in 30 days.`,
+        description: `${currentModule?.name} replaced with ${newModule?.name}. Next swap available in 7 days.`,
       });
       setOpen(false);
       setSelectedModule('');

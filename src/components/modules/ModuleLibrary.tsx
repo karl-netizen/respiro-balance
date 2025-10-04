@@ -3,9 +3,11 @@ import { useModuleStore } from '@/store/moduleStore';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Check, Lock, Sparkles } from 'lucide-react';
+import { Check, Lock, Sparkles, Bug, AlertCircle } from 'lucide-react';
 import { ModuleSwapDialog } from './ModuleSwapDialog';
 import { useNavigate } from 'react-router-dom';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Switch } from '@/components/ui/switch';
 
 export function ModuleLibrary() {
   const navigate = useNavigate();
@@ -13,7 +15,9 @@ export function ModuleLibrary() {
     subscriptionTier, 
     activeModules, 
     activateModule, 
-    canActivateModule 
+    canActivateModule,
+    devMode,
+    toggleDevMode
   } = useModuleStore();
 
   // Safety check: ensure subscriptionTier has a valid value
@@ -33,6 +37,43 @@ export function ModuleLibrary() {
 
   return (
     <div className="space-y-6">
+      {/* Dev Mode Toggle */}
+      <Alert className={devMode ? "border-orange-500 bg-orange-50 dark:bg-orange-950/20" : ""}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Bug className={`h-5 w-5 ${devMode ? 'text-orange-600' : 'text-muted-foreground'}`} />
+            <div>
+              <AlertDescription className="font-medium">
+                Developer Testing Mode
+              </AlertDescription>
+              <AlertDescription className="text-xs text-muted-foreground">
+                {devMode 
+                  ? 'All subscription restrictions bypassed. You can activate any module for testing.'
+                  : 'Enable to bypass subscription requirements and test all modules freely.'}
+              </AlertDescription>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Switch 
+              checked={devMode} 
+              onCheckedChange={toggleDevMode}
+            />
+            <span className="text-sm font-medium">
+              {devMode ? 'ON' : 'OFF'}
+            </span>
+          </div>
+        </div>
+      </Alert>
+
+      {devMode && (
+        <Alert className="border-orange-500 bg-orange-50 dark:bg-orange-950/20">
+          <AlertCircle className="h-4 w-4 text-orange-600" />
+          <AlertDescription className="text-sm">
+            <strong>Dev Mode Active:</strong> You can now activate all modules without subscription restrictions. This is for testing purposes only.
+          </AlertDescription>
+        </Alert>
+      )}
+
       {/* Header Section */}
       <div className="space-y-2">
         <h2 className="text-3xl font-bold text-foreground">Your Modules</h2>

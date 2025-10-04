@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { MODULE_REGISTRY } from '@/lib/modules/moduleRegistry';
+import { getModuleById } from '@/lib/modules/moduleRegistry';
 
 export type SubscriptionTier = 'free' | 'standard' | 'premium';
 
@@ -8,16 +8,18 @@ interface ModuleState {
   subscriptionTier: SubscriptionTier;
   activeModules: string[];
   lastModuleSwap: Date | null;
+  devMode: boolean; // Testing mode to bypass subscription requirements
   
-  // Actions
   setSubscriptionTier: (tier: SubscriptionTier) => void;
-  activateModule: (moduleId: string) => boolean;
+  activateModule: (moduleId: string) => void;
   deactivateModule: (moduleId: string) => void;
-  swapModule: (oldModuleId: string, newModuleId: string) => boolean;
+  swapModule: (oldModuleId: string, newModuleId: string) => void;
   canActivateModule: (moduleId: string) => boolean;
   canSwapModule: () => boolean;
   getActiveModules: () => string[];
   getDaysUntilNextSwap: () => number;
+  toggleDevMode: () => void;
+  setDevMode: (enabled: boolean) => void;
 }
 
 export const useModuleStore = create<ModuleState>()(
@@ -26,47 +28,33 @@ export const useModuleStore = create<ModuleState>()(
       subscriptionTier: 'free',
       activeModules: [],
       lastModuleSwap: null,
+      devMode: false,
 
       setSubscriptionTier: (tier) => {
         set({ subscriptionTier: tier });
         
-        // Auto-activate biofeedback for Standard & Premium
+        // Auto-activate biofeedback for paid tiers
         if (tier === 'standard' || tier === 'premium') {
           const { activeModules } = get();
           if (!activeModules.includes('biofeedback')) {
             set({ activeModules: [...activeModules, 'biofeedback'] });
           }
         }
-        
-        // Auto-activate all modules for Premium
-        if (tier === 'premium') {
-          const allModuleIds = Object.keys(MODULE_REGISTRY);
-          set({ activeModules: allModuleIds });
-        }
-        
-        // Clear modules if downgrading to Free
-        if (tier === 'free') {
-          set({ activeModules: [] });
-        }
       },
 
       activateModule: (moduleId) => {
-        const { canActivateModule, activeModules } = get();
-        
-        if (!canActivateModule(moduleId)) {
-          return false;
+        const { activeModules } = get();
+        if (!activeModules.includes(moduleId)) {
+          set({ activeModules: [...activeModules, moduleId] });
         }
-
-        set({ activeModules: [...activeModules, moduleId] });
-        return true;
       },
 
       deactivateModule: (moduleId) => {
         const { activeModules } = get();
-        const module = MODULE_REGISTRY[moduleId];
+        const module = getModuleById(moduleId);
         
-        // Can't deactivate always-active modules
-        if (module?.alwaysActive) {
+        // Can't deactivate always-active modules unless in dev mode
+        if (module?.alwaysActive && !get().devMode) {
           return;
         }
 
@@ -76,11 +64,7 @@ export const useModuleStore = create<ModuleState>()(
       },
 
       swapModule: (oldModuleId, newModuleId) => {
-        const { canSwapModule, activeModules } = get();
-        
-        if (!canSwapModule()) {
-          return false;
-        }
+        const { activeModules } = get();
 
         const newActiveModules = activeModules.map(id => 
           id === oldModuleId ? newModuleId : id
@@ -90,65 +74,71 @@ export const useModuleStore = create<ModuleState>()(
           activeModules: newActiveModules,
           lastModuleSwap: new Date()
         });
-        
-        return true;
       },
 
       canActivateModule: (moduleId) => {
-        const { subscriptionTier, activeModules } = get();
-        const module = MODULE_REGISTRY[moduleId];
+        const { subscriptionTier, activeModules, devMode } = get();
+        
+        // Dev mode bypasses all restrictions
+        if (devMode) return !activeModules.includes(moduleId);
+        
+        const module = getModuleById(moduleId);
         
         if (!module) return false;
         if (activeModules.includes(moduleId)) return false;
-
-        // Free users can't activate modules
-        if (subscriptionTier === 'free') return false;
-
-        // Premium users can activate anything
-        if (subscriptionTier === 'premium') return true;
-
-        // Standard users: biofeedback is auto-activated, can choose 1 more
-        const nonBiofeedbackModules = activeModules.filter(
-          id => id !== 'biofeedback'
-        );
+        if (module.alwaysActive) return false;
         
-        return nonBiofeedbackModules.length < 1;
+        // Free tier can't activate any modules
+        if (subscriptionTier === 'free') return false;
+        
+        // Standard tier: max 2 modules (excluding always-active)
+        if (subscriptionTier === 'standard') {
+          const nonAlwaysActive = activeModules.filter(id => {
+            const m = getModuleById(id);
+            return m && !m.alwaysActive;
+          });
+          return nonAlwaysActive.length < 2;
+        }
+        
+        // Premium tier: unlimited
+        return true;
       },
 
       canSwapModule: () => {
-        const { subscriptionTier, lastModuleSwap } = get();
+        const { subscriptionTier, lastModuleSwap, devMode } = get();
         
-        // Premium users can't swap (all active)
-        if (subscriptionTier === 'premium') return false;
+        // Dev mode allows unlimited swaps
+        if (devMode) return true;
         
-        // Free users can't swap (no modules)
-        if (subscriptionTier === 'free') return false;
-
-        // Standard users can swap once per month
+        if (subscriptionTier !== 'standard') return false;
         if (!lastModuleSwap) return true;
-
-        const daysSinceLastSwap = Math.floor(
-          (Date.now() - new Date(lastModuleSwap).getTime()) / (1000 * 60 * 60 * 24)
-        );
         
-        return daysSinceLastSwap >= 30;
+        const daysSinceSwap = Math.floor((Date.now() - new Date(lastModuleSwap).getTime()) / (1000 * 60 * 60 * 24));
+        return daysSinceSwap >= 7;
       },
 
       getDaysUntilNextSwap: () => {
-        const { lastModuleSwap } = get();
+        const { lastModuleSwap, devMode } = get();
+        
+        // Dev mode always allows swaps
+        if (devMode) return 0;
         
         if (!lastModuleSwap) return 0;
-
-        const daysSinceLastSwap = Math.floor(
-          (Date.now() - new Date(lastModuleSwap).getTime()) / (1000 * 60 * 60 * 24)
-        );
         
-        const daysRemaining = 30 - daysSinceLastSwap;
-        return Math.max(0, daysRemaining);
+        const daysSinceSwap = Math.floor((Date.now() - new Date(lastModuleSwap).getTime()) / (1000 * 60 * 60 * 24));
+        return Math.max(0, 7 - daysSinceSwap);
       },
 
       getActiveModules: () => {
         return get().activeModules;
+      },
+
+      toggleDevMode: () => {
+        set(state => ({ devMode: !state.devMode }));
+      },
+
+      setDevMode: (enabled) => {
+        set({ devMode: enabled });
       }
     }),
     {
