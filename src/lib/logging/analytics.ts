@@ -299,6 +299,7 @@ declare global {
     Sentry: any;
     DD_RUM: any;
     LogRocket: any;
-    gtag: any;
+    gtag: (...args: any[]) => void;
+    dataLayer: any[];
   }
 }

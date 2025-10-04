@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { DEMO_USER } from '@/lib/demoData';
 import { toast } from 'sonner';
+import { analytics, trackUserSignUp, trackUserLogin } from '@/lib/analytics/analytics';
 
 // Extend User interface to include user_metadata and app_metadata
 interface ExtendedUser extends User {
@@ -81,9 +82,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         
         // Load user profile data when signed in
         if (session?.user && event === 'SIGNED_IN') {
+          // Set analytics user ID
+          analytics.setUserId(session.user.id);
+          
           setTimeout(async () => {
             await loadUserProfile(session.user.id);
           }, 0);
+        }
+        
+        // Clear analytics user ID when signed out
+        if (event === 'SIGNED_OUT') {
+          analytics.setUserId(null);
         }
       }
     );
@@ -133,6 +142,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       throw error;
     }
 
+    // Track successful login
+    trackUserLogin('email');
     toast.success('Signed in successfully');
   };
 
@@ -155,8 +166,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       throw error;
     }
 
-    // Wait briefly for trigger to complete
+    // Track successful signup
     if (data.user) {
+      trackUserSignUp('email', 'free');
       await new Promise(resolve => setTimeout(resolve, 500));
     }
 

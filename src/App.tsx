@@ -15,6 +15,8 @@ import Footer from '@/components/Footer';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { LoadingMonitor } from '@/components/LoadingMonitor';
 import { DashboardSkeleton } from '@/components/ui/skeleton-variants';
+import { CookieConsent } from '@/components/analytics/CookieConsent';
+import { analytics } from '@/lib/analytics/analytics';
 import HomePage from '@/pages/HomePage';
 import Dashboard from '@/pages/Dashboard';
 import LandingPage from '@/pages/LandingPage';
@@ -99,6 +101,11 @@ const queryClient = new QueryClient({
 function App() {
   usePerformanceMonitoring();
   
+  // Initialize analytics on app load
+  useEffect(() => {
+    analytics.initialize();
+  }, []);
+  
   return (
     <ErrorBoundary level="global" onError={(error, errorInfo) => {
       console.error('Global error boundary:', error, errorInfo);
@@ -128,6 +135,9 @@ function AppContent() {
                       
                       {/* Mobile PWA Setup */}
                       <MobilePWASetup />
+                      
+                      {/* Cookie Consent Banner */}
+                      <CookieConsent />
                       
                       {/* Loading Performance Monitor */}
                       <LoadingMonitor />
