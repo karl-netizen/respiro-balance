@@ -35,8 +35,8 @@ const DashboardMainContent: React.FC<DashboardMainContentProps> = ({
         <WeeklyProgressCard progress={progressData} />
       </div>
 
-      {/* Mood-Based Recommendations or Actions */}
-      <div className="lg:col-span-1 order-2 lg:order-2">
+      {/* Mood Selection or Recommendations */}
+      <div className="lg:col-span-1 order-2">
         {currentMood ? (
           <MoodBasedRecommendations currentMood={currentMood} />
         ) : (
@@ -47,22 +47,12 @@ const DashboardMainContent: React.FC<DashboardMainContentProps> = ({
         )}
       </div>
 
-      {/* Action Cards - Last on mobile */}
+      {/* Action Cards - Always shown on the right */}
       <div className="lg:col-span-1 order-3">
-        {currentMood ? (
-          <DashboardActionCards
-            currentMood={currentMood}
-            onMoodSelect={onMoodSelect}
-          />
-        ) : (
-          <div className="space-y-4">
-            {/* Fallback content when no mood is selected */}
-            <DashboardActionCards
-              currentMood={currentMood}
-              onMoodSelect={onMoodSelect}
-            />
-          </div>
-        )}
+        <DashboardActionCards
+          currentMood={currentMood}
+          onMoodSelect={onMoodSelect}
+        />
       </div>
     </div>
   );

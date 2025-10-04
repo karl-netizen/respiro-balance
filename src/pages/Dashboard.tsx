@@ -63,47 +63,47 @@ const Dashboard: React.FC = () => {
             {/* Header with Back Button */}
             <DashboardHeader onGoBack={handleGoBack} />
 
-            {/* Module Management Quick Access */}
-            <div className="container mx-auto px-4 py-4">
-              <Card className="border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-accent/5">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-lg bg-primary/10">
-                        <Boxes className="w-5 h-5 text-primary" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-foreground flex items-center gap-2">
-                          Power Modules
-                          <Badge variant="secondary" className="text-xs">
-                            {activeModules.length} active
-                          </Badge>
-                        </h3>
-                        <p className="text-sm text-muted-foreground">
-                          {subscriptionTier === 'free' 
-                            ? 'Upgrade to unlock Focus Mode, Morning Rituals & more'
-                            : 'Activate modules to enhance your wellness journey'}
-                        </p>
-                      </div>
-                    </div>
-                    <Button 
-                      onClick={() => navigate(subscriptionTier === 'free' ? '/subscription' : '/modules')}
-                      className="flex items-center gap-2"
-                    >
-                      <Settings className="w-4 h-4" />
-                      {subscriptionTier === 'free' ? 'Upgrade' : 'Manage Modules'}
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
             <DashboardLayout>
               {/* Mood Check Modal */}
               <MoodCheckModal 
                 open={showMoodModal}
                 onMoodSelect={handleMoodModalSelect}
               />
+
+              {/* Module Management Quick Access */}
+              <div className="mb-6">
+                <Card className="border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-accent/5">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between flex-wrap gap-4">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-lg bg-primary/10">
+                          <Boxes className="w-5 h-5 text-primary" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-foreground flex items-center gap-2">
+                            Power Modules
+                            <Badge variant="secondary" className="text-xs">
+                              {activeModules.length} active
+                            </Badge>
+                          </h3>
+                          <p className="text-sm text-muted-foreground">
+                            {subscriptionTier === 'free' 
+                              ? 'Upgrade to unlock Focus Mode, Morning Rituals & more'
+                              : 'Activate modules to enhance your wellness journey'}
+                          </p>
+                        </div>
+                      </div>
+                      <Button 
+                        onClick={() => navigate(subscriptionTier === 'free' ? '/subscription' : '/modules')}
+                        className="flex items-center gap-2"
+                      >
+                        <Settings className="w-4 h-4" />
+                        {subscriptionTier === 'free' ? 'Upgrade' : 'Manage Modules'}
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
 
               {/* Welcome Section */}
               <DashboardTopSection
