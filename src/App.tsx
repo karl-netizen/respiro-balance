@@ -106,9 +106,6 @@ function App() {
 function AppContent() {
   const { user, isLoading: authLoading } = useAuth();
   const { hasCompletedOnboarding, isLoading: onboardingLoading } = useOnboarding();
-  
-  // Sync module store with subscription tier
-  useModuleSync();
 
   // Show loading while checking auth and onboarding status
   if (authLoading || (user && onboardingLoading)) {
@@ -129,18 +126,20 @@ function AppContent() {
         <FocusProvider>
           <UserPreferencesProvider>
             <SubscriptionProvider>
-              <ThemeProvider defaultTheme="system" storageKey="respiro-ui-theme">
-                <Router>
-                  <NavigationHistoryProvider>
-                    <div className="min-h-screen bg-background font-sans antialiased">
-                      <OnboardingPage />
-                      <MobilePWASetup />
-                      <LoadingMonitor />
-                      <Toaster />
-                    </div>
-                  </NavigationHistoryProvider>
-                </Router>
-              </ThemeProvider>
+              <ModuleSyncWrapper>
+                <ThemeProvider defaultTheme="system" storageKey="respiro-ui-theme">
+                  <Router>
+                    <NavigationHistoryProvider>
+                      <div className="min-h-screen bg-background font-sans antialiased">
+                        <OnboardingPage />
+                        <MobilePWASetup />
+                        <LoadingMonitor />
+                        <Toaster />
+                      </div>
+                    </NavigationHistoryProvider>
+                  </Router>
+                </ThemeProvider>
+              </ModuleSyncWrapper>
             </SubscriptionProvider>
           </UserPreferencesProvider>
         </FocusProvider>
@@ -153,11 +152,12 @@ function AppContent() {
       <FocusProvider>
         <UserPreferencesProvider>
           <SubscriptionProvider>
-            <ThemeProvider defaultTheme="system" storageKey="respiro-ui-theme">
-              <Router>
-                <NavigationHistoryProvider>
-                  <div className="min-h-screen bg-background font-sans antialiased">
-                    <Header />
+            <ModuleSyncWrapper>
+              <ThemeProvider defaultTheme="system" storageKey="respiro-ui-theme">
+                <Router>
+                  <NavigationHistoryProvider>
+                    <div className="min-h-screen bg-background font-sans antialiased">
+                      <Header />
                     
                     {/* Mobile PWA Setup */}
                     <MobilePWASetup />
@@ -253,11 +253,18 @@ function AppContent() {
                 </NavigationHistoryProvider>
               </Router>
             </ThemeProvider>
+            </ModuleSyncWrapper>
           </SubscriptionProvider>
         </UserPreferencesProvider>
       </FocusProvider>
     </NotificationsProvider>
   );
+}
+
+// Wrapper component to sync modules - must be inside SubscriptionProvider
+function ModuleSyncWrapper({ children }: { children: React.ReactNode }) {
+  useModuleSync();
+  return <>{children}</>;
 }
 
 export default App;
