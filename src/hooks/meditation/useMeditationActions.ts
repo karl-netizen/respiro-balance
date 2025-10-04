@@ -2,13 +2,13 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { MeditationSession } from '@/types/meditation';
-import { useSubscriptionContext } from '@/hooks/useSubscriptionContext';
+import { useSubscription } from '@/components/subscription/SubscriptionProvider';
 import { useMeditationNavigation } from './useMeditationNavigation';
 import { useMeditationRecentlyPlayed } from './useMeditationRecentlyPlayed';
 
 export const useMeditationActions = () => {
   const navigate = useNavigate();
-  const { isPremium } = useSubscriptionContext();
+  const { isPremium } = useSubscription();
   const navigation = useMeditationNavigation();
   const recentlyPlayed = useMeditationRecentlyPlayed();
 

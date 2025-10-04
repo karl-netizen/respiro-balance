@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useSubscriptionContext } from '@/hooks/useSubscriptionContext';
+import { useSubscription } from '@/components/subscription/SubscriptionProvider';
 import { toast } from 'sonner';
 
 export interface MeditationContent {

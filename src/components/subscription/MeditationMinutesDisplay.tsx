@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useSubscriptionContext } from '@/hooks/useSubscriptionContext';
+import { useSubscription } from '@/components/subscription/SubscriptionProvider';
 import { Progress } from '@/components/ui/progress';
 import { Clock } from 'lucide-react';
 
@@ -13,12 +13,14 @@ export const MeditationMinutesDisplay: React.FC<MeditationMinutesDisplayProps> =
   showIcon = true,
   compact = false
 }) => {
-  const { subscriptionData, isPremium } = useSubscriptionContext();
+  const { subscription, isPremium } = useSubscription();
   
+  // Don't show for premium users
   if (isPremium) return null;
   
-  const minutesUsed = subscriptionData?.meditation_minutes_used || 0;
-  const minutesLimit = subscriptionData?.meditation_minutes_limit || 60;
+  // Mock data for free tier - in production this would come from user profile
+  const minutesUsed = 0; // Would be tracked in user profile
+  const minutesLimit = 60; // Free tier limit
   const usagePercentage = Math.min(Math.round((minutesUsed / minutesLimit) * 100), 100);
   
   return (
