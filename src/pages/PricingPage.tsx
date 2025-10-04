@@ -266,12 +266,12 @@ export default function PricingPage() {
       </div>
 
       {/* Checkout Dialog */}
-      {selectedTier && (
+      {selectedTier && selectedTier !== 'free' && (
         <CheckoutDialog
-          open={!!selectedTier}
-          onOpenChange={(open) => !open && setSelectedTier(null)}
+          open={true}
+          onClose={() => setSelectedTier(null)}
           tier={selectedTier}
-          billingCycle={billingCycle}
+          cycle={billingCycle}
         />
       )}
     </div>

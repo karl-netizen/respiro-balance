@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { useSubscriptionStore } from '@/store/subscriptionStore';
+import { useModuleStore } from '@/store/moduleStore';
+import { stripeService } from '@/lib/payment/stripe';
 import {
   Dialog,
   DialogContent,
@@ -10,124 +12,39 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { useSubscriptionStore, SubscriptionTier, BillingCycle } from '@/store/subscriptionStore';
-import { useModuleStore } from '@/store/moduleStore';
-import { mockStripeService } from '@/lib/payment/stripe';
+import { Badge } from '@/components/ui/badge';
+import { CreditCard, Lock } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, CreditCard, Lock } from 'lucide-react';
 
 interface CheckoutDialogProps {
   open: boolean;
-  onOpenChange: (open: boolean) => void;
-  tier: SubscriptionTier;
-  billingCycle: BillingCycle;
+  onClose: () => void;
+  tier: 'standard' | 'premium';
+  cycle: 'monthly' | 'annual';
 }
 
-export const CheckoutDialog: React.FC<CheckoutDialogProps> = ({
+export function CheckoutDialog({
   open,
-  onOpenChange,
+  onClose,
   tier,
-  billingCycle
-}) => {
+  cycle
+}: CheckoutDialogProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { getPricing, upgradeTier } = useSubscriptionStore();
   const { setSubscriptionTier, activateModule } = useModuleStore();
   
-  const [loading, setLoading] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState('');
   const [cardNumber, setCardNumber] = useState('');
   const [expiry, setExpiry] = useState('');
   const [cvc, setCvc] = useState('');
   const [cardholderName, setCardholderName] = useState('');
-  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const amount = tier !== 'free' ? getPricing(tier, billingCycle) : 0;
-
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {};
-
-    if (!cardNumber || cardNumber.replace(/\s/g, '').length < 13) {
-      newErrors.cardNumber = 'Please enter a valid card number';
-    }
-
-    if (!expiry || !expiry.includes('/')) {
-      newErrors.expiry = 'Please enter a valid expiry date (MM/YY)';
-    }
-
-    if (!cvc || cvc.length < 3) {
-      newErrors.cvc = 'Please enter a valid CVC';
-    }
-
-    if (!cardholderName || cardholderName.trim().length === 0) {
-      newErrors.cardholderName = 'Please enter the cardholder name';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!validateForm()) return;
-
-    setLoading(true);
-
-    try {
-      const result = await mockStripeService.processPayment(
-        cardNumber,
-        expiry,
-        cvc,
-        cardholderName,
-        amount,
-        tier as any, // Cast for mock service
-        billingCycle
-      );
-
-      if (result.success) {
-        // Update subscription in store
-        await upgradeTier(tier as 'standard' | 'premium', billingCycle);
-        
-        // Update module store
-        setSubscriptionTier(tier);
-        
-        // Auto-activate modules based on tier
-        if (tier === 'standard') {
-          activateModule('biofeedback');
-        } else if (tier === 'premium') {
-          activateModule('biofeedback');
-          activateModule('focus');
-          activateModule('morning_rituals');
-          activateModule('social');
-          activateModule('work_life_balance');
-        }
-
-        toast({
-          title: 'Payment Successful!',
-          description: `Welcome to ${tier.charAt(0).toUpperCase() + tier.slice(1)}! Your account has been upgraded.`,
-        });
-
-        onOpenChange(false);
-        navigate('/account');
-      } else {
-        toast({
-          title: 'Payment Failed',
-          description: result.error || 'Unable to process payment. Please try again.',
-          variant: 'destructive'
-        });
-      }
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'An unexpected error occurred. Please try again.',
-        variant: 'destructive'
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+  const amount = getPricing(tier, cycle);
+  const tierName = tier.charAt(0).toUpperCase() + tier.slice(1);
 
   const formatCardNumber = (value: string) => {
     const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
@@ -156,95 +73,145 @@ export const CheckoutDialog: React.FC<CheckoutDialogProps> = ({
     return v;
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsProcessing(true);
+    setError('');
+
+    try {
+      // Basic validation
+      if (!cardNumber || cardNumber.replace(/\s/g, '').length < 13) {
+        setError('Please enter a valid card number');
+        setIsProcessing(false);
+        return;
+      }
+
+      if (!expiry || !expiry.includes('/')) {
+        setError('Please enter a valid expiry date');
+        setIsProcessing(false);
+        return;
+      }
+
+      if (!cvc || cvc.length < 3) {
+        setError('Please enter a valid CVC');
+        setIsProcessing(false);
+        return;
+      }
+
+      if (!cardholderName || cardholderName.trim().length === 0) {
+        setError('Please enter cardholder name');
+        setIsProcessing(false);
+        return;
+      }
+
+      // Create payment intent
+      const paymentIntent = await stripeService.createPaymentIntent(
+        amount,
+        tier,
+        cycle
+      );
+
+      if (paymentIntent.status === 'succeeded') {
+        // Upgrade subscription
+        await upgradeTier(tier, cycle);
+        
+        // Update module store
+        setSubscriptionTier(tier);
+        
+        // Auto-activate modules based on tier
+        if (tier === 'standard') {
+          activateModule('biofeedback');
+        } else if (tier === 'premium') {
+          activateModule('biofeedback');
+          activateModule('focus');
+          activateModule('morning_rituals');
+          activateModule('social');
+          activateModule('work_life_balance');
+        }
+
+        // Show success toast
+        toast({
+          title: 'Payment Successful!',
+          description: `Welcome to ${tierName}! Your account has been upgraded.`,
+        });
+        
+        // Close dialog
+        onClose();
+        
+        // Redirect to dashboard with success indicator
+        navigate('/dashboard?upgraded=true');
+      } else {
+        setError('Payment failed. Please try again.');
+      }
+    } catch (err) {
+      console.error('Payment error:', err);
+      setError('An error occurred. Please try again.');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-2xl">Complete Your Purchase</DialogTitle>
+          <DialogTitle>Complete Your Upgrade</DialogTitle>
           <DialogDescription>
-            Upgrade to {tier.charAt(0).toUpperCase() + tier.slice(1)} and unlock premium features
+            Subscribe to Respiro Balance {tierName}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-4">
           {/* Order Summary */}
-          <Card>
-            <CardContent className="p-6">
-              <h3 className="font-semibold mb-4">Order Summary</h3>
-              
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Plan</span>
-                  <span className="font-medium capitalize">{tier}</span>
-                </div>
-                
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Billing</span>
-                  <span className="font-medium capitalize">{billingCycle}</span>
-                </div>
-                
-                <Separator />
-                
-                <div className="flex justify-between text-lg">
-                  <span className="font-semibold">Total</span>
-                  <span className="font-bold">${amount.toFixed(2)}</span>
-                </div>
-
-                {billingCycle === 'annual' && (
-                  <p className="text-xs text-muted-foreground">
-                    Billed as one payment of ${amount.toFixed(2)}
-                  </p>
-                )}
-              </div>
-
-              <div className="mt-6 p-4 bg-muted/50 rounded-lg">
-                <div className="flex items-start gap-2">
-                  <Lock className="w-4 h-4 text-primary mt-0.5" />
-                  <p className="text-xs text-muted-foreground">
-                    Your payment information is secure and encrypted
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="bg-muted/50 p-4 rounded-lg space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="font-medium">{tierName} Plan</span>
+              <Badge>{cycle}</Badge>
+            </div>
+            <Separator />
+            <div className="flex items-center justify-between text-lg font-bold">
+              <span>Total</span>
+              <span>${amount.toFixed(2)}</span>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {cycle === 'annual' 
+                ? 'Billed annually. Cancel anytime.' 
+                : 'Billed monthly. Cancel anytime.'}
+            </p>
+          </div>
 
           {/* Payment Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="cardNumber">Card Number</Label>
               <div className="relative">
-                <CreditCard className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="cardNumber"
                   placeholder="1234 5678 9012 3456"
+                  className="pl-10"
                   value={cardNumber}
                   onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
                   maxLength={19}
-                  className="pl-10"
-                  disabled={loading}
+                  disabled={isProcessing}
+                  required
                 />
+                <CreditCard className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
               </div>
-              {errors.cardNumber && (
-                <p className="text-sm text-destructive">{errors.cardNumber}</p>
-              )}
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="expiry">Expiry Date</Label>
+                <Label htmlFor="expiry">Expiry</Label>
                 <Input
                   id="expiry"
                   placeholder="MM/YY"
                   value={expiry}
                   onChange={(e) => setExpiry(formatExpiry(e.target.value))}
                   maxLength={5}
-                  disabled={loading}
+                  disabled={isProcessing}
+                  required
                 />
-                {errors.expiry && (
-                  <p className="text-sm text-destructive">{errors.expiry}</p>
-                )}
               </div>
-
               <div className="space-y-2">
                 <Label htmlFor="cvc">CVC</Label>
                 <Input
@@ -253,50 +220,45 @@ export const CheckoutDialog: React.FC<CheckoutDialogProps> = ({
                   value={cvc}
                   onChange={(e) => setCvc(e.target.value.replace(/\D/g, '').slice(0, 4))}
                   maxLength={4}
-                  disabled={loading}
+                  disabled={isProcessing}
+                  required
                 />
-                {errors.cvc && (
-                  <p className="text-sm text-destructive">{errors.cvc}</p>
-                )}
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="cardholderName">Cardholder Name</Label>
+              <Label htmlFor="name">Cardholder Name</Label>
               <Input
-                id="cardholderName"
+                id="name"
                 placeholder="John Doe"
                 value={cardholderName}
                 onChange={(e) => setCardholderName(e.target.value)}
-                disabled={loading}
+                disabled={isProcessing}
+                required
               />
-              {errors.cardholderName && (
-                <p className="text-sm text-destructive">{errors.cardholderName}</p>
-              )}
             </div>
 
-            <Button
-              type="submit"
+            {error && (
+              <div className="bg-destructive/10 text-destructive p-3 rounded-lg text-sm">
+                {error}
+              </div>
+            )}
+
+            <Button 
+              type="submit" 
               className="w-full"
-              size="lg"
-              disabled={loading}
+              disabled={isProcessing}
             >
-              {loading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Processing...
-                </>
-              ) : (
-                `Pay $${amount.toFixed(2)}`
-              )}
+              {isProcessing ? 'Processing...' : `Pay $${amount.toFixed(2)}`}
             </Button>
 
-            <p className="text-xs text-center text-muted-foreground">
-              By completing this purchase, you agree to our Terms of Service
-            </p>
+            <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+              <Lock className="w-3 h-3" />
+              <span>Secure payment powered by Stripe</span>
+            </div>
           </form>
         </div>
       </DialogContent>
     </Dialog>
   );
-};
+}
