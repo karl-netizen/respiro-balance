@@ -129,6 +129,70 @@ export interface ChallengeParticipation {
   challenge?: CommunityChallenge;
 }
 
+export interface ChallengeParticipant {
+  id: string;
+  user_id: string;
+  challenge_id: string;
+  progress: number;
+  is_completed: boolean;
+  completed_at?: string;
+  joined_at: string;
+}
+
+export interface SocialComment {
+  id: string;
+  post_id: string;
+  user_id: string;
+  content: string;
+  parent_comment_id?: string;
+  likes_count: number;
+  created_at: string;
+  updated_at: string;
+  user_profile?: UserSocialProfile;
+  replies?: SocialComment[];
+}
+
+export interface Friendship {
+  id: string;
+  user_id: string;
+  friend_id: string;
+  status: 'pending' | 'accepted' | 'blocked';
+  created_at: string;
+  updated_at: string;
+  friend_profile?: UserSocialProfile;
+}
+
+export interface Challenge {
+  id: string;
+  name: string;
+  description?: string;
+  challenge_type: '7-day' | '30-day' | 'community-event';
+  category: 'meditation' | 'breathing' | 'focus' | 'habit';
+  start_date: string;
+  end_date: string;
+  target_metric?: string;
+  target_value?: number;
+  participants_count: number;
+  is_active: boolean;
+  created_by?: string;
+  created_at: string;
+  user_participation?: ChallengeParticipant;
+}
+
+export interface SocialNotification {
+  id: string;
+  user_id: string;
+  type: 'like' | 'comment' | 'follow' | 'challenge' | 'achievement';
+  title: string;
+  message?: string;
+  action_url?: string;
+  related_user_id?: string;
+  related_post_id?: string;
+  is_read: boolean;
+  created_at: string;
+  related_user?: UserSocialProfile;
+}
+
 export interface LeaderboardEntry {
   id: string;
   user_id: string;
