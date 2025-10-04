@@ -72,12 +72,11 @@ import OnboardingPage from '@/pages/Onboarding';
 import SimpleAuthPage from '@/pages/SimpleAuthPage';
 import { MobilePWASetup } from '@/components/mobile/MobilePWASetup';
 import { usePerformanceMonitoring } from '@/hooks/usePerformanceMonitoring';
-import { useOnboarding } from '@/hooks/useOnboarding';
-import { useAuth } from '@/hooks/useAuth';
 import { useModuleSync } from '@/hooks/useModuleSync';
 import { useSubscriptionSync } from '@/hooks/useSubscriptionSync';
 import { SubscriptionMonitor } from '@/components/subscription/SubscriptionMonitor';
 import { OnboardingGuard } from '@/components/OnboardingGuard';
+import { Navigate } from 'react-router-dom';
 
 // Global error handler for unhandled promise rejections
 window.addEventListener('unhandledrejection', (event) => {
@@ -115,49 +114,6 @@ function App() {
 }
 
 function AppContent() {
-  const { user, isLoading: authLoading } = useAuth();
-  const { hasCompletedOnboarding, isLoading: onboardingLoading } = useOnboarding();
-
-  // Show loading while checking auth and onboarding status
-  if (authLoading || (user && onboardingLoading)) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Redirect authenticated users to onboarding if not completed
-  if (user && !hasCompletedOnboarding) {
-    return (
-      <NotificationsProvider>
-        <FocusProvider>
-          <UserPreferencesProvider>
-            <SubscriptionProvider>
-              <ModuleSyncWrapper>
-                <ThemeProvider defaultTheme="system" storageKey="respiro-ui-theme">
-                  <Router>
-                    <NavigationHistoryProvider>
-                      <div className="min-h-screen bg-background font-sans antialiased">
-                        <OnboardingPage />
-                        <MobilePWASetup />
-                        <LoadingMonitor />
-                        <Toaster />
-                      </div>
-                    </NavigationHistoryProvider>
-                  </Router>
-                </ThemeProvider>
-              </ModuleSyncWrapper>
-            </SubscriptionProvider>
-          </UserPreferencesProvider>
-        </FocusProvider>
-      </NotificationsProvider>
-    );
-  }
-
   return (
     <NotificationsProvider>
       <FocusProvider>
@@ -179,15 +135,15 @@ function AppContent() {
                       
                       <main className="flex-1">
                         <Routes>
-                        <Route path="/" element={<LandingPage />} />
-                        <Route path="/landing" element={<LandingPage />} />
-                        <Route path="/home" element={<HomePage />} />
-                        <Route path="/onboarding" element={<OnboardingPage />} />
-                        <Route path="/dashboard" element={<Dashboard />} />
-                        <Route path="/register" element={<RegisterPage />} />
-                        <Route path="/login" element={<LoginPage />} />
-                        <Route path="/auth" element={user ? <Dashboard /> : <SimpleAuthPage />} />
-                        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                          <Route path="/landing" element={<LandingPage />} />
+                          <Route path="/home" element={<HomePage />} />
+                          <Route path="/onboarding" element={<OnboardingPage />} />
+                          <Route path="/dashboard" element={<Dashboard />} />
+                         <Route path="/register" element={<RegisterPage />} />
+                         <Route path="/login" element={<LoginPage />} />
+                         <Route path="/auth" element={<SimpleAuthPage />} />
+                         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                         <Route path="/reset-password" element={<ResetPasswordPage />} />
                         <Route path="/profile" element={<ProfilePage />} />
                         <Route path="/account" element={
