@@ -1,10 +1,12 @@
 
 import React from 'react';
-
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { RotateCcw } from 'lucide-react';
 import AccountGeneralSettings from '@/components/settings/AccountGeneralSettings';
 import AccountNotificationSettings from '@/components/settings/AccountNotificationSettings';
 import AccountPreferencesSettings from '@/components/settings/AccountPreferencesSettings';
@@ -18,6 +20,15 @@ const Settings = () => {
   if (!isLoading && !user) {
     return <Navigate to="/login" />;
   }
+  
+  const handleResetOnboarding = () => {
+    if (confirm('Are you sure you want to reset onboarding? This will restart the welcome flow.')) {
+      localStorage.removeItem('onboarding_completed');
+      localStorage.removeItem('user_goal');
+      localStorage.removeItem('welcome_shown');
+      window.location.href = '/onboarding';
+    }
+  };
   
   return (
     <div className="min-h-screen flex flex-col">
@@ -60,6 +71,36 @@ const Settings = () => {
             <AccountSubscriptionSettings />
           </TabsContent>
         </Tabs>
+        
+        <Separator className="my-8" />
+        
+        {/* Developer Tools */}
+        <Card className="border-muted">
+          <CardHeader>
+            <CardTitle className="text-xl font-semibold">Developer Tools</CardTitle>
+            <CardDescription>
+              Testing and debugging utilities
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
+              <div>
+                <p className="font-medium">Reset Onboarding</p>
+                <p className="text-sm text-muted-foreground">
+                  Clear onboarding progress and restart the welcome flow
+                </p>
+              </div>
+              <Button 
+                variant="outline" 
+                onClick={handleResetOnboarding}
+                className="gap-2"
+              >
+                <RotateCcw className="w-4 h-4" />
+                Reset
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </main>
       
       

@@ -1,127 +1,144 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Switch } from '@/components/ui/switch';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { useDemoMode } from '@/hooks/useDemoMode';
+import { Progress } from '@/components/ui/progress';
+import { ChevronRight, ChevronLeft } from 'lucide-react';
 
-const Onboarding = () => {
+export default function Onboarding() {
   const navigate = useNavigate();
-  const { loginDemo, isDemoMode, toggleDemoMode } = useDemoMode();
-  const [isDemo, setIsDemo] = useState(isDemoMode);
+  const [step, setStep] = useState(0);
+  const [userGoal, setUserGoal] = useState('');
 
-  const handleDemoToggle = (checked: boolean) => {
-    setIsDemo(checked);
-    if (checked !== isDemoMode) {
-      toggleDemoMode();
-    }
-  };
+  const totalSteps = 3;
+  const progress = ((step + 1) / totalSteps) * 100;
 
-  const handleDemoLogin = () => {
-    // Ensure demo mode is set before logging in
-    if (!isDemoMode) {
-      toggleDemoMode();
-    }
-    loginDemo();
+  const handleComplete = () => {
+    // Mark onboarding as complete
+    localStorage.setItem('onboarding_completed', 'true');
+    
+    // Save user preferences
+    localStorage.setItem('user_goal', userGoal);
+    
+    // Navigate to dashboard
     navigate('/dashboard');
   };
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-white to-secondary/10 px-4 py-12">
-      <div className="max-w-2xl w-full space-y-8">
-        <Card className="shadow-lg">
-          <CardHeader className="text-center">
-            <CardTitle className="text-3xl font-bold text-primary">Welcome to Respiro Balance</CardTitle>
-            <p className="text-lg text-muted-foreground mt-4">
-              Choose how you'd like to experience your wellness journey
+  const handleSkip = () => {
+    localStorage.setItem('onboarding_completed', 'true');
+    navigate('/dashboard');
+  };
+
+  // Step 0: Welcome
+  if (step === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-blue-50 p-4">
+        <Card className="max-w-2xl w-full">
+          <CardContent className="pt-12 pb-8 text-center space-y-6">
+            <div className="text-6xl mb-4">🧘</div>
+            <h1 className="text-4xl font-bold">Welcome to Respiro Balance</h1>
+            <p className="text-xl text-muted-foreground max-w-md mx-auto">
+              Your journey to better focus, reduced stress, and inner peace starts here.
             </p>
-          </CardHeader>
-          
-          <CardContent className="space-y-6">
-            {/* Demo/Live Mode Toggle */}
-            <div className="p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200 shadow-sm">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm font-semibold text-gray-700">Experience Mode:</span>
-                  <Badge 
-                    variant={isDemo ? "default" : "secondary"} 
-                    className={`text-xs ${isDemo ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}
-                  >
-                    {isDemo ? "🎭 DEMO" : "🔐 LIVE"}
-                  </Badge>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <span className={`text-sm font-medium transition-colors ${!isDemo ? "text-blue-600" : "text-gray-500"}`}>
-                    Live
-                  </span>
-                  <Switch
-                    checked={isDemo}
-                    onCheckedChange={handleDemoToggle}
-                    className="data-[state=checked]:bg-blue-600"
-                  />
-                  <span className={`text-sm font-medium transition-colors ${isDemo ? "text-blue-600" : "text-gray-500"}`}>
-                    Demo
-                  </span>
-                </div>
-              </div>
-              
-              <div className="space-y-4">
-                {isDemo ? (
-                  <>
-                    <p className="text-sm text-gray-600 leading-relaxed">
-                      🎭 <strong>Demo Mode:</strong> Instant access with premium features, sample meditation data, and a fully functional interface. Perfect for exploring Respiro Balance without creating an account.
-                    </p>
-                    <Button
-                      onClick={handleDemoLogin}
-                      className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-[1.02]"
-                      size="lg"
-                    >
-                      🎭 Enter Demo Mode - Start Exploring
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <p className="text-sm text-gray-600 leading-relaxed">
-                      🔐 <strong>Live Mode:</strong> Create a real account with email verification, personalized progress tracking, and full access to your meditation journey.
-                    </p>
-                    <div className="flex flex-col sm:flex-row gap-3">
-                      <Button
-                        onClick={() => navigate('/register')}
-                        className="bg-primary text-white hover:bg-primary/90 px-8 py-3 flex-1"
-                        size="lg"
-                      >
-                        Create Account
-                      </Button>
-                      
-                      <Button
-                        onClick={() => navigate('/login')}
-                        variant="outline"
-                        className="border-primary text-primary hover:bg-primary/10 px-8 py-3 flex-1"
-                        size="lg"
-                      >
-                        Sign In
-                      </Button>
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
             
-            <div className="text-center">
-              <Button
-                onClick={() => navigate('/')}
-                variant="ghost"
-                className="text-muted-foreground"
-              >
-                ← Back to Home
+            <div className="flex flex-col gap-4 max-w-sm mx-auto pt-8">
+              <Button size="lg" onClick={() => setStep(1)}>
+                Get Started
+                <ChevronRight className="w-4 h-4 ml-2" />
+              </Button>
+              <Button size="lg" variant="ghost" onClick={handleSkip}>
+                Skip Tutorial
               </Button>
             </div>
           </CardContent>
         </Card>
       </div>
+    );
+  }
+
+  // Step 1: Choose Your Goal
+  if (step === 1) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-blue-50 p-4">
+        <Card className="max-w-2xl w-full">
+          <CardContent className="pt-8 pb-6 space-y-6">
+            <Progress value={progress} className="mb-4" />
+            
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-bold mb-2">What brings you here today?</h2>
+              <p className="text-muted-foreground">Choose your primary goal</p>
+            </div>
+            
+            <div className="space-y-3">
+              {[
+                { value: 'stress', emoji: '😌', label: 'Reduce stress & anxiety' },
+                { value: 'focus', emoji: '🎯', label: 'Improve focus & productivity' },
+                { value: 'sleep', emoji: '😴', label: 'Better sleep' },
+                { value: 'habits', emoji: '🌅', label: 'Build healthy habits' }
+              ].map(option => (
+                <button
+                  key={option.value}
+                  onClick={() => setUserGoal(option.value)}
+                  className={`w-full flex items-center gap-4 p-4 border-2 rounded-lg transition-colors ${
+                    userGoal === option.value 
+                      ? 'border-primary bg-primary/5' 
+                      : 'border-border hover:bg-accent'
+                  }`}
+                >
+                  <span className="text-3xl">{option.emoji}</span>
+                  <span className="font-medium text-left">{option.label}</span>
+                </button>
+              ))}
+            </div>
+
+            <div className="flex gap-3 pt-4">
+              <Button variant="outline" onClick={() => setStep(0)}>
+                <ChevronLeft className="w-4 h-4 mr-2" />
+                Back
+              </Button>
+              <Button 
+                className="flex-1" 
+                onClick={() => setStep(2)}
+                disabled={!userGoal}
+              >
+                Continue
+                <ChevronRight className="w-4 h-4 ml-2" />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Step 2: Complete
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-blue-50 p-4">
+      <Card className="max-w-2xl w-full">
+        <CardContent className="pt-12 pb-8 text-center space-y-6">
+          <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
+            <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          
+          <h2 className="text-3xl font-bold">You're All Set! 🎉</h2>
+          <p className="text-lg text-muted-foreground max-w-md mx-auto">
+            Let's start your meditation journey!
+          </p>
+          
+          <div className="bg-muted/50 p-6 rounded-lg max-w-md mx-auto">
+            <Badge className="mb-3">Your Goal</Badge>
+            <p className="text-sm capitalize">{userGoal?.replace('_', ' ')}</p>
+          </div>
+
+          <Button size="lg" className="mt-8" onClick={handleComplete}>
+            Start Your Journey
+            <ChevronRight className="w-4 h-4 ml-2" />
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
-};
-
-export default Onboarding;
+}

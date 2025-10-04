@@ -77,6 +77,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useModuleSync } from '@/hooks/useModuleSync';
 import { useSubscriptionSync } from '@/hooks/useSubscriptionSync';
 import { SubscriptionMonitor } from '@/components/subscription/SubscriptionMonitor';
+import { OnboardingGuard } from '@/components/OnboardingGuard';
 
 // Global error handler for unhandled promise rejections
 window.addEventListener('unhandledrejection', (event) => {
@@ -166,17 +167,18 @@ function AppContent() {
               <ThemeProvider defaultTheme="system" storageKey="respiro-ui-theme">
                 <Router>
                   <NavigationHistoryProvider>
-                    <div className="min-h-screen bg-background font-sans antialiased">
-                      <Header />
-                    
-                    {/* Mobile PWA Setup */}
-                    <MobilePWASetup />
-                    
-                    {/* Loading Performance Monitor */}
-                    <LoadingMonitor />
-                    
-                    <main className="flex-1">
-                      <Routes>
+                    <OnboardingGuard>
+                      <div className="min-h-screen bg-background font-sans antialiased">
+                        <Header />
+                      
+                      {/* Mobile PWA Setup */}
+                      <MobilePWASetup />
+                      
+                      {/* Loading Performance Monitor */}
+                      <LoadingMonitor />
+                      
+                      <main className="flex-1">
+                        <Routes>
                         <Route path="/" element={<LandingPage />} />
                         <Route path="/landing" element={<LandingPage />} />
                         <Route path="/home" element={<HomePage />} />
@@ -296,22 +298,23 @@ function AppContent() {
                         <Route path="/testing-summary" element={<TestingFrameworkSummary />} />
                         <Route path="/enhanced-work-life" element={React.createElement(React.lazy(() => import('@/examples/EnhancedWorkLifeExample').then(m => ({ default: m.EnhancedWorkLifeExample }))))} />
 
-                      </Routes>
-                    </main>
-                    
-                    <Footer />
-                    <Toaster />
-                  </div>
-                </NavigationHistoryProvider>
-              </Router>
-            </ThemeProvider>
-            </ModuleSyncWrapper>
-          </SubscriptionProvider>
-        </UserPreferencesProvider>
-      </FocusProvider>
-    </NotificationsProvider>
-  );
-}
+                        </Routes>
+                      </main>
+                      
+                      <Footer />
+                      <Toaster />
+                    </div>
+                    </OnboardingGuard>
+                  </NavigationHistoryProvider>
+                </Router>
+              </ThemeProvider>
+              </ModuleSyncWrapper>
+            </SubscriptionProvider>
+          </UserPreferencesProvider>
+        </FocusProvider>
+      </NotificationsProvider>
+    );
+  }
 
 // Wrapper component to sync modules - must be inside SubscriptionProvider
 function ModuleSyncWrapper({ children }: { children: React.ReactNode }) {
