@@ -56,6 +56,7 @@ const AdvancedSecurityDemo = lazy(() => import('@/components/security/advanced/A
 
 // Module Library Page
 const ModuleLibraryPage = lazy(() => import('@/pages/ModuleLibraryPage'));
+const BiofeedbackSettings = lazy(() => import('@/pages/BiofeedbackSettings'));
 import { ComprehensiveTestingDemo } from '@/test/demo/comprehensive-testing-demo';
 import { TestingFrameworkSummary } from '@/test/demo/testing-framework-summary';
 import OnboardingPage from '@/pages/Onboarding';
@@ -194,6 +195,11 @@ function AppContent() {
                         <Route path="/modules" element={
                           <React.Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div></div>}>
                             <ModuleLibraryPage />
+                          </React.Suspense>
+                        } />
+                        <Route path="/biofeedback/settings" element={
+                          <React.Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div></div>}>
+                            <BiofeedbackSettings />
                           </React.Suspense>
                         } />
                         <Route path="/fitbit-callback" element={<FitbitCallback />} />

@@ -8,6 +8,8 @@ import { ArrowLeft, Play, Pause, RotateCcw, Heart, Clock, Star, Crown } from 'lu
 import { Progress } from '@/components/ui/progress';
 import { SubscriptionGate } from '@/components/subscription/SubscriptionGate';
 import { useSubscription } from '@/components/subscription/SubscriptionProvider';
+import { SessionInsightDialog } from '@/components/biofeedback/SessionInsightDialog';
+import { useBiofeedbackStore } from '@/store/biofeedbackStore';
 
 export interface MeditationSessionViewProps {
   sessionId?: string;
@@ -26,6 +28,8 @@ const MeditationSessionView: React.FC<MeditationSessionViewProps> = ({
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [rating, setRating] = useState(0);
+  const [showInsightDialog, setShowInsightDialog] = useState(false);
+  const { isConnected } = useBiofeedbackStore();
 
   // Mock session data - in real implementation, fetch from database
   const session = {
@@ -70,7 +74,13 @@ const MeditationSessionView: React.FC<MeditationSessionViewProps> = ({
     
     const feedback = rating > 0 ? { rating } : undefined;
     onComplete?.(completedSession, feedback);
-    navigate('/dashboard');
+    
+    // Show biofeedback insight if connected
+    if (isConnected) {
+      setShowInsightDialog(true);
+    } else {
+      navigate('/dashboard');
+    }
   };
 
   const formatTime = (seconds: number) => {
@@ -305,6 +315,18 @@ const MeditationSessionView: React.FC<MeditationSessionViewProps> = ({
           </CardContent>
         </Card>
       </div>
+
+      {/* Biofeedback Insight Dialog */}
+      <SessionInsightDialog
+        open={showInsightDialog}
+        onClose={() => {
+          setShowInsightDialog(false);
+          navigate('/dashboard');
+        }}
+        sessionId={session.id}
+        sessionType="meditation"
+        duration={session.duration}
+      />
     </div>
   );
 };

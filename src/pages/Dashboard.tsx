@@ -8,15 +8,18 @@ import MoodDashboardHeader from '@/components/dashboard/MoodDashboardHeader';
 import { DashboardWelcome, DashboardQuickAccess } from '@/components/dashboard';
 import { MODULE_REGISTRY } from '@/lib/modules/moduleRegistry';
 import { useModuleStore } from '@/store/moduleStore';
+import { useBiofeedbackStore } from '@/store/biofeedbackStore';
+import { WeeklyReportCard } from '@/components/biofeedback/WeeklyReportCard';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles, Package } from 'lucide-react';
+import { Sparkles, Package, Settings, Activity } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const { activeModules, subscriptionTier } = useModuleStore();
+  const { isConnected, sessionInsights } = useBiofeedbackStore();
 
   return (
     <div className="min-h-screen bg-background">
@@ -89,13 +92,25 @@ const Dashboard: React.FC = () => {
                       <Package className="w-5 h-5 text-primary" />
                       Your Active Modules
                     </h2>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => navigate('/modules')}
-                    >
-                      Manage
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      {isConnected && (
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => navigate('/biofeedback/settings')}
+                        >
+                          <Settings className="w-4 h-4 mr-2" />
+                          Biofeedback
+                        </Button>
+                      )}
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => navigate('/modules')}
+                      >
+                        Manage
+                      </Button>
+                    </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {activeModules.map(moduleId => {
@@ -120,6 +135,17 @@ const Dashboard: React.FC = () => {
                       );
                     })}
                   </div>
+                </div>
+              )}
+
+              {/* Weekly Wellness Report */}
+              {isConnected && sessionInsights.length > 0 && (
+                <div className="space-y-4 mb-6">
+                  <h2 className="text-xl font-semibold text-foreground flex items-center gap-2">
+                    <Activity className="w-5 h-5 text-primary" />
+                    Wellness Insights
+                  </h2>
+                  <WeeklyReportCard />
                 </div>
               )}
 
