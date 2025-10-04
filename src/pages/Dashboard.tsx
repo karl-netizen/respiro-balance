@@ -14,7 +14,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles, Package, Settings, Activity } from 'lucide-react';
+import { Sparkles, Package, Settings, Activity, Boxes } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 // Lazy load module components
 const BiofeedbackModule = lazy(() => import('@/components/modules/BiofeedbackModule'));
@@ -61,6 +62,41 @@ const Dashboard: React.FC = () => {
           <>
             {/* Header with Back Button */}
             <DashboardHeader onGoBack={handleGoBack} />
+
+            {/* Module Management Quick Access */}
+            <div className="container mx-auto px-4 py-4">
+              <Card className="border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-accent/5">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 rounded-lg bg-primary/10">
+                        <Boxes className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-foreground flex items-center gap-2">
+                          Power Modules
+                          <Badge variant="secondary" className="text-xs">
+                            {activeModules.length} active
+                          </Badge>
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                          {subscriptionTier === 'free' 
+                            ? 'Upgrade to unlock Focus Mode, Morning Rituals & more'
+                            : 'Activate modules to enhance your wellness journey'}
+                        </p>
+                      </div>
+                    </div>
+                    <Button 
+                      onClick={() => navigate(subscriptionTier === 'free' ? '/subscription' : '/modules')}
+                      className="flex items-center gap-2"
+                    >
+                      <Settings className="w-4 h-4" />
+                      {subscriptionTier === 'free' ? 'Upgrade' : 'Manage Modules'}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
 
             <DashboardLayout>
               {/* Mood Check Modal */}
