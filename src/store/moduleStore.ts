@@ -33,12 +33,19 @@ export const useModuleStore = create<ModuleState>()(
       setSubscriptionTier: (tier) => {
         set({ subscriptionTier: tier });
         
-        // Auto-activate biofeedback for paid tiers
-        if (tier === 'standard' || tier === 'premium') {
-          const { activeModules } = get();
+        const { activeModules } = get();
+        
+        // Auto-activate modules based on tier
+        if (tier === 'standard') {
+          // Auto-activate biofeedback for standard
           if (!activeModules.includes('biofeedback')) {
-            set({ activeModules: [...activeModules, 'biofeedback'] });
+            set({ activeModules: [...get().activeModules, 'biofeedback'] });
           }
+        } else if (tier === 'premium') {
+          // Auto-activate all modules for premium
+          const allModules = ['biofeedback', 'focus', 'morning_rituals', 'social', 'work_life_balance'];
+          const newActiveModules = [...new Set([...activeModules, ...allModules])];
+          set({ activeModules: newActiveModules });
         }
       },
 

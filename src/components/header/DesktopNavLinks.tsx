@@ -102,6 +102,17 @@ const DesktopNavLinks = () => {
             Morning Ritual
           </NavLink>
         </NavigationMenuItem>
+
+        {/* Pricing link */}
+        <NavigationMenuItem>
+          <NavLink
+            to="/pricing"
+            isActive={isActive('/pricing')}
+            onClick={() => handleNavClick("/pricing")}
+          >
+            Pricing
+          </NavLink>
+        </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>
   );

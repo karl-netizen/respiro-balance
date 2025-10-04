@@ -6,7 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useDeviceDetection } from '@/hooks/core/useDeviceDetection';
 import { 
   Home, Gauge, LineChart, Settings, BookOpen, Heart, 
-  Clock, Sunrise, Briefcase, Brain
+  Clock, Sunrise, Briefcase, Brain, Sparkles
 } from "lucide-react";
 import MobileDropdown from "./MobileDropdown";
 
@@ -170,6 +170,15 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
       >
         <LineChart className={getIconSize()} />
         <span className={getTextSize()}>Progress</span>
+      </Link>
+
+      <Link
+        to="/pricing"
+        className={getLinkClasses(isActive('/pricing'))}
+        onClick={() => handleLinkClick('/pricing')}
+      >
+        <Sparkles className={getIconSize()} />
+        <span className={getTextSize()}>Pricing</span>
       </Link>
       
       <Link

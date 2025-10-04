@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { Sparkles, Package, Settings, Activity, Boxes } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { SessionCounterWidget } from '@/components/subscription/SessionCounterWidget';
 
 // Lazy load module components
 const BiofeedbackModule = lazy(() => import('@/components/modules/BiofeedbackModule'));
@@ -135,6 +136,11 @@ const Dashboard: React.FC = () => {
                 onMoodSelect={handleMoodModalSelect}
                 currentStreak={currentStreak}
               />
+
+              {/* Session Counter Widget */}
+              <div className="mb-6">
+                <SessionCounterWidget />
+              </div>
 
               {/* Active Module Widgets */}
               {activeModules.length > 0 && (

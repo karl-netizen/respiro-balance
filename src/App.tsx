@@ -67,6 +67,8 @@ import { usePerformanceMonitoring } from '@/hooks/usePerformanceMonitoring';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { useAuth } from '@/hooks/useAuth';
 import { useModuleSync } from '@/hooks/useModuleSync';
+import { useSubscriptionSync } from '@/hooks/useSubscriptionSync';
+import { SubscriptionMonitor } from '@/components/subscription/SubscriptionMonitor';
 
 // Global error handler for unhandled promise rejections
 window.addEventListener('unhandledrejection', (event) => {
@@ -178,8 +180,9 @@ function AppContent() {
                         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                         <Route path="/reset-password" element={<ResetPasswordPage />} />
                         <Route path="/profile" element={<ProfilePage />} />
-                        <Route path="/account" element={<ProfilePage />} />
+                        <Route path="/account" element={React.createElement(React.lazy(() => import('@/pages/AccountSettings')))} />
                         <Route path="/settings" element={<SettingsPage />} />
+                        <Route path="/pricing" element={React.createElement(React.lazy(() => import('@/pages/PricingPage')))} />
                         <Route path="/meditate" element={<Meditate />} />
                         <Route path="/system" element={<SystemDashboardPage />} />
                         <Route path="/meditation" element={<MeditationLibrary />} />
@@ -264,7 +267,14 @@ function AppContent() {
 // Wrapper component to sync modules - must be inside SubscriptionProvider
 function ModuleSyncWrapper({ children }: { children: React.ReactNode }) {
   useModuleSync();
-  return <>{children}</>;
+  useSubscriptionSync(); // Sync subscription tier with module store
+  
+  return (
+    <>
+      <SubscriptionMonitor />
+      {children}
+    </>
+  );
 }
 
 export default App;
