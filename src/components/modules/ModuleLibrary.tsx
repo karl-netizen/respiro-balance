@@ -16,13 +16,16 @@ export function ModuleLibrary() {
     canActivateModule 
   } = useModuleStore();
 
+  // Safety check: ensure subscriptionTier has a valid value
+  const safeTier = subscriptionTier || 'free';
+
   const modules = Object.values(MODULE_REGISTRY);
 
   const getBannerMessage = () => {
-    if (subscriptionTier === 'free') {
+    if (safeTier === 'free') {
       return 'Upgrade to Standard or Premium to unlock power modules';
     }
-    if (subscriptionTier === 'standard') {
+    if (safeTier === 'standard') {
       return 'Biofeedback Lite is always active. Choose 1 additional module.';
     }
     return 'All modules unlocked! Enjoy the full Respiro experience.';
@@ -44,16 +47,16 @@ export function ModuleLibrary() {
               <Sparkles className="w-5 h-5 text-primary" />
               <div>
                 <p className="text-sm text-muted-foreground">Current Plan</p>
-                <p className="text-xl font-semibold capitalize text-foreground">{subscriptionTier}</p>
+                <p className="text-xl font-semibold capitalize text-foreground">{safeTier}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <div className="text-right">
                 <p className="text-sm text-muted-foreground">Active Modules</p>
-                <p className="text-xl font-semibold text-foreground">{activeModules.length} / {subscriptionTier === 'premium' ? '5' : subscriptionTier === 'standard' ? '2' : '0'}</p>
+                <p className="text-xl font-semibold text-foreground">{activeModules.length} / {safeTier === 'premium' ? '5' : safeTier === 'standard' ? '2' : '0'}</p>
               </div>
             </div>
-            {subscriptionTier === 'free' && (
+            {safeTier === 'free' && (
               <Button onClick={() => navigate('/subscription')} className="bg-primary hover:bg-primary/90">
                 Upgrade Now
               </Button>
@@ -71,7 +74,7 @@ export function ModuleLibrary() {
               const module = MODULE_REGISTRY[moduleId];
               if (!module) return null;
 
-              const canSwap = !module.alwaysActive && subscriptionTier === 'standard';
+              const canSwap = !module.alwaysActive && safeTier === 'standard';
 
               return (
                 <Card key={moduleId} className="border-2 border-success">
@@ -173,12 +176,12 @@ export function ModuleLibrary() {
                         className="w-full" 
                         variant="outline" 
                         onClick={() => {
-                          if (subscriptionTier === 'free') {
+                          if (safeTier === 'free') {
                             navigate('/subscription');
                           }
                         }}
                       >
-                        {subscriptionTier === 'free' ? 'Upgrade to Activate' : 'Module Limit Reached'}
+                        {safeTier === 'free' ? 'Upgrade to Activate' : 'Module Limit Reached'}
                       </Button>
                     )}
                   </CardFooter>
