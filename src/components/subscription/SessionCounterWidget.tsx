@@ -16,14 +16,14 @@ export const SessionCounterWidget: React.FC = () => {
     return (
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <Zap className="w-5 h-5 text-primary" />
+          <CardTitle className="text-xl font-semibold flex items-center gap-2">
+            <Zap className="w-5 h-5 text-yellow-500" />
             Session Usage
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6 pt-0">
           <div className="text-center py-4">
-            <Badge variant="secondary" className="text-base px-4 py-2">
+            <Badge variant="secondary" className="text-base px-4 py-2 bg-yellow-500/10 text-yellow-700 dark:text-yellow-400">
               <Zap className="w-4 h-4 mr-2" />
               Unlimited Sessions
             </Badge>
@@ -44,15 +44,17 @@ export const SessionCounterWidget: React.FC = () => {
   const isRunningLow = sessionsRemaining <= 5 && sessionsRemaining > 0;
 
   return (
-    <Card className={isOutOfSessions ? 'border-destructive' : ''}>
+    <Card className={isOutOfSessions ? 'border-2 border-red-500/50' : ''}>
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg flex items-center justify-between">
+        <CardTitle className="text-xl font-semibold flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Activity className="w-5 h-5 text-primary" />
+            <Activity className="w-5 h-5 text-blue-500" />
             Session Usage
           </div>
           {isOutOfSessions && (
-            <Badge variant="destructive">Out of sessions</Badge>
+            <Badge variant="destructive" className="bg-red-500 text-white">
+              Out of sessions
+            </Badge>
           )}
           {isRunningLow && (
             <Badge variant="secondary" className="bg-yellow-500/10 text-yellow-700 dark:text-yellow-400">
@@ -61,7 +63,7 @@ export const SessionCounterWidget: React.FC = () => {
           )}
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 p-6 pt-0">
         <div>
           <div className="flex justify-between items-center mb-2">
             <span className="text-2xl font-bold">
@@ -85,7 +87,7 @@ export const SessionCounterWidget: React.FC = () => {
             </p>
             <Button 
               onClick={() => navigate('/pricing')}
-              className="w-full"
+              className="w-full bg-blue-500 hover:bg-blue-600 text-white"
               size="sm"
             >
               <TrendingUp className="w-4 h-4 mr-2" />

@@ -97,14 +97,16 @@ export default function PricingPage() {
 
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4">Choose Your Plan</h1>
-          <p className="text-xl text-muted-foreground mb-8">
+          <h1 className="text-3xl font-bold mb-4">
+            Choose Your Plan
+          </h1>
+          <p className="text-xl text-muted-foreground mb-6">
             Invest in your wellness journey
           </p>
 
           {/* Billing Toggle */}
           <div className="flex items-center justify-center gap-4">
-            <Label htmlFor="billing-toggle" className={!isAnnual ? 'font-semibold' : ''}>
+            <Label htmlFor="billing-toggle" className={!isAnnual ? 'font-semibold' : 'text-muted-foreground'}>
               Monthly
             </Label>
             <Switch
@@ -112,15 +114,17 @@ export default function PricingPage() {
               checked={isAnnual}
               onCheckedChange={setIsAnnual}
             />
-            <Label htmlFor="billing-toggle" className={isAnnual ? 'font-semibold' : ''}>
+            <Label htmlFor="billing-toggle" className={isAnnual ? 'font-semibold' : 'text-muted-foreground'}>
               Annual
-              <Badge variant="secondary" className="ml-2">Save up to 30%</Badge>
+              <Badge variant="secondary" className="ml-2 bg-green-500/10 text-green-700 dark:text-green-400">
+                Save up to 30%
+              </Badge>
             </Label>
           </div>
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-16">
           {plans.map((plan) => {
             const isCurrentPlan = currentTier === plan.tier;
             const displayPrice = isAnnual ? plan.annualPrice : plan.price;
@@ -132,8 +136,10 @@ export default function PricingPage() {
               <Card 
                 key={plan.tier}
                 className={`relative ${
-                  plan.highlighted 
-                    ? 'border-2 border-primary shadow-lg scale-105' 
+                  plan.tier === 'premium' 
+                    ? 'border-2 border-yellow-500/50 shadow-lg scale-105' 
+                    : plan.tier === 'standard'
+                    ? 'border-2 border-blue-500/50 shadow-lg'
                     : isCurrentPlan 
                     ? 'border-2 border-primary/50'
                     : ''
@@ -141,7 +147,11 @@ export default function PricingPage() {
               >
                 {plan.badge && (
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                    <Badge className="px-4 py-1">
+                    <Badge className={`px-4 py-1 ${
+                      plan.badge === 'Best Value' 
+                        ? 'bg-yellow-500 text-yellow-950 hover:bg-yellow-600'
+                        : 'bg-blue-500 text-white hover:bg-blue-600'
+                    }`}>
                       {plan.badge === 'Best Value' && <Zap className="w-3 h-3 mr-1" />}
                       {plan.badge}
                     </Badge>
@@ -149,7 +159,7 @@ export default function PricingPage() {
                 )}
 
                 <CardHeader className="text-center pb-8 pt-8">
-                  <CardTitle className="text-2xl mb-2">{plan.name}</CardTitle>
+                  <CardTitle className="text-xl font-semibold mb-2">{plan.name}</CardTitle>
                   <CardDescription>{plan.description}</CardDescription>
                   
                   <div className="mt-6">
@@ -169,28 +179,34 @@ export default function PricingPage() {
                       </p>
                     )}
                     {isAnnual && plan.annualSavings && (
-                      <Badge variant="secondary" className="mt-2">
+                      <Badge variant="secondary" className="mt-2 bg-green-500/10 text-green-700 dark:text-green-400">
                         Save {plan.annualSavings}%
                       </Badge>
                     )}
                   </div>
                 </CardHeader>
 
-                <CardContent>
+                <CardContent className="p-6">
                   <ul className="space-y-3">
                     {plan.features.map((feature, index) => (
                       <li key={index} className="flex items-start gap-2">
-                        <Check className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                        <Check className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
                         <span className="text-sm">{feature}</span>
                       </li>
                     ))}
                   </ul>
                 </CardContent>
 
-                <CardFooter>
+                <CardFooter className="p-6 pt-0">
                   <Button
-                    className="w-full"
-                    variant={plan.highlighted ? 'default' : 'outline'}
+                    className={`w-full ${
+                      plan.tier === 'premium'
+                        ? 'bg-yellow-500 hover:bg-yellow-600 text-yellow-950'
+                        : plan.tier === 'standard'
+                        ? 'bg-blue-500 hover:bg-blue-600 text-white'
+                        : ''
+                    }`}
+                    variant={plan.highlighted || plan.tier === 'premium' ? 'default' : 'outline'}
                     disabled={isCurrentPlan}
                     onClick={() => handleSelectPlan(plan.tier)}
                   >
@@ -208,7 +224,7 @@ export default function PricingPage() {
             Frequently Asked Questions
           </h2>
           
-          <Accordion type="single" collapsible className="w-full">
+          <Accordion type="single" collapsible className="w-full space-y-4">
             <AccordionItem value="item-1">
               <AccordionTrigger>What happens when I reach my session limit?</AccordionTrigger>
               <AccordionContent>

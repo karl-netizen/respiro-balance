@@ -94,7 +94,7 @@ export default function AccountSettings() {
         {/* Subscription Status Card */}
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle className="flex items-center justify-between">
+            <CardTitle className="text-xl font-semibold flex items-center justify-between">
               <span>Subscription Status</span>
               <Badge 
                 variant={
@@ -102,7 +102,13 @@ export default function AccountSettings() {
                   tier === 'standard' ? 'secondary' : 
                   'outline'
                 }
-                className="capitalize"
+                className={`capitalize ${
+                  tier === 'premium'
+                    ? 'bg-yellow-500 text-yellow-950 hover:bg-yellow-600'
+                    : tier === 'standard'
+                    ? 'bg-blue-500 text-white hover:bg-blue-600'
+                    : ''
+                }`}
               >
                 {tier}
               </Badge>
@@ -111,7 +117,7 @@ export default function AccountSettings() {
               Manage your subscription and view usage
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-6 p-6 pt-0">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <p className="text-sm text-muted-foreground mb-1">Billing Cycle</p>
@@ -199,7 +205,7 @@ export default function AccountSettings() {
         {tier !== 'free' && paymentMethod && (
           <Card className="mb-6">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="text-xl font-semibold flex items-center gap-2">
                 <CreditCard className="w-5 h-5" />
                 Payment Method
               </CardTitle>
@@ -207,7 +213,7 @@ export default function AccountSettings() {
                 Manage your payment information
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 p-6 pt-0">
               <div className="flex items-center justify-between p-4 border rounded-lg">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-primary/10 rounded">
@@ -239,7 +245,7 @@ export default function AccountSettings() {
         {tier !== 'free' && billingHistory.length > 0 && (
           <Card className="mb-6">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="text-xl font-semibold flex items-center gap-2">
                 <Calendar className="w-5 h-5" />
                 Billing History
               </CardTitle>
@@ -247,7 +253,7 @@ export default function AccountSettings() {
                 View and download your invoices
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-6 pt-0">
               <div className="space-y-2">
                 {billingHistory.map((invoice) => (
                   <div
@@ -279,9 +285,9 @@ export default function AccountSettings() {
 
         {/* Danger Zone (for paid, non-canceled subscriptions) */}
         {tier !== 'free' && !cancelAtPeriodEnd && (
-          <Card className="border-destructive">
+          <Card className="border-2 border-red-500/50">
             <CardHeader>
-              <CardTitle className="text-destructive flex items-center gap-2">
+              <CardTitle className="text-xl font-semibold text-red-600 dark:text-red-400 flex items-center gap-2">
                 <AlertTriangle className="w-5 h-5" />
                 Danger Zone
               </CardTitle>
@@ -289,7 +295,7 @@ export default function AccountSettings() {
                 Irreversible actions for your subscription
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-6 pt-0">
               <div className="space-y-4">
                 <div>
                   <h4 className="font-medium mb-2">Cancel Subscription</h4>
@@ -299,6 +305,7 @@ export default function AccountSettings() {
                   </p>
                   <Button 
                     variant="destructive"
+                    className="bg-red-500 hover:bg-red-600 text-white"
                     onClick={() => setShowCancelDialog(true)}
                   >
                     Cancel Subscription
