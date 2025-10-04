@@ -15,6 +15,7 @@ import Footer from '@/components/Footer';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { LoadingMonitor } from '@/components/LoadingMonitor';
 import HomePage from '@/pages/HomePage';
+import Dashboard from '@/pages/Dashboard';
 import LandingPage from '@/pages/LandingPage';
 import LoginPage from '@/pages/LoginPage';
 import RegisterPage from '@/pages/RegisterPage';
@@ -168,11 +169,12 @@ function AppContent() {
                       <Routes>
                         <Route path="/" element={<LandingPage />} />
                         <Route path="/landing" element={<LandingPage />} />
+                        <Route path="/home" element={<HomePage />} />
                         <Route path="/onboarding" element={<OnboardingPage />} />
-                        <Route path="/dashboard" element={<HomePage />} />
+                        <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/register" element={<RegisterPage />} />
                         <Route path="/login" element={<LoginPage />} />
-                        <Route path="/auth" element={user ? <HomePage /> : <SimpleAuthPage />} />
+                        <Route path="/auth" element={user ? <Dashboard /> : <SimpleAuthPage />} />
                         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                         <Route path="/reset-password" element={<ResetPasswordPage />} />
                         <Route path="/profile" element={<ProfilePage />} />
