@@ -2,7 +2,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { MeditationSession } from '@/types/meditation';
-import { meditationSessions } from '@/data/meditationSessions';
 
 export const useMeditationNavigation = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -23,17 +22,6 @@ export const useMeditationNavigation = () => {
       setSearchParams({ tab: activeTab });
     }
   }, [searchParams, activeTab, setSearchParams]);
-  
-  // Check for session ID in URL on component mount
-  useEffect(() => {
-    const sessionId = searchParams.get('session');
-    if (sessionId) {
-      const session = meditationSessions.find(s => s.id === sessionId);
-      if (session) {
-        handleSelectSession(session);
-      }
-    }
-  }, [searchParams]);
   
   // Update URL when tab changes
   const handleTabChange = useCallback((value: string) => {
