@@ -46,7 +46,6 @@ import TermsPage from '@/pages/TermsPage';
 import { 
   LazyPricingPage, 
   LazyAccountSettings, 
-  LazyOnboardingFlow,
   LazyModuleLibraryPage,
   LazyBiofeedbackSettings,
   LazyMeditationLibrary,
@@ -155,11 +154,6 @@ function AppContent() {
                         <Route path="/pricing" element={
                           <Suspense fallback={<DashboardSkeleton />}>
                             <LazyPricingPage />
-                          </Suspense>
-                        } />
-                        <Route path="/onboarding-flow" element={
-                          <Suspense fallback={<DashboardSkeleton />}>
-                            <LazyOnboardingFlow />
                           </Suspense>
                         } />
                         <Route path="/meditate" element={<Meditate />} />

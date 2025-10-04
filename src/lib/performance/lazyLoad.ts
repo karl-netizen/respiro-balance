@@ -11,10 +11,6 @@ export const LazyAccountSettings = lazy(() =>
   import('@/pages/AccountSettings')
 );
 
-export const LazyOnboardingFlow = lazy(() => 
-  import('@/pages/OnboardingFlow')
-);
-
 export const LazyModuleLibraryPage = lazy(() =>
   import('@/pages/ModuleLibraryPage')
 );
