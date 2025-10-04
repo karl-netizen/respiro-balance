@@ -36,7 +36,7 @@ class AnalyticsService {
   setUserId(userId: string | null) {
     this.userId = userId;
     if (userId && window.gtag) {
-      window.gtag('config', 'GA_MEASUREMENT_ID', {
+      window.gtag('config', 'G-283162984', {
         user_id: userId
       });
     }
@@ -63,7 +63,7 @@ class AnalyticsService {
     if (!this.initialized) return;
 
     if (window.gtag) {
-      window.gtag('config', 'GA_MEASUREMENT_ID', {
+      window.gtag('config', 'G-283162984', {
         page_path: path,
         page_title: title
       });
