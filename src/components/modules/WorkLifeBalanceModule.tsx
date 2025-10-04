@@ -1,16 +1,21 @@
-import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Scale, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { Scale, AlertTriangle, CheckCircle2, Coffee } from 'lucide-react';
+import { useWorkLifeBalanceStore } from '@/store/workLifeBalanceStore';
+import { toast } from 'sonner';
 
 export default function WorkLifeBalanceModule() {
-  const [workMinutesToday] = useState(120); // Mock data
-  const [breakMinutesToday] = useState(30); // Mock data
+  const { 
+    workMinutesToday, 
+    breakMinutesToday, 
+    addBreakSession,
+    getBalanceScore 
+  } = useWorkLifeBalanceStore();
   
   const totalMinutes = workMinutesToday + breakMinutesToday;
-  const balanceScore = totalMinutes > 0 ? (breakMinutesToday / totalMinutes) * 100 : 0;
+  const balanceScore = getBalanceScore();
   
   // Ideal balance is 15-20% breaks
   const getBalanceStatus = () => {
@@ -20,6 +25,14 @@ export default function WorkLifeBalanceModule() {
   };
 
   const status = getBalanceStatus();
+
+  const handleTakeBreak = () => {
+    // Suggest a 15-minute break
+    addBreakSession(15);
+    toast.success('Break started! Take 15 minutes to recharge.', {
+      description: 'Your balance score will update automatically.'
+    });
+  };
 
   return (
     <Card className="hover:shadow-lg transition-shadow">
@@ -78,9 +91,13 @@ export default function WorkLifeBalanceModule() {
           </p>
         </div>
 
-        <Button className="w-full" variant="outline">
-          <Scale className="w-4 h-4 mr-2" />
-          Take a Break
+        <Button 
+          className="w-full" 
+          variant="outline"
+          onClick={handleTakeBreak}
+        >
+          <Coffee className="w-4 h-4 mr-2" />
+          Take a 15min Break
         </Button>
       </CardContent>
     </Card>
