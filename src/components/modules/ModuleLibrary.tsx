@@ -87,7 +87,7 @@ export function ModuleLibrary() {
                           <CardDescription>{module.shortDescription}</CardDescription>
                         </div>
                       </div>
-                      <Badge className="bg-success text-success-foreground">
+                      <Badge variant="default" className="bg-green-600 hover:bg-green-700">
                         <Check className="w-3 h-3 mr-1" />
                         Active
                       </Badge>

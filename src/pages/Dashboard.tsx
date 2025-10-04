@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, lazy } from 'react';
 import DashboardContainer from '@/components/dashboard/DashboardContainer';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import DashboardLayout, { DashboardTopSection } from '@/components/dashboard/DashboardLayout';
@@ -15,6 +15,22 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { Sparkles, Package, Settings, Activity } from 'lucide-react';
+
+// Lazy load module components
+const BiofeedbackModule = lazy(() => import('@/components/modules/BiofeedbackModule'));
+const FocusModule = lazy(() => import('@/components/modules/FocusModule'));
+const MorningRitualsModule = lazy(() => import('@/components/modules/MorningRitualsModule'));
+const SocialModule = lazy(() => import('@/components/modules/SocialModule'));
+const WorkLifeBalanceModule = lazy(() => import('@/components/modules/WorkLifeBalanceModule'));
+
+// Map module IDs to components
+const MODULE_COMPONENTS: Record<string, React.LazyExoticComponent<React.ComponentType<any>>> = {
+  biofeedback: BiofeedbackModule,
+  focus: FocusModule,
+  morning_rituals: MorningRitualsModule,
+  social: SocialModule,
+  work_life_balance: WorkLifeBalanceModule,
+};
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -117,7 +133,8 @@ const Dashboard: React.FC = () => {
                       const module = MODULE_REGISTRY[moduleId];
                       if (!module) return null;
 
-                      const ModuleComponent = module.component;
+                      const ModuleComponent = MODULE_COMPONENTS[moduleId];
+                      if (!ModuleComponent) return null;
 
                       return (
                         <Suspense

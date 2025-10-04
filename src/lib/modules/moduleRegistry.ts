@@ -1,5 +1,3 @@
-import { lazy } from 'react';
-
 export interface Module {
   id: string;
   name: string;
@@ -8,7 +6,6 @@ export interface Module {
   shortDescription: string;
   tier: 'standard' | 'premium';
   alwaysActive?: boolean;
-  component: React.LazyExoticComponent<React.ComponentType<any>>;
   colorClass: string;
   features: string[];
 }
@@ -22,7 +19,6 @@ export const MODULE_REGISTRY: Record<string, Module> = {
     shortDescription: 'See your stress reduction in real-time',
     tier: 'standard',
     alwaysActive: true,
-    component: lazy(() => import('@/components/modules/BiofeedbackModule')),
     colorClass: 'bg-destructive',
     features: [
       'Heart rate tracking',
@@ -38,7 +34,6 @@ export const MODULE_REGISTRY: Record<string, Module> = {
     description: 'Pomodoro timer with productivity analytics. Track your focus sessions and improve your deep work capacity.',
     shortDescription: 'Boost productivity with focus sessions',
     tier: 'standard',
-    component: lazy(() => import('@/components/modules/FocusModule')),
     colorClass: 'bg-[hsl(271,76%,53%)]',
     features: [
       'Pomodoro timer',
@@ -54,7 +49,6 @@ export const MODULE_REGISTRY: Record<string, Module> = {
     description: 'Build consistent morning habits. Create custom routines, track streaks, and start your day with intention.',
     shortDescription: 'Start your day with intention',
     tier: 'standard',
-    component: lazy(() => import('@/components/modules/MorningRitualsModule')),
     colorClass: 'bg-warning',
     features: [
       'Custom routines',
@@ -70,7 +64,6 @@ export const MODULE_REGISTRY: Record<string, Module> = {
     description: 'Connect with the wellness community. Join challenges, share achievements, and meditate together.',
     shortDescription: 'Share your journey with others',
     tier: 'standard',
-    component: lazy(() => import('@/components/modules/SocialModule')),
     colorClass: 'bg-success',
     features: [
       'Friend connections',
@@ -86,7 +79,6 @@ export const MODULE_REGISTRY: Record<string, Module> = {
     description: 'Prevent burnout with smart breaks. Track your balance meter and maintain healthy boundaries.',
     shortDescription: 'Maintain healthy boundaries',
     tier: 'standard',
-    component: lazy(() => import('@/components/modules/WorkLifeBalanceModule')),
     colorClass: 'bg-[hsl(210,29%,29%)]',
     features: [
       'Balance meter',
