@@ -1,5 +1,5 @@
 
-import React, { useEffect, lazy } from 'react';
+import React, { useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from '@/hooks/useAuth.tsx';
@@ -14,6 +14,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { LoadingMonitor } from '@/components/LoadingMonitor';
+import { DashboardSkeleton } from '@/components/ui/skeleton-variants';
 import HomePage from '@/pages/HomePage';
 import Dashboard from '@/pages/Dashboard';
 import LandingPage from '@/pages/LandingPage';
@@ -28,25 +29,35 @@ import Meditate from '@/pages/Meditate';
 import BiofeedbackPage from '@/pages/BiofeedbackPage';
 import SubscriptionPage from '@/pages/SubscriptionPage';
 import PremiumPlusPage from '@/pages/PremiumPlusPage';
-import SocialPage from '@/pages/SocialPage';
 import MeditateAdvanced from '@/pages/MeditateAdvanced';
 import PremiumProPage from '@/pages/PremiumProPage';
 import UserJourneyTestingPage from '@/pages/UserJourneyTestingPage';
-import MeditationLibrary from '@/pages/MeditationLibrary';
 import MeditationAudioManagement from '@/pages/MeditationAudioManagement';
 import MeditationSessionPage from '@/pages/MeditationSessionPage';
-import Breathe from '@/pages/Breathe';
-import MorningRitual from '@/pages/MorningRitual';
 import FitbitCallback from '@/pages/FitbitCallback';
 import MeditationMonitorPage from '@/pages/MeditationMonitorPage';
 import SetupGuidePage from '@/pages/SetupGuidePage';
-import WorkLifeBalance from '@/pages/WorkLifeBalance';
-import Progress from '@/pages/Progress';
-import FocusPage from '@/pages/FocusPage';
 import HelpPage from '@/pages/HelpPage';
 import ContactPage from '@/pages/ContactPage';
 import PrivacyPage from '@/pages/PrivacyPage';
 import TermsPage from '@/pages/TermsPage';
+
+// Lazy-loaded components for better performance
+import { 
+  LazyPricingPage, 
+  LazyAccountSettings, 
+  LazyOnboardingFlow,
+  LazyModuleLibraryPage,
+  LazyBiofeedbackSettings,
+  LazyMeditationLibrary,
+  LazyProgressPage,
+  LazyFocusPage,
+  LazyWorkLifeBalance,
+  LazyMorningRitual,
+  LazyBreathePage,
+  LazySocialPage,
+  setupPreloadHooks
+} from '@/lib/performance/lazyLoad';
 
 // Lazy-loaded demo components
 const PerformanceDemo = lazy(() => import('@/components/performance/PerformanceDemo'));
@@ -55,9 +66,6 @@ const SecuritySystemDemo = lazy(() => import('@/components/security/SecuritySyst
 const SecureFormsDemo = lazy(() => import('@/components/security/SecureFormsDemo'));
 const AdvancedSecurityDemo = lazy(() => import('@/components/security/advanced/AdvancedSecurityDemo'));
 
-// Module Library Page
-const ModuleLibraryPage = lazy(() => import('@/pages/ModuleLibraryPage'));
-const BiofeedbackSettings = lazy(() => import('@/pages/BiofeedbackSettings'));
 import { ComprehensiveTestingDemo } from '@/test/demo/comprehensive-testing-demo';
 import { TestingFrameworkSummary } from '@/test/demo/testing-framework-summary';
 import OnboardingPage from '@/pages/Onboarding';
@@ -180,16 +188,37 @@ function AppContent() {
                         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                         <Route path="/reset-password" element={<ResetPasswordPage />} />
                         <Route path="/profile" element={<ProfilePage />} />
-                        <Route path="/account" element={React.createElement(React.lazy(() => import('@/pages/AccountSettings')))} />
+                        <Route path="/account" element={
+                          <Suspense fallback={<DashboardSkeleton />}>
+                            <LazyAccountSettings />
+                          </Suspense>
+                        } />
                         <Route path="/settings" element={<SettingsPage />} />
-                        <Route path="/pricing" element={React.createElement(React.lazy(() => import('@/pages/PricingPage')))} />
+                        <Route path="/pricing" element={
+                          <Suspense fallback={<DashboardSkeleton />}>
+                            <LazyPricingPage />
+                          </Suspense>
+                        } />
+                        <Route path="/onboarding-flow" element={
+                          <Suspense fallback={<DashboardSkeleton />}>
+                            <LazyOnboardingFlow />
+                          </Suspense>
+                        } />
                         <Route path="/meditate" element={<Meditate />} />
                         <Route path="/system" element={<SystemDashboardPage />} />
-                        <Route path="/meditation" element={<MeditationLibrary />} />
+                        <Route path="/meditation" element={
+                          <Suspense fallback={<DashboardSkeleton />}>
+                            <LazyMeditationLibrary />
+                          </Suspense>
+                        } />
                         <Route path="/biofeedback" element={<BiofeedbackPage />} />
                         <Route path="/subscription" element={<SubscriptionPage />} />
                         <Route path="/premium-plus" element={<PremiumPlusPage />} />
-                        <Route path="/social" element={<SocialPage />} />
+                        <Route path="/social" element={
+                          <Suspense fallback={<DashboardSkeleton />}>
+                            <LazySocialPage />
+                          </Suspense>
+                        } />
                         <Route path="/meditate-advanced" element={<MeditateAdvanced />} />
                         <Route path="/premium-pro" element={<PremiumProPage />} />
                         <Route path="/testing" element={<UserJourneyTestingPage />} />
@@ -198,21 +227,41 @@ function AppContent() {
                         <Route path="/meditation-monitor" element={<MeditationMonitorPage />} />
                         <Route path="/setup-guide" element={<SetupGuidePage />} />
                         <Route path="/modules" element={
-                          <React.Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div></div>}>
-                            <ModuleLibraryPage />
-                          </React.Suspense>
+                          <Suspense fallback={<DashboardSkeleton />}>
+                            <LazyModuleLibraryPage />
+                          </Suspense>
                         } />
                         <Route path="/biofeedback/settings" element={
-                          <React.Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div></div>}>
-                            <BiofeedbackSettings />
-                          </React.Suspense>
+                          <Suspense fallback={<DashboardSkeleton />}>
+                            <LazyBiofeedbackSettings />
+                          </Suspense>
                         } />
                         <Route path="/fitbit-callback" element={<FitbitCallback />} />
-                        <Route path="/breathe" element={<Breathe />} />
-                        <Route path="/morning-ritual" element={<MorningRitual />} />
-                        <Route path="/work-life-balance" element={<WorkLifeBalance />} />
-                        <Route path="/progress" element={<Progress />} />
-                        <Route path="/focus" element={<FocusPage />} />
+                        <Route path="/breathe" element={
+                          <Suspense fallback={<DashboardSkeleton />}>
+                            <LazyBreathePage />
+                          </Suspense>
+                        } />
+                        <Route path="/morning-ritual" element={
+                          <Suspense fallback={<DashboardSkeleton />}>
+                            <LazyMorningRitual />
+                          </Suspense>
+                        } />
+                        <Route path="/work-life-balance" element={
+                          <Suspense fallback={<DashboardSkeleton />}>
+                            <LazyWorkLifeBalance />
+                          </Suspense>
+                        } />
+                        <Route path="/progress" element={
+                          <Suspense fallback={<DashboardSkeleton />}>
+                            <LazyProgressPage />
+                          </Suspense>
+                        } />
+                        <Route path="/focus" element={
+                          <Suspense fallback={<DashboardSkeleton />}>
+                            <LazyFocusPage />
+                          </Suspense>
+                        } />
                         <Route path="/help" element={<HelpPage />} />
                         <Route path="/contact" element={<ContactPage />} />
                         <Route path="/privacy" element={<PrivacyPage />} />
@@ -268,6 +317,11 @@ function AppContent() {
 function ModuleSyncWrapper({ children }: { children: React.ReactNode }) {
   useModuleSync();
   useSubscriptionSync(); // Sync subscription tier with module store
+  
+  // Setup preload hooks on mount
+  useEffect(() => {
+    setupPreloadHooks();
+  }, []);
   
   return (
     <>

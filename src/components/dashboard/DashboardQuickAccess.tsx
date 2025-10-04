@@ -37,7 +37,7 @@ const DashboardQuickAccess: React.FC = () => {
   }, []);
 
   return (
-    <Card>
+    <Card data-tour="meditation-library">
       <CardHeader>
         <CardTitle>Quick Access</CardTitle>
         <CardDescription>Jump directly into your wellness activities</CardDescription>

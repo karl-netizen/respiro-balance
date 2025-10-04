@@ -67,7 +67,7 @@ export const UpgradePromptDialog: React.FC<UpgradePromptDialogProps> = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle className="text-2xl flex items-center gap-2">
+          <DialogTitle className="text-xl font-semibold flex items-center gap-2">
             <Lock className="w-6 h-6 text-primary" />
             Unlock {featureName}
           </DialogTitle>
@@ -79,17 +79,21 @@ export const UpgradePromptDialog: React.FC<UpgradePromptDialogProps> = ({
         <Card className="border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-accent/5">
           <CardContent className="p-6">
             <div className="text-center mb-6">
-              <Badge className="mb-3">
+              <Badge className={`mb-3 ${
+                requiredTier === 'premium'
+                  ? 'bg-yellow-500 text-yellow-950 hover:bg-yellow-600'
+                  : 'bg-blue-500 text-white hover:bg-blue-600'
+              }`}>
                 <Sparkles className="w-3 h-3 mr-1" />
                 {requiredTier === 'standard' ? 'Most Popular' : 'Best Value'}
               </Badge>
-              <h3 className="text-2xl font-bold mb-2 capitalize">{requiredTier}</h3>
+              <h3 className="text-xl font-semibold mb-2 capitalize">{requiredTier}</h3>
               <div className="flex items-baseline justify-center gap-2 mb-2">
-                <span className="text-3xl font-bold">${monthlyPrice}</span>
+                <span className="text-3xl font-bold">${monthlyPrice.toFixed(2)}</span>
                 <span className="text-muted-foreground">/month</span>
               </div>
               <p className="text-sm text-muted-foreground">
-                or ${annualPrice}/year (save {requiredTier === 'standard' ? '30' : '25'}%)
+                or ${annualPrice.toFixed(2)}/year (save {requiredTier === 'standard' ? '30' : '25'}%)
               </p>
             </div>
 
@@ -97,7 +101,7 @@ export const UpgradePromptDialog: React.FC<UpgradePromptDialogProps> = ({
               <ul className="space-y-3">
                 {displayBenefits.map((benefit, index) => (
                   <li key={index} className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                    <Check className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
                     <span className="text-sm">{benefit}</span>
                   </li>
                 ))}
@@ -116,7 +120,8 @@ export const UpgradePromptDialog: React.FC<UpgradePromptDialogProps> = ({
           </Button>
           <Button
             onClick={handleViewPricing}
-            className="w-full sm:w-auto"
+            className="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 text-white"
+            data-preload="pricing"
           >
             View Pricing Plans
           </Button>

@@ -17,6 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import { Sparkles, Package, Settings, Activity, Boxes } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { SessionCounterWidget } from '@/components/subscription/SessionCounterWidget';
+import { FeatureTour } from '@/components/onboarding/FeatureTour';
 
 // Lazy load module components
 const BiofeedbackModule = lazy(() => import('@/components/modules/BiofeedbackModule'));
@@ -41,6 +42,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <FeatureTour />
       <DashboardContainer>
         {({
           user,
@@ -72,7 +74,7 @@ const Dashboard: React.FC = () => {
               />
 
               {/* Module Management Quick Access */}
-              <div className="mb-6">
+              <div className="mb-6" data-tour="modules">
                 <Card className="border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-accent/5">
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between flex-wrap gap-4">
@@ -97,6 +99,7 @@ const Dashboard: React.FC = () => {
                       <Button 
                         onClick={() => navigate(subscriptionTier === 'free' ? '/subscription' : '/modules')}
                         className="flex items-center gap-2"
+                        data-preload="modules"
                       >
                         <Settings className="w-4 h-4" />
                         {subscriptionTier === 'free' ? 'Upgrade' : 'Manage Modules'}
@@ -138,13 +141,13 @@ const Dashboard: React.FC = () => {
               />
 
               {/* Session Counter Widget */}
-              <div className="mb-6">
+              <div className="mb-6" data-tour="session-counter">
                 <SessionCounterWidget />
               </div>
 
               {/* Active Module Widgets */}
               {activeModules.length > 0 && (
-                <div className="space-y-4 mb-6">
+                <div className="space-y-4 mb-6" data-tour="modules">
                   <div className="flex items-center justify-between">
                     <h2 className="text-xl font-semibold text-foreground flex items-center gap-2">
                       <Package className="w-5 h-5 text-primary" />

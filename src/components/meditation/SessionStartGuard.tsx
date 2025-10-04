@@ -70,10 +70,10 @@ export const SessionStartGuard: React.FC<SessionStartGuardProps> = ({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
             {/* Standard Plan */}
-            <Card className="border-2 hover:border-primary/50 transition-colors">
+            <Card className="border-2 hover:border-blue-500/50 transition-colors">
               <CardContent className="p-6">
                 <div className="text-center mb-4">
-                  <Badge className="mb-2">Most Popular</Badge>
+                  <Badge className="mb-2 bg-blue-500 text-white hover:bg-blue-600">Most Popular</Badge>
                   <h3 className="text-xl font-semibold mb-2">Standard</h3>
                   <div className="mb-4">
                     <span className="text-3xl font-bold">$6.99</span>
@@ -83,27 +83,28 @@ export const SessionStartGuard: React.FC<SessionStartGuardProps> = ({
                 
                 <ul className="space-y-3 mb-6">
                   <li className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                    <Check className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
                     <span className="text-sm">40 sessions per month</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                    <Check className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
                     <span className="text-sm">Biofeedback integration</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                    <Check className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
                     <span className="text-sm">Access to all core features</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                    <Check className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
                     <span className="text-sm">Community access</span>
                   </li>
                 </ul>
                 
                 <Button 
                   onClick={handleUpgrade}
-                  className="w-full"
-                  variant="outline"
+                  className="w-full bg-blue-500 hover:bg-blue-600 text-white"
+                  variant="default"
+                  data-preload="pricing"
                 >
                   Choose Standard
                 </Button>
@@ -111,13 +112,13 @@ export const SessionStartGuard: React.FC<SessionStartGuardProps> = ({
             </Card>
 
             {/* Premium Plan */}
-            <Card className="border-2 border-primary relative overflow-hidden">
-              <div className="absolute top-0 right-0 bg-gradient-to-l from-primary to-primary/80 text-primary-foreground px-3 py-1 text-xs font-semibold">
+            <Card className="border-2 border-yellow-500/50 relative overflow-hidden">
+              <div className="absolute top-0 right-0 bg-gradient-to-l from-yellow-500 to-yellow-600 text-yellow-950 px-3 py-1 text-xs font-semibold">
                 Best Value
               </div>
               <CardContent className="p-6">
                 <div className="text-center mb-4">
-                  <Badge variant="secondary" className="mb-2">
+                  <Badge variant="secondary" className="mb-2 bg-yellow-500/10 text-yellow-700 dark:text-yellow-400">
                     <Zap className="w-3 h-3 mr-1" />
                     Premium
                   </Badge>
@@ -130,26 +131,27 @@ export const SessionStartGuard: React.FC<SessionStartGuardProps> = ({
                 
                 <ul className="space-y-3 mb-6">
                   <li className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                    <Check className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
                     <span className="text-sm font-medium">Unlimited sessions</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                    <Check className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
                     <span className="text-sm">All Standard features</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                    <Check className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
                     <span className="text-sm">All power modules unlocked</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                    <Check className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
                     <span className="text-sm">Priority support</span>
                   </li>
                 </ul>
                 
                 <Button 
                   onClick={handleUpgrade}
-                  className="w-full"
+                  className="w-full bg-yellow-500 hover:bg-yellow-600 text-yellow-950"
+                  data-preload="pricing"
                 >
                   Choose Premium
                 </Button>

@@ -89,6 +89,7 @@ export const SessionCounterWidget: React.FC = () => {
               onClick={() => navigate('/pricing')}
               className="w-full bg-blue-500 hover:bg-blue-600 text-white"
               size="sm"
+              data-preload="pricing"
             >
               <TrendingUp className="w-4 h-4 mr-2" />
               Upgrade Now
@@ -104,6 +105,7 @@ export const SessionCounterWidget: React.FC = () => {
               variant="outline"
               className="w-full"
               size="sm"
+              data-preload="pricing"
             >
               View Plans
             </Button>
