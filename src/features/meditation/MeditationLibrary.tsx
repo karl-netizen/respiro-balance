@@ -192,12 +192,12 @@ const CategoryTabs = React.memo<{
   selectedCategory: string;
   onCategoryChange: (category: string) => void;
 }>(({ categories, selectedCategory, onCategoryChange }) => (
-  <TabsList className="grid w-full grid-cols-5">
+  <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
     {categories.map((tab) => (
       <TabsTrigger 
         key={tab.value} 
         value={tab.value} 
-        className="text-sm"
+        className="text-xs sm:text-sm whitespace-nowrap"
         onClick={() => onCategoryChange(tab.value)}
       >
         {tab.label}
@@ -411,78 +411,105 @@ const MeditationLibrary: React.FC = () => {
       </Suspense>
 
       {/* Audio Files from Supabase Storage */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Headphones className="h-5 w-5" />
-            Audio Files from Storage
-          </CardTitle>
-          <CardDescription>
-            {audioLoading ? 'Loading audio files...' : `${audioFiles.length} audio files available`}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {audioLoading ? (
-            <div className="grid grid-cols-1 gap-3">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="h-16 bg-muted rounded-md animate-pulse"></div>
-              ))}
-            </div>
-          ) : audioFiles.length > 0 ? (
-            <div className="grid grid-cols-1 gap-3">
-              {audioFiles.map((file, index) => (
-                <AudioFileItem 
-                  key={`${file.name}-${index}`}
-                  file={file} 
-                  onPlay={handlePlayAudioFile}
-                />
-              ))}
-            </div>
-          ) : (
-            <p className="text-center text-muted-foreground py-8">
-              No audio files found in storage bucket
-            </p>
-          )}
-        </CardContent>
-      </Card>
+      {audioFiles.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Headphones className="h-5 w-5" />
+              Audio Files from Storage
+            </CardTitle>
+            <CardDescription>
+              {audioLoading ? 'Loading audio files...' : `${audioFiles.length} audio files available`}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {audioLoading ? (
+              <div className="grid grid-cols-1 gap-3">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="h-16 bg-muted rounded-md animate-pulse"></div>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-3">
+                {audioFiles.map((file, index) => (
+                  <AudioFileItem 
+                    key={`${file.name}-${index}`}
+                    file={file} 
+                    onPlay={handlePlayAudioFile}
+                  />
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Category Tabs */}
-      <Tabs value={selectedCategory} onValueChange={handleCategoryChange} className="w-full">
+      <Tabs value={selectedCategory} onValueChange={handleCategoryChange} className="w-full space-y-6">
         <CategoryTabs
           categories={categoryTabs}
           selectedCategory={selectedCategory}
           onCategoryChange={handleCategoryChange}
         />
         
-        <TabsContent value={selectedCategory} className="mt-6">
-          {filteredContent.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredContent.map((item) => {
-                const progress = getProgressForContent(item.id);
-                
-                return (
-                  <MeditationCard
-                    key={item.id}
-                    item={item}
-                    progress={progress}
-                    selectedContent={selectedContent}
-                    onPlay={handlePlayContent}
-                    onToggleFavorite={handleToggleFavorite}
-                  />
-                );
-              })}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground text-lg">
-                {selectedCategory === 'sleep' 
-                  ? 'No sleep meditations available' 
-                  : `No ${selectedCategory} sessions found`
-                }
-              </p>
-            </div>
-          )}
-        </TabsContent>
+        {categoryTabs.map((tab) => (
+          <TabsContent key={tab.value} value={tab.value} className="mt-6">
+            {tab.value === 'all' ? (
+              content.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {content.map((item) => {
+                    const progress = getProgressForContent(item.id);
+                    
+                    return (
+                      <MeditationCard
+                        key={item.id}
+                        item={item}
+                        progress={progress}
+                        selectedContent={selectedContent}
+                        onPlay={handlePlayContent}
+                        onToggleFavorite={handleToggleFavorite}
+                      />
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground text-lg">
+                    No meditation sessions available
+                  </p>
+                </div>
+              )
+            ) : (
+              filteredContent.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredContent.map((item) => {
+                    const progress = getProgressForContent(item.id);
+                    
+                    return (
+                      <MeditationCard
+                        key={item.id}
+                        item={item}
+                        progress={progress}
+                        selectedContent={selectedContent}
+                        onPlay={handlePlayContent}
+                        onToggleFavorite={handleToggleFavorite}
+                      />
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground text-lg">
+                    {tab.label === 'Sleep' 
+                      ? 'No sleep meditations available' 
+                      : `No ${tab.label.toLowerCase()} sessions found`
+                    }
+                  </p>
+                </div>
+              )
+            )}
+          </TabsContent>
+        ))}
       </Tabs>
 
       {/* Now Playing Card */}
