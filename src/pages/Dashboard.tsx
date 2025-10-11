@@ -17,7 +17,6 @@ import { useNavigate } from 'react-router-dom';
 import { Sparkles, Package, Settings, Activity, Boxes } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { SessionCounterWidget } from '@/components/subscription/SessionCounterWidget';
-import { FeatureTour } from '@/components/onboarding/FeatureTour';
 import { AIRecommendationsPanel } from '@/components/personalization/AIRecommendationsPanel';
 import { AIErrorBoundary } from '@/components/personalization/AIErrorBoundary';
 import { SEO } from '@/components/SEO';
@@ -50,7 +49,6 @@ const Dashboard: React.FC = () => {
         description="Your personalized wellness dashboard with meditation sessions, progress tracking, and mindfulness tools."
       />
       <div className="min-h-screen bg-background">
-        <FeatureTour />
         <DashboardContainer>
         {({
           user,
