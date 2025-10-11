@@ -1,5 +1,3 @@
-
-import FocusMode from './FocusMode';
 import { FocusStats } from './FocusStats';
 import { FocusTimer } from './FocusTimer';
 import { FocusControls } from './FocusControls';
@@ -9,7 +7,6 @@ import { FocusAchievements } from './FocusAchievements';
 import { FocusInsights } from './FocusInsights';
 
 export {
-  FocusMode,
   FocusStats,
   FocusTimer,
   FocusControls,
@@ -18,5 +15,3 @@ export {
   FocusAchievements,
   FocusInsights
 };
-
-export default FocusMode;
