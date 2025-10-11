@@ -103,7 +103,7 @@ const PricingTiers = () => {
           </div>
         </div>
         
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
           {/* Free Tier */}
           <Card className="flex flex-col border-border shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 bg-white hover:bg-gray-50/80 dark:bg-gray-800 dark:hover:bg-gray-700/80">
             <CardHeader>
@@ -167,28 +167,28 @@ const PricingTiers = () => {
             </CardFooter>
           </Card>
           
-          {/* Premium Tier */}
+          {/* Standard Tier */}
           <Card className="flex flex-col border-border shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 bg-white hover:bg-gray-50/80 dark:bg-gray-800 dark:hover:bg-gray-700/80">
             <CardHeader>
-              <CardTitle className="text-xl text-gray-900 dark:text-white">Premium</CardTitle>
+              <CardTitle className="text-xl text-gray-900 dark:text-white">Standard</CardTitle>
               <div className="mt-4">
                 <span className="text-3xl font-bold text-gray-900 dark:text-white">
-                  ${getPricing(11.97, 32).price}
+                  ${getPricing(9, 32).price}
                 </span>
                 <span className="text-muted-foreground ml-2 dark:text-gray-300">
-                  /{getPricing(11.97, 32).period}
+                  /{getPricing(9, 32).period}
                 </span>
                 {isAnnual && (
                   <div className="mt-2 space-y-1">
                     <div className="text-sm text-muted-foreground dark:text-gray-400">
-                      That's ${getPricing(11.97, 32).monthlyEquivalent}/month
+                      That's ${getPricing(9, 32).monthlyEquivalent}/month
                     </div>
                     <div className="flex flex-wrap gap-1">
                       <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-medium">
-                        Save {getPricing(11.97, 32).savings}%
+                        Save {getPricing(9, 32).savings}%
                       </span>
                       <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-medium">
-                        Save ${getPricing(11.97, 32).savingsAmount}/year
+                        Save ${getPricing(9, 32).savingsAmount}/year
                       </span>
                     </div>
                   </div>
@@ -236,12 +236,12 @@ const PricingTiers = () => {
                 className="w-full bg-respiro-dark hover:bg-respiro-darker text-white font-medium transition-all duration-200 hover:scale-105"
                 openInNewTab={false}
               >
-                Upgrade to Premium
+                Upgrade to Standard
               </PaymentButton>
             </CardFooter>
           </Card>
           
-          {/* Premium Pro Tier */}
+          {/* Premium Tier */}
           <Card className="flex flex-col relative border-respiro-dark before:absolute before:inset-0 before:-z-10 before:rounded-lg before:bg-respiro-dark/5 shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 bg-white hover:bg-gray-50/80 dark:bg-gray-800 dark:hover:bg-gray-700/80">
             <div className="absolute top-0 right-0 transform translate-x-1/4 -translate-y-1/3">
               <div className="bg-respiro-dark text-white text-xs font-medium px-3 py-1 rounded-full">
@@ -249,25 +249,25 @@ const PricingTiers = () => {
               </div>
             </div>
             <CardHeader>
-              <CardTitle className="text-xl text-gray-900 dark:text-white">Premium Pro</CardTitle>
+              <CardTitle className="text-xl text-gray-900 dark:text-white">Premium</CardTitle>
               <div className="mt-4">
                 <span className="text-3xl font-bold text-gray-900 dark:text-white">
-                  ${getPricing(29.97, 35).price}
+                  ${getPricing(13, 35).price}
                 </span>
                 <span className="text-muted-foreground ml-2 dark:text-gray-300">
-                  /{getPricing(29.97, 35).period}
+                  /{getPricing(13, 35).period}
                 </span>
                 {isAnnual && (
                   <div className="mt-2 space-y-1">
                     <div className="text-sm text-muted-foreground dark:text-gray-400">
-                      That's ${getPricing(29.97, 35).monthlyEquivalent}/month
+                      That's ${getPricing(13, 35).monthlyEquivalent}/month
                     </div>
                     <div className="flex flex-wrap gap-1">
                       <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-medium">
-                        Save {getPricing(29.97, 35).savings}%
+                        Save {getPricing(13, 35).savings}%
                       </span>
                       <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-medium">
-                        Save ${getPricing(29.97, 35).savingsAmount}/year
+                        Save ${getPricing(13, 35).savingsAmount}/year
                       </span>
                     </div>
                   </div>
@@ -278,7 +278,7 @@ const PricingTiers = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="flex-1">
-              <div className="mb-3 text-sm font-medium text-respiro-dark">Everything in Premium, plus:</div>
+              <div className="mb-3 text-sm font-medium text-respiro-dark">Everything in Standard, plus:</div>
               <ul className="space-y-2">
                 {/* Core Sessions & Access */}
                 <PricingFeature included>50 Sessions</PricingFeature>
@@ -311,109 +311,20 @@ const PricingTiers = () => {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button 
+              <PaymentButton 
                 className="w-full bg-respiro-dark hover:bg-respiro-darker text-white font-medium transition-all duration-200 hover:scale-105"
-                onClick={() => {
-                  toast.info("Premium Pro Available Soon", {
-                    description: "Premium Pro features will be available soon. Contact us for early access."
-                  });
-                  window.open("mailto:sales@respirobalance.com?subject=Premium Pro Early Access", "_blank");
-                }}
+                openInNewTab={false}
               >
-                Choose Premium Pro
-              </Button>
-            </CardFooter>
-          </Card>
-          
-          {/* Premium Plus Tier */}
-          <Card className="flex flex-col relative border-border shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 bg-white hover:bg-gray-50/80 dark:bg-gray-800 dark:hover:bg-gray-700/80">
-            <div className="absolute top-0 left-0 transform -translate-x-1/4 -translate-y-1/3">
-              <div className="bg-purple-600 text-white text-xs font-medium px-3 py-1 rounded-full">
-                Limited Beta
-              </div>
-            </div>
-            <CardHeader>
-              <CardTitle className="text-xl text-gray-900 dark:text-white">Premium Plus</CardTitle>
-              <div className="mt-4">
-                <span className="text-3xl font-bold text-gray-900 dark:text-white">
-                  ${getPricing(47.97, 40).price}
-                </span>
-                <span className="text-muted-foreground ml-2 dark:text-gray-300">
-                  /{getPricing(47.97, 40).period}
-                </span>
-                {isAnnual && (
-                  <div className="mt-2 space-y-1">
-                    <div className="text-sm text-muted-foreground dark:text-gray-400">
-                      That's ${getPricing(47.97, 40).monthlyEquivalent}/month
-                    </div>
-                    <div className="flex flex-wrap gap-1">
-                      <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-medium">
-                        Save {getPricing(47.97, 40).savings}%
-                      </span>
-                      <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-medium">
-                        Save ${getPricing(47.97, 40).savingsAmount}/year
-                      </span>
-                    </div>
-                  </div>
-                )}
-              </div>
-              <CardDescription className="mt-2 text-gray-600 dark:text-gray-300">
-                Complete platform with AI & biofeedback coaching
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex-1">
-              <div className="mb-3 text-sm font-medium text-respiro-dark">Everything in Premium Pro, plus:</div>
-              <ul className="space-y-2">
-                {/* Core Sessions & Access */}
-                <PricingFeature included>100+ Sessions + Smart Playlists</PricingFeature>
-                <PricingFeature included>Unlimited + Session recommendations</PricingFeature>
-                <PricingFeature included>Any length + favorite session bookmarks</PricingFeature>
-                <PricingFeature included>All Patterns + Advanced Customization</PricingFeature>
-                
-                {/* Tracking & Insights */}
-                <PricingFeature included>Comprehensive dashboard + smart insights</PricingFeature>
-                <PricingFeature included>Full wellness pattern analysis</PricingFeature>
-                <PricingFeature included>Heart rate + stress + HRV coaching</PricingFeature>
-                
-                {/* App Experience */}
-                <PricingFeature included>Download entire library</PricingFeature>
-                
-                {/* Premium Content & Features */}
-                <PricingFeature included>Focus analytics + productivity insights</PricingFeature>
-                <PricingFeature included>Early access + exclusive masterclasses</PricingFeature>
-                
-                {/* Community & Social */}
-                <PricingFeature included>Private groups + exclusive content</PricingFeature>
-                
-                {/* Support & Sharing */}
-                <PricingFeature included>Priority support + dedicated success manager</PricingFeature>
-                <PricingFeature included>Family plan for up to 6 members</PricingFeature>
-                <PricingFeature included>Custom colors + personal branding</PricingFeature>
-                <PricingFeature included>Beta testing + feature voting rights</PricingFeature>
-                <PricingFeature included>JSON/CSV export + backup restore</PricingFeature>
-              </ul>
-            </CardContent>
-            <CardFooter>
-              <Button 
-                variant="outline" 
-                className="w-full text-white bg-respiro-dark border-respiro-dark hover:bg-respiro-darker font-medium transition-all duration-200 hover:scale-105"
-                onClick={() => {
-                  toast.info("Premium Plus Available Soon", {
-                    description: "Premium Plus features will be available soon. Contact us for early access."
-                  });
-                  window.open("mailto:sales@respirobalance.com?subject=Premium Plus Early Access", "_blank");
-                }}
-              >
-                Get Premium Plus
-              </Button>
+                Upgrade to Premium
+              </PaymentButton>
             </CardFooter>
           </Card>
         </div>
 
         <div className="text-center mt-12">
           <p className="text-sm text-muted-foreground max-w-2xl mx-auto text-gray-700 dark:text-gray-300">
-            All plans include access to our mobile app and web platform. Premium plans
-            can be canceled at any time. Annual plans save 32-40% compared to monthly.
+            All plans include access to our mobile app and web platform. Paid plans
+            can be canceled at any time. Annual plans save 32-35% compared to monthly.
             For enterprise solutions or custom pricing, please contact our sales team.
           </p>
         </div>

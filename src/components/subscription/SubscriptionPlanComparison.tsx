@@ -21,7 +21,7 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
     manageSubscription 
   } = useSubscription();
   
-  const handleSubscribe = async (tier: 'free' | 'premium' | 'premium-pro' | 'premium-plus') => {
+  const handleSubscribe = async (tier: 'free' | 'standard' | 'premium') => {
     if (!user && tier !== 'free') {
       toast.error("Please sign in to subscribe", {
         description: "You need to have an account to subscribe to a plan."
@@ -38,7 +38,7 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
         return;
       }
       
-      if (tier === 'premium') {
+      if (tier === 'standard' || tier === 'premium') {
         if (onSelectPremium) {
           onSelectPremium();
           return;
@@ -51,21 +51,6 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
           throw new Error("Failed to get checkout URL");
         }
         return;
-      }
-      
-      if (tier === 'premium-pro') {
-        toast.info("Premium Pro Available Soon", {
-          description: "Premium Pro features will be available soon. Contact us for early access."
-        });
-        window.open("mailto:sales@respirobalance.com?subject=Premium Pro Early Access", "_blank");
-        return;
-      }
-      
-      if (tier === 'premium-plus') {
-        toast.info("Premium Plus Available Soon", {
-          description: "Premium Plus features will be available soon. Contact us for early access."
-        });
-        window.open("mailto:sales@respirobalance.com?subject=Premium Plus Early Access", "_blank");
       }
     } catch (error) {
       toast.error("Checkout failed", {
@@ -101,7 +86,7 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
 
   return (
     <div className="w-full">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 max-w-7xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 max-w-7xl mx-auto">
         {/* Free Plan */}
         <SubscriptionCard
           title="Free"
@@ -129,9 +114,9 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
           onSubscribe={() => handleSubscribe('free')}
         />
 
-        {/* Premium Plan */}
+        {/* Standard Plan */}
         <SubscriptionCard
-          title="Premium"
+          title="Standard"
           description="Comprehensive meditation toolkit"
           features={[
             "✓ 20 Sessions",
@@ -146,23 +131,23 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
             "✓ 5 sleep stories + nature sounds",
             "✓ Community forum + email (72h response)"
           ]}
-          price={11.97}
-          subscription={currentTier === 'premium' ? {
+          price={9}
+          subscription={currentTier === 'standard' ? {
             status: 'active',
-            tier: 'premium',
+            tier: 'standard',
             current_period_end: subscriptionData?.subscription_period_end || '',
             cancel_at_period_end: false
           } : undefined}
-          onSubscribe={() => handleSubscribe('premium')}
+          onSubscribe={() => handleSubscribe('standard')}
           onManage={handleManageSubscription}
         />
 
-        {/* Premium Pro Plan */}
+        {/* Premium Plan */}
         <SubscriptionCard
-          title="Premium Pro"
+          title="Premium"
           description="Advanced features + biofeedback"
           features={[
-            "Everything in Premium, plus:",
+            "Everything in Standard, plus:",
             "✓ 50 Sessions",
             "✓ Unlimited daily sessions", 
             "✓ 5-60 minute sessions",
@@ -175,52 +160,23 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
             "✓ Share with 1 family member",
             "✓ Priority email support (24h response)"
           ]}
-          price={29.97}
+          price={13}
           highlighted={true}
-          subscription={currentTier === 'premium-pro' ? {
+          subscription={currentTier === 'premium' ? {
             status: 'active',
-            tier: 'premium-pro',
+            tier: 'premium',
             current_period_end: subscriptionData?.subscription_period_end || '',
             cancel_at_period_end: false
           } : undefined}
-          onSubscribe={() => handleSubscribe('premium-pro')}
-          onManage={handleManageSubscription}
-        />
-
-        {/* Premium Plus Plan */}
-        <SubscriptionCard
-          title="Premium Plus"
-          description="Complete platform with AI & biofeedback coaching"
-          features={[
-            "Everything in Premium Pro, plus:",
-            "✓ 100+ Sessions + Smart Playlists",
-            "✓ Unlimited + Session recommendations",
-            "✓ Any length + favorite session bookmarks",
-            "✓ All Patterns + Advanced Customization",
-            "✓ Comprehensive dashboard + smart insights",
-            "✓ Full wellness pattern analysis",
-            "✓ Heart rate + stress + HRV coaching",
-            "✓ Download entire library",
-            "✓ Unlimited devices + web access",
-            "✓ Family plan for up to 6 members",
-            "✓ Priority support + dedicated success manager"
-          ]}
-          price={47.97}
-          subscription={currentTier === 'premium-plus' ? {
-            status: 'active',
-            tier: 'premium-plus',
-            current_period_end: subscriptionData?.subscription_period_end || '',
-            cancel_at_period_end: false
-          } : undefined}
-          onSubscribe={() => handleSubscribe('premium-plus')}
+          onSubscribe={() => handleSubscribe('premium')}
           onManage={handleManageSubscription}
         />
       </div>
       
       <div className="text-center mt-12">
         <p className="text-sm text-muted-foreground max-w-2xl mx-auto text-gray-700 dark:text-gray-300">
-          All plans include access to our mobile app and web platform. Premium plans
-          can be canceled at any time. Annual plans save 32-40% compared to monthly.
+          All plans include access to our mobile app and web platform. Paid plans
+          can be canceled at any time. Annual plans save 32-35% compared to monthly.
           For enterprise solutions or custom pricing, please contact our sales team.
         </p>
       </div>

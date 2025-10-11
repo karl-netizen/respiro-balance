@@ -24,9 +24,8 @@ interface FeatureValue {
 interface Feature {
   name: string;
   free: FeatureValue;
+  standard: FeatureValue;
   premium: FeatureValue;
-  premiumPro: FeatureValue;
-  premiumPlus: FeatureValue;
 }
 
 interface FeatureCategory {
@@ -96,32 +95,23 @@ const PricingMatrix: React.FC<PricingMatrixProps> = ({
       color: 'gray'
     },
     {
-      name: 'Premium',
-      price: '$11.97',
+      name: 'Standard',
+      price: '$9',
       period: '/month',
       description: 'Comprehensive meditation toolkit',
       popular: true,
-      buttonText: 'Start Premium',
+      buttonText: 'Start Standard',
       buttonStyle: 'premium',
       color: 'teal'
     },
     {
-      name: 'Premium Pro',
-      price: '$29.97',
+      name: 'Premium',
+      price: '$13',
       period: '/month',
       description: 'Advanced features + biofeedback',
-      buttonText: 'Upgrade to Pro',
+      buttonText: 'Upgrade to Premium',
       buttonStyle: 'pro',
       color: 'blue'
-    },
-    {
-      name: 'Premium Plus',
-      price: '$47.97',
-      period: '/month',
-      description: 'Complete platform with AI & coaching',
-      buttonText: 'Get Premium Plus',
-      buttonStyle: 'plus',
-      color: 'purple'
     }
   ];
 
@@ -133,23 +123,20 @@ const PricingMatrix: React.FC<PricingMatrixProps> = ({
         {
           name: 'Meditation Library Access',
           free: { text: '3 Beginner Sessions Only', type: 'limited' },
-          premium: { text: '20 Sessions', type: 'included' },
-          premiumPro: { text: '50 Sessions', type: 'included' },
-          premiumPlus: { text: '100+ Sessions + Smart Playlists', type: 'included' }
+          standard: { text: '20 Sessions', type: 'included' },
+          premium: { text: '50 Sessions', type: 'included' }
         },
         {
           name: 'Daily Session Allowance',
           free: { text: '1 session per day (max 7/week)', type: 'limited' },
-          premium: { text: '5 sessions per day', type: 'included' },
-          premiumPro: { text: 'Unlimited daily sessions', type: 'included' },
-          premiumPlus: { text: 'Unlimited + Session recommendations', type: 'included' }
+          standard: { text: '5 sessions per day', type: 'included' },
+          premium: { text: 'Unlimited daily sessions', type: 'included' }
         },
         {
           name: 'Session Length Options',
           free: { text: '5-10 minute sessions only', type: 'limited' },
-          premium: { text: '5-30 minute sessions', type: 'included' },
-          premiumPro: { text: '5-60 minute sessions', type: 'included' },
-          premiumPlus: { text: 'Any length + favorite session bookmarks', type: 'included' }
+          standard: { text: '5-30 minute sessions', type: 'included' },
+          premium: { text: '5-60 minute sessions', type: 'included' }
         }
       ]
     },
@@ -159,16 +146,14 @@ const PricingMatrix: React.FC<PricingMatrixProps> = ({
         {
           name: 'Breathing Patterns Available',
           free: { text: 'Box Breathing only', type: 'limited' },
-          premium: { text: '3 Proven Patterns + Guided Instructions', type: 'included' },
-          premiumPro: { text: 'All Patterns + Custom Timing', type: 'included' },
-          premiumPlus: { text: 'All Patterns + Advanced Customization', type: 'included' }
+          standard: { text: '3 Proven Patterns + Guided Instructions', type: 'included' },
+          premium: { text: 'All Patterns + Custom Timing', type: 'included' }
         },
         {
           name: 'Breathing Technique Customization',
           free: { text: '✗ Fixed settings', type: 'not-included' },
-          premium: { text: '✓ Adjust basic timing', type: 'included' },
-          premiumPro: { text: '✓ Save custom sequences', type: 'included' },
-          premiumPlus: { text: '✓ Personal preference learning', type: 'included' }
+          standard: { text: '✓ Adjust basic timing', type: 'included' },
+          premium: { text: '✓ Save custom sequences', type: 'included' }
         }
       ]
     },
@@ -178,30 +163,26 @@ const PricingMatrix: React.FC<PricingMatrixProps> = ({
         {
           name: 'Progress Analytics',
           free: { text: 'Weekly streak count only', type: 'limited' },
-          premium: { text: 'Monthly insights + basic charts', type: 'included' },
-          premiumPro: { text: 'Advanced wellness tracking + trends', type: 'included' },
-          premiumPlus: { text: 'Comprehensive dashboard + smart insights', type: 'included' }
+          standard: { text: 'Monthly insights + basic charts', type: 'included' },
+          premium: { text: 'Advanced wellness tracking + trends', type: 'included' }
         },
         {
           name: 'Mood & Wellness Tracking',
           free: { text: '✗ No mood tracking', type: 'not-included' },
-          premium: { text: '✓ Daily mood check-ins', type: 'included' },
-          premiumPro: { text: '✓ Mood + sleep + energy tracking', type: 'included' },
-          premiumPlus: { text: '✓ Full wellness pattern analysis', type: 'included' }
+          standard: { text: '✓ Daily mood check-ins', type: 'included' },
+          premium: { text: '✓ Mood + sleep + energy tracking', type: 'included' }
         },
         {
           name: 'Biofeedback Integration',
           free: { text: '✗ No biofeedback', type: 'not-included' },
-          premium: { text: '✗ No biofeedback', type: 'not-included' },
-          premiumPro: { text: '✓ Heart rate + stress monitoring', type: 'included' },
-          premiumPlus: { text: '✓ Heart rate + stress + HRV coaching', type: 'included' }
+          standard: { text: '✗ No biofeedback', type: 'not-included' },
+          premium: { text: '✓ Heart rate + stress monitoring', type: 'included' }
         },
         {
           name: 'Data Export & Sharing',
           free: { text: '✗ No data export', type: 'not-included' },
-          premium: { text: 'Basic stats sharing', type: 'included' },
-          premiumPro: { text: 'Full CSV export', type: 'included' },
-          premiumPlus: { text: 'JSON/CSV export + backup restore', type: 'included' }
+          standard: { text: 'Basic stats sharing', type: 'included' },
+          premium: { text: 'Full CSV export', type: 'included' }
         }
       ]
     },
@@ -211,23 +192,20 @@ const PricingMatrix: React.FC<PricingMatrixProps> = ({
         {
           name: 'Advertisements',
           free: { text: '30-60 second ads between sessions', type: 'not-included' },
-          premium: { text: '✓ Completely ad-free experience', type: 'included' },
-          premiumPro: { text: '✓ Completely ad-free experience', type: 'included' },
-          premiumPlus: { text: '✓ Completely ad-free experience', type: 'included' }
+          standard: { text: '✓ Completely ad-free experience', type: 'included' },
+          premium: { text: '✓ Completely ad-free experience', type: 'included' }
         },
         {
           name: 'Offline Access',
           free: { text: '✗ Internet required for all content', type: 'not-included' },
-          premium: { text: '✓ Download up to 5 sessions', type: 'included' },
-          premiumPro: { text: '✓ Download up to 20 sessions', type: 'included' },
-          premiumPlus: { text: '✓ Download entire library', type: 'included' }
+          standard: { text: '✓ Download up to 5 sessions', type: 'included' },
+          premium: { text: '✓ Download up to 20 sessions', type: 'included' }
         },
         {
           name: 'Device Synchronization',
           free: { text: 'Single device only', type: 'limited' },
-          premium: { text: 'Sync across 3 devices', type: 'included' },
-          premiumPro: { text: 'Sync across 3 devices', type: 'included' },
-          premiumPlus: { text: 'Unlimited devices + web access', type: 'included' }
+          standard: { text: 'Sync across 3 devices', type: 'included' },
+          premium: { text: 'Sync across 3 devices', type: 'included' }
         }
       ]
     },
@@ -237,30 +215,26 @@ const PricingMatrix: React.FC<PricingMatrixProps> = ({
         {
           name: 'Sleep Stories & Content',
           free: { text: '1 sleep story', type: 'limited' },
-          premium: { text: '5 sleep stories + nature sounds', type: 'included' },
-          premiumPro: { text: '15 sleep stories + sleep courses', type: 'included' },
-          premiumPlus: { text: 'Unlimited stories + premium content', type: 'included' }
+          standard: { text: '5 sleep stories + nature sounds', type: 'included' },
+          premium: { text: '15 sleep stories + sleep courses', type: 'included' }
         },
         {
           name: 'Focus & Productivity Tools',
           free: { text: '✗ No focus tools', type: 'not-included' },
-          premium: { text: '✓ Basic Pomodoro timer', type: 'included' },
-          premiumPro: { text: '✓ Advanced focus tracking + break reminders', type: 'included' },
-          premiumPlus: { text: '✓ Focus analytics + productivity insights', type: 'included' }
+          standard: { text: '✓ Basic Pomodoro timer', type: 'included' },
+          premium: { text: '✓ Advanced focus tracking + break reminders', type: 'included' }
         },
         {
           name: 'Community & Social',
           free: { text: 'View-only community feed', type: 'limited' },
-          premium: { text: '✓ Join discussions + buddy system', type: 'included' },
-          premiumPro: { text: '✓ Weekly group challenges + leaderboards', type: 'included' },
-          premiumPlus: { text: '✓ Private groups + exclusive content', type: 'included' }
+          standard: { text: '✓ Join discussions + buddy system', type: 'included' },
+          premium: { text: '✓ Weekly group challenges + leaderboards', type: 'included' }
         },
         {
           name: 'Premium Content Access',
           free: { text: '✗ Basic content only', type: 'not-included' },
-          premium: { text: '✓ Weekly new content releases', type: 'included' },
-          premiumPro: { text: '✓ Expert-led courses + workshops', type: 'included' },
-          premiumPlus: { text: '✓ Early access + exclusive masterclasses', type: 'included' }
+          standard: { text: '✓ Weekly new content releases', type: 'included' },
+          premium: { text: '✓ Expert-led courses + workshops', type: 'included' }
         }
       ]
     },
@@ -270,30 +244,26 @@ const PricingMatrix: React.FC<PricingMatrixProps> = ({
         {
           name: 'Customer Support',
           free: { text: 'FAQ & help articles only', type: 'limited' },
-          premium: { text: 'Community forum + email (72h response)', type: 'included' },
-          premiumPro: { text: 'Priority email support (24h response)', type: 'included' },
-          premiumPlus: { text: 'Priority support + dedicated success manager', type: 'included' }
+          standard: { text: 'Community forum + email (72h response)', type: 'included' },
+          premium: { text: 'Priority email support (24h response)', type: 'included' }
         },
         {
           name: 'Account Sharing',
           free: { text: 'Single user only', type: 'limited' },
-          premium: { text: 'Single user only', type: 'limited' },
-          premiumPro: { text: '✓ Share with 1 family member', type: 'included' },
-          premiumPlus: { text: '✓ Family plan for up to 6 members', type: 'included' }
+          standard: { text: 'Single user only', type: 'limited' },
+          premium: { text: '✓ Share with 1 family member', type: 'included' }
         },
         {
           name: 'Customization Features',
           free: { text: '✗ Basic app experience', type: 'not-included' },
-          premium: { text: '✗ Standard theme only', type: 'not-included' },
-          premiumPro: { text: '✓ Dark mode + theme options', type: 'included' },
-          premiumPlus: { text: '✓ Custom colors + personal branding', type: 'included' }
+          standard: { text: '✗ Standard theme only', type: 'not-included' },
+          premium: { text: '✓ Dark mode + theme options', type: 'included' }
         },
         {
           name: 'Early Access & Beta',
           free: { text: '✗ Standard releases only', type: 'not-included' },
-          premium: { text: '✗ Standard releases only', type: 'not-included' },
-          premiumPro: { text: '✓ Early access to new features', type: 'included' },
-          premiumPlus: { text: '✓ Beta testing + feature voting rights', type: 'included' }
+          standard: { text: '✗ Standard releases only', type: 'not-included' },
+          premium: { text: '✓ Early access to new features', type: 'included' }
         }
       ]
     }
@@ -401,8 +371,7 @@ const PricingMatrix: React.FC<PricingMatrixProps> = ({
                   </div>
                   {category.features.map((feature) => {
                     const planFeature = planIndex === 0 ? feature.free : 
-                                      planIndex === 1 ? feature.premium :
-                                      planIndex === 2 ? feature.premiumPro : feature.premiumPlus;
+                                      planIndex === 1 ? feature.standard : feature.premium;
                     return (
                       <div key={feature.name} className="p-4 border-b border-border last:border-b-0">
                         <div className="font-medium text-sm text-foreground mb-2">
@@ -435,7 +404,7 @@ const PricingMatrix: React.FC<PricingMatrixProps> = ({
         <div className="min-w-[1000px] bg-card rounded-lg shadow-lg border border-border">
           
           {/* Plan Headers */}
-          <div className="grid grid-cols-4 border-b border-border">
+          <div className="grid grid-cols-3 border-b border-border">
             {plans.map((plan, index) => (
               <div key={plan.name} className={getPlanHeaderClass(plan.buttonStyle, plan.popular)}>
                 {plan.popular && (
@@ -467,8 +436,8 @@ const PricingMatrix: React.FC<PricingMatrixProps> = ({
             {featureCategories.map((category, categoryIndex) => (
               <div key={category.title}>
                 {/* Category Header */}
-                <div className="grid grid-cols-4 bg-muted/50">
-                  <div className="col-span-4 p-4">
+                <div className="grid grid-cols-3 bg-muted/50">
+                  <div className="col-span-3 p-4">
                     <h4 className="font-semibold text-foreground text-sm tracking-wide">
                       {category.title}
                     </h4>
@@ -479,7 +448,7 @@ const PricingMatrix: React.FC<PricingMatrixProps> = ({
                 {category.features.map((feature, featureIndex) => (
                   <div 
                     key={feature.name} 
-                    className="grid grid-cols-4 hover:bg-muted/30 transition-colors border-b border-border last:border-b-0"
+                    className="grid grid-cols-3 hover:bg-muted/30 transition-colors border-b border-border last:border-b-0"
                   >
                     {/* Feature Name */}
                     <div className="p-4 border-r border-border bg-muted/20">
@@ -494,17 +463,13 @@ const PricingMatrix: React.FC<PricingMatrixProps> = ({
                       planColor="gray"
                     />
                     <FeatureCell 
-                      feature={feature.premium} 
+                      feature={feature.standard} 
                       planColor="teal"
                       isHighlighted={plans[1].popular}
                     />
                     <FeatureCell 
-                      feature={feature.premiumPro} 
+                      feature={feature.premium} 
                       planColor="blue"
-                    />
-                    <FeatureCell 
-                      feature={feature.premiumPlus} 
-                      planColor="purple"
                     />
                   </div>
                 ))}
@@ -513,7 +478,7 @@ const PricingMatrix: React.FC<PricingMatrixProps> = ({
           </div>
 
           {/* Footer CTAs */}
-          <div className="grid grid-cols-4 p-6 bg-muted/20 rounded-b-lg border-t border-border">
+          <div className="grid grid-cols-3 p-6 bg-muted/20 rounded-b-lg border-t border-border">
             {plans.map((plan) => (
               <div key={plan.name} className="px-4">
                 <Button

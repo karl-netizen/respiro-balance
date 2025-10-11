@@ -61,16 +61,16 @@ export const SubscriptionManagement: React.FC<SubscriptionManagementProps> = ({
     {
       id: 'standard',
       name: 'Standard',
-      price: 6.99,
+      price: 9,
       interval: 'month',
-      discountPercent: 30,
+      discountPercent: 32,
       features: [
-        '✓ 40 sessions per month',
+        '✓ 20 sessions',
         '✓ All meditation content',
-        '✓ Biofeedback (always active)',
-        '✓ 1 power module choice',
-        '✓ Advanced progress tracking',
-        '✓ Full community access'
+        '✓ Daily mood check-ins',
+        '✓ Ad-free experience',
+        '✓ Download up to 5 sessions',
+        '✓ Sync across 3 devices'
       ],
       current: currentTier === 'standard',
       popular: true
@@ -78,18 +78,18 @@ export const SubscriptionManagement: React.FC<SubscriptionManagementProps> = ({
     {
       id: 'premium',
       name: 'Premium',
-      price: 12.99,
+      price: 13,
       interval: 'month',
-      discountPercent: 25,
+      discountPercent: 35,
       features: [
         '✓ Unlimited sessions',
-        '✓ All power modules unlocked',
-        '✓ Biofeedback (always active)',
+        '✓ All patterns + custom timing',
+        '✓ Advanced wellness tracking',
+        '✓ Biofeedback integration',
+        '✓ Heart rate monitoring',
         '✓ Focus Mode',
-        '✓ Morning Rituals',
-        '✓ Social Hub',
-        '✓ Work-Life Balance',
-        '✓ AI Personalization',
+        '✓ Group challenges',
+        '✓ Family sharing (1 member)',
         '✓ Priority support'
       ],
       current: currentTier === 'premium'
@@ -146,7 +146,7 @@ export const SubscriptionManagement: React.FC<SubscriptionManagementProps> = ({
       </Card>
 
       {/* Subscription Plans */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {tiers.map((tier) => (
           <Card 
             key={tier.id} 
@@ -161,8 +161,6 @@ export const SubscriptionManagement: React.FC<SubscriptionManagementProps> = ({
             <CardHeader className="text-center">
               <CardTitle className="flex items-center justify-center gap-2">
                 {tier.id === 'premium' && <Crown className="h-5 w-5 text-yellow-500" />}
-                {tier.id === 'premium-pro' && <Crown className="h-5 w-5 text-purple-500" />}
-                {tier.id === 'premium-plus' && <Users className="h-5 w-5 text-purple-500" />}
                 {tier.name}
               </CardTitle>
               <div className="text-3xl font-bold">
