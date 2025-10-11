@@ -7,7 +7,7 @@ import SubscriptionBanner from '@/components/subscription/SubscriptionBanner';
 import { useMeditatePage } from '@/hooks/useMeditatePage';
 import { MeditationSession } from '@/types/meditation';
 import { StateDebugger } from '@/components/dev';
-import { MOCK_MEDITATION_SESSIONS } from '@/data/mockMeditationSessions';
+import { meditationSessions } from '@/data/meditationSessions';
 
 const Meditate = () => {
   // const {
@@ -32,15 +32,9 @@ const Meditate = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const isPremium = true;
 
-  const getAllSessions = () => MOCK_MEDITATION_SESSIONS as any;
+  const getAllSessions = () => meditationSessions;
   const getFilteredSessions = (category: string) => {
-    const categoryMap: Record<string, string> = {
-      'guided': 'Guided',
-      'quick': 'Quick Breaks',
-      'deep': 'Deep Focus',
-      'sleep': 'Sleep'
-    };
-    return MOCK_MEDITATION_SESSIONS.filter(s => s.category === categoryMap[category]) as any;
+    return meditationSessions.filter(s => s.category === category);
   };
   const getRecentSessions = () => [];
   const handleTabChange = (tab: string) => setActiveTab(tab);
