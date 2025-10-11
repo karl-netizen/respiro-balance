@@ -26,6 +26,32 @@ const Meditate = () => {
   //   isPremium
   // } = useMeditatePage();
 
+  // MOCK DATA REPLACEMENTS
+  const [activeTab, setActiveTab] = useState('guided');
+  const [selectedSession, setSelectedSession] = useState<MeditationSession | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const isPremium = true;
+
+  const getAllSessions = () => MOCK_MEDITATION_SESSIONS as any;
+  const getFilteredSessions = (category: string) => {
+    const categoryMap: Record<string, string> = {
+      'guided': 'Guided',
+      'quick': 'Quick Breaks',
+      'deep': 'Deep Focus',
+      'sleep': 'Sleep'
+    };
+    return MOCK_MEDITATION_SESSIONS.filter(s => s.category === categoryMap[category]) as any;
+  };
+  const getRecentSessions = () => [];
+  const handleTabChange = (tab: string) => setActiveTab(tab);
+  const handleSelectSession = (session: any) => {
+    setSelectedSession(session);
+    setDialogOpen(true);
+  };
+  const handleStartMeditation = () => console.log('Start meditation');
+  const handleToggleFavorite = (session: any) => console.log('Toggle favorite', session);
+  const isFavorite = (id: string) => false;
+
   // State to track filtered sessions
   const [filteredSessions, setFilteredSessions] = useState<MeditationSession[]>([]);
   
