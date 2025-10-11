@@ -7,6 +7,7 @@ import SubscriptionBanner from '@/components/subscription/SubscriptionBanner';
 import { useMeditatePage } from '@/hooks/useMeditatePage';
 import { MeditationSession } from '@/types/meditation';
 import { StateDebugger } from '@/components/dev';
+import { MOCK_MEDITATION_SESSIONS } from '@/data/mockMeditationSessions';
 
 const Meditate = () => {
   const {
