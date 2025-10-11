@@ -338,6 +338,17 @@ const MeditationLibrary: React.FC = () => {
     incrementPlayCount
   } = useMeditationContent();
   
+  // DEBUG: Log what we receive from the hook
+  useEffect(() => {
+    console.log('🎯 MeditationLibrary received from useMeditationContent:', {
+      contentCount: content?.length || 0,
+      contentArray: content,
+      isLoading,
+      categoriesCount: categories?.length || 0,
+      firstItem: content?.[0]
+    });
+  }, [content, isLoading, categories]);
+  
   const { audioFiles, loading: audioLoading } = useAudioFiles();
   const { 
     weeklySessionCount, 

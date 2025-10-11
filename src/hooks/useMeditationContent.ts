@@ -68,14 +68,24 @@ export const useMeditationContent = () => {
   const fetchContent = async () => {
     try {
       setIsLoading(true);
-      console.log('🔍 Fetching meditation content...');
+      console.log('🔍 useMeditationContent: fetchContent started');
+      console.log('🔍 Supabase client exists:', !!supabase);
+      
       const { data, error } = await supabase
         .from('meditation_content')
         .select('*')
         .eq('is_active', true)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      console.log('📡 Supabase query completed');
+      console.log('📊 Query result - data:', data);
+      console.log('📊 Query result - error:', error);
+
+      if (error) {
+        console.error('❌ Supabase query error:', error);
+        throw error;
+      }
+      
       console.log('✅ Fetched content:', data?.length || 0, 'items');
       console.log('📊 Content by category:', 
         data?.reduce((acc: any, item: any) => {
@@ -84,13 +94,21 @@ export const useMeditationContent = () => {
         }, {})
       );
       console.log('🎯 First 3 items:', data?.slice(0, 3));
+      console.log('💾 Setting content state with', data?.length || 0, 'items');
       setContent(data || []);
+      console.log('✅ Content state updated');
     } catch (err) {
       console.error('❌ Error fetching content:', err);
+      console.error('❌ Error details:', {
+        message: err instanceof Error ? err.message : 'Unknown error',
+        stack: err instanceof Error ? err.stack : undefined,
+        fullError: err
+      });
       setError(err instanceof Error ? err.message : 'Failed to fetch content');
       toast.error('Failed to load meditation content');
     } finally {
       setIsLoading(false);
+      console.log('✅ fetchContent completed, isLoading set to false');
     }
   };
 
@@ -257,6 +275,7 @@ export const useMeditationContent = () => {
   };
 
   useEffect(() => {
+    console.log('🚀 useMeditationContent: useEffect triggered - starting data fetch');
     fetchContent();
     fetchCategories();
     fetchUserProgress();
