@@ -65,6 +65,33 @@ export const AIPersonalizationDashboard: React.FC<AIPersonalizationDashboardProp
     return 'bg-orange-500';
   };
 
+  if (!isProfileLoaded && isLoading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Brain className="w-5 h-5 animate-pulse" />
+            AI Personalization Engine
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-8">
+            <div className="inline-flex items-center gap-2 text-muted-foreground mb-4">
+              <RefreshCw className="w-4 h-4 animate-spin" />
+              Loading your personalization profile...
+            </div>
+            {error && (
+              <p className="text-sm text-muted-foreground">
+                {error}
+              </p>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+  
+  // Show component even if profile failed to load (fallback mode)
   if (!isProfileLoaded) {
     return (
       <Card>
@@ -77,13 +104,12 @@ export const AIPersonalizationDashboard: React.FC<AIPersonalizationDashboardProp
         <CardContent>
           <div className="text-center py-8">
             <p className="text-muted-foreground mb-4">
-              Loading your personalization profile...
+              Unable to load personalization profile. Using fallback recommendations.
             </p>
-            {error && (
-              <p className="text-destructive mb-4">
-                {error}
-              </p>
-            )}
+            <Button onClick={() => window.location.reload()} variant="outline">
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Retry
+            </Button>
           </div>
         </CardContent>
       </Card>

@@ -33,12 +33,29 @@ export const useAIPersonalization = ({
     setIsLoading(true);
     setError(null);
 
-    const result = await aiPersonalizationEngine.loadUserProfile(user.id);
-    
-    if (result.tag === 'Ok') {
+    try {
+      // Add timeout to prevent infinite loading
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Profile loading timeout')), 5000)
+      );
+      
+      const loadPromise = aiPersonalizationEngine.loadUserProfile(user.id);
+      
+      const result = await Promise.race([loadPromise, timeoutPromise]) as any;
+      
+      if (result?.tag === 'Ok' || result?.success) {
+        setIsProfileLoaded(true);
+      } else {
+        // Even if loading fails, set profile as loaded with limited functionality
+        console.warn('Profile loading failed, using fallback mode');
+        setIsProfileLoaded(true);
+        setError('Using fallback recommendations');
+      }
+    } catch (err: any) {
+      console.error('Profile loading error:', err);
+      // Set profile as loaded anyway to prevent infinite loading
       setIsProfileLoaded(true);
-    } else {
-      setError(result.value);
+      setError('Using fallback mode');
     }
 
     setIsLoading(false);
