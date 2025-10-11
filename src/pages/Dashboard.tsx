@@ -18,6 +18,7 @@ import { Sparkles, Package, Settings, Activity, Boxes } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { SessionCounterWidget } from '@/components/subscription/SessionCounterWidget';
 import { FeatureTour } from '@/components/onboarding/FeatureTour';
+import { AIRecommendationsPanel } from '@/components/personalization/AIRecommendationsPanel';
 
 // Lazy load module components
 const BiofeedbackModule = lazy(() => import('@/components/modules/BiofeedbackModule'));
@@ -232,6 +233,15 @@ const Dashboard: React.FC = () => {
                   </CardContent>
                 </Card>
               )}
+
+              {/* AI Recommendations */}
+              <div className="space-y-4 mb-6" data-tour="ai-recommendations">
+                <h2 className="text-xl font-semibold text-foreground flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-primary" />
+                  AI-Powered Recommendations
+                </h2>
+                <AIRecommendationsPanel />
+              </div>
 
               {/* Quick Access Tabs */}
               <DashboardQuickAccess />

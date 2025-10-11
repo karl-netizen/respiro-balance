@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_recommendation_feedback: {
+        Row: {
+          created_at: string
+          feedback: Json
+          id: string
+          recommendation_id: string
+          session_data: Json
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          feedback?: Json
+          id?: string
+          recommendation_id: string
+          session_data?: Json
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          feedback?: Json
+          id?: string
+          recommendation_id?: string
+          session_data?: Json
+          user_id?: string
+        }
+        Relationships: []
+      }
       biometric_data: {
         Row: {
           coherence: number | null

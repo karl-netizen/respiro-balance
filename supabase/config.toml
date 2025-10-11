@@ -1,5 +1,7 @@
-
 project_id = "tlwlxlthrcgscwgmsamo"
+
+[functions.ai-personalization]
+verify_jwt = true
 
 [api]
 enabled = true
