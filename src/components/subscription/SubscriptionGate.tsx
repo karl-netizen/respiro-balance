@@ -30,11 +30,11 @@ export const SubscriptionGate: React.FC<SubscriptionGateProps> = ({
     }
   };
 
-  // Allow access if user has premium or higher
-  const hasAccess = isPremium && (
-    tier === 'premium' || 
-    (tier === 'team' && ['premium', 'team'].includes(subscription.tier))
-  );
+  // Allow access based on tier hierarchy
+  const hasAccess = (() => {
+    if (tier === 'premium') return isPremium && subscription.tier === 'premium';
+    return isPremium; // Standard and premium both have access to non-premium features
+  })();
 
   if (hasAccess) {
     return <>{children}</>;

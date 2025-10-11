@@ -28,7 +28,7 @@ export const useModuleStore = create<ModuleState>()(
       subscriptionTier: 'free',
       activeModules: [],
       lastModuleSwap: null,
-      devMode: false,
+      devMode: process.env.NODE_ENV === 'development' ? false : false,
 
       setSubscriptionTier: (tier) => {
         set({ subscriptionTier: tier });
@@ -43,7 +43,7 @@ export const useModuleStore = create<ModuleState>()(
           }
         } else if (tier === 'premium') {
           // Auto-activate all modules for premium
-          const allModules = ['biofeedback', 'focus', 'morning_rituals', 'social', 'work_life_balance'];
+          const allModules = ['biofeedback', 'focus', 'morning_rituals', 'social', 'work_life_balance', 'ai_personalization'];
           const newActiveModules = [...new Set([...activeModules, ...allModules])];
           set({ activeModules: newActiveModules });
         }
@@ -141,11 +141,17 @@ export const useModuleStore = create<ModuleState>()(
       },
 
       toggleDevMode: () => {
-        set(state => ({ devMode: !state.devMode }));
+        // Only allow toggling in development mode
+        if (process.env.NODE_ENV === 'development') {
+          set(state => ({ devMode: !state.devMode }));
+        }
       },
 
       setDevMode: (enabled) => {
-        set({ devMode: enabled });
+        // Only allow setting in development mode
+        if (process.env.NODE_ENV === 'development') {
+          set({ devMode: enabled });
+        }
       }
     }),
     {

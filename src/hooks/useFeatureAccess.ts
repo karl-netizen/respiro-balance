@@ -1,8 +1,9 @@
 
 import { useAuth } from './useAuth';
 import { useSubscription } from './useSubscription';
+import { useSubscriptionStore } from '@/store/subscriptionStore';
 
-export type FeatureTier = 'free' | 'premium' | 'premium_pro' | 'premium_plus';
+export type FeatureTier = 'free' | 'standard' | 'premium';
 
 export interface FeatureAccess {
   hasAccess: boolean;
@@ -16,18 +17,19 @@ export const useFeatureAccess = () => {
   const { user } = useAuth();
   const { isPremium, subscriptionData } = useSubscription();
 
+  const { tier: storeTier } = useSubscriptionStore();
+
   const getCurrentTier = (): FeatureTier => {
-    if (!user || !isPremium) return 'free';
-    return (subscriptionData?.tier as FeatureTier) || 'free';
+    if (!user) return 'free';
+    return storeTier as FeatureTier;
   };
 
   const checkFeatureAccess = (requiredTier: FeatureTier): FeatureAccess => {
     const currentTier = getCurrentTier();
     const tierHierarchy: Record<FeatureTier, number> = {
       free: 0,
-      premium: 1,
-      premium_pro: 2,
-      premium_plus: 3
+      standard: 1,
+      premium: 2
     };
 
     const hasAccess = tierHierarchy[currentTier] >= tierHierarchy[requiredTier];
@@ -43,13 +45,13 @@ export const useFeatureAccess = () => {
     
     switch (tier) {
       case 'free':
-        return { weekly: 2, monthly: 8 };
+        return { weekly: Infinity, monthly: 5 };
+      case 'standard':
+        return { weekly: Infinity, monthly: 40 };
       case 'premium':
-      case 'premium_pro':
-      case 'premium_plus':
         return { weekly: Infinity, monthly: Infinity };
       default:
-        return { weekly: 2, monthly: 8 };
+        return { weekly: Infinity, monthly: 5 };
     }
   };
 
@@ -59,11 +61,9 @@ export const useFeatureAccess = () => {
     switch (tier) {
       case 'free':
         return { sessions: 3, breathingTechniques: 3 };
+      case 'standard':
+        return { sessions: Infinity, breathingTechniques: Infinity };
       case 'premium':
-        return { sessions: 14, breathingTechniques: Infinity };
-      case 'premium_pro':
-        return { sessions: 18, breathingTechniques: Infinity };
-      case 'premium_plus':
         return { sessions: Infinity, breathingTechniques: Infinity };
       default:
         return { sessions: 3, breathingTechniques: 3 };
@@ -80,17 +80,16 @@ export const useFeatureAccess = () => {
       communityAccess: tier !== 'free',
       sleepStories: tier !== 'free',
       moodTracking: tier !== 'free',
-      focusMode: tier !== 'free',
-      habitTracking: ['premium_pro', 'premium_plus'].includes(tier),
-      biofeedbackIntegration: ['premium_pro', 'premium_plus'].includes(tier),
-      groupChallenges: ['premium_pro', 'premium_plus'].includes(tier),
-      emailSupport: ['premium_pro', 'premium_plus'].includes(tier),
-      customBreathingPatterns: ['premium_pro', 'premium_plus'].includes(tier),
-      expertSessions: tier === 'premium_plus',
-      aiPersonalization: tier === 'premium_plus',
-      familySharing: tier === 'premium_plus',
-      prioritySupport: tier === 'premium_plus',
-      whiteLabel: tier === 'premium_plus'
+      focusMode: tier === 'premium',
+      habitTracking: tier === 'premium',
+      biofeedbackIntegration: tier !== 'free',
+      groupChallenges: tier === 'premium',
+      emailSupport: tier !== 'free',
+      customBreathingPatterns: tier === 'premium',
+      expertSessions: tier === 'premium',
+      aiPersonalization: tier === 'premium',
+      familySharing: tier === 'premium',
+      prioritySupport: tier === 'premium'
     };
   };
 
@@ -100,7 +99,7 @@ export const useFeatureAccess = () => {
     getSessionLimits,
     getMeditationLibraryAccess,
     getFeatureFlags,
-    isPremium,
-    hasFullAccess: getCurrentTier() === 'premium_plus'
+    isPremium: getCurrentTier() !== 'free',
+    hasFullAccess: getCurrentTier() === 'premium'
   };
 };

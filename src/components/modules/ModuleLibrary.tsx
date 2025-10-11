@@ -30,7 +30,7 @@ export function ModuleLibrary() {
       return 'Upgrade to Standard or Premium to unlock power modules';
     }
     if (safeTier === 'standard') {
-      return 'Biofeedback Lite is always active. Choose 1 additional module.';
+      return 'Biofeedback is always active. Choose 1 additional module.';
     }
     return 'All modules unlocked! Enjoy the full Respiro experience.';
   };
@@ -94,7 +94,12 @@ export function ModuleLibrary() {
             <div className="flex items-center gap-3">
               <div className="text-right">
                 <p className="text-sm text-muted-foreground">Active Modules</p>
-                <p className="text-xl font-semibold text-foreground">{activeModules.length} / {safeTier === 'premium' ? '5' : safeTier === 'standard' ? '2' : '0'}</p>
+                <p className="text-xl font-semibold text-foreground">
+                  {activeModules.length} / {safeTier === 'premium' ? '6' : safeTier === 'standard' ? '2' : '0'}
+                  {safeTier === 'standard' && (
+                    <span className="ml-2 text-xs text-muted-foreground">(Biofeedback + 1 choice)</span>
+                  )}
+                </p>
               </div>
             </div>
             {safeTier === 'free' && (

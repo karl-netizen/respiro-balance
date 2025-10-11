@@ -49,85 +49,50 @@ export const SubscriptionManagement: React.FC<SubscriptionManagementProps> = ({
       price: 0,
       interval: 'month',
       features: [
-        '✓ 3 Beginner Sessions Only',
-        '✓ 1 session per day (max 7/week)',
-        '✓ 5-10 minute sessions only',
-        '✓ Box Breathing only',
-        '✓ Weekly streak count only',
-        '✓ 1 sleep story',
-        '✗ No mood tracking',
-        '✗ 30-60 second ads between sessions',
-        '✗ Internet required for all content',
-        '✗ Single device only',
-        '✗ No focus tools'
+        '✓ 5 sessions per month',
+        '✓ Basic meditation library',
+        '✓ Breathing exercises',
+        '✓ Progress tracking',
+        '✗ No power modules',
+        '✗ No biofeedback'
       ],
       current: currentTier === 'free'
     },
     {
-      id: 'premium',
-      name: 'Premium',
-      price: 11.97,
+      id: 'standard',
+      name: 'Standard',
+      price: 6.99,
       interval: 'month',
-      discountPercent: 32,
+      discountPercent: 30,
       features: [
-        '✓ 20 Sessions',
-        '✓ 5 sessions per day',
-        '✓ 5-30 minute sessions',
-        '✓ 3 Proven Patterns + Guided Instructions',
-        '✓ Monthly insights + basic charts',
-        '✓ Daily mood check-ins',
-        '✓ Completely ad-free experience',
-        '✓ Download up to 5 sessions',
-        '✓ Sync across 3 devices',
-        '✓ 5 sleep stories + nature sounds',
-        '✓ Community forum + email (72h response)'
+        '✓ 40 sessions per month',
+        '✓ All meditation content',
+        '✓ Biofeedback (always active)',
+        '✓ 1 power module choice',
+        '✓ Advanced progress tracking',
+        '✓ Full community access'
       ],
-      current: currentTier === 'premium'
-    },
-    {
-      id: 'premium-pro',
-      name: 'Premium Pro',
-      price: 29.97,
-      interval: 'month',
-      discountPercent: 35,
-      features: [
-        'Everything in Premium, plus:',
-        '✓ 50 Sessions',
-        '✓ Unlimited daily sessions',
-        '✓ 5-60 minute sessions',
-        '✓ All Patterns + Custom Timing',
-        '✓ Advanced wellness tracking + trends',
-        '✓ Mood + sleep + energy tracking',
-        '✓ Heart rate + stress monitoring',
-        '✓ Download up to 20 sessions',
-        '✓ 15 sleep stories + sleep courses',
-        '✓ Share with 1 family member',
-        '✓ Priority email support (24h response)'
-      ],
-      current: currentTier === 'premium-pro',
+      current: currentTier === 'standard',
       popular: true
     },
     {
-      id: 'premium-plus',
-      name: 'Premium Plus',
-      price: 47.97,
+      id: 'premium',
+      name: 'Premium',
+      price: 12.99,
       interval: 'month',
-      discountPercent: 40,
+      discountPercent: 25,
       features: [
-        'Everything in Premium Pro, plus:',
-        '✓ 100+ Sessions + Smart Playlists',
-        '✓ Unlimited + Session recommendations',
-        '✓ Any length + favorite session bookmarks',
-        '✓ All Patterns + Advanced Customization',
-        '✓ Comprehensive dashboard + smart insights',
-        '✓ Full wellness pattern analysis',
-        '✓ Heart rate + stress + HRV coaching',
-        '✓ Download entire library',
-        '✓ Unlimited devices + web access',
-        '✓ Family plan for up to 6 members',
-        '✓ Priority support + dedicated success manager'
+        '✓ Unlimited sessions',
+        '✓ All power modules unlocked',
+        '✓ Biofeedback (always active)',
+        '✓ Focus Mode',
+        '✓ Morning Rituals',
+        '✓ Social Hub',
+        '✓ Work-Life Balance',
+        '✓ AI Personalization',
+        '✓ Priority support'
       ],
-      current: currentTier === 'premium-plus'
+      current: currentTier === 'premium'
     }
   ];
 

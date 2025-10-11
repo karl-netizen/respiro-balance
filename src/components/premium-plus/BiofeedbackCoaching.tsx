@@ -119,7 +119,7 @@ const BiofeedbackCoaching: React.FC<BiofeedbackCoachingProps> = ({
 
   return (
     <FeatureGate
-      requiredTier="premium_plus"
+      requiredTier="premium"
       featureName="Advanced Biofeedback Coaching"
       featureDescription="Real-time physiological monitoring with adaptive guidance"
     >

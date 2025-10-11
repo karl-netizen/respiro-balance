@@ -193,7 +193,7 @@ const MasterclassSystem: React.FC = () => {
 
   return (
     <FeatureGate
-      requiredTier="premium_plus"
+      requiredTier="premium"
       featureName="Exclusive Masterclasses"
       featureDescription="Access expert-led masterclasses and interactive learning sessions"
     >

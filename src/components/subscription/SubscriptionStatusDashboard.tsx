@@ -31,12 +31,10 @@ export const SubscriptionStatusDashboard: React.FC = () => {
 
   const getTierIcon = () => {
     switch (currentTier) {
+      case 'standard':
+        return <Zap className="h-5 w-5 text-blue-500" />;
       case 'premium':
         return <Crown className="h-5 w-5 text-amber-500" />;
-      case 'premium_pro':
-        return <Zap className="h-5 w-5 text-purple-500" />;
-      case 'premium_plus':
-        return <Shield className="h-5 w-5 text-blue-500" />;
       default:
         return <Heart className="h-5 w-5 text-gray-500" />;
     }
@@ -44,12 +42,10 @@ export const SubscriptionStatusDashboard: React.FC = () => {
 
   const getTierColor = () => {
     switch (currentTier) {
+      case 'standard':
+        return 'bg-gradient-to-r from-blue-500 to-indigo-500';
       case 'premium':
         return 'bg-gradient-to-r from-amber-500 to-orange-500';
-      case 'premium_pro':
-        return 'bg-gradient-to-r from-purple-500 to-pink-500';
-      case 'premium_plus':
-        return 'bg-gradient-to-r from-blue-500 to-indigo-500';
       default:
         return 'bg-gray-500';
     }
@@ -57,12 +53,10 @@ export const SubscriptionStatusDashboard: React.FC = () => {
 
   const getTierName = () => {
     switch (currentTier) {
+      case 'standard':
+        return 'Standard';
       case 'premium':
         return 'Premium';
-      case 'premium_pro':
-        return 'Premium Pro';
-      case 'premium_plus':
-        return 'Premium Plus';
       default:
         return 'Free';
     }
@@ -241,7 +235,7 @@ export const SubscriptionStatusDashboard: React.FC = () => {
                 className="w-full bg-gradient-to-r from-teal-600 to-blue-600 hover:from-teal-700 hover:to-blue-700"
               >
                 <Crown className="h-4 w-4 mr-2" />
-                Upgrade Starting at $11.97/month
+                Upgrade Starting at $6.99/month
               </Button>
             </div>
           </CardContent>

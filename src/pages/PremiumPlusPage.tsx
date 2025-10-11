@@ -16,8 +16,8 @@ import ComprehensiveWellnessDashboard from '@/components/premium-plus/Comprehens
 const PremiumPlusPage: React.FC = () => {
   const { currentTier } = useFeatureAccess();
 
-  // Redirect if not Premium Plus user
-  if (currentTier !== 'premium_plus') {
+  // Redirect if not Premium user (renamed from Premium Plus)
+  if (currentTier !== 'premium') {
     return <Navigate to="/subscription" />;
   }
 

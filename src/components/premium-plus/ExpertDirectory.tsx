@@ -93,7 +93,7 @@ const ExpertDirectory: React.FC<ExpertDirectoryProps> = ({ onBookSession }) => {
 
   return (
     <FeatureGate
-      requiredTier="premium_plus"
+      requiredTier="premium"
       featureName="1-on-1 Expert Sessions"
       featureDescription="Connect with certified meditation experts for personalized guidance"
     >

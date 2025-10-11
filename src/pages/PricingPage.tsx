@@ -32,10 +32,9 @@ export default function PricingPage() {
       annualPrice: 0,
       features: [
         '5 sessions per month',
-        'Basic meditation content',
-        'Mood tracking',
-        'Progress stats',
-        'Community access (view only)'
+        'Basic meditation library',
+        'Breathing exercises',
+        'Progress tracking'
       ],
       cta: 'Current Plan',
       highlighted: false
@@ -45,15 +44,15 @@ export default function PricingPage() {
       name: 'Standard',
       description: 'Perfect for regular practitioners',
       price: 6.99,
-      annualPrice: 59.99,
+      annualPrice: 58.99,
       annualSavings: 30,
       features: [
         '40 sessions per month',
         'All meditation content',
-        'Biofeedback integration',
+        'Biofeedback (always active)',
+        '1 power module of your choice',
         'Advanced progress tracking',
-        'Full community access',
-        'Priority content updates'
+        'Full community access'
       ],
       cta: 'Upgrade to Standard',
       highlighted: true,
@@ -64,18 +63,18 @@ export default function PricingPage() {
       name: 'Premium',
       description: 'Complete wellness experience',
       price: 12.99,
-      annualPrice: 119.99,
+      annualPrice: 116.99,
       annualSavings: 25,
       features: [
         'Unlimited sessions',
-        'All Standard features',
         'All power modules unlocked',
+        'Biofeedback (always active)',
         'Focus Mode',
         'Morning Rituals',
         'Social Hub',
         'Work-Life Balance',
-        'Priority support',
-        'Early access to new features'
+        'AI Personalization',
+        'Priority support'
       ],
       cta: 'Upgrade to Premium',
       highlighted: false,

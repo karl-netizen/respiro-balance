@@ -13,9 +13,9 @@ export interface Module {
 export const MODULE_REGISTRY: Record<string, Module> = {
   biofeedback: {
     id: 'biofeedback',
-    name: 'Biofeedback Lite',
+    name: 'Biofeedback',
     icon: '📱',
-    description: 'Track your wellness with Apple Health and Google Fit integration. Monitor heart rate, HRV, and get post-session insights.',
+    description: 'Track heart rate, HRV, and stress levels with Apple Health and Google Fit integration.',
     shortDescription: 'See your stress reduction in real-time',
     tier: 'standard',
     alwaysActive: true,
@@ -33,7 +33,7 @@ export const MODULE_REGISTRY: Record<string, Module> = {
     icon: '🎯',
     description: 'Pomodoro timer with productivity analytics. Track your focus sessions and improve your deep work capacity.',
     shortDescription: 'Boost productivity with focus sessions',
-    tier: 'standard',
+    tier: 'premium',
     colorClass: 'bg-[hsl(271,76%,53%)]',
     features: [
       'Pomodoro timer',
@@ -48,7 +48,7 @@ export const MODULE_REGISTRY: Record<string, Module> = {
     icon: '🌄',
     description: 'Build consistent morning habits. Create custom routines, track streaks, and start your day with intention.',
     shortDescription: 'Start your day with intention',
-    tier: 'standard',
+    tier: 'premium',
     colorClass: 'bg-warning',
     features: [
       'Custom routines',
@@ -63,7 +63,7 @@ export const MODULE_REGISTRY: Record<string, Module> = {
     icon: '👥',
     description: 'Connect with the wellness community. Join challenges, share achievements, and meditate together.',
     shortDescription: 'Share your journey with others',
-    tier: 'standard',
+    tier: 'premium',
     colorClass: 'bg-success',
     features: [
       'Friend connections',
@@ -78,13 +78,29 @@ export const MODULE_REGISTRY: Record<string, Module> = {
     icon: '⚖️',
     description: 'Prevent burnout with smart breaks. Track your balance meter and maintain healthy boundaries.',
     shortDescription: 'Maintain healthy boundaries',
-    tier: 'standard',
+    tier: 'premium',
     colorClass: 'bg-[hsl(210,29%,29%)]',
     features: [
       'Balance meter',
       'Break reminders',
       'Burnout prevention',
       'Weekly balance reports'
+    ]
+  },
+  ai_personalization: {
+    id: 'ai_personalization',
+    name: 'AI Personalization',
+    icon: '✨',
+    description: 'Get personalized meditation and wellness recommendations powered by AI. Smart insights tailored to your journey.',
+    shortDescription: 'AI-powered recommendations',
+    tier: 'premium',
+    alwaysActive: false,
+    colorClass: 'bg-[hsl(271,76%,53%)]',
+    features: [
+      'Personalized session recommendations',
+      'AI wellness insights',
+      'Adaptive meditation programs',
+      'Smart progress tracking'
     ]
   }
 };

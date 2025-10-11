@@ -112,7 +112,7 @@ const ComprehensiveWellnessDashboard: React.FC = () => {
 
   return (
     <FeatureGate
-      requiredTier="premium_plus"
+      requiredTier="premium"
       featureName="Comprehensive Wellness Dashboard"
       featureDescription="Unified health data visualization and advanced wellness insights"
     >

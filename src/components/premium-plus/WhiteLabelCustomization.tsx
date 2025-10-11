@@ -83,7 +83,7 @@ const WhiteLabelCustomization: React.FC = () => {
 
   return (
     <FeatureGate
-      requiredTier="premium_plus"
+      requiredTier="premium"
       featureName="White-label Customization"
       featureDescription="Fully customize the app's branding and appearance"
     >

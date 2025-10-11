@@ -43,9 +43,8 @@ export const MeditationCard: React.FC<MeditationCardProps> = ({
   const getTierColor = (tier: string): string => {
     switch (tier) {
       case 'free': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100';
+      case 'standard': return 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-100';
       case 'premium': return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100';
-      case 'premium_pro': return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-100';
-      case 'premium_plus': return 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-100';
       default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-100';
     }
   };

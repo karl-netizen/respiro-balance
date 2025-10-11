@@ -17,7 +17,7 @@ export const AdminDashboard: React.FC = () => {
   const features = getFeatureFlags()
   const [activeTab, setActiveTab] = useState('users')
 
-  if (!features.whiteLabel && currentTier !== 'premium_plus') {
+  if (currentTier !== 'premium') {
     return (
       <div className="container mx-auto px-4 py-8">
         <Card>
@@ -29,10 +29,10 @@ export const AdminDashboard: React.FC = () => {
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground">
-              Enterprise admin features require Premium Plus subscription.
+              Enterprise admin features require Premium subscription.
             </p>
             <Button className="mt-4">
-              Upgrade to Premium Plus
+              Upgrade to Premium
             </Button>
           </CardContent>
         </Card>

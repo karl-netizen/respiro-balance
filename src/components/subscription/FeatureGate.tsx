@@ -30,12 +30,12 @@ export const FeatureGate: React.FC<FeatureGateProps> = ({
 
   const getTierDisplayName = (tier: FeatureTier) => {
     switch (tier) {
+      case 'free':
+        return 'Free';
+      case 'standard':
+        return 'Standard';
       case 'premium':
         return 'Premium';
-      case 'premium_pro':
-        return 'Premium Pro';
-      case 'premium_plus':
-        return 'Premium Plus';
       default:
         return 'Premium';
     }
@@ -43,14 +43,14 @@ export const FeatureGate: React.FC<FeatureGateProps> = ({
 
   const getTierPrice = (tier: FeatureTier) => {
     switch (tier) {
+      case 'free':
+        return '$0/month';
+      case 'standard':
+        return '$6.99/month';
       case 'premium':
-        return '$11.97/month';
-      case 'premium_pro':
-        return '$19.97/month';
-      case 'premium_plus':
-        return '$29.97/month';
+        return '$12.99/month';
       default:
-        return '$11.97/month';
+        return '$12.99/month';
     }
   };
 
