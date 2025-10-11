@@ -1,9 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, waitFor as rtlWaitFor } from '@testing-library/react';
+import { screen } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Dashboard from '@/pages/Dashboard';
+
+const waitFor = rtlWaitFor;
 
 // Mock authentication
 vi.mock('@/hooks/useAuth', () => ({
@@ -100,7 +103,7 @@ describe('Dashboard Integration', () => {
       renderWithProviders(<Dashboard />);
       
       // Wait for initial render
-      await waitFor(() => {
+      await rtlWaitFor(() => {
         expect(screen.getByRole('main')).toBeInTheDocument();
       }, { timeout: 5000 });
     });
@@ -194,6 +197,7 @@ describe('Dashboard Integration', () => {
       const buttons = screen.queryAllByRole('button');
       if (buttons.length > 0) {
         await user.click(buttons[0]);
+        const main = screen.getByRole('main');
         expect(main).toBeInTheDocument();
       }
     });
@@ -283,6 +287,7 @@ describe('Dashboard Integration', () => {
       if (buttons.length > 0) {
         await user.click(buttons[0]);
         // Should not crash
+        const main = screen.getByRole('main');
         expect(main).toBeInTheDocument();
       }
     });
@@ -298,6 +303,7 @@ describe('Dashboard Integration', () => {
       
       // Test Tab navigation
       await user.keyboard('{Tab}');
+      const main = screen.getByRole('main');
       expect(main).toBeInTheDocument();
     });
   });

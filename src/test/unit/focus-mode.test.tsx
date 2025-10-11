@@ -1,27 +1,11 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, waitFor as rtlWaitFor } from '@testing-library/react';
+import { screen } from '@testing-library/dom';
 import { act } from 'react';
 import userEvent from '@testing-library/user-event';
 
-async function waitFor(callback: () => void, options?: { timeout?: number }) {
-  return new Promise((resolve) => {
-    const timeout = options?.timeout || 3000;
-    const startTime = Date.now();
-    const checkCondition = () => {
-      try {
-        callback();
-        resolve(true);
-      } catch (e) {
-        if (Date.now() - startTime < timeout) {
-          setTimeout(checkCondition, 50);
-        } else {
-          resolve(false);
-        }
-      }
-    };
-    checkCondition();
-  });
-}
+const waitFor = rtlWaitFor;
+
 import { FocusProvider, useFocus } from '@/context/FocusProvider';
 import { useFocusModeStore } from '@/store/focusModeStore';
 
@@ -62,6 +46,10 @@ describe('Focus Mode Context', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   afterEach(() => {
