@@ -12,13 +12,15 @@ export default defineConfig({
     css: true,
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'json', 'html'],
+      reporter: ['text', 'json', 'html', 'lcov'],
       exclude: [
         'node_modules/',
         'src/test/',
         '**/*.d.ts',
         '**/*.config.*',
-        'dist/'
+        'dist/',
+        '**/*.stories.*',
+        '**/__mocks__/**'
       ],
       thresholds: {
         global: {
@@ -27,7 +29,9 @@ export default defineConfig({
           lines: 70,
           statements: 70
         }
-      }
+      },
+      all: true,
+      include: ['src/**/*.{ts,tsx}']
     }
   },
   resolve: {
