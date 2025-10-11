@@ -11,6 +11,8 @@ export interface MeditationContent {
   category: string;
   difficulty_level: string;
   subscription_tier: string;
+  tier?: 'free' | 'standard' | 'premium';
+  is_available?: boolean;
   audio_file_url?: string;
   audio_file_path?: string;
   thumbnail_url?: string;
@@ -66,6 +68,7 @@ export const useMeditationContent = () => {
   const fetchContent = async () => {
     try {
       setIsLoading(true);
+      console.log('🔍 Fetching meditation content...');
       const { data, error } = await supabase
         .from('meditation_content')
         .select('*')
@@ -73,8 +76,17 @@ export const useMeditationContent = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
+      console.log('✅ Fetched content:', data?.length || 0, 'items');
+      console.log('📊 Content by category:', 
+        data?.reduce((acc: any, item: any) => {
+          acc[item.category] = (acc[item.category] || 0) + 1;
+          return acc;
+        }, {})
+      );
+      console.log('🎯 First 3 items:', data?.slice(0, 3));
       setContent(data || []);
     } catch (err) {
+      console.error('❌ Error fetching content:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch content');
       toast.error('Failed to load meditation content');
     } finally {

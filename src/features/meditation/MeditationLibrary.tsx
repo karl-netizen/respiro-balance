@@ -391,12 +391,25 @@ const MeditationLibrary: React.FC = () => {
 
   // Memoized filtered content with proper category mapping
   const filteredContent = useMemo(() => {
+    console.log('🔍 Filtering content:', {
+      selectedCategory,
+      totalContent: content.length,
+      mappedCategories: categoryMapping[selectedCategory]
+    });
+    
     if (selectedCategory === 'all') return content;
     
     const mappedCategories = categoryMapping[selectedCategory] || [];
     if (mappedCategories.length === 0) return content;
     
-    return content.filter(item => mappedCategories.includes(item.category));
+    const filtered = content.filter(item => mappedCategories.includes(item.category));
+    console.log('✅ Filtered result:', {
+      category: selectedCategory,
+      count: filtered.length,
+      items: filtered.map(i => ({ title: i.title, category: i.category }))
+    });
+    
+    return filtered;
   }, [content, selectedCategory]);
 
   // Memoized category tabs with proper counts
