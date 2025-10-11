@@ -53,6 +53,22 @@ export interface UserProgress {
   updated_at: string;
 }
 
+// TEMPORARY: Mock data fallback for when API fails
+const MOCK_SESSIONS = [
+  { id: '1', title: 'Morning Mindfulness', category: 'Guided', tier: 'free', duration: 10, is_active: true, audio_file_path: 'guided-morning-1.mp3', description: 'Gentle wake-up meditation', difficulty_level: 'beginner', subscription_tier: 'free', is_featured: false, play_count: 0, average_rating: 0, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), tags: [], instructor: 'Calm Guide', is_available: true },
+  { id: '2', title: 'Focus Improvement', category: 'Guided', tier: 'free', duration: 15, is_active: true, audio_file_path: 'guided-focus-1.mp3', description: 'Concentration practice', difficulty_level: 'beginner', subscription_tier: 'free', is_featured: false, play_count: 0, average_rating: 0, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), tags: [], instructor: 'Focus Master', is_available: true },
+  { id: '3', title: '1-Minute Breather', category: 'Quick Breaks', tier: 'free', duration: 1, is_active: true, audio_file_path: 'quick-breather-1.mp3', description: 'Ultra-quick reset', difficulty_level: 'beginner', subscription_tier: 'free', is_featured: false, play_count: 0, average_rating: 0, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), tags: [], instructor: 'Quick Guide', is_available: true },
+  { id: '4', title: '5-Minute Reset', category: 'Quick Breaks', tier: 'free', duration: 5, is_active: true, audio_file_path: 'quick-break-5.mp3', description: 'Lunch break meditation', difficulty_level: 'beginner', subscription_tier: 'free', is_featured: false, play_count: 0, average_rating: 0, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), tags: [], instructor: 'Break Guide', is_available: true },
+  { id: '5', title: '3-Minute Calm', category: 'Quick Breaks', tier: 'free', duration: 3, is_active: true, audio_file_path: 'quick-calm-3.mp3', description: 'Instant stress relief', difficulty_level: 'beginner', subscription_tier: 'free', is_featured: false, play_count: 0, average_rating: 0, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), tags: [], instructor: 'Calm Guide', is_available: true },
+  { id: '6', title: 'Stress Release', category: 'Guided', tier: 'standard', duration: 12, is_active: true, audio_file_path: 'guided-stress-1.mp3', description: 'Anxiety relief', difficulty_level: 'intermediate', subscription_tier: 'standard', is_featured: false, play_count: 0, average_rating: 0, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), tags: [], instructor: 'Stress Expert', is_available: true },
+  { id: '7', title: 'Quick Focus', category: 'Quick Breaks', tier: 'standard', duration: 2, is_active: true, audio_file_path: 'quick-focus-1.mp3', description: 'Focus boost', difficulty_level: 'intermediate', subscription_tier: 'standard', is_featured: false, play_count: 0, average_rating: 0, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), tags: [], instructor: 'Focus Coach', is_available: true },
+  { id: '8', title: 'Breath Awareness', category: 'Quick Breaks', tier: 'standard', duration: 4, is_active: true, audio_file_path: 'breath-awareness-1.mp3', description: 'Grounding practice', difficulty_level: 'intermediate', subscription_tier: 'standard', is_featured: false, play_count: 0, average_rating: 0, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), tags: [], instructor: 'Breath Master', is_available: true },
+  { id: '9', title: 'Sleep Relaxation', category: 'Sleep', tier: 'standard', duration: 15, is_active: true, audio_file_path: 'sleep-relaxation-1.mp3', description: 'Evening wind-down', difficulty_level: 'beginner', subscription_tier: 'standard', is_featured: false, play_count: 0, average_rating: 0, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), tags: [], instructor: 'Sleep Guide', is_available: true },
+  { id: '10', title: 'Deep Sleep Journey', category: 'Sleep', tier: 'premium', duration: 30, is_active: true, audio_file_path: 'sleep-deep-1.mp3', description: 'Deep restorative sleep', difficulty_level: 'advanced', subscription_tier: 'premium', is_featured: true, play_count: 0, average_rating: 0, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), tags: [], instructor: 'Sleep Expert', is_available: true },
+  { id: '11', title: 'Sleep Anxiety Relief', category: 'Sleep', tier: 'premium', duration: 20, is_active: true, audio_file_path: 'sleep-anxiety-1.mp3', description: 'Bedtime worry relief', difficulty_level: 'advanced', subscription_tier: 'premium', is_featured: false, play_count: 0, average_rating: 0, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), tags: [], instructor: 'Anxiety Specialist', is_available: true },
+  { id: '12', title: 'Sleep Preparation', category: 'Sleep', tier: 'premium', duration: 12, is_active: true, audio_file_path: 'sleep-prep-1.mp3', description: 'Pre-sleep routine', difficulty_level: 'intermediate', subscription_tier: 'premium', is_featured: false, play_count: 0, average_rating: 0, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), tags: [], instructor: 'Sleep Coach', is_available: true },
+];
+
 export const useMeditationContent = () => {
   const [content, setContent] = useState<MeditationContent[]>([]);
   const [categories, setCategories] = useState<ContentCategory[]>([]);
@@ -104,8 +120,14 @@ export const useMeditationContent = () => {
         stack: err instanceof Error ? err.stack : undefined,
         fullError: err
       });
+      
+      // FALLBACK: Use mock data when API fails
+      console.warn('⚠️ Using MOCK DATA as fallback due to API error');
+      console.log('🧪 Loading', MOCK_SESSIONS.length, 'mock sessions');
+      setContent(MOCK_SESSIONS as any);
+      
       setError(err instanceof Error ? err.message : 'Failed to fetch content');
-      toast.error('Failed to load meditation content');
+      toast.error('Using offline demo data - API connection failed');
     } finally {
       setIsLoading(false);
       console.log('✅ fetchContent completed, isLoading set to false');
