@@ -71,12 +71,12 @@ const Meditate = () => {
         console.log(`  ${category}: ${filtered.length} sessions`);
       });
     }
-  }, [getAllSessions, getFilteredSessions]);
+  }, []); // Empty deps - functions are stable
   
   // Update filtered sessions when tab changes
   useEffect(() => {
     setFilteredSessions(getFilteredSessions(activeTab));
-  }, [activeTab, getFilteredSessions]);
+  }, [activeTab]); // Removed getFilteredSessions from deps
   
   // Memoize the current session's favorite status to avoid unnecessary re-renders
   const currentFavoriteStatus = useCallback(() => {
