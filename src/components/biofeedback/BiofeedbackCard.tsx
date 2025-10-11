@@ -17,7 +17,11 @@ const BiofeedbackCard = () => {
   const [isConnecting, setIsConnecting] = useState(false);
   const [showTeamFeatures, setShowTeamFeatures] = useState(false);
 
-  const isTeamOrEnterprise = ["team", "enterprise", "premium"].includes(preferences.subscriptionTier || 'free');
+  // Check tier for advanced biofeedback features
+  // Standard tier gets basic biofeedback (always active)
+  // Premium tier gets advanced team features
+  const isPremium = preferences.subscriptionTier === 'premium';
+  const hasAdvancedBiofeedback = isPremium;
   
   const handleConnectDevice = async () => {
     if (preferences.hasWearableDevice) {
@@ -117,7 +121,7 @@ const BiofeedbackCard = () => {
           <Monitor className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
         </div>
         <CardDescription className="text-sm">
-          {isTeamOrEnterprise 
+          {hasAdvancedBiofeedback 
             ? "Connect multiple wearable devices and share insights with your team" 
             : "Connect your wearable device to enhance your meditation insights"}
         </CardDescription>
@@ -134,7 +138,7 @@ const BiofeedbackCard = () => {
                 disabled={isConnecting}
               />
               
-              {isTeamOrEnterprise && showTeamFeatures && (
+              {hasAdvancedBiofeedback && showTeamFeatures && (
                 <TeamFeatures />
               )}
             </div>
@@ -180,7 +184,7 @@ const BiofeedbackCard = () => {
               className="text-xs sm:text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
               {preferences.hasWearableDevice 
-                ? isTeamOrEnterprise 
+                ? hasAdvancedBiofeedback 
                   ? "Devices connected" 
                   : "Device connected" 
                 : "Enable wearable integration"}
@@ -198,10 +202,10 @@ const BiofeedbackCard = () => {
           {isConnecting 
             ? "Connecting..." 
             : preferences.hasWearableDevice 
-              ? isTeamOrEnterprise 
+              ? hasAdvancedBiofeedback 
                 ? showTeamFeatures ? "Hide Team Settings" : "Team Device Settings" 
                 : "Manage Device"
-              : isTeamOrEnterprise 
+              : hasAdvancedBiofeedback 
                 ? "Connect Team Devices" 
                 : "Connect Device"}
         </TouchFriendlyButton>

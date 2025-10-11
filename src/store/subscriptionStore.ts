@@ -59,11 +59,11 @@ interface SubscriptionState {
 const PRICING = {
   standard: {
     monthly: 6.99,
-    annual: 59.99
+    annual: 58.99
   },
   premium: {
     monthly: 12.99,
-    annual: 119.99
+    annual: 116.99
   }
 };
 

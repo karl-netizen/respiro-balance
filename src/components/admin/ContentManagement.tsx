@@ -352,9 +352,8 @@ export const ContentManagement = () => {
                   className="w-full px-3 py-2 border rounded-md"
                 >
                   <option value="free">Free</option>
+                  <option value="standard">Standard</option>
                   <option value="premium">Premium</option>
-                  <option value="premium_pro">Premium Pro</option>
-                  <option value="premium_plus">Premium Plus</option>
                 </select>
               </div>
 
