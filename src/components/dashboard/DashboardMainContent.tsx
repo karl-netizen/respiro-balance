@@ -29,7 +29,7 @@ const DashboardMainContent: React.FC<DashboardMainContentProps> = ({
   }), [weeklyProgress, weeklyGoal, currentStreak]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6">
       {/* Progress Card - Always first on mobile */}
       <div className="lg:col-span-1 order-1">
         <WeeklyProgressCard progress={progressData} />
@@ -45,14 +45,6 @@ const DashboardMainContent: React.FC<DashboardMainContentProps> = ({
             onMoodSelect={onMoodSelect}
           />
         )}
-      </div>
-
-      {/* Action Cards - Always shown on the right */}
-      <div className="lg:col-span-1 order-3">
-        <DashboardActionCards
-          currentMood={currentMood}
-          onMoodSelect={onMoodSelect}
-        />
       </div>
     </div>
   );
