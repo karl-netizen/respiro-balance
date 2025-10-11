@@ -9,6 +9,12 @@ import { useMeditationContent, MeditationContent as HookMeditationContent, UserP
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/hooks/useAuth';
+import { canAccessSession, UserTier, SessionTier } from '@/utils/tierAccess';
+import { useSessionLimit } from '@/hooks/useSessionLimit';
+import { EnhancedMeditationCard } from '@/components/meditation/EnhancedMeditationCard';
+import { UpgradeModal } from '@/components/meditation/UpgradeModal';
+import { SessionLimitBanner } from '@/components/meditation/SessionLimitBanner';
 
 // Import typed interfaces and utilities
 import {
@@ -321,6 +327,7 @@ const MeditationLibrary: React.FC = () => {
     };
   }, []);
 
+  const { user } = useAuth();
   const { 
     content, 
     categories, 
@@ -332,15 +339,53 @@ const MeditationLibrary: React.FC = () => {
   } = useMeditationContent();
   
   const { audioFiles, loading: audioLoading } = useAudioFiles();
+  const { 
+    weeklySessionCount, 
+    hasReachedLimit, 
+    getRemainingSessions, 
+    trackSession 
+  } = useSessionLimit();
+  
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedContent, setSelectedContent] = useState<ComponentMeditationContent | null>(null);
+  const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
+  const [upgradeModalData, setUpgradeModalData] = useState<{
+    sessionTitle: string;
+    requiredTier: 'standard' | 'premium';
+  } | null>(null);
+  
+  // Get user's subscription tier from profile
+  const [userTier, setUserTier] = useState<UserTier>('free');
+  
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (!user) return;
+      
+      const { data, error } = await supabase
+        .from('user_profiles')
+        .select('subscription_tier')
+        .eq('id', user.id)
+        .single();
+      
+      if (error) {
+        console.error('Error fetching user profile:', error);
+        return;
+      }
+      
+      if (data) {
+        setUserTier(data.subscription_tier as UserTier);
+      }
+    };
+    
+    fetchUserProfile();
+  }, [user]);
 
   // Category mapping for tab values to database categories
   const categoryMapping: Record<string, string[]> = {
     'all': [],
-    'guided': ['Mindfulness'],
-    'quick': ['Breathing', 'Stress Relief'],
-    'deep': ['Focus', 'Body Scan'],
+    'guided': ['Guided'],
+    'quick': ['Quick Breaks'],
+    'deep': ['Deep Focus'],
     'sleep': ['Sleep']
   };
 
@@ -366,6 +411,29 @@ const MeditationLibrary: React.FC = () => {
   // Memoized event handlers with proper error handling
   const handlePlayContent = useCallback(async (contentItem: ComponentMeditationContent): Promise<void> => {
     await withErrorHandling(async () => {
+      // Check if user has access
+      const sessionTier = (contentItem as any).tier || 'free';
+      if (!canAccessSession(userTier, sessionTier as SessionTier)) {
+        handleUpgrade(contentItem);
+        return;
+      }
+      
+      // Check session limit for free users
+      if (userTier === 'free' && hasReachedLimit(userTier)) {
+        toast.error('Weekly session limit reached. Upgrade for unlimited access!');
+        setUpgradeModalData({
+          sessionTitle: contentItem.title,
+          requiredTier: 'standard'
+        });
+        setUpgradeModalOpen(true);
+        return;
+      }
+      
+      // Track session for free users
+      if (userTier === 'free') {
+        await trackSession(contentItem.id);
+      }
+      
       setSelectedContent(contentItem);
       await incrementPlayCount(contentItem.id);
       toast.success(`Playing: ${contentItem.title}`);
@@ -374,7 +442,7 @@ const MeditationLibrary: React.FC = () => {
       action: 'playContent',
       contentId: contentItem.id 
     })();
-  }, [incrementPlayCount]);
+  }, [incrementPlayCount, userTier, hasReachedLimit, trackSession]);
 
   const handleToggleFavorite = useCallback(async (contentId: string): Promise<void> => {
     await withErrorHandling(async () => {
@@ -388,6 +456,15 @@ const MeditationLibrary: React.FC = () => {
 
   const handleCategoryChange = useCallback((category: string): void => {
     setSelectedCategory(category);
+  }, []);
+
+  const handleUpgrade = useCallback((contentItem: ComponentMeditationContent): void => {
+    const sessionTier = (contentItem as any).tier || 'free';
+    setUpgradeModalData({
+      sessionTitle: contentItem.title,
+      requiredTier: sessionTier === 'premium' ? 'premium' : 'standard'
+    });
+    setUpgradeModalOpen(true);
   }, []);
 
   const handlePlayAudioFile = useCallback((file: AudioFile): void => {
@@ -417,6 +494,20 @@ const MeditationLibrary: React.FC = () => {
           designed to help you find balance in your busy day.
         </p>
       </div>
+
+      {/* Session Limit Banner for Free Users */}
+      {user && userTier === 'free' && (
+        <SessionLimitBanner 
+          remainingSessions={getRemainingSessions(userTier)}
+          onUpgrade={() => {
+            setUpgradeModalData({
+              sessionTitle: 'Unlimited Access',
+              requiredTier: 'standard'
+            });
+            setUpgradeModalOpen(true);
+          }}
+        />
+      )}
 
       {/* Lazy-loaded Premium Banner */}
       <Suspense fallback={<div className="h-24 bg-muted animate-pulse rounded-lg" />}>
@@ -472,15 +563,23 @@ const MeditationLibrary: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {content.map((item) => {
                     const progress = getProgressForContent(item.id);
+                    const sessionTier = (item as any).tier || 'free';
+                    const hasAccess = canAccessSession(userTier, sessionTier as SessionTier);
+                    const itemWithTier = item as any;
                     
                     return (
-                      <MeditationCard
+                      <EnhancedMeditationCard
                         key={item.id}
-                        item={item}
+                        item={{
+                          ...item,
+                          tier: sessionTier as 'free' | 'standard' | 'premium',
+                          is_available: itemWithTier.is_available ?? true
+                        }}
                         progress={progress}
-                        selectedContent={selectedContent}
+                        hasAccess={hasAccess}
                         onPlay={handlePlayContent}
                         onToggleFavorite={handleToggleFavorite}
+                        onUpgrade={handleUpgrade}
                       />
                     );
                   })}
@@ -497,15 +596,23 @@ const MeditationLibrary: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {filteredContent.map((item) => {
                     const progress = getProgressForContent(item.id);
+                    const sessionTier = (item as any).tier || 'free';
+                    const hasAccess = canAccessSession(userTier, sessionTier as SessionTier);
+                    const itemWithTier = item as any;
                     
                     return (
-                      <MeditationCard
+                      <EnhancedMeditationCard
                         key={item.id}
-                        item={item}
+                        item={{
+                          ...item,
+                          tier: sessionTier as 'free' | 'standard' | 'premium',
+                          is_available: itemWithTier.is_available ?? true
+                        }}
                         progress={progress}
-                        selectedContent={selectedContent}
+                        hasAccess={hasAccess}
                         onPlay={handlePlayContent}
                         onToggleFavorite={handleToggleFavorite}
+                        onUpgrade={handleUpgrade}
                       />
                     );
                   })}
@@ -528,6 +635,16 @@ const MeditationLibrary: React.FC = () => {
       {/* Now Playing Card */}
       {selectedContent && (
         <NowPlayingCard content={selectedContent} />
+      )}
+
+      {/* Upgrade Modal */}
+      {upgradeModalData && (
+        <UpgradeModal
+          open={upgradeModalOpen}
+          onOpenChange={setUpgradeModalOpen}
+          sessionTitle={upgradeModalData.sessionTitle}
+          requiredTier={upgradeModalData.requiredTier}
+        />
       )}
     </div>
   );

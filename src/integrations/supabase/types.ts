@@ -643,11 +643,13 @@ export type Database = {
           id: string
           instructor: string | null
           is_active: boolean | null
+          is_available: boolean | null
           is_featured: boolean | null
           play_count: number | null
           subscription_tier: string | null
           tags: string[] | null
           thumbnail_url: string | null
+          tier: string | null
           title: string
           transcript: string | null
           updated_at: string | null
@@ -671,11 +673,13 @@ export type Database = {
           id?: string
           instructor?: string | null
           is_active?: boolean | null
+          is_available?: boolean | null
           is_featured?: boolean | null
           play_count?: number | null
           subscription_tier?: string | null
           tags?: string[] | null
           thumbnail_url?: string | null
+          tier?: string | null
           title: string
           transcript?: string | null
           updated_at?: string | null
@@ -699,11 +703,13 @@ export type Database = {
           id?: string
           instructor?: string | null
           is_active?: boolean | null
+          is_available?: boolean | null
           is_featured?: boolean | null
           play_count?: number | null
           subscription_tier?: string | null
           tags?: string[] | null
           thumbnail_url?: string | null
+          tier?: string | null
           title?: string
           transcript?: string | null
           updated_at?: string | null
@@ -1407,6 +1413,38 @@ export type Database = {
           },
         ]
       }
+      user_meditation_history: {
+        Row: {
+          content_id: string
+          created_at: string | null
+          id: string
+          played_at: string
+          user_id: string
+        }
+        Insert: {
+          content_id: string
+          created_at?: string | null
+          id?: string
+          played_at?: string
+          user_id: string
+        }
+        Update: {
+          content_id?: string
+          created_at?: string | null
+          id?: string
+          played_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_meditation_history_content_id_fkey"
+            columns: ["content_id"]
+            isOneToOne: false
+            referencedRelation: "meditation_content"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_notifications: {
         Row: {
           created_at: string | null
@@ -1678,6 +1716,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_weekly_session_limit: {
+        Args: { p_user_id: string }
+        Returns: number
+      }
       has_exceeded_free_limits: {
         Args: { user_id_param: string }
         Returns: boolean
