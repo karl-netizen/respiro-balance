@@ -6,6 +6,9 @@ import { Button } from '@/components/ui/button';
 import MeditationSessionView from '@/components/meditation/MeditationSessionView';
 import { useSubscriptionContext } from '@/hooks/useSubscriptionContext';
 import { MeditationSession as MeditationSessionType } from '@/types/meditation';
+import { FirstSessionGuide } from '@/components/onboarding/FirstSessionGuide';
+import { useFirstSessionGuide } from '@/hooks/useFirstSessionGuide';
+import { SEO } from '@/components/SEO';
 
 // Create a custom hook to extend the original useMeditationSession
 const useEnhancedMeditationSession = (sessionId: string) => {
@@ -85,6 +88,21 @@ const MeditationSession = () => {
     handleSessionComplete 
   } = useEnhancedMeditationSession(sessionId || '');
   
+  const { 
+    showGuide, 
+    isFirstSession, 
+    triggerGuide, 
+    closeGuide, 
+    startFirstSession 
+  } = useFirstSessionGuide();
+  
+  // Trigger guide on first session load
+  useEffect(() => {
+    if (!isLoading && session && isFirstSession) {
+      triggerGuide();
+    }
+  }, [isLoading, session, isFirstSession, triggerGuide]);
+  
   useEffect(() => {
     // If session requires premium and user is not premium, redirect to subscription
     if (!isLoading && session && session.premium && !isPremium) {
@@ -129,19 +147,33 @@ const MeditationSession = () => {
   }
   
   return (
-    <div className="min-h-screen flex flex-col">
-      <div className="container mx-auto px-4 py-4">
-        <Button variant="ghost" onClick={handleBack} className="mb-4">
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back
-        </Button>
-      </div>
-      
-      <MeditationSessionView 
-        sessionId={session.id}
-        onComplete={handleComplete} 
+    <>
+      <SEO 
+        title={`${session.title} - Meditation Session`}
+        description={session.description || 'Guided meditation session for mindfulness and relaxation'}
+        type="article"
       />
-    </div>
+      
+      <FirstSessionGuide 
+        open={showGuide}
+        onClose={closeGuide}
+        onStart={startFirstSession}
+      />
+      
+      <div className="min-h-screen flex flex-col">
+        <div className="container mx-auto px-4 py-4">
+          <Button variant="ghost" onClick={handleBack} className="mb-4">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back
+          </Button>
+        </div>
+        
+        <MeditationSessionView 
+          sessionId={session.id}
+          onComplete={handleComplete} 
+        />
+      </div>
+    </>
   );
 };
 

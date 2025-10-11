@@ -20,6 +20,7 @@ import { SessionCounterWidget } from '@/components/subscription/SessionCounterWi
 import { FeatureTour } from '@/components/onboarding/FeatureTour';
 import { AIRecommendationsPanel } from '@/components/personalization/AIRecommendationsPanel';
 import { AIErrorBoundary } from '@/components/personalization/AIErrorBoundary';
+import { SEO } from '@/components/SEO';
 
 // Lazy load module components
 const BiofeedbackModule = lazy(() => import('@/components/modules/BiofeedbackModule'));
@@ -43,9 +44,14 @@ const Dashboard: React.FC = () => {
   const { isConnected, sessionInsights } = useBiofeedbackStore();
 
   return (
-    <div className="min-h-screen bg-background">
-      <FeatureTour />
-      <DashboardContainer>
+    <>
+      <SEO 
+        title="Dashboard"
+        description="Your personalized wellness dashboard with meditation sessions, progress tracking, and mindfulness tools."
+      />
+      <div className="min-h-screen bg-background">
+        <FeatureTour />
+        <DashboardContainer>
         {({
           user,
           currentPeriod,
@@ -252,7 +258,8 @@ const Dashboard: React.FC = () => {
           </>
         )}
       </DashboardContainer>
-    </div>
+      </div>
+    </>
   );
 };
 
