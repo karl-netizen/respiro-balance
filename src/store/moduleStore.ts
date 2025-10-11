@@ -121,7 +121,7 @@ export const useModuleStore = create<ModuleState>()(
         if (!lastModuleSwap) return true;
         
         const daysSinceSwap = Math.floor((Date.now() - new Date(lastModuleSwap).getTime()) / (1000 * 60 * 60 * 24));
-        return daysSinceSwap >= 7;
+        return daysSinceSwap >= 30;
       },
 
       getDaysUntilNextSwap: () => {
@@ -133,7 +133,7 @@ export const useModuleStore = create<ModuleState>()(
         if (!lastModuleSwap) return 0;
         
         const daysSinceSwap = Math.floor((Date.now() - new Date(lastModuleSwap).getTime()) / (1000 * 60 * 60 * 24));
-        return Math.max(0, 7 - daysSinceSwap);
+        return Math.max(0, 30 - daysSinceSwap);
       },
 
       getActiveModules: () => {

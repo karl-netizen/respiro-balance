@@ -241,16 +241,18 @@ const Dashboard: React.FC = () => {
                 </Card>
               )}
 
-              {/* AI Recommendations */}
-              <div className="space-y-4 mb-6" data-tour="ai-recommendations">
-                <h2 className="text-xl font-semibold text-foreground flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-primary" />
-                  AI-Powered Recommendations
-                </h2>
-                <AIErrorBoundary>
-                  <AIRecommendationsPanel />
-                </AIErrorBoundary>
-              </div>
+              {/* AI Recommendations - Premium Only */}
+              {subscriptionTier === 'premium' && (
+                <div className="space-y-4 mb-6" data-tour="ai-recommendations">
+                  <h2 className="text-xl font-semibold text-foreground flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-primary" />
+                    AI-Powered Recommendations
+                  </h2>
+                  <AIErrorBoundary>
+                    <AIRecommendationsPanel />
+                  </AIErrorBoundary>
+                </div>
+              )}
 
               {/* Quick Access Tabs */}
               <DashboardQuickAccess />
