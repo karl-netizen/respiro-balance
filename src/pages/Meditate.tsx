@@ -10,21 +10,21 @@ import { StateDebugger } from '@/components/dev';
 import { MOCK_MEDITATION_SESSIONS } from '@/data/mockMeditationSessions';
 
 const Meditate = () => {
-  const {
-    activeTab,
-    handleTabChange,
-    selectedSession,
-    dialogOpen,
-    setDialogOpen,
-    isFavorite,
-    handleToggleFavorite,
-    handleSelectSession,
-    handleStartMeditation,
-    getAllSessions,
-    getFilteredSessions,
-    getRecentSessions,
-    isPremium
-  } = useMeditatePage();
+  // const {
+  //   activeTab,
+  //   handleTabChange,
+  //   selectedSession,
+  //   dialogOpen,
+  //   setDialogOpen,
+  //   isFavorite,
+  //   handleToggleFavorite,
+  //   handleSelectSession,
+  //   handleStartMeditation,
+  //   getAllSessions,
+  //   getFilteredSessions,
+  //   getRecentSessions,
+  //   isPremium
+  // } = useMeditatePage();
 
   // State to track filtered sessions
   const [filteredSessions, setFilteredSessions] = useState<MeditationSession[]>([]);
