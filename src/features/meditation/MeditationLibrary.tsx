@@ -335,20 +335,33 @@ const MeditationLibrary: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedContent, setSelectedContent] = useState<ComponentMeditationContent | null>(null);
 
-  // Memoized filtered content to prevent unnecessary recalculations
+  // Category mapping for tab values to database categories
+  const categoryMapping: Record<string, string[]> = {
+    'all': [],
+    'guided': ['Mindfulness'],
+    'quick': ['Breathing', 'Stress Relief'],
+    'deep': ['Focus', 'Body Scan'],
+    'sleep': ['Sleep']
+  };
+
+  // Memoized filtered content with proper category mapping
   const filteredContent = useMemo(() => {
     if (selectedCategory === 'all') return content;
-    return getContentByCategory(selectedCategory);
-  }, [content, selectedCategory, getContentByCategory]);
+    
+    const mappedCategories = categoryMapping[selectedCategory] || [];
+    if (mappedCategories.length === 0) return content;
+    
+    return content.filter(item => mappedCategories.includes(item.category));
+  }, [content, selectedCategory]);
 
-  // Memoized category tabs with proper typing to prevent recalculation
+  // Memoized category tabs with proper counts
   const categoryTabs = useMemo((): CategoryTab[] => [
     { value: 'all', label: 'All Sessions', count: content.length },
-    { value: 'guided', label: 'Guided', count: getContentByCategory('Mindfulness').length },
-    { value: 'quick', label: 'Quick Breaks', count: getContentByCategory('Focus').length },
-    { value: 'deep', label: 'Deep Focus', count: getContentByCategory('Body Scan').length },
-    { value: 'sleep', label: 'Sleep', count: getContentByCategory('Sleep').length }
-  ], [content.length, getContentByCategory]);
+    { value: 'guided', label: 'Guided', count: content.filter(c => categoryMapping.guided.includes(c.category)).length },
+    { value: 'quick', label: 'Quick Breaks', count: content.filter(c => categoryMapping.quick.includes(c.category)).length },
+    { value: 'deep', label: 'Deep Focus', count: content.filter(c => categoryMapping.deep.includes(c.category)).length },
+    { value: 'sleep', label: 'Sleep', count: content.filter(c => categoryMapping.sleep.includes(c.category)).length }
+  ], [content]);
 
   // Memoized event handlers with proper error handling
   const handlePlayContent = useCallback(async (contentItem: ComponentMeditationContent): Promise<void> => {
