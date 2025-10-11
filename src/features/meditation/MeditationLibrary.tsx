@@ -349,6 +349,36 @@ const MeditationLibrary: React.FC = () => {
     });
   }, [content, isLoading, categories]);
   
+  // DIAGNOSTIC: Direct database query to test RLS and connectivity
+  useEffect(() => {
+    const testDirectFetch = async () => {
+      console.log('🧪 DIAGNOSTIC: Testing direct Supabase query...');
+      try {
+        const { data, error, count } = await supabase
+          .from('meditation_content')
+          .select('*', { count: 'exact' })
+          .eq('is_active', true);
+        
+        console.log('🧪 Direct query result:', {
+          success: !error,
+          error: error,
+          count: count,
+          dataLength: data?.length,
+          firstItem: data?.[0],
+          allData: data
+        });
+        
+        if (error) {
+          console.error('🧪 Direct query ERROR:', error.message, error);
+        }
+      } catch (err) {
+        console.error('🧪 Direct query EXCEPTION:', err);
+      }
+    };
+    
+    testDirectFetch();
+  }, []);
+  
   const { audioFiles, loading: audioLoading } = useAudioFiles();
   const { 
     weeklySessionCount, 
