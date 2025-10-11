@@ -3,36 +3,45 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAIRecommendations } from '@/hooks/useAIRecommendations';
-import { Sparkles, Clock, TrendingUp, Brain, Loader2 } from 'lucide-react';
-import { SessionRecommendation } from '@/services/AIPersonalizationEngine';
+import { Sparkles, Clock, TrendingUp, Brain, Loader2, Settings } from 'lucide-react';
+import { SessionRecommendation, RecommendationContext } from '@/services/AIPersonalizationEngine';
+import { ContextControls } from './ContextControls';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { AIUsageStats } from './AIUsageStats';
 
 export function AIRecommendationsPanel() {
   const { recommendations, isLoading, generateRecommendations } = useAIRecommendations();
   const [selectedRec, setSelectedRec] = useState<SessionRecommendation | null>(null);
+  const [showControls, setShowControls] = useState(false);
+  const [currentContext, setCurrentContext] = useState<RecommendationContext>({
+    currentMood: 5,
+    currentStress: 5,
+    energyLevel: 5,
+    availableTime: 15,
+  });
 
   useEffect(() => {
-    // Auto-generate recommendations on mount
+    // Auto-generate recommendations on mount with default context
     const currentHour = new Date().getHours();
     const timeOfDay = currentHour < 12 ? 'morning' : currentHour < 18 ? 'afternoon' : 'evening';
     
-    generateRecommendations({
-      timeOfDay,
-      currentMood: 5,
-      currentStress: 5,
-      energyLevel: 5,
-    });
+    const initialContext = {
+      ...currentContext,
+      timeOfDay
+    } as RecommendationContext;
+    
+    setCurrentContext(initialContext);
+    generateRecommendations(initialContext);
   }, []);
 
   const handleRefresh = () => {
-    const currentHour = new Date().getHours();
-    const timeOfDay = currentHour < 12 ? 'morning' : currentHour < 18 ? 'afternoon' : 'evening';
-    
-    generateRecommendations({
-      timeOfDay,
-      currentMood: 5,
-      currentStress: 5,
-      energyLevel: 5,
-    });
+    generateRecommendations(currentContext);
+  };
+
+  const handleContextUpdate = (newContext: RecommendationContext) => {
+    setCurrentContext(newContext);
+    generateRecommendations(newContext);
+    setShowControls(false);
   };
 
   if (isLoading) {
@@ -56,27 +65,55 @@ export function AIRecommendationsPanel() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="flex items-center gap-2">
-              <Sparkles className="h-5 w-5" />
-              AI-Powered Recommendations
-            </CardTitle>
-            <CardDescription>Personalized sessions based on your history and goals</CardDescription>
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleRefresh}
-            disabled={isLoading}
-          >
-            <Sparkles className="h-4 w-4 mr-2" />
-            Refresh
-          </Button>
+    <div className="space-y-4">
+      {/* Context Controls & Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="md:col-span-2">
+          <Collapsible open={showControls} onOpenChange={setShowControls}>
+            <div className="flex items-center justify-between">
+              <CollapsibleTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <Settings className="h-4 w-4 mr-2" />
+                  Customize
+                </Button>
+              </CollapsibleTrigger>
+            </div>
+            <CollapsibleContent className="pt-4">
+              <ContextControls
+                onUpdate={handleContextUpdate}
+                onRefresh={handleRefresh}
+                isLoading={isLoading}
+              />
+            </CollapsibleContent>
+          </Collapsible>
         </div>
-      </CardHeader>
+        <div>
+          <AIUsageStats />
+        </div>
+      </div>
+
+      {/* Recommendations Card */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <Sparkles className="h-5 w-5" />
+                AI-Powered Recommendations
+              </CardTitle>
+              <CardDescription>Personalized sessions based on your current state</CardDescription>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleRefresh}
+              disabled={isLoading}
+            >
+              <Sparkles className="h-4 w-4 mr-2" />
+              Refresh
+            </Button>
+          </div>
+        </CardHeader>
       <CardContent className="space-y-4">
         {recommendations.length === 0 ? (
           <div className="text-center py-8">
@@ -174,5 +211,6 @@ export function AIRecommendationsPanel() {
         )}
       </CardContent>
     </Card>
+    </div>
   );
 }

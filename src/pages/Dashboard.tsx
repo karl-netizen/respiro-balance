@@ -19,6 +19,7 @@ import { Badge } from '@/components/ui/badge';
 import { SessionCounterWidget } from '@/components/subscription/SessionCounterWidget';
 import { FeatureTour } from '@/components/onboarding/FeatureTour';
 import { AIRecommendationsPanel } from '@/components/personalization/AIRecommendationsPanel';
+import { AIErrorBoundary } from '@/components/personalization/AIErrorBoundary';
 
 // Lazy load module components
 const BiofeedbackModule = lazy(() => import('@/components/modules/BiofeedbackModule'));
@@ -240,7 +241,9 @@ const Dashboard: React.FC = () => {
                   <Sparkles className="w-5 h-5 text-primary" />
                   AI-Powered Recommendations
                 </h2>
-                <AIRecommendationsPanel />
+                <AIErrorBoundary>
+                  <AIRecommendationsPanel />
+                </AIErrorBoundary>
               </div>
 
               {/* Quick Access Tabs */}

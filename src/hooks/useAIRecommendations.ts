@@ -10,7 +10,7 @@ export function useAIRecommendations() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const generateRecommendations = useCallback(async (context?: RecommendationContext) => {
+  const generateRecommendations = useCallback(async (context?: RecommendationContext, useCache: boolean = true) => {
     if (!user) {
       setError('User not authenticated');
       return;
@@ -20,25 +20,14 @@ export function useAIRecommendations() {
     setError(null);
 
     try {
-      const recs = await aiPersonalizationEngine.generateRecommendations(5, context);
+      const recs = await aiPersonalizationEngine.generateRecommendations(5, context, useCache);
       setRecommendations(recs);
     } catch (err: any) {
       const errorMsg = err.message || 'Failed to generate recommendations';
       setError(errorMsg);
       
-      if (errorMsg === 'RATE_LIMIT_EXCEEDED') {
-        toast({
-          title: 'Rate Limit Exceeded',
-          description: 'Too many requests. Please try again in a few moments.',
-          variant: 'destructive',
-        });
-      } else if (errorMsg === 'QUOTA_EXCEEDED') {
-        toast({
-          title: 'AI Usage Quota Exceeded',
-          description: 'Please add credits to your workspace to continue using AI features.',
-          variant: 'destructive',
-        });
-      } else {
+      // No toast for fallback since fallback is automatic
+      if (!errorMsg.includes('fallback')) {
         toast({
           title: 'Error',
           description: 'Failed to generate recommendations. Please try again.',
