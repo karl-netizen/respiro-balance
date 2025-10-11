@@ -15,6 +15,7 @@ import { useSessionLimit } from '@/hooks/useSessionLimit';
 import { EnhancedMeditationCard } from '@/components/meditation/EnhancedMeditationCard';
 import { UpgradeModal } from '@/components/meditation/UpgradeModal';
 import { SessionLimitBanner } from '@/components/meditation/SessionLimitBanner';
+import { DatabaseTest } from '@/components/meditation/DatabaseTest';
 
 // Import typed interfaces and utilities
 import {
@@ -540,6 +541,9 @@ const MeditationLibrary: React.FC = () => {
 
   return (
     <div className="container mx-auto p-6 space-y-8">
+      {/* Database Connection Test */}
+      <DatabaseTest />
+      
       {/* Header */}
       <div className="text-center space-y-4">
         <h1 className="text-4xl font-bold text-foreground">Meditation Library</h1>
