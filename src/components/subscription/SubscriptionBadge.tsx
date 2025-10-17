@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
-import { useSubscription } from '@/components/subscription/SubscriptionProvider';
+import { useSubscriptionContext } from '@/features/subscription';
 import { Crown } from 'lucide-react';
 
 interface SubscriptionBadgeProps {
@@ -13,7 +13,7 @@ export const SubscriptionBadge: React.FC<SubscriptionBadgeProps> = ({
   className = '',
   showIcon = true
 }) => {
-  const { subscription, isPremium } = useSubscription();
+  const { subscription, isPremium } = useSubscriptionContext();
   const tierName = subscription.tier || 'free';
   
   return (

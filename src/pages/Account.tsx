@@ -7,7 +7,7 @@ import { ArrowLeft } from 'lucide-react';
 
 
 import AccountSubscriptionSettings from '@/components/settings/AccountSubscriptionSettings';
-import SubscriptionCard from '@/components/subscription/SubscriptionCard';
+import { SubscriptionCard } from '@/features/subscription';
 import MeditationHistoryList from '@/components/meditation/MeditationHistoryList';
 
 const Account = () => {

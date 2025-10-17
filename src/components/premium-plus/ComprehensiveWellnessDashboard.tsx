@@ -17,7 +17,7 @@ import {
   Target,
   Award
 } from 'lucide-react';
-import { FeatureGate } from '@/components/subscription/FeatureGate';
+import { FeatureGate } from '@/features/subscription';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, RadialBarChart, RadialBar } from 'recharts';
 
 const ComprehensiveWellnessDashboard: React.FC = () => {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useSubscriptionStore } from '@/store/subscriptionStore';
+import { useSubscriptionStore } from '@/features/subscription';
 import {
   Dialog,
   DialogContent,

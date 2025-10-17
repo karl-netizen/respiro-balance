@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useSubscriptionStore } from '@/store/subscriptionStore';
+import { useSubscriptionStore } from '@/features/subscription';
 
 /**
  * Component that monitors subscription state and handles automatic resets

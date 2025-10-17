@@ -1,17 +1,31 @@
-
-import React, { useState } from 'react';
+import React, { useState, lazy, Suspense } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardDescription } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useUserPreferences } from "@/context";
 import { useBiometricData } from "@/hooks/useBiometricData";
 import { useMeditationStats } from './useMeditationStats';
-import { 
-  MonthlyTrendsSection,
-  CorrelationsSection,
-  InsightsSection
-} from './insights';
-import ShareableReport from './ShareableReport';
 import { Activity, TrendingUp, Lightbulb } from "lucide-react";
+
+// Lazy load heavy chart sections
+const MonthlyTrendsSection = lazy(() => 
+  import('./insights').then(m => ({ default: m.MonthlyTrendsSection }))
+);
+const CorrelationsSection = lazy(() => 
+  import('./insights').then(m => ({ default: m.CorrelationsSection }))
+);
+const InsightsSection = lazy(() => 
+  import('./insights').then(m => ({ default: m.InsightsSection }))
+);
+const ShareableReport = lazy(() => import('./ShareableReport'));
+
+// Loading fallback for heavy sections
+const SectionLoadingFallback = () => (
+  <div className="space-y-4">
+    <Skeleton className="h-48 w-full" />
+    <Skeleton className="h-64 w-full" />
+  </div>
+);
 
 const InsightsTab: React.FC = () => {
   const { meditationStats } = useMeditationStats();
@@ -51,18 +65,24 @@ const InsightsTab: React.FC = () => {
         </TabsList>
         
         <TabsContent value="monthly" className="mt-0">
-          <MonthlyTrendsSection meditationStats={meditationStats} />
+          <Suspense fallback={<SectionLoadingFallback />}>
+            <MonthlyTrendsSection meditationStats={meditationStats} />
+          </Suspense>
         </TabsContent>
         
         <TabsContent value="correlations" className="mt-0">
-          <CorrelationsSection biometricData={biometricData} meditationStats={meditationStats} />
+          <Suspense fallback={<SectionLoadingFallback />}>
+            <CorrelationsSection biometricData={biometricData} meditationStats={meditationStats} />
+          </Suspense>
         </TabsContent>
         
         <TabsContent value="insights" className="mt-0">
-          <div className="space-y-6">
-            <InsightsSection preferences={preferences} />
-            <ShareableReport />
-          </div>
+          <Suspense fallback={<SectionLoadingFallback />}>
+            <div className="space-y-6">
+              <InsightsSection preferences={preferences} />
+              <ShareableReport />
+            </div>
+          </Suspense>
         </TabsContent>
       </Tabs>
     </div>

@@ -1,7 +1,7 @@
 
 import { useAuth } from './useAuth';
 import { useSubscription } from './useSubscription';
-import { useSubscriptionStore } from '@/store/subscriptionStore';
+import { useSubscriptionStore } from '@/features/subscription';
 
 export type FeatureTier = 'free' | 'standard' | 'premium';
 

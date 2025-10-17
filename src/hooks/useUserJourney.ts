@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { useSubscription } from '@/components/subscription/SubscriptionProvider';
+import { useSubscription } from '@/features/subscription';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 

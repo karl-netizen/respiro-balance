@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Calendar, Clock, Users, Play, Radio, Download, MessageCircle } from 'lucide-react';
-import { FeatureGate } from '@/components/subscription/FeatureGate';
+import { FeatureGate } from '@/features/subscription';
 
 interface Masterclass {
   id: string;

@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { MeditationSession } from '@/types/meditation';
-import { useSubscription } from '@/components/subscription/SubscriptionProvider';
+import { useSubscription } from '@/features/subscription';
 import { useMeditationNavigation } from './useMeditationNavigation';
 import { useMeditationRecentlyPlayed } from './useMeditationRecentlyPlayed';
 

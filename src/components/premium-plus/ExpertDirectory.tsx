@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Star, Clock, Globe, Award, Calendar } from 'lucide-react';
 import { Expert } from '@/types/experts';
-import { FeatureGate } from '@/components/subscription/FeatureGate';
+import { FeatureGate } from '@/features/subscription';
 
 interface ExpertDirectoryProps {
   onBookSession: (expert: Expert) => void;

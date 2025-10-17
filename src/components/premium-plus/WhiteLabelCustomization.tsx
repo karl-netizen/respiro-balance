@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Palette, Upload, Eye, Save, Smartphone, Monitor } from 'lucide-react';
-import { FeatureGate } from '@/components/subscription/FeatureGate';
+import { FeatureGate } from '@/features/subscription';
 import { toast } from 'sonner';
 
 const WhiteLabelCustomization: React.FC = () => {

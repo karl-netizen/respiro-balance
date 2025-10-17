@@ -47,6 +47,28 @@ export const LazySocialPage = lazy(() =>
   import('@/pages/SocialPage')
 );
 
+// Additional lazy-loaded pages
+export const LazyDashboard = lazy(() => import('@/pages/Dashboard'));
+export const LazyProfilePage = lazy(() => import('@/pages/ProfilePage'));
+export const LazySettingsPage = lazy(() => import('@/pages/SettingsPage'));
+export const LazySystemDashboardPage = lazy(() => import('@/pages/SystemDashboardPage'));
+export const LazyMeditate = lazy(() => import('@/pages/Meditate'));
+export const LazyBiofeedbackPage = lazy(() => import('@/pages/BiofeedbackPage'));
+export const LazySubscriptionPage = lazy(() => import('@/pages/SubscriptionPage'));
+export const LazyPremiumPlusPage = lazy(() => import('@/pages/PremiumPlusPage'));
+export const LazyMeditateAdvanced = lazy(() => import('@/pages/MeditateAdvanced'));
+export const LazyPremiumProPage = lazy(() => import('@/pages/PremiumProPage'));
+export const LazyUserJourneyTestingPage = lazy(() => import('@/pages/UserJourneyTestingPage'));
+export const LazyMeditationAudioManagement = lazy(() => import('@/pages/MeditationAudioManagement'));
+export const LazyMeditationSessionPage = lazy(() => import('@/pages/MeditationSessionPage'));
+export const LazyMeditationMonitorPage = lazy(() => import('@/pages/MeditationMonitorPage'));
+export const LazySetupGuidePage = lazy(() => import('@/pages/SetupGuidePage'));
+export const LazyHelpPage = lazy(() => import('@/pages/HelpPage'));
+export const LazyContactPage = lazy(() => import('@/pages/ContactPage'));
+export const LazyPrivacyPage = lazy(() => import('@/pages/PrivacyPage'));
+export const LazyTermsPage = lazy(() => import('@/pages/TermsPage'));
+export const LazyOnboardingPage = lazy(() => import('@/pages/Onboarding'));
+
 // Preload critical routes for faster navigation
 export const preloadPricingPage = () => {
   import('@/pages/PricingPage');
@@ -62,6 +84,14 @@ export const preloadModuleLibrary = () => {
 
 export const preloadMeditationLibrary = () => {
   import('@/pages/MeditationLibrary');
+};
+
+export const preloadDashboard = () => {
+  import('@/pages/Dashboard');
+};
+
+export const preloadProgress = () => {
+  import('@/pages/Progress');
 };
 
 // Preload on user interaction (e.g., hover over link)
@@ -82,5 +112,17 @@ export const setupPreloadHooks = () => {
   const moduleButtons = document.querySelectorAll('[data-preload="modules"]');
   moduleButtons.forEach(button => {
     button.addEventListener('mouseenter', preloadModuleLibrary, { once: true });
+  });
+
+  // Preload dashboard for logged-in users
+  const dashboardButtons = document.querySelectorAll('[data-preload="dashboard"]');
+  dashboardButtons.forEach(button => {
+    button.addEventListener('mouseenter', preloadDashboard, { once: true });
+  });
+
+  // Preload progress page
+  const progressButtons = document.querySelectorAll('[data-preload="progress"]');
+  progressButtons.forEach(button => {
+    button.addEventListener('mouseenter', preloadProgress, { once: true });
   });
 };

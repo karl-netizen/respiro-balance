@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useModuleStore } from '@/store/moduleStore';
-import { useSubscription } from '@/components/subscription/SubscriptionProvider';
+import { useSubscription } from '@/features/subscription';
 
 /**
  * Hook to sync module store with subscription tier

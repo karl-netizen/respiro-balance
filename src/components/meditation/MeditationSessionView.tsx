@@ -6,8 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Play, Pause, RotateCcw, Heart, Clock, Star, Crown } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
-import { SubscriptionGate } from '@/components/subscription/SubscriptionGate';
-import { useSubscription } from '@/components/subscription/SubscriptionProvider';
+import { SubscriptionGate } from '@/features/subscription';
+import { useSubscription } from '@/features/subscription';
 import { SessionInsightDialog } from '@/components/biofeedback/SessionInsightDialog';
 import { useBiofeedbackStore } from '@/store/biofeedbackStore';
 

@@ -7,10 +7,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { Link, Navigate } from 'react-router-dom';
-import SubscriptionPlanComparison from '@/components/subscription/SubscriptionPlanComparison';
-import SubscriptionFAQs from '@/components/subscription/SubscriptionFAQs';
-import CheckoutFlow from '@/components/subscription/CheckoutFlow';
-import { useSubscription } from '@/components/subscription/SubscriptionProvider';
+import { SubscriptionPlanComparison, SubscriptionFAQs, CheckoutFlow, useSubscription } from '@/features/subscription';
 import { useNavigationHistory } from '@/context/NavigationHistoryProvider';
 import { toast } from 'sonner';
 

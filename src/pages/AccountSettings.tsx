@@ -15,7 +15,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { useSubscriptionStore } from '@/store/subscriptionStore';
+import { useSubscriptionStore } from '@/features/subscription';
 import { mockStripeService } from '@/lib/payment/stripe';
 import { useToast } from '@/hooks/use-toast';
 import { 

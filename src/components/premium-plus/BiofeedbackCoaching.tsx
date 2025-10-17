@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Heart, Activity, Brain, TrendingUp, Play, Pause, RotateCcw } from 'lucide-react';
-import { FeatureGate } from '@/components/subscription/FeatureGate';
+import { FeatureGate } from '@/features/subscription';
 import { toast } from 'sonner';
 
 interface BiofeedbackCoachingProps {

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useSubscriptionStore } from '@/store/subscriptionStore';
+import { useSubscriptionStore } from '@/features/subscription';
 import { useModuleStore } from '@/store/moduleStore';
 import { stripeService } from '@/lib/payment/stripe';
 import {

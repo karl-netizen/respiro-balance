@@ -6,9 +6,9 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { useSubscriptionStore, BillingCycle, SubscriptionTier } from '@/store/subscriptionStore';
+import { useSubscriptionStore, BillingCycle, SubscriptionTier } from '@/features/subscription';
 import { Check, Sparkles, Zap, ArrowLeft } from 'lucide-react';
-import { CheckoutDialog } from '@/components/subscription/CheckoutDialog';
+import { CheckoutDialog } from '@/features/subscription';
 
 export default function PricingPage() {
   const navigate = useNavigate();

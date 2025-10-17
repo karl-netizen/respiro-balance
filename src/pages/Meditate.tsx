@@ -3,7 +3,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { MeditationHeader, MeditationSessionDialog } from '@/components/meditation';
 import RecentPlayedList from '@/components/meditation/RecentPlayedList';
 import MeditationTabsContent from '@/components/meditation/MeditationTabsContent';
-import SubscriptionBanner from '@/components/subscription/SubscriptionBanner';
+import { SubscriptionBanner } from '@/features/subscription';
 import { useMeditatePage } from '@/hooks/useMeditatePage';
 import { MeditationSession } from '@/types/meditation';
 import { StateDebugger } from '@/components/dev';

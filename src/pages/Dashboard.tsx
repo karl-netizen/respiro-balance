@@ -16,7 +16,7 @@ import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { Sparkles, Package, Settings, Activity, Boxes } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { SessionCounterWidget } from '@/components/subscription/SessionCounterWidget';
+import { SessionCounterWidget } from '@/features/subscription';
 import { AIRecommendationsPanel } from '@/components/personalization/AIRecommendationsPanel';
 import { AIErrorBoundary } from '@/components/personalization/AIErrorBoundary';
 import { SEO } from '@/components/SEO';

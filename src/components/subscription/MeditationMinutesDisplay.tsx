@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useSubscription } from '@/components/subscription/SubscriptionProvider';
+import { useSubscriptionContext } from '@/features/subscription';
 import { Progress } from '@/components/ui/progress';
 import { Clock } from 'lucide-react';
 
@@ -13,7 +13,7 @@ export const MeditationMinutesDisplay: React.FC<MeditationMinutesDisplayProps> =
   showIcon = true,
   compact = false
 }) => {
-  const { subscription, isPremium } = useSubscription();
+  const { subscription, isPremium } = useSubscriptionContext();
   
   // Don't show for premium users
   if (isPremium) return null;
