@@ -54,62 +54,101 @@ export default defineConfig(({ mode }) => ({
         '@capacitor-community/bluetooth-le'
       ],
       output: {
-        manualChunks: {
-          // Core vendor chunks
-          'vendor-react': ['react', 'react-dom'],
-          'vendor-router': ['react-router-dom'],
-          'vendor-query': ['@tanstack/react-query'],
+        manualChunks(id) {
+          // Vendor chunks
+          if (id.includes('node_modules')) {
+            // Core vendor chunks
+            if (id.includes('react') || id.includes('react-dom')) {
+              return 'vendor-react';
+            }
+            if (id.includes('react-router-dom')) {
+              return 'vendor-router';
+            }
+            if (id.includes('@tanstack/react-query')) {
+              return 'vendor-query';
+            }
 
-          // UI component chunks - split into smaller pieces
-          'ui-radix-dialog': ['@radix-ui/react-dialog'],
-          'ui-radix-forms': [
-            '@radix-ui/react-checkbox',
-            '@radix-ui/react-radio-group',
-            '@radix-ui/react-select',
-            '@radix-ui/react-slider',
-            '@radix-ui/react-switch',
-          ],
-          'ui-radix-layout': [
-            '@radix-ui/react-tabs',
-            '@radix-ui/react-accordion',
-            '@radix-ui/react-collapsible',
-            '@radix-ui/react-separator',
-          ],
-          'ui-radix-overlay': [
-            '@radix-ui/react-popover',
-            '@radix-ui/react-tooltip',
-            '@radix-ui/react-hover-card',
-            '@radix-ui/react-dropdown-menu',
-          ],
-          'ui-icons': ['lucide-react'],
-          'ui-motion': ['framer-motion'],
+            // UI component chunks - split into smaller pieces
+            if (id.includes('@radix-ui/react-dialog')) {
+              return 'ui-radix-dialog';
+            }
+            if (id.includes('@radix-ui/react-checkbox') ||
+                id.includes('@radix-ui/react-radio-group') ||
+                id.includes('@radix-ui/react-select') ||
+                id.includes('@radix-ui/react-slider') ||
+                id.includes('@radix-ui/react-switch')) {
+              return 'ui-radix-forms';
+            }
+            if (id.includes('@radix-ui/react-tabs') ||
+                id.includes('@radix-ui/react-accordion') ||
+                id.includes('@radix-ui/react-collapsible') ||
+                id.includes('@radix-ui/react-separator')) {
+              return 'ui-radix-layout';
+            }
+            if (id.includes('@radix-ui/react-popover') ||
+                id.includes('@radix-ui/react-tooltip') ||
+                id.includes('@radix-ui/react-hover-card') ||
+                id.includes('@radix-ui/react-dropdown-menu')) {
+              return 'ui-radix-overlay';
+            }
+            if (id.includes('lucide-react')) {
+              return 'ui-icons';
+            }
+            if (id.includes('framer-motion')) {
+              return 'ui-motion';
+            }
 
-          // Charts (large dependency)
-          'charts': ['recharts'],
+            // Charts (large dependency) - split further
+            if (id.includes('recharts')) {
+              return 'charts';
+            }
 
-          // Form handling
-          'forms': ['react-hook-form', '@hookform/resolvers', 'zod'],
+            // Form handling
+            if (id.includes('react-hook-form') || id.includes('@hookform/resolvers') || id.includes('zod')) {
+              return 'forms';
+            }
 
-          // Utilities
-          'utils': [
-            'clsx',
-            'class-variance-authority',
-            'tailwind-merge',
-            'date-fns'
-          ],
+            // Utilities
+            if (id.includes('clsx') || id.includes('class-variance-authority') ||
+                id.includes('tailwind-merge') || id.includes('date-fns')) {
+              return 'utils';
+            }
 
-          // Supabase
-          'supabase': ['@supabase/supabase-js'],
+            // Supabase
+            if (id.includes('@supabase/supabase-js')) {
+              return 'supabase';
+            }
 
-          // Stripe
-          'stripe': ['@stripe/stripe-js'],
+            // Stripe
+            if (id.includes('@stripe/stripe-js')) {
+              return 'stripe';
+            }
+          }
+
+          // Split large page components into separate chunks
+          if (id.includes('/src/pages/')) {
+            const pageName = id.split('/pages/')[1]?.split('.')[0];
+            if (pageName) {
+              // Group smaller pages together
+              if (['LoginPage', 'RegisterPage', 'ForgotPasswordPage', 'ResetPasswordPage'].some(p => pageName.includes(p))) {
+                return 'pages-auth';
+              }
+              if (['HelpPage', 'ContactPage', 'PrivacyPage', 'TermsPage'].some(p => pageName.includes(p))) {
+                return 'pages-info';
+              }
+              // Keep large pages separate
+              if (['Dashboard', 'MorningRitual'].includes(pageName)) {
+                return `page-${pageName.toLowerCase()}`;
+              }
+            }
+          }
         },
         assetFileNames: 'assets/[name]-[hash][extname]',
         chunkFileNames: 'assets/js/[name]-[hash].js',
         entryFileNames: 'assets/js/[name]-[hash].js',
       },
     },
-    chunkSizeWarningLimit: 500,
+    chunkSizeWarningLimit: 600, // Increased limit since we're using lazy loading
   },
   optimizeDeps: {
     include: ['react', 'react-dom', 'react-router-dom'],

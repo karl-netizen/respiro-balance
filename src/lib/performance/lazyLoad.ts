@@ -69,6 +69,11 @@ export const LazyPrivacyPage = lazy(() => import('@/pages/PrivacyPage'));
 export const LazyTermsPage = lazy(() => import('@/pages/TermsPage'));
 export const LazyOnboardingPage = lazy(() => import('@/pages/Onboarding'));
 
+// Lazy load examples
+export const LazyEnhancedWorkLifeExample = lazy(() =>
+  import('@/examples/EnhancedWorkLifeExample').then(m => ({ default: m.EnhancedWorkLifeExample }))
+);
+
 // Preload critical routes for faster navigation
 export const preloadPricingPage = () => {
   import('@/pages/PricingPage');

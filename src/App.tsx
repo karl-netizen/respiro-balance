@@ -15,6 +15,7 @@ import Footer from '@/components/Footer';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { LoadingMonitor } from '@/components/LoadingMonitor';
 import { DashboardSkeleton } from '@/components/ui/skeleton-variants';
+import { SuspenseRoute } from '@/components/SuspenseRoute';
 import { CookieConsent } from '@/components/analytics/CookieConsent';
 import { analytics } from '@/lib/analytics/analytics';
 // Keep only critical landing/auth pages as eager imports
@@ -46,9 +47,9 @@ import FitbitCallback from '@/pages/FitbitCallback';
 // import TermsPage from '@/pages/TermsPage';
 
 // Lazy-loaded components for better performance
-import { 
-  LazyPricingPage, 
-  LazyAccountSettings, 
+import {
+  LazyPricingPage,
+  LazyAccountSettings,
   LazyModuleLibraryPage,
   LazyBiofeedbackSettings,
   LazyMeditationLibrary,
@@ -78,6 +79,7 @@ import {
   LazyMorningRitual,
   LazyBreathePage,
   LazySocialPage,
+  LazyEnhancedWorkLifeExample,
   setupPreloadHooks
 } from '@/lib/performance/lazyLoad';
 
@@ -168,47 +170,77 @@ function AppContent() {
                           <Route path="/" element={<Navigate to="/dashboard" replace />} />
                           <Route path="/landing" element={<LandingPage />} />
                           <Route path="/home" element={<HomePage />} />
-                          <Route path="/onboarding" element={<LazyOnboardingPage />} />
-                          <Route path="/dashboard" element={<LazyDashboard />} />
+                          <Route path="/onboarding" element={
+                            <SuspenseRoute><LazyOnboardingPage /></SuspenseRoute>
+                          } />
+                          <Route path="/dashboard" element={
+                            <SuspenseRoute><LazyDashboard /></SuspenseRoute>
+                          } />
                          <Route path="/register" element={<RegisterPage />} />
                          <Route path="/login" element={<LoginPage />} />
                          <Route path="/auth" element={<SimpleAuthPage />} />
                          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                         <Route path="/reset-password" element={<ResetPasswordPage />} />
-                        <Route path="/profile" element={<LazyProfilePage />} />
+                        <Route path="/profile" element={
+                          <SuspenseRoute><LazyProfilePage /></SuspenseRoute>
+                        } />
                         <Route path="/account" element={
                           <Suspense fallback={<DashboardSkeleton />}>
                             <LazyAccountSettings />
                           </Suspense>
                         } />
-                        <Route path="/settings" element={<LazySettingsPage />} />
-                        <Route path="/pricing" element={
-                          <Suspense fallback={<DashboardSkeleton />}>
-                            <LazyPricingPage />
-                          </Suspense>
+                        <Route path="/settings" element={
+                          <SuspenseRoute><LazySettingsPage /></SuspenseRoute>
                         } />
-                        <Route path="/meditate" element={<LazyMeditate />} />
-                        <Route path="/system" element={<LazySystemDashboardPage />} />
+                        <Route path="/pricing" element={
+                          <SuspenseRoute><LazyPricingPage /></SuspenseRoute>
+                        } />
+                        <Route path="/meditate" element={
+                          <SuspenseRoute><LazyMeditate /></SuspenseRoute>
+                        } />
+                        <Route path="/system" element={
+                          <SuspenseRoute><LazySystemDashboardPage /></SuspenseRoute>
+                        } />
                         <Route path="/meditation" element={
                           <Suspense fallback={<DashboardSkeleton />}>
                             <LazyMeditationLibrary />
                           </Suspense>
                         } />
-                        <Route path="/biofeedback" element={<LazyBiofeedbackPage />} />
-                        <Route path="/subscription" element={<LazySubscriptionPage />} />
-                        <Route path="/premium-plus" element={<LazyPremiumPlusPage />} />
+                        <Route path="/biofeedback" element={
+                          <SuspenseRoute><LazyBiofeedbackPage /></SuspenseRoute>
+                        } />
+                        <Route path="/subscription" element={
+                          <SuspenseRoute><LazySubscriptionPage /></SuspenseRoute>
+                        } />
+                        <Route path="/premium-plus" element={
+                          <SuspenseRoute><LazyPremiumPlusPage /></SuspenseRoute>
+                        } />
                         <Route path="/social" element={
                           <Suspense fallback={<DashboardSkeleton />}>
                             <LazySocialPage />
                           </Suspense>
                         } />
-                        <Route path="/meditate-advanced" element={<LazyMeditateAdvanced />} />
-                        <Route path="/premium-pro" element={<LazyPremiumProPage />} />
-                        <Route path="/testing" element={<LazyUserJourneyTestingPage />} />
-                        <Route path="/meditation/audio-management" element={<LazyMeditationAudioManagement />} />
-                        <Route path="/meditate/session/:sessionId" element={<LazyMeditationSessionPage />} />
-                        <Route path="/meditation-monitor" element={<LazyMeditationMonitorPage />} />
-                        <Route path="/setup-guide" element={<LazySetupGuidePage />} />
+                        <Route path="/meditate-advanced" element={
+                          <SuspenseRoute><LazyMeditateAdvanced /></SuspenseRoute>
+                        } />
+                        <Route path="/premium-pro" element={
+                          <SuspenseRoute><LazyPremiumProPage /></SuspenseRoute>
+                        } />
+                        <Route path="/testing" element={
+                          <SuspenseRoute><LazyUserJourneyTestingPage /></SuspenseRoute>
+                        } />
+                        <Route path="/meditation/audio-management" element={
+                          <SuspenseRoute><LazyMeditationAudioManagement /></SuspenseRoute>
+                        } />
+                        <Route path="/meditate/session/:sessionId" element={
+                          <SuspenseRoute><LazyMeditationSessionPage /></SuspenseRoute>
+                        } />
+                        <Route path="/meditation-monitor" element={
+                          <SuspenseRoute><LazyMeditationMonitorPage /></SuspenseRoute>
+                        } />
+                        <Route path="/setup-guide" element={
+                          <SuspenseRoute><LazySetupGuidePage /></SuspenseRoute>
+                        } />
                         <Route path="/modules" element={
                           <Suspense fallback={<DashboardSkeleton />}>
                             <LazyModuleLibraryPage />
@@ -245,10 +277,18 @@ function AppContent() {
                             <LazyFocusPage />
                           </Suspense>
                         } />
-                        <Route path="/help" element={<LazyHelpPage />} />
-                        <Route path="/contact" element={<LazyContactPage />} />
-                        <Route path="/privacy" element={<LazyPrivacyPage />} />
-                        <Route path="/terms" element={<LazyTermsPage />} />
+                        <Route path="/help" element={
+                          <SuspenseRoute><LazyHelpPage /></SuspenseRoute>
+                        } />
+                        <Route path="/contact" element={
+                          <SuspenseRoute><LazyContactPage /></SuspenseRoute>
+                        } />
+                        <Route path="/privacy" element={
+                          <SuspenseRoute><LazyPrivacyPage /></SuspenseRoute>
+                        } />
+                        <Route path="/terms" element={
+                          <SuspenseRoute><LazyTermsPage /></SuspenseRoute>
+                        } />
 
                         <Route path="/performance-demo" element={
                           <React.Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div></div>}>
@@ -277,7 +317,9 @@ function AppContent() {
                         } />
                         <Route path="/testing-demo" element={<ComprehensiveTestingDemo />} />
                         <Route path="/testing-summary" element={<TestingFrameworkSummary />} />
-                        <Route path="/enhanced-work-life" element={React.createElement(React.lazy(() => import('@/examples/EnhancedWorkLifeExample').then(m => ({ default: m.EnhancedWorkLifeExample }))))} />
+                        <Route path="/enhanced-work-life" element={
+                          <SuspenseRoute><LazyEnhancedWorkLifeExample /></SuspenseRoute>
+                        } />
 
                         </Routes>
                       </main>
