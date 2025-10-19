@@ -92,65 +92,72 @@ describe('Focus Mode Context', () => {
   describe('Session Management', () => {
     it('should start a focus session', async () => {
       const user = userEvent.setup({ delay: null });
-      
+
       render(
         <FocusProvider>
           <TestFocusComponent />
         </FocusProvider>
       );
 
-      await user.click(screen.getByText('Start'));
-
-      await waitFor(() => {
-        expect(screen.getByTestId('timer-state')).toHaveTextContent('work');
-        expect(screen.getByTestId('is-active')).toHaveTextContent('active');
+      await act(async () => {
+        await user.click(screen.getByText('Start'));
+        vi.advanceTimersByTime(100);
       });
+
+      expect(screen.getByTestId('timer-state')).toHaveTextContent('work');
+      expect(screen.getByTestId('is-active')).toHaveTextContent('active');
     });
 
     it('should pause an active session', async () => {
       const user = userEvent.setup({ delay: null });
-      
+
       render(
         <FocusProvider>
           <TestFocusComponent />
         </FocusProvider>
       );
 
-      await user.click(screen.getByText('Start'));
-      await waitFor(() => {
-        expect(screen.getByTestId('timer-state')).toHaveTextContent('work');
+      await act(async () => {
+        await user.click(screen.getByText('Start'));
+        vi.advanceTimersByTime(100);
       });
 
-      await user.click(screen.getByText('Pause'));
+      expect(screen.getByTestId('timer-state')).toHaveTextContent('work');
 
-      await waitFor(() => {
-        expect(screen.getByTestId('timer-state')).toHaveTextContent('paused');
-        expect(screen.getByTestId('is-active')).toHaveTextContent('inactive');
+      await act(async () => {
+        await user.click(screen.getByText('Pause'));
+        vi.advanceTimersByTime(100);
       });
+
+      expect(screen.getByTestId('timer-state')).toHaveTextContent('paused');
+      expect(screen.getByTestId('is-active')).toHaveTextContent('inactive');
     });
 
     it('should resume a paused session', async () => {
       const user = userEvent.setup({ delay: null });
-      
+
       render(
         <FocusProvider>
           <TestFocusComponent />
         </FocusProvider>
       );
 
-      await user.click(screen.getByText('Start'));
-      await user.click(screen.getByText('Pause'));
-      
-      await waitFor(() => {
-        expect(screen.getByTestId('timer-state')).toHaveTextContent('paused');
+      await act(async () => {
+        await user.click(screen.getByText('Start'));
+        vi.advanceTimersByTime(100);
+        await user.click(screen.getByText('Pause'));
+        vi.advanceTimersByTime(100);
       });
 
-      await user.click(screen.getByText('Resume'));
+      expect(screen.getByTestId('timer-state')).toHaveTextContent('paused');
 
-      await waitFor(() => {
-        expect(screen.getByTestId('timer-state')).toHaveTextContent('work');
-        expect(screen.getByTestId('is-active')).toHaveTextContent('active');
+      await act(async () => {
+        await user.click(screen.getByText('Resume'));
+        vi.advanceTimersByTime(100);
       });
+
+      expect(screen.getByTestId('timer-state')).toHaveTextContent('work');
+      expect(screen.getByTestId('is-active')).toHaveTextContent('active');
     });
 
     it('should complete a session', async () => {
