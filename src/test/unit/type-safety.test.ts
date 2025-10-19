@@ -8,7 +8,7 @@ const createUserId = (id: string) => {
 };
 
 const createEmail = (email: string) => {
-  const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) throw new Error('Invalid email format');
   return email as any;
 };
@@ -134,8 +134,11 @@ describe('Unit Tests - Type Safety & Utilities', () => {
 
     it('handles empty and whitespace-only inputs', () => {
       expect(sanitizeUserInput('').success).toBe(true);
+      expect(sanitizeUserInput('').data).toBe('');
+      expect(sanitizeUserInput('   ').success).toBe(true);
       expect(sanitizeUserInput('   ').data).toBe('');
-      expect(sanitizeUserInput('\\t\\n').data).toBe('');
+      expect(sanitizeUserInput('\t\n').success).toBe(true);
+      expect(sanitizeUserInput('\t\n').data).toBe('');
     });
 
     it('detects complex XSS attempts', () => {

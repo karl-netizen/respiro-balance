@@ -7,6 +7,7 @@ const mockPersonalizationStore = {
   isLoading: false,
   userPreferences: {} as any,
   interactionHistory: [] as any[],
+  cacheTimestamp: null as number | null,
   setRecommendations: vi.fn((recs) => { mockPersonalizationStore.recommendations = recs; }),
   setLoading: vi.fn((loading) => { mockPersonalizationStore.isLoading = loading; }),
   updateUserPreference: vi.fn((key, value) => {
@@ -17,11 +18,22 @@ const mockPersonalizationStore = {
   }),
   addInteraction: vi.fn((interaction) => { mockPersonalizationStore.interactionHistory.push(interaction); }),
   getCachedRecommendations: vi.fn(() => mockPersonalizationStore.recommendations),
-  setCacheTimestamp: vi.fn(),
-  isCacheExpired: vi.fn(),
-  getSessionPattern: vi.fn(),
-  getPreferredTimes: vi.fn(),
-  calculateEngagementScore: vi.fn(),
+  setCacheTimestamp: vi.fn((timestamp) => { mockPersonalizationStore.cacheTimestamp = timestamp; }),
+  isCacheExpired: vi.fn(() => {
+    if (!mockPersonalizationStore.cacheTimestamp) return true;
+    const cacheMaxAge = 5 * 60 * 1000; // 5 minutes
+    return Date.now() - mockPersonalizationStore.cacheTimestamp > cacheMaxAge;
+  }),
+  getSessionPattern: vi.fn(() => ({
+    totalSessions: mockPersonalizationStore.interactionHistory.filter((i: any) => i.type === 'completed_session').length,
+    averageDuration: 10,
+    completionRate: 0.85
+  })),
+  getPreferredTimes: vi.fn(() => ['morning', 'evening']),
+  calculateEngagementScore: vi.fn(() => {
+    const totalInteractions = mockPersonalizationStore.interactionHistory.length;
+    return Math.min(totalInteractions * 10, 100);
+  }),
   getState: () => mockPersonalizationStore
 };
 
@@ -47,6 +59,12 @@ describe('AI Personalization System', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     queryClient = createTestQueryClient();
+    // Reset store state
+    mockPersonalizationStore.recommendations = [];
+    mockPersonalizationStore.isLoading = false;
+    mockPersonalizationStore.userPreferences = {};
+    mockPersonalizationStore.interactionHistory = [];
+    mockPersonalizationStore.cacheTimestamp = null;
   });
 
   afterEach(() => {
