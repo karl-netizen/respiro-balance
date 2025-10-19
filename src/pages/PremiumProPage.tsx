@@ -12,20 +12,20 @@ import GroupChallengesSystem from '@/components/premium-pro/GroupChallengesSyste
 const PremiumProPage: React.FC = () => {
   const { currentTier } = useFeatureAccess();
 
-  // Redirect if not Premium Pro user
-  if (!['premium_pro', 'premium_plus'].includes(currentTier)) {
+  // Redirect if not Premium user
+  if (currentTier !== 'premium') {
     return <Navigate to="/subscription" />;
   }
 
   return (
     <div className="min-h-screen flex flex-col">
-      
-      
+
+
       <main className="flex-grow">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 max-w-7xl">
           <div className="mb-8">
             <h1 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900 dark:text-white">
-              Premium Pro Features
+              Premium Features
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl">
               Advanced biofeedback integration, enhanced sleep stories, and community challenges

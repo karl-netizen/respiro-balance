@@ -70,8 +70,12 @@ export const SubscriptionProvider: React.FC<SubscriptionProviderProps> = ({ chil
   }, [user]);
 
   const isPremium = subscriptionTier === 'premium' && isSubscribed;
-  const isPremiumPro = subscriptionTier === 'premium_pro' && isSubscribed;
-  const isPremiumPlus = subscriptionTier === 'premium_plus' && isSubscribed;
+  const isStandard = subscriptionTier === 'standard' && isSubscribed;
+
+  // Deprecated - for backward compatibility only
+  // These will always be false as we've migrated to free/standard/premium tiers
+  const isPremiumPro = false;
+  const isPremiumPlus = false;
 
   const value = {
     subscriptionTier,
@@ -79,6 +83,8 @@ export const SubscriptionProvider: React.FC<SubscriptionProviderProps> = ({ chil
     subscriptionEnd,
     isSubscribed,
     isPremium,
+    isStandard,
+    // Deprecated properties - kept for backward compatibility
     isPremiumPro,
     isPremiumPlus,
     refreshSubscription,

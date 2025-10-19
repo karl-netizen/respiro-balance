@@ -13,7 +13,8 @@
       "Bash(npm test --run)",
       "Bash(npm run build)",
       "Bash(cat .gitmodules)",
-      "Bash(npm run lint -- --fix)"
+      "Bash(npm run lint -- --fix)",
+      "Bash(git push origin main)"
     ],
     "deny": [],
     "ask": []

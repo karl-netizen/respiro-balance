@@ -63,7 +63,7 @@ export const useMeditationContent = () => {
   
   // Simple fallback for demo - replace with actual subscription context later
   const isSubscribed = true;
-  const subscriptionTier = 'premium' as 'free' | 'premium' | 'premium_pro' | 'premium_plus';
+  const subscriptionTier = 'premium' as 'free' | 'standard' | 'premium';
 
   // Fetch all content
   const fetchContent = async () => {
@@ -146,20 +146,28 @@ export const useMeditationContent = () => {
 
   // Check if user has access to content
   const hasAccessToContent = (contentItem: MeditationContent): boolean => {
+    // Free content is accessible to everyone
     if (contentItem.subscription_tier === 'free') return true;
-    
+
+    // Paid content requires subscription
     if (!isSubscribed) return false;
-    
-    switch (contentItem.subscription_tier) {
-      case 'premium':
-        return ['premium', 'premium_pro', 'premium_plus'].includes(subscriptionTier);
-      case 'premium_pro':
-        return ['premium_pro', 'premium_plus'].includes(subscriptionTier);
-      case 'premium_plus':
-        return subscriptionTier === 'premium_plus';
-      default:
-        return false;
+
+    // Simple tier hierarchy: standard >= standard, premium >= all
+    if (contentItem.subscription_tier === 'standard') {
+      return ['standard', 'premium'].includes(subscriptionTier);
     }
+
+    if (contentItem.subscription_tier === 'premium') {
+      return subscriptionTier === 'premium';
+    }
+
+    // Legacy tiers (should not exist in production)
+    // These checks ensure backward compatibility if old data exists
+    if (contentItem.subscription_tier === 'premium_pro' || contentItem.subscription_tier === 'premium_plus') {
+      return subscriptionTier === 'premium';
+    }
+
+    return false;
   };
 
   // Get filtered content based on subscription

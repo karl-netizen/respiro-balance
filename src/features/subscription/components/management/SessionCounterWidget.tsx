@@ -38,10 +38,14 @@ export const SessionCounterWidget: React.FC = () => {
 
   const sessionsRemaining = getSessionsRemaining();
   const progressPercentage = (sessionsUsed / sessionsLimit) * 100;
-  
+
   // Determine status
   const isOutOfSessions = sessionsRemaining === 0;
-  const isRunningLow = sessionsRemaining <= 5 && sessionsRemaining > 0;
+  // Free users with 5 total sessions need earlier warning (at 1 session left)
+  // Standard/other tiers get warning at 5 sessions remaining
+  const isRunningLow = tier === 'free'
+    ? sessionsRemaining === 1
+    : sessionsRemaining <= 5 && sessionsRemaining > 0;
 
   return (
     <Card className={isOutOfSessions ? 'border-2 border-red-500/50' : ''}>
