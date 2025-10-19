@@ -209,6 +209,22 @@ export function trackSubscriptionCancelled(tier: string, reason?: string) {
   });
 }
 
+export function trackUpgradeButtonClicked(location: string, currentTier: string, targetTier?: string) {
+  analytics.track('upgrade_button_clicked', {
+    location, // e.g., 'dashboard', 'session_limit', 'settings'
+    current_tier: currentTier,
+    target_tier: targetTier || 'premium'
+  });
+}
+
+export function trackSessionLimitHit(tier: string, sessionsUsed: number, sessionsLimit: number) {
+  analytics.track('session_limit_hit', {
+    tier,
+    sessions_used: sessionsUsed,
+    sessions_limit: sessionsLimit
+  });
+}
+
 // ============================================
 // Onboarding Events
 // ============================================

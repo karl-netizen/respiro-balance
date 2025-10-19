@@ -6,6 +6,7 @@ import { ArrowLeft, CreditCard, Check, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscriptionContext } from '@/hooks/useSubscriptionContext';
+import { trackSubscriptionStarted } from '@/lib/analytics/analytics';
 
 interface CheckoutFlowProps {
   onCancel: () => void;
@@ -24,7 +25,10 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ onCancel, onComplete }) => 
   
   const handleCompletePayment = async () => {
     setIsProcessing(true);
-    
+
+    // Track checkout started
+    trackSubscriptionStarted('premium', 'monthly');
+
     try {
       // Redirect to Stripe checkout
       const checkoutUrl = await startPremiumCheckout();

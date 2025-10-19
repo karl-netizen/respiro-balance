@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -6,6 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { useSubscriptionStore } from '../../store/subscriptionStore';
 import { useNavigate } from 'react-router-dom';
 import { Activity, Zap, TrendingUp } from 'lucide-react';
+import { trackUpgradeButtonClicked, trackSessionLimitHit } from '@/lib/analytics/analytics';
 
 export const SessionCounterWidget: React.FC = () => {
   const navigate = useNavigate();
@@ -46,6 +47,18 @@ export const SessionCounterWidget: React.FC = () => {
   const isRunningLow = tier === 'free'
     ? sessionsRemaining === 1
     : sessionsRemaining <= 5 && sessionsRemaining > 0;
+
+  // Track when user hits session limit
+  useEffect(() => {
+    if (isOutOfSessions) {
+      trackSessionLimitHit(tier, sessionsUsed, sessionsLimit);
+    }
+  }, [isOutOfSessions, tier, sessionsUsed, sessionsLimit]);
+
+  const handleUpgradeClick = () => {
+    trackUpgradeButtonClicked('session_counter', tier);
+    navigate('/pricing');
+  };
 
   return (
     <Card className={isOutOfSessions ? 'border-2 border-red-500/50' : ''}>
@@ -89,8 +102,8 @@ export const SessionCounterWidget: React.FC = () => {
             <p className="text-sm text-muted-foreground">
               You've reached your monthly session limit. Upgrade to continue your wellness journey.
             </p>
-            <Button 
-              onClick={() => navigate('/pricing')}
+            <Button
+              onClick={handleUpgradeClick}
               className="w-full bg-blue-500 hover:bg-blue-600 text-white"
               size="sm"
               data-preload="pricing"
