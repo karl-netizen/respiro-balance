@@ -96,7 +96,7 @@ const PricingMatrix: React.FC<PricingMatrixProps> = ({
     },
     {
       name: 'Standard',
-      price: '$9',
+      price: '$6.99',
       period: '/month',
       description: 'Comprehensive meditation toolkit',
       popular: true,
@@ -106,7 +106,7 @@ const PricingMatrix: React.FC<PricingMatrixProps> = ({
     },
     {
       name: 'Premium',
-      price: '$13',
+      price: '$12.99',
       period: '/month',
       description: 'Advanced features + biofeedback',
       buttonText: 'Upgrade to Premium',
