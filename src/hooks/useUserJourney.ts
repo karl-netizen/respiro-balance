@@ -153,7 +153,7 @@ export const useUserJourney = () => {
   // Test critical user flows
   const testUserFlow = async (flowType: 'signup' | 'payment' | 'content-access' | 'mobile') => {
     const startTime = Date.now();
-    let testResults: any = {
+    const testResults: any = {
       flowType,
       success: false,
       duration: 0,

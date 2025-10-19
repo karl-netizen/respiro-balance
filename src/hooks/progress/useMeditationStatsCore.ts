@@ -65,7 +65,7 @@ export const useMeditationStatsCore = () => {
           sessions.map(session => new Date(session.completed_at).toDateString())
         );
         
-        let checkDate = new Date();
+        const checkDate = new Date();
         while (sessionDates.has(checkDate.toDateString())) {
           currentStreak++;
           checkDate.setDate(checkDate.getDate() - 1);

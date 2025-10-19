@@ -221,7 +221,7 @@ export const useAchievements = () => {
     // Calculate streak
     let streak = 0;
     const today = new Date();
-    let currentDate = new Date(today);
+    const currentDate = new Date(today);
 
     while (true) {
       const dateString = currentDate.toDateString();

@@ -91,7 +91,7 @@ describe('Focus Mode Context', () => {
 
   describe('Session Management', () => {
     it('should start a focus session', async () => {
-      const user = userEvent.setup({ delay: null });
+      const user = userEvent.setup({ delay: null, advanceTimers: vi.advanceTimersByTime });
 
       render(
         <FocusProvider>
@@ -101,6 +101,9 @@ describe('Focus Mode Context', () => {
 
       await act(async () => {
         await user.click(screen.getByText('Start'));
+      });
+
+      act(() => {
         vi.advanceTimersByTime(100);
       });
 
@@ -109,7 +112,7 @@ describe('Focus Mode Context', () => {
     });
 
     it('should pause an active session', async () => {
-      const user = userEvent.setup({ delay: null });
+      const user = userEvent.setup({ delay: null, advanceTimers: vi.advanceTimersByTime });
 
       render(
         <FocusProvider>
@@ -119,6 +122,9 @@ describe('Focus Mode Context', () => {
 
       await act(async () => {
         await user.click(screen.getByText('Start'));
+      });
+
+      act(() => {
         vi.advanceTimersByTime(100);
       });
 
@@ -126,6 +132,9 @@ describe('Focus Mode Context', () => {
 
       await act(async () => {
         await user.click(screen.getByText('Pause'));
+      });
+
+      act(() => {
         vi.advanceTimersByTime(100);
       });
 
@@ -134,7 +143,7 @@ describe('Focus Mode Context', () => {
     });
 
     it('should resume a paused session', async () => {
-      const user = userEvent.setup({ delay: null });
+      const user = userEvent.setup({ delay: null, advanceTimers: vi.advanceTimersByTime });
 
       render(
         <FocusProvider>
@@ -144,8 +153,17 @@ describe('Focus Mode Context', () => {
 
       await act(async () => {
         await user.click(screen.getByText('Start'));
+      });
+
+      act(() => {
         vi.advanceTimersByTime(100);
+      });
+
+      await act(async () => {
         await user.click(screen.getByText('Pause'));
+      });
+
+      act(() => {
         vi.advanceTimersByTime(100);
       });
 
@@ -153,6 +171,9 @@ describe('Focus Mode Context', () => {
 
       await act(async () => {
         await user.click(screen.getByText('Resume'));
+      });
+
+      act(() => {
         vi.advanceTimersByTime(100);
       });
 
@@ -161,39 +182,54 @@ describe('Focus Mode Context', () => {
     });
 
     it('should complete a session', async () => {
-      const user = userEvent.setup({ delay: null });
-      
+      const user = userEvent.setup({ delay: null, advanceTimers: vi.advanceTimersByTime });
+
       render(
         <FocusProvider>
           <TestFocusComponent />
         </FocusProvider>
       );
 
-      await user.click(screen.getByText('Start'));
-      await user.click(screen.getByText('Complete'));
-
-      await waitFor(() => {
-        expect(screen.getByTestId('timer-state')).toHaveTextContent('completed');
-        expect(screen.getByTestId('is-active')).toHaveTextContent('inactive');
+      await act(async () => {
+        await user.click(screen.getByText('Start'));
       });
+
+      act(() => {
+        vi.advanceTimersByTime(100);
+      });
+
+      await act(async () => {
+        await user.click(screen.getByText('Complete'));
+      });
+
+      act(() => {
+        vi.advanceTimersByTime(100);
+      });
+
+      expect(screen.getByTestId('timer-state')).toHaveTextContent('completed');
+      expect(screen.getByTestId('is-active')).toHaveTextContent('inactive');
     });
   });
 
   describe('Timer Countdown', () => {
     it('should decrement time remaining every second', async () => {
-      const user = userEvent.setup({ delay: null });
-      
+      const user = userEvent.setup({ delay: null, advanceTimers: vi.advanceTimersByTime });
+
       render(
         <FocusProvider>
           <TestFocusComponent />
         </FocusProvider>
       );
 
-      await user.click(screen.getByText('Start'));
-
-      await waitFor(() => {
-        expect(screen.getByTestId('timer-state')).toHaveTextContent('work');
+      await act(async () => {
+        await user.click(screen.getByText('Start'));
       });
+
+      act(() => {
+        vi.advanceTimersByTime(100);
+      });
+
+      expect(screen.getByTestId('timer-state')).toHaveTextContent('work');
 
       const initialTime = parseInt(screen.getByTestId('time-remaining').textContent || '0');
 
@@ -201,82 +237,99 @@ describe('Focus Mode Context', () => {
         vi.advanceTimersByTime(3000); // Advance 3 seconds
       });
 
-      await waitFor(() => {
-        const currentTime = parseInt(screen.getByTestId('time-remaining').textContent || '0');
-        expect(currentTime).toBe(initialTime - 3);
-      });
+      const currentTime = parseInt(screen.getByTestId('time-remaining').textContent || '0');
+      expect(currentTime).toBe(initialTime - 3);
     });
 
     it('should update progress as timer counts down', async () => {
-      const user = userEvent.setup({ delay: null });
-      
+      const user = userEvent.setup({ delay: null, advanceTimers: vi.advanceTimersByTime });
+
       render(
         <FocusProvider>
           <TestFocusComponent />
         </FocusProvider>
       );
 
-      await user.click(screen.getByText('Start'));
+      await act(async () => {
+        await user.click(screen.getByText('Start'));
+      });
 
       act(() => {
         vi.advanceTimersByTime(5000); // Advance 5 seconds
       });
 
-      await waitFor(() => {
-        const progress = parseFloat(screen.getByTestId('progress').textContent || '0');
-        expect(progress).toBeGreaterThan(0);
-      });
+      const progress = parseFloat(screen.getByTestId('progress').textContent || '0');
+      expect(progress).toBeGreaterThan(0);
     });
   });
 
   describe('Interval Transitions', () => {
     it('should skip to break interval', async () => {
-      const user = userEvent.setup({ delay: null });
-      
+      const user = userEvent.setup({ delay: null, advanceTimers: vi.advanceTimersByTime });
+
       render(
         <FocusProvider>
           <TestFocusComponent />
         </FocusProvider>
       );
 
-      await user.click(screen.getByText('Start'));
-      
-      await waitFor(() => {
-        expect(screen.getByTestId('timer-state')).toHaveTextContent('work');
+      await act(async () => {
+        await user.click(screen.getByText('Start'));
       });
 
-      await user.click(screen.getByText('Skip'));
-
-      await waitFor(() => {
-        expect(screen.getByTestId('timer-state')).toHaveTextContent('break');
+      act(() => {
+        vi.advanceTimersByTime(100);
       });
+
+      expect(screen.getByTestId('timer-state')).toHaveTextContent('work');
+
+      await act(async () => {
+        await user.click(screen.getByText('Skip'));
+      });
+
+      act(() => {
+        vi.advanceTimersByTime(100);
+      });
+
+      expect(screen.getByTestId('timer-state')).toHaveTextContent('break');
     });
   });
 
   describe('Distraction Tracking', () => {
     it('should log distractions during work session', async () => {
-      const user = userEvent.setup({ delay: null });
-      
+      const user = userEvent.setup({ delay: null, advanceTimers: vi.advanceTimersByTime });
+
       render(
         <FocusProvider>
           <TestFocusComponent />
         </FocusProvider>
       );
 
-      await user.click(screen.getByText('Start'));
-      await user.click(screen.getByText('Log Distraction'));
+      await act(async () => {
+        await user.click(screen.getByText('Start'));
+      });
+
+      act(() => {
+        vi.advanceTimersByTime(100);
+      });
+
+      await act(async () => {
+        await user.click(screen.getByText('Log Distraction'));
+      });
+
+      act(() => {
+        vi.advanceTimersByTime(100);
+      });
 
       // Verify no errors occurred
-      await waitFor(() => {
-        expect(screen.getByTestId('timer-state')).toHaveTextContent('work');
-      });
+      expect(screen.getByTestId('timer-state')).toHaveTextContent('work');
     });
   });
 
   describe('Stats Tracking', () => {
     it('should increment total sessions on completion', async () => {
-      const user = userEvent.setup({ delay: null });
-      
+      const user = userEvent.setup({ delay: null, advanceTimers: vi.advanceTimersByTime });
+
       render(
         <FocusProvider>
           <TestFocusComponent />
@@ -285,22 +338,42 @@ describe('Focus Mode Context', () => {
 
       const initialSessions = parseInt(screen.getByTestId('total-sessions').textContent || '0');
 
-      await user.click(screen.getByText('Start'));
-      await user.click(screen.getByText('Complete'));
-
-      await waitFor(() => {
-        const finalSessions = parseInt(screen.getByTestId('total-sessions').textContent || '0');
-        expect(finalSessions).toBe(initialSessions + 1);
+      await act(async () => {
+        await user.click(screen.getByText('Start'));
       });
+
+      act(() => {
+        vi.advanceTimersByTime(100);
+      });
+
+      await act(async () => {
+        await user.click(screen.getByText('Complete'));
+      });
+
+      act(() => {
+        vi.advanceTimersByTime(100);
+      });
+
+      const finalSessions = parseInt(screen.getByTestId('total-sessions').textContent || '0');
+      expect(finalSessions).toBe(initialSessions + 1);
     });
   });
 });
 
 describe('Focus Mode Store', () => {
   beforeEach(() => {
-    // Reset store state
-    const store = useFocusModeStore.getState();
-    store.skipSession();
+    // Reset store state completely
+    useFocusModeStore.setState({
+      isActive: false,
+      currentSession: null,
+      timeRemaining: 0,
+      workDuration: 25,
+      shortBreakDuration: 5,
+      longBreakDuration: 15,
+      sessionsUntilLongBreak: 4,
+      sessions: [],
+      completedCycles: 0
+    });
   });
 
   describe('Session State', () => {

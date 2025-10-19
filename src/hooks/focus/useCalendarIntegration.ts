@@ -162,7 +162,7 @@ export const useCalendarIntegration = () => {
     );
     
     // Generate 30-minute slots throughout the day
-    let currentTime = new Date(startOfDay);
+    const currentTime = new Date(startOfDay);
     while (currentTime < endOfDay) {
       const slotEnd = new Date(currentTime.getTime() + durationMinutes * 60 * 1000);
       

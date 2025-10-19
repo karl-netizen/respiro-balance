@@ -38,7 +38,7 @@ serve(async (req) => {
     console.log('Creating checkout session for:', { priceId, tier, billingPeriod, email });
 
     // Get or create customer
-    let customers = await stripe.customers.list({ email, limit: 1 });
+    const customers = await stripe.customers.list({ email, limit: 1 });
     let customerId;
     
     if (customers.data.length > 0) {

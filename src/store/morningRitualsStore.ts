@@ -96,7 +96,7 @@ export const useMorningRitualsStore = create<MorningRitualsState>()(
       calculateStreak: () => {
         const { habits, completions } = get();
         let streak = 0;
-        let currentDate = new Date();
+        const currentDate = new Date();
 
         while (true) {
           const dateStr = currentDate.toISOString().split('T')[0];

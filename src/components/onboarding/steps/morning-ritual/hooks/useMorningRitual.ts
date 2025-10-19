@@ -26,7 +26,7 @@ export const useMorningRitual = () => {
 
   const handleActivityChange = (value: string, checked: boolean) => {
     // Update local state for immediate feedback
-    let updatedActivities = checked 
+    const updatedActivities = checked 
       ? [...morningActivities, value]
       : morningActivities.filter(activity => activity !== value);
     

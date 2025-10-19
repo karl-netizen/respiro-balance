@@ -35,7 +35,7 @@ const TimeManagementStep = () => {
 
   const handleChallengeChange = (value: string, checked: boolean) => {
     // Update local state for immediate feedback
-    let updatedChallenges = checked 
+    const updatedChallenges = checked 
       ? [...challenges, value]
       : challenges.filter(challenge => challenge !== value);
     

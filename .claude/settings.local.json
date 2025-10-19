@@ -1,7 +1,19 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git add -A)"
+      "Bash(git add -A)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nchore: Remove duplicate subscription and audio player files\n\n## Changes\n- Remove 22 duplicate files from src/components/subscription/\n- Remove 2 duplicate audio player files\n- Remove deprecated SubscriptionProvider from src/context/\n- Total: 2,865 lines of duplicate code removed\n\nThese files were consolidated in previous commits into:\n- src/features/subscription/components/management/ (subscription components)\n- src/components/meditation/ (audio players)\n\nAll imports have been updated to use the consolidated locations.\n\n## Impact\n- Cleaner codebase\n- Single source of truth\n- Easier maintenance\n- No functional changes\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(npm run typecheck)",
+      "Bash(npm run lint)",
+      "Bash(cat .env)",
+      "Bash(npm test)",
+      "Bash(npm test -- src/test/integration/dashboard.test.tsx)",
+      "Bash(timeout 10 bash -c \"sleep 10\")",
+      "Bash(npm test -- src/test/unit/focus-mode.test.tsx --run)",
+      "Bash(npm test --run)",
+      "Bash(npm run build)",
+      "Bash(cat .gitmodules)",
+      "Bash(npm run lint -- --fix)"
     ],
     "deny": [],
     "ask": []

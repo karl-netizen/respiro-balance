@@ -17,7 +17,7 @@ export const calculateStreak = (sessions: any[]): number => {
   if (!sortedSessions.length) return 0;
   
   const today = startOfDay(new Date());
-  let currentDate = startOfDay(new Date(sortedSessions[0].completed_at || sortedSessions[0].started_at));
+  const currentDate = startOfDay(new Date(sortedSessions[0].completed_at || sortedSessions[0].started_at));
   
   // If the most recent session is not today or yesterday, the streak is broken
   if (differenceInCalendarDays(today, currentDate) > 1) {
@@ -25,7 +25,7 @@ export const calculateStreak = (sessions: any[]): number => {
   }
   
   let streak = 1;
-  let previousDate = currentDate;
+  const previousDate = currentDate;
   
   // Create a map of days with completed sessions
   const completedDays = new Map<string, boolean>();
@@ -35,7 +35,7 @@ export const calculateStreak = (sessions: any[]): number => {
   });
   
   // Count the streak by checking each previous day
-  let checkDate = startOfDay(new Date(currentDate));
+  const checkDate = startOfDay(new Date(currentDate));
   checkDate.setDate(checkDate.getDate() - 1); // Start checking from yesterday
   
   while (completedDays.has(format(checkDate, 'yyyy-MM-dd'))) {

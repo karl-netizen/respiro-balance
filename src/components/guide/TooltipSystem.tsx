@@ -41,7 +41,7 @@ const TooltipSystem: React.FC<TooltipSystemProps> = ({ tooltips }) => {
 
         const showTooltip = () => {
           const rect = targetElement.getBoundingClientRect();
-          let position = calculatePosition(tooltip.placement, rect, 300, 200);
+          const position = calculatePosition(tooltip.placement, rect, 300, 200);
 
           const activeTooltip: ActiveTooltip = {
             ...tooltip,
@@ -109,7 +109,7 @@ const TooltipSystem: React.FC<TooltipSystemProps> = ({ tooltips }) => {
         const targetElement = document.querySelector(tooltip.target);
         if (targetElement) {
           const rect = targetElement.getBoundingClientRect();
-          let position = calculatePosition(tooltip.placement, rect, 300, 200);
+          const position = calculatePosition(tooltip.placement, rect, 300, 200);
 
           const activeTooltip: ActiveTooltip = {
             ...tooltip,

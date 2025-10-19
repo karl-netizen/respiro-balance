@@ -40,7 +40,7 @@ const StressFocusStep = () => {
   
   const handleFocusChallengeChange = (value: string, checked: boolean) => {
     // Update local state for immediate feedback
-    let updatedChallenges = checked 
+    const updatedChallenges = checked 
       ? [...focusChallenges, value]
       : focusChallenges.filter(challenge => challenge !== value);
     

@@ -21,7 +21,7 @@ export class AdaptiveTimingEngine {
     const isRushedMorning = currentHour >= 7 && currentHour <= 9;
     
     let optimalHours = hours;
-    let optimalMinutes = minutes;
+    const optimalMinutes = minutes;
     let confidence = 70;
     
     if (isEarlyMorning && hours > 8) {

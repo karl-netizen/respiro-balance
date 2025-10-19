@@ -3,7 +3,7 @@
 
 // Store
 export { useSubscriptionStore } from './store/subscriptionStore';
-export type { SubscriptionTier, BillingCycle, SubscriptionStatus } from './store/subscriptionStore';
+export type { SubscriptionTier, BillingCycle, SubscriptionStatus as SubscriptionStatusType } from './store/subscriptionStore';
 
 // Management Components - Consolidated from components/subscription
 export { SubscriptionProvider } from './components/management/SubscriptionProvider';
