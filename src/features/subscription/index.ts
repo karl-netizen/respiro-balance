@@ -5,39 +5,38 @@
 export { useSubscriptionStore } from './store/subscriptionStore';
 export type { SubscriptionTier, BillingCycle, SubscriptionStatus } from './store/subscriptionStore';
 
-// Re-export from old locations (temporary - until fully migrated)
-// Management Components - Named exports
-export { SubscriptionProvider } from '@/components/subscription/SubscriptionProvider';
-export { SubscriptionManagement } from '@/components/subscription/SubscriptionManagement';
-export { SubscriptionStatus } from '@/components/subscription/SubscriptionStatus';
-export { SubscriptionStatusDashboard } from '@/components/subscription/SubscriptionStatusDashboard';
-export { SubscriptionMonitor } from '@/components/subscription/SubscriptionMonitor';
-export { BillingHistory } from '@/components/subscription/BillingHistory';
-export { default as SubscriptionFAQs } from '@/components/subscription/SubscriptionFAQs';
+// Management Components - Consolidated from components/subscription
+export { SubscriptionProvider } from './components/management/SubscriptionProvider';
+export { SubscriptionManagement } from './components/management/SubscriptionManagement';
+export { SubscriptionStatus } from './components/management/SubscriptionStatus';
+export { SubscriptionStatusDashboard } from './components/management/SubscriptionStatusDashboard';
+export { SubscriptionMonitor } from './components/management/SubscriptionMonitor';
+export { BillingHistory } from './components/management/BillingHistory';
+export { default as SubscriptionFAQs } from './components/management/SubscriptionFAQs';
 
 // Pricing Components
 export { default as PricingMatrix } from '@/components/pricing/PricingMatrix';
-export { default as SubscriptionPlanComparison } from '@/components/subscription/SubscriptionPlanComparison';
-export { SubscriptionCard } from '@/components/subscription/SubscriptionCard';
+export { default as SubscriptionPlanComparison } from './components/management/SubscriptionPlanComparison';
+export { SubscriptionCard } from './components/management/SubscriptionCard';
 
 // Payment & Checkout - Named exports
-export { CheckoutDialog } from '@/components/subscription/CheckoutDialog';
-export { default as CheckoutFlow } from '@/components/subscription/CheckoutFlow';
+export { CheckoutDialog } from './components/management/CheckoutDialog';
+export { default as CheckoutFlow } from './components/management/CheckoutFlow';
 export { PaymentButton } from '@/components/payment/PaymentButton';
 export { EnhancedPaymentButton } from '@/components/payment/EnhancedPaymentButton';
 export { PaymentCard } from '@/components/payment/PaymentCard';
 
 // Gates & Banners - Named exports
-export { SubscriptionGate } from '@/components/subscription/SubscriptionGate';
-export { FeatureGate } from '@/components/subscription/FeatureGate';
-export { default as SubscriptionBanner } from '@/components/subscription/SubscriptionBanner';
-export { SubscriptionBadge } from '@/components/subscription/SubscriptionBadge';
-export { UpgradePromptDialog } from '@/components/subscription/UpgradePromptDialog';
+export { SubscriptionGate } from './components/management/SubscriptionGate';
+export { FeatureGate } from './components/management/FeatureGate';
+export { default as SubscriptionBanner } from './components/management/SubscriptionBanner';
+export { SubscriptionBadge } from './components/management/SubscriptionBadge';
+export { UpgradePromptDialog } from './components/management/UpgradePromptDialog';
 
 // Usage Tracking - Named exports
-export { SessionCounterWidget } from '@/components/subscription/SessionCounterWidget';
-export { MeditationMinutesDisplay } from '@/components/subscription/MeditationMinutesDisplay';
-export { ExportButton } from '@/components/subscription/ExportButton';
+export { SessionCounterWidget } from './components/management/SessionCounterWidget';
+export { MeditationMinutesDisplay } from './components/management/MeditationMinutesDisplay';
+export { ExportButton } from './components/management/ExportButton';
 
 // Premium Features - Mixed exports
 export { default as BiofeedbackCoaching } from '@/components/premium-plus/BiofeedbackCoaching';

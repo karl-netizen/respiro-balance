@@ -3,7 +3,7 @@ import { useState } from "react";
 
 
 import DailyQuote from "@/components/DailyQuote";
-import SubscriptionFAQs from "@/components/subscription/SubscriptionFAQs";
+import { SubscriptionFAQs } from "@/features/subscription";
 import { 
   Accordion,
   AccordionContent,

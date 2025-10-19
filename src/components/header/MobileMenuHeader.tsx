@@ -3,7 +3,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { TouchFriendlyButton } from "@/components/responsive/TouchFriendlyButton";
-import SubscriptionBadge from "@/components/subscription/SubscriptionBadge";
+import { SubscriptionBadge } from "@/features/subscription";
 import ProfileAvatarUpload from "@/components/profile/ProfileAvatarUpload";
 
 interface MobileMenuHeaderProps {

@@ -5,7 +5,7 @@ import { ProgressHero } from "@/components/progress";
 import { useMeditationStats } from "@/components/progress/useMeditationStats";
 import { useSubscriptionContext } from "@/hooks/useSubscriptionContext";
 import { useIsMobile } from "@/hooks/use-mobile";
-import SubscriptionBanner from "@/components/subscription/SubscriptionBanner";
+import { SubscriptionBanner } from "@/features/subscription";
 import { ActivityCalendar } from "@/components/dashboard";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
