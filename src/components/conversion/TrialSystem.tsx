@@ -109,7 +109,7 @@ export const TrialSystem: React.FC<TrialSystemProps> = ({
                 className="w-full" 
                 onClick={() => onUpgrade(trialTier)}
               >
-                Continue with {trialTier.replace('-', ' ')} - $11.97/mo
+                Continue with {trialTier.replace('-', ' ')} - $12.99/mo
               </Button>
               
               {onExtendTrial && (

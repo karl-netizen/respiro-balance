@@ -94,7 +94,7 @@ export const RetentionFeatures: React.FC<RetentionFeaturesProps> = ({
                     <div className="flex items-center justify-between">
                       <div>
                         <div className="font-medium">50% Off Next 3 Months</div>
-                        <div className="text-sm text-gray-600">Continue with Premium at just $5.99/month</div>
+                        <div className="text-sm text-gray-600">Continue with Premium at just $6.50/month</div>
                       </div>
                       <Button onClick={() => onRetain({ type: 'discount', value: 50, duration: 3 })}>
                         Accept Offer

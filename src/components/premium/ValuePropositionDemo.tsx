@@ -195,7 +195,7 @@ const ValuePropositionDemo: React.FC = () => {
                 Upgrade to Premium
               </Button>
               <p className="text-sm text-muted-foreground mt-2">
-                30-day free trial • Cancel anytime • $9.99/month
+                30-day free trial • Cancel anytime • $12.99/month
               </p>
             </div>
           </CardContent>

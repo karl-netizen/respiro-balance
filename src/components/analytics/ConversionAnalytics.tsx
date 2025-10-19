@@ -199,16 +199,12 @@ export const ConversionAnalytics: React.FC = () => {
               <CardContent>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span>Premium ($11.97/mo)</span>
-                    <span className="font-semibold">$8,520</span>
+                    <span>Standard ($6.99/mo)</span>
+                    <span className="font-semibold">$4,890</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span>Premium Pro ($29.97/mo)</span>
-                    <span className="font-semibold">$7,190</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span>Premium Plus ($47.97/mo)</span>
-                    <span className="font-semibold">$3,190</span>
+                    <span>Premium ($12.99/mo)</span>
+                    <span className="font-semibold">$14,010</span>
                   </div>
                 </div>
               </CardContent>

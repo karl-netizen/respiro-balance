@@ -247,9 +247,9 @@ export const ReferralSystem: React.FC<ReferralSystemProps> = ({
 
               <div className="text-center space-y-4">
                 <div>
-                  <div className="text-3xl font-bold">$29.97/month</div>
+                  <div className="text-3xl font-bold">$77.94/month</div>
                   <div className="text-sm text-gray-600">For up to 6 family members</div>
-                  <div className="text-sm text-green-600">Save $42/month vs individual plans</div>
+                  <div className="text-sm text-green-600">Save $0.60/month per person</div>
                 </div>
                 
                 <Button className="w-full">

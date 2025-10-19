@@ -87,7 +87,7 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ onCancel, onComplete }) => 
             <div className="bg-secondary/50 p-4 rounded-md">
               <div className="flex justify-between mb-2">
                 <span>Premium Plan</span>
-                <span className="font-medium">$9.99/month</span>
+                <span className="font-medium">$12.99/month</span>
               </div>
               <div className="text-muted-foreground text-sm">
                 <p>✓ Unlimited meditation sessions</p>

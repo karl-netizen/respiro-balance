@@ -290,7 +290,7 @@ const AccountSubscriptionSettings = () => {
               <div className="text-center space-y-3">
                 <h3 className="font-medium text-amber-800">Ready to unlock all features?</h3>
                 <p className="text-sm text-amber-700">
-                  Get unlimited meditation time, advanced analytics, and premium content for just $7.99/month.
+                  Get unlimited meditation time, advanced analytics, and premium content for just $12.99/month.
                 </p>
                 <Button 
                   onClick={handleUpgrade}
