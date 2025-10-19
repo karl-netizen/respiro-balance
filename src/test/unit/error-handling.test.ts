@@ -1,5 +1,16 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { handleAsyncError, handleNetworkError } from '@/lib/logging/errorHandler'
+import { logger } from '@/lib/logging/logger'
+
+// Mock the logger
+vi.mock('@/lib/logging/logger', () => ({
+  logger: {
+    error: vi.fn(),
+    warn: vi.fn(),
+    info: vi.fn(),
+    debug: vi.fn()
+  }
+}))
 
 // Simple mock component for testing
 const createErrorComponent = (shouldThrow: boolean) => {
@@ -12,7 +23,6 @@ const createErrorComponent = (shouldThrow: boolean) => {
 describe('Error Handling System', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.spyOn(console, 'error').mockImplementation(() => {})
   })
 
   describe('Async Error Handler', () => {
@@ -22,7 +32,16 @@ describe('Error Handling System', () => {
 
       handleAsyncError(error, context)
 
-      expect(console.error).toHaveBeenCalled()
+      expect(logger.error).toHaveBeenCalledWith(
+        'Async Operation Failed',
+        error,
+        expect.objectContaining({
+          component: 'AsyncErrorHandler',
+          feature: 'errorHandling',
+          operation: 'fetchUserData',
+          userId: '123'
+        })
+      )
     })
 
     it('should handle errors without context', () => {
@@ -30,7 +49,14 @@ describe('Error Handling System', () => {
 
       handleAsyncError(error)
 
-      expect(console.error).toHaveBeenCalled()
+      expect(logger.error).toHaveBeenCalledWith(
+        'Async Operation Failed',
+        error,
+        expect.objectContaining({
+          component: 'AsyncErrorHandler',
+          feature: 'errorHandling'
+        })
+      )
     })
   })
 
@@ -41,7 +67,17 @@ describe('Error Handling System', () => {
 
       handleNetworkError(error, request)
 
-      expect(console.error).toHaveBeenCalled()
+      expect(logger.error).toHaveBeenCalledWith(
+        'Network Request Failed',
+        error,
+        expect.objectContaining({
+          component: 'NetworkErrorHandler',
+          feature: 'network',
+          url: '/api/users',
+          method: 'GET',
+          isOnline: expect.any(Boolean)
+        })
+      )
     })
 
     it('should include online status in logs', () => {
@@ -50,7 +86,13 @@ describe('Error Handling System', () => {
 
       handleNetworkError(error, request)
 
-      expect(console.error).toHaveBeenCalled()
+      expect(logger.error).toHaveBeenCalledWith(
+        'Network Request Failed',
+        error,
+        expect.objectContaining({
+          isOnline: expect.any(Boolean)
+        })
+      )
     })
   })
 
