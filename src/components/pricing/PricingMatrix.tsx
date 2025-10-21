@@ -3,6 +3,7 @@ import { Check, X, AlertTriangle, ArrowUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { PRICING } from '@/lib/pricing/constants';
 
 // Type definitions
 interface PricingPlan {
@@ -96,7 +97,7 @@ const PricingMatrix: React.FC<PricingMatrixProps> = ({
     },
     {
       name: 'Standard',
-      price: '$6.99',
+      price: `$${PRICING.STANDARD.monthly.toFixed(2)}`,
       period: '/month',
       description: 'Comprehensive meditation toolkit',
       popular: true,
@@ -106,7 +107,7 @@ const PricingMatrix: React.FC<PricingMatrixProps> = ({
     },
     {
       name: 'Premium',
-      price: '$12.99',
+      price: `$${PRICING.PREMIUM.monthly.toFixed(2)}`,
       period: '/month',
       description: 'Advanced features + biofeedback',
       buttonText: 'Upgrade to Premium',

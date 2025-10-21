@@ -1,8 +1,7 @@
-
-import React, { useState, useCallback } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useState, useCallback } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { Circle } from "lucide-react"; 
+import { Circle } from "lucide-react";
 import DesktopNav from "./header/DesktopNav";
 import MobileMenu from "./header/MobileMenu";
 import AccountSection from "./header/AccountSection";

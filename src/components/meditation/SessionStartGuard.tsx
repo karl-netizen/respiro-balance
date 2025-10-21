@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useSubscriptionStore } from '@/features/subscription';
+import { useSessionLimit } from '@/hooks/useSessionLimit';
 import {
   Dialog,
   DialogContent,
@@ -13,6 +14,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
 import { Check, Lock, Zap } from 'lucide-react';
+import { PRICING } from '@/lib/pricing/constants';
 
 interface SessionStartGuardProps {
   children: React.ReactNode;
@@ -25,15 +27,25 @@ export const SessionStartGuard: React.FC<SessionStartGuardProps> = ({
 }) => {
   const navigate = useNavigate();
   const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
-  const { canStartSession, incrementSessionCount, getSessionsRemaining, tier, sessionsUsed, sessionsLimit } = useSubscriptionStore();
+  const { canStartSession, incrementSessionCount, tier, sessionsUsed, sessionsLimit } = useSubscriptionStore();
+  const { hasReachedLimit, trackSession, getRemainingSessions } = useSessionLimit();
 
-  const handleStartSession = () => {
-    if (canStartSession()) {
-      incrementSessionCount();
-      onSessionStart();
-    } else {
+  const handleStartSession = async () => {
+    // Check session limit for free tier users
+    if (tier === 'free' && hasReachedLimit('free')) {
       setShowUpgradeDialog(true);
+      return;
     }
+
+    // Check if user can start session (for monthly limits)
+    if (!canStartSession()) {
+      setShowUpgradeDialog(true);
+      return;
+    }
+
+    // Track the session and increment count
+    incrementSessionCount();
+    onSessionStart();
   };
 
   const handleUpgrade = () => {
@@ -76,7 +88,7 @@ export const SessionStartGuard: React.FC<SessionStartGuardProps> = ({
                   <Badge className="mb-2 bg-blue-500 text-white hover:bg-blue-600">Most Popular</Badge>
                   <h3 className="text-xl font-semibold mb-2">Standard</h3>
                   <div className="mb-4">
-                    <span className="text-3xl font-bold">$6.99</span>
+                    <span className="text-3xl font-bold">${PRICING.STANDARD.monthly.toFixed(2)}</span>
                     <span className="text-muted-foreground">/month</span>
                   </div>
                 </div>
@@ -124,7 +136,7 @@ export const SessionStartGuard: React.FC<SessionStartGuardProps> = ({
                   </Badge>
                   <h3 className="text-xl font-semibold mb-2">Premium</h3>
                   <div className="mb-4">
-                    <span className="text-3xl font-bold">$12.99</span>
+                    <span className="text-3xl font-bold">${PRICING.PREMIUM.monthly.toFixed(2)}</span>
                     <span className="text-muted-foreground">/month</span>
                   </div>
                 </div>

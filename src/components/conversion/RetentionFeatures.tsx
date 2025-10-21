@@ -16,6 +16,7 @@ import {
   Star,
   MessageCircle 
 } from 'lucide-react';
+import { PRICING } from '@/lib/pricing/constants';
 
 interface RetentionFeaturesProps {
   type: 'cancellation' | 'pause' | 'winback' | 'loyalty';
@@ -94,7 +95,7 @@ export const RetentionFeatures: React.FC<RetentionFeaturesProps> = ({
                     <div className="flex items-center justify-between">
                       <div>
                         <div className="font-medium">50% Off Next 3 Months</div>
-                        <div className="text-sm text-gray-600">Continue with Premium at just $6.50/month</div>
+                        <div className="text-sm text-gray-600">Continue with {currentTier === 'premium' ? 'Premium' : 'Standard'} at just ${((currentTier === 'premium' ? PRICING.PREMIUM.monthly : PRICING.STANDARD.monthly) * 0.5).toFixed(2)}/month</div>
                       </div>
                       <Button onClick={() => onRetain({ type: 'discount', value: 50, duration: 3 })}>
                         Accept Offer

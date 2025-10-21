@@ -17,6 +17,7 @@ import {
   DollarSign
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { PRICING } from '@/lib/pricing/constants';
 
 interface ReferralSystemProps {
   userCode: string;
@@ -247,9 +248,9 @@ export const ReferralSystem: React.FC<ReferralSystemProps> = ({
 
               <div className="text-center space-y-4">
                 <div>
-                  <div className="text-3xl font-bold">$77.94/month</div>
+                  <div className="text-3xl font-bold">${(PRICING.PREMIUM.monthly * 6 * 0.6).toFixed(2)}/month</div>
                   <div className="text-sm text-gray-600">For up to 6 family members</div>
-                  <div className="text-sm text-green-600">Save $0.60/month per person</div>
+                  <div className="text-sm text-green-600">Save 40% vs individual plans</div>
                 </div>
                 
                 <Button className="w-full">
