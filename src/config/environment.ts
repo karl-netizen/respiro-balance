@@ -47,7 +47,7 @@ export const env: EnvironmentConfig = {
   app: {
     env: (import.meta.env.VITE_APP_ENV as any) || 'development',
     siteUrl: getRequiredEnvVar('VITE_SITE_URL', window.location.origin),
-    demoMode: getBooleanEnvVar('VITE_DEMO_MODE', true),
+    demoMode: getBooleanEnvVar('VITE_DEMO_MODE', false),
   },
   features: {
     biometricIntegration: getBooleanEnvVar('VITE_ENABLE_BIOMETRIC_INTEGRATION', true),
