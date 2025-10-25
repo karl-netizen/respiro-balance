@@ -56,9 +56,9 @@ export type ExtractRouteParams<T extends string> =
     : {};
 
 type ParseQueryParams<T extends string> = 
-  T extends `${infer Key}=${infer Value}&${infer Rest}`
+  T extends `${infer Key}=${ string}&${infer Rest}`
     ? { [K in Key]: string } & ParseQueryParams<Rest>
-    : T extends `${infer Key}=${infer Value}`
+    : T extends `${infer Key}=${ string}`
     ? { [K in Key]: string }
     : {};
 

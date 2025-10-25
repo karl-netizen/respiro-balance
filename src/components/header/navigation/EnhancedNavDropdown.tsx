@@ -144,8 +144,7 @@ const EnhancedNavDropdown: React.FC<EnhancedNavDropdownProps> = ({
 
   // Type-safe navigation handler with Result pattern
   const handleItemClick = useCallback(async (
-    item: NavigationItem, 
-    event: React.MouseEvent
+    item: NavigationItem
   ): Promise<Result<void>> => {
     const startTime = performance.now();
     const currentPath = createRoutePath(location.pathname);

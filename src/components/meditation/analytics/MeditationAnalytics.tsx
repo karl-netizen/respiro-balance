@@ -3,14 +3,14 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { Brain, Heart, Zap, Target, TrendingUp, Calendar } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
+import { Brain, Heart, Zap, Target, TrendingUp } from 'lucide-react';
+import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 
 interface MeditationAnalyticsProps {
   timeframe?: 'week' | 'month' | 'year';
 }
 
-export const MeditationAnalytics: React.FC<MeditationAnalyticsProps> = ({ timeframe = 'week' }) => {
+export const MeditationAnalytics: React.FC<MeditationAnalyticsProps> = () => {
   const analytics = {
     totalSessions: 45,
     totalMinutes: 680,

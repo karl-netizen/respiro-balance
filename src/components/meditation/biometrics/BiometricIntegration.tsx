@@ -18,7 +18,7 @@ interface BiometricData {
 export const BiometricIntegration: React.FC = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [currentData, setCurrentData] = useState<BiometricData>({
+  const [currentData] = useState<BiometricData>({
     heartRate: 72,
     hrv: 45,
     stressLevel: 25,

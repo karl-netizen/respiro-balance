@@ -12,7 +12,6 @@ interface EnhancedPlayerControlsProps {
 }
 
 export const EnhancedPlayerControls: React.FC<EnhancedPlayerControlsProps> = ({
-  session,
   isPlaying,
   sessionStarted,
   sessionCompleted,

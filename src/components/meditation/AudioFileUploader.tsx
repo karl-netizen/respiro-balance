@@ -62,7 +62,7 @@ const AudioFileUploader = () => {
       if (error) throw error;
       
       // Get the public URL
-      const { data: urlData } = supabase.storage
+      supabase.storage
         .from(AUDIO_BUCKET_NAME)
         .getPublicUrl(fileName);
         

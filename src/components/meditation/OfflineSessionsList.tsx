@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Trash2, Play, Wifi, WifiOff } from 'lucide-react';
 import { useOfflineStorage } from './offline/OfflineStorageProvider';
 import { MeditationSession } from '@/types/meditation';
-import { toast } from 'sonner';
 
 interface OfflineSession {
   id: string;

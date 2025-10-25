@@ -26,15 +26,13 @@ const BiometricTracker: React.FC<BiometricTrackerProps> = ({
   timeRemaining,
   sessionDuration,
   initialBiometrics,
-  setInitialBiometrics,
   currentBiometrics,
   setCurrentBiometrics,
   biometricChange,
   setBiometricChange,
-  getInitialBiometrics,
   sessionId // Use the sessionId prop
 }) => {
-  const { preferences } = useUserPreferences();
+  useUserPreferences();
 
   useEffect(() => {
     if (isPlaying && sessionStarted && initialBiometrics) {

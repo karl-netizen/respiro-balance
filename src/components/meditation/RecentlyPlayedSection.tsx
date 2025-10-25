@@ -14,9 +14,7 @@ export interface RecentlyPlayedProps {
 
 const RecentlyPlayedSection: React.FC<RecentlyPlayedProps> = ({
   recentlyPlayed,
-  onSelectSession,
-  isFavorite,
-  onToggleFavorite
+  onSelectSession
 }) => {
   if (recentlyPlayed.length === 0) {
     return null;

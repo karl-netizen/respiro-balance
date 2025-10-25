@@ -7,7 +7,7 @@ interface ErrorStateProps {
   audioUrl?: string;
 }
 
-const ErrorState: React.FC<ErrorStateProps> = ({ error, audioUrl }) => {
+const ErrorState: React.FC<ErrorStateProps> = ({ audioUrl }) => {
   return (
     <div className="text-center p-4 border border-red-200 bg-red-50 rounded-md text-red-600">
       <p className="mb-2">Failed to load audio. The audio file may not be accessible.</p>

@@ -12,7 +12,6 @@ import { useActiveRoute } from "./navigationUtils";
 // Import enhanced TypeScript patterns
 import {
   NavigationItem,
-  DropdownConfig,
   NavigationEventEmitter,
   createNavItemId,
   createRoutePath,
@@ -37,7 +36,7 @@ interface NavDropdownProps {
 
 const NavDropdown = ({ title, items, isActive, onItemClick, activeCategory }: NavDropdownProps) => {
   const navigate = useNavigate();
-  const location = useLocation();
+  useLocation();
   const { isActive: checkIsActive } = useActiveRoute();
   
   // Global event emitter (in real app, this would be provided via context)

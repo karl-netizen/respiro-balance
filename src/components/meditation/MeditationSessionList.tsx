@@ -1,5 +1,4 @@
-
-import React, { memo, useCallback } from 'react';
+import { memo, useCallback } from 'react';
 import { MeditationSession } from '@/types/meditation';
 import MeditationSessionCard from './MeditationSessionCard';
 import { useIsMobile } from "@/hooks/use-mobile";

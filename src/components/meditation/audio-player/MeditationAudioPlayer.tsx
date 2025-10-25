@@ -13,8 +13,7 @@ const MeditationAudioPlayer: React.FC<MeditationAudioPlayerProps> = ({
   audioUrl,
   onComplete,
   onPlay,
-  onPause,
-  autoPlay = false,
+  onPause
 }) => {
   const { deviceType } = useDeviceDetection();
   

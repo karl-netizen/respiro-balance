@@ -18,7 +18,6 @@ interface BiometricDisplayProps {
 
 const BiometricDisplay: React.FC<BiometricDisplayProps> = ({ 
   biometricData, 
-  sessionId, 
   isInitial = false, 
   showChange = false,
   change = {}

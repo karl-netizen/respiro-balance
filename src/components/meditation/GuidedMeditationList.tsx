@@ -1,5 +1,4 @@
-
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { MeditationSession } from '@/types/meditation';
 import MeditationSessionList from './MeditationSessionList';
 

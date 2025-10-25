@@ -14,9 +14,7 @@ export interface FavoritesSectionProps {
 
 const FavoritesSection: React.FC<FavoritesSectionProps> = ({
   favoriteSessions,
-  onSelectSession,
-  isFavorite,
-  onToggleFavorite
+  onSelectSession
 }) => {
   if (favoriteSessions.length === 0) {
     return null;
