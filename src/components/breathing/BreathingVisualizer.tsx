@@ -27,8 +27,7 @@ const BreathingVisualizer: React.FC<BreathingVisualizerProps> = ({
     startBreathing,
     stopBreathing,
     toggleVoice,
-    selectTechnique,
-    cyclesCompleted
+    selectTechnique
   } = useBreathingLogic();
 
   // Apply technique from props or URL parameter

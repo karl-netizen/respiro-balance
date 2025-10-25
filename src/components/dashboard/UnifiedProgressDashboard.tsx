@@ -11,8 +11,6 @@ import { useBiometricData } from '@/hooks/useBiometricData';
 
 const UnifiedProgressDashboard: React.FC = () => {
   const { meditationStats } = useMeditationStats();
-  const { biometricData } = useBiometricData();
-  const [activeTab, setActiveTab] = React.useState('overview');
 
   // Sample data for demonstration
   const weeklyProgress = [

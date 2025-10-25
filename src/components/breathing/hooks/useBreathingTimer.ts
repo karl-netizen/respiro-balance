@@ -12,7 +12,6 @@ interface UseBreathingTimerProps {
 
 export function useBreathingTimer({ 
   isActive, 
-  voiceEnabled, 
   pattern, 
   onPhaseChange 
 }: UseBreathingTimerProps) {

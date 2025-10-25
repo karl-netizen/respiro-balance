@@ -16,7 +16,6 @@ interface DashboardMainContentProps {
 const DashboardMainContent: React.FC<DashboardMainContentProps> = ({
   weeklyProgress,
   weeklyGoal,
-  progressPercentage,
   currentMood,
   onMoodSelect,
   currentStreak

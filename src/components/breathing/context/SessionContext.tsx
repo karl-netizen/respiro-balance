@@ -1,6 +1,5 @@
 
 import React, { createContext, useState, useRef, useEffect, useContext } from 'react';
-import { useSearchParams } from 'react-router-dom';
 
 interface SessionContextType {
   sessionDuration: number;

@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React from 'react';
 import { useApiCall } from '@/hooks/useAsync';
 import { useErrorHandler } from '@/hooks/useErrorHandler';
 import LoadingState, { Skeleton } from '@/components/LoadingState';
@@ -121,7 +121,7 @@ const EnhancedMeditationContent: React.FC = () => {
     }
   );
 
-  const { handleError } = useErrorHandler({
+  useErrorHandler({
     showToast: true,
     onError: (error) => {
       console.error('Meditation content error:', error);

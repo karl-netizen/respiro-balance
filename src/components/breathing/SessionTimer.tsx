@@ -1,16 +1,13 @@
 
 import React from 'react';
-import { Clock } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 
 interface SessionTimerProps {
-  isActive: boolean;
   sessionElapsed: number;
   formatTime: (seconds: number) => string;
 }
 
 const SessionTimer: React.FC<SessionTimerProps> = ({ 
-  isActive, 
   sessionElapsed,
   formatTime 
 }) => {

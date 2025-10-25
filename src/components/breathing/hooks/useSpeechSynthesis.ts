@@ -1,6 +1,5 @@
 
 import { useRef, useEffect } from 'react';
-import { toast } from 'sonner';
 
 export function useSpeechSynthesis() {
   const speechSynthesisRef = useRef<SpeechSynthesisUtterance | null>(null);

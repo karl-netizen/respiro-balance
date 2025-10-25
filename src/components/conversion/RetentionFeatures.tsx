@@ -33,7 +33,6 @@ export const RetentionFeatures: React.FC<RetentionFeaturesProps> = ({
 }) => {
   const [selectedReason, setSelectedReason] = useState('');
   const [feedback, setFeedback] = useState('');
-  const [selectedOffer, setSelectedOffer] = useState('');
 
   if (type === 'cancellation') {
     return (

@@ -14,7 +14,6 @@ interface TechniqueCardProps {
 }
 
 const TechniqueCard: React.FC<TechniqueCardProps> = ({
-  technique,
   isSelected,
   title,
   subtitle,

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -24,10 +24,8 @@ interface ProfessionalDashboardProps {
 }
 
 export const ProfessionalDashboard: React.FC<ProfessionalDashboardProps> = ({
-  isAuthorized = false,
-  patientId = "patient-001"
+  isAuthorized = false
 }) => {
-  const [accessLevel] = useState<'basic' | 'full' | 'clinical'>('full');
 
   const mockClinicalData = {
     complianceRate: 85,

@@ -30,8 +30,6 @@ export const SmartPaywall: React.FC<SmartPaywallProps> = ({
   socialProof,
   urgency
 }) => {
-  const { currentTier } = useFeatureAccess();
-  const navigate = useNavigate();
   const [timeLeft, setTimeLeft] = useState({ hours: 23, minutes: 45 });
   const [showPreview, setShowPreview] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState('premium');

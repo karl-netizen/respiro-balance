@@ -17,7 +17,6 @@ interface ConnectedDevicesListProps {
 const ConnectedDevicesList: React.FC<ConnectedDevicesListProps> = ({
   devices,
   onScanForDevices,
-  onConnectDevice,
   onDisconnectDevice,
   disabled = false
 }) => {

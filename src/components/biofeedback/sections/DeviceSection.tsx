@@ -26,7 +26,6 @@ const DeviceSection: React.FC<DeviceSectionProps> = ({
   onScanForDevices,
   onConnectDevice,
   onDisconnectDevice,
-  isSimulating,
   onStopScan
 }) => {
   // Updated to properly return a Promise<void>

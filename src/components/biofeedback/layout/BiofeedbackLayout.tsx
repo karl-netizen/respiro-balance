@@ -31,8 +31,7 @@ const BiofeedbackLayout: React.FC<BiofeedbackLayoutProps> = ({
   onScanForDevices,
   onConnectDevice,
   onDisconnectDevice,
-  isSimulating,
-  onStopScan
+  isSimulating
 }) => {
   const connectedDevices = devices.filter(device => device.connected);
   const availableDevices = devices.filter(device => !device.connected);

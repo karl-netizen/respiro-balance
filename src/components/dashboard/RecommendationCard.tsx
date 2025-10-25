@@ -13,7 +13,7 @@ export interface RecommendationCardProps {
   recentSessions?: number;
 }
 
-const RecommendationCard: React.FC<RecommendationCardProps> = ({ currentMood, timeOfDay, recentSessions }) => {
+const RecommendationCard: React.FC<RecommendationCardProps> = ({ currentMood, timeOfDay }) => {
   const navigate = useNavigate();
   const { recommendations } = useTimeAwareness();
   

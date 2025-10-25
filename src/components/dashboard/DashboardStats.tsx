@@ -13,8 +13,6 @@ interface DashboardStatsProps {
 }
 
 const DashboardStats: React.FC<DashboardStatsProps> = ({
-  weeklyProgress,
-  weeklyGoal,
   progressPercentage
 }) => {
   const navigate = useNavigate();

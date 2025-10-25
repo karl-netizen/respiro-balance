@@ -35,8 +35,6 @@ const ActivityCalendar: React.FC<ActivityCalendarProps> = ({ data }) => {
           
           {/* Calendar days */}
           {Array.from({ length: 35 }, (_, i) => {
-            const dayIndex = i % 7;
-            const weekIndex = Math.floor(i / 7);
             
             // Get the activity for this day (if exists)
             const dayOfMonth = i - 3 + 1; // Adjust based on month start day
