@@ -211,20 +211,47 @@ export class SocialHubAPI {
     return data as ChallengeParticipant;
   }
 
-  async updateChallengeProgress(challengeId: string, progress: number): Promise<ChallengeParticipant> {
+  /**
+   * Update challenge progress using secure RPC function
+   * Prevents manipulation by validating increments server-side
+   * @param challengeId - The challenge to update
+   * @param progressIncrement - Amount to increment (not absolute value)
+   * @param metadata - Optional metadata (e.g., meditation_session_id)
+   */
+  async updateChallengeProgress(
+    challengeId: string,
+    progressIncrement: number,
+    metadata?: Record<string, any>
+  ): Promise<{ success: boolean; old_progress: number; new_progress: number; is_completed: boolean }> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
-    const { data, error } = await supabase
-      .from('challenge_participants_new')
-      .update({ progress })
-      .eq('challenge_id', challengeId)
-      .eq('user_id', user.id)
-      .select()
-      .single();
+    // Call secure RPC function instead of direct update
+    const { data, error } = await supabase.rpc('update_challenge_progress', {
+      p_challenge_id: challengeId,
+      p_progress_increment: progressIncrement,
+      p_metadata: metadata || null
+    });
 
     if (error) throw error;
-    return data as ChallengeParticipant;
+    return data;
+  }
+
+  /**
+   * Reset challenge progress (for retrying)
+   * @param challengeId - The challenge to reset
+   */
+  async resetChallengeProgress(challengeId: string): Promise<{ success: boolean; reset_count: number }> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    const { data, error } = await supabase.rpc('reset_challenge_progress', {
+      p_challenge_id: challengeId,
+      p_user_id: user.id
+    });
+
+    if (error) throw error;
+    return data;
   }
 
   // ========== LEADERBOARDS ==========
