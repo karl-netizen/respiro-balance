@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,7 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Target, Calendar, TrendingUp, CheckCircle } from 'lucide-react';
 import { FadeIn, SlideIn } from '@/components/animations/MicroInteractions';
-import { useUserPreferences } from '@/context';
 
 interface Goal {
   id: string;
@@ -25,7 +24,6 @@ interface Goal {
 }
 
 const GoalSettingFlow: React.FC = () => {
-  const { preferences, updatePreferences } = useUserPreferences();
   const [isCreating, setIsCreating] = useState(false);
   const [goals, setGoals] = useState<Goal[]>([
     {

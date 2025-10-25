@@ -1,9 +1,9 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { X, ChevronLeft, ChevronRight, SkipForward } from 'lucide-react';
-import { TourSequence, TourStep } from './types';
+import { TourSequence } from './types';
 
 interface GuidedTourEngineProps {
   tours: TourSequence[];
@@ -19,7 +19,6 @@ const GuidedTourEngine: React.FC<GuidedTourEngineProps> = ({
   onTourSkip
 }) => {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [highlightedElement, setHighlightedElement] = useState<Element | null>(null);
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
   const tooltipRef = useRef<HTMLDivElement>(null);
 
@@ -31,7 +30,6 @@ const GuidedTourEngine: React.FC<GuidedTourEngineProps> = ({
 
     const targetElement = document.querySelector(currentStep.target);
     if (targetElement) {
-      setHighlightedElement(targetElement);
       targetElement.classList.add('tour-highlight');
       
       // Calculate tooltip position

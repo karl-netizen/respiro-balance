@@ -1,15 +1,14 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Upload, Trash2, Download, Music, CloudUpload, FileAudio, Plus, Search, Filter, Play } from 'lucide-react';
-import { uploadMeditationAudio, deleteMeditationAudio, fetchMeditationAudioFiles, getMeditationAudioUrl } from '@/lib/meditationAudioIntegration';
+import { Upload, Trash2, Music, CloudUpload, FileAudio, Plus, Search } from 'lucide-react';
+import { uploadMeditationAudio } from '@/lib/meditationAudioIntegration';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { AudioUpload } from '@/components/meditation/AudioUpload';
-import { RobustAudioPlayer } from '@/components/meditation/RobustAudioPlayer';
 import { useAudioUpload } from '@/hooks/useAudioUpload';
 
 interface AudioFile {
@@ -28,22 +27,12 @@ interface AudioFile {
   };
 }
 
-interface LegacyAudioFile {
-  name: string;
-  size: number;
-  url: string;
-  uploadedAt: string;
-}
-
 const AudioFileManager: React.FC = () => {
   const [audioFiles, setAudioFiles] = useState<AudioFile[]>([]);
-  const [legacyFiles, setLegacyFiles] = useState<LegacyAudioFile[]>([]);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [dragActive, setDragActive] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState<'all' | 'completed' | 'pending'>('all');
-  const [selectedContentId, setSelectedContentId] = useState<string>('');
   const [showUploadForm, setShowUploadForm] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -51,7 +40,6 @@ const AudioFileManager: React.FC = () => {
 
   useEffect(() => {
     loadAudioFiles();
-    loadLegacyFiles();
   }, []);
 
   const loadAudioFiles = async () => {
@@ -80,20 +68,6 @@ const AudioFileManager: React.FC = () => {
     }
   };
 
-  const loadLegacyFiles = async () => {
-    try {
-      const files = await fetchMeditationAudioFiles();
-      const audioFileObjects: LegacyAudioFile[] = files.map((filename) => ({
-        name: filename,
-        size: 0,
-        url: getMeditationAudioUrl(filename),
-        uploadedAt: new Date().toISOString()
-      }));
-      setLegacyFiles(audioFileObjects);
-    } catch (error) {
-      console.error('Error loading legacy audio files:', error);
-    }
-  };
 
   const handleCreateContent = async (audioFile: AudioFile) => {
     try {
@@ -201,20 +175,6 @@ const AudioFileManager: React.FC = () => {
     }
   };
 
-  const handleDeleteFile = async (filename: string) => {
-    try {
-      const success = await deleteMeditationAudio(filename);
-      if (success) {
-        await loadAudioFiles();
-        toast.success('File deleted successfully!');
-      } else {
-        toast.error('Delete failed. Please try again.');
-      }
-    } catch (error) {
-      console.error('Delete failed:', error);
-      toast.error('Delete failed. Please try again.');
-    }
-  };
 
   // Drag and drop handlers
   const handleDragOver = useCallback((e: React.DragEvent) => {
@@ -429,7 +389,7 @@ const AudioFileManager: React.FC = () => {
               <div className="mb-6">
                 <AudioUpload
                   meditationContentId="temp-id"
-                  onUploadComplete={(data) => {
+                  onUploadComplete={() => {
                     setShowUploadForm(false);
                     loadAudioFiles();
                     toast.success('Audio uploaded successfully!');
@@ -444,9 +404,6 @@ const AudioFileManager: React.FC = () => {
                   !searchTerm || 
                   file.file_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                   file.meditation_content?.title?.toLowerCase().includes(searchTerm.toLowerCase())
-                )
-                .filter(file => 
-                  filterStatus === 'all' || file.upload_status === filterStatus
                 )
                 .map((file) => (
                 <div key={file.id} className="p-4 border rounded-lg hover:bg-muted/30 transition-colors space-y-3">
@@ -501,20 +458,6 @@ const AudioFileManager: React.FC = () => {
                       </Button>
                     </div>
                   </div>
-
-                  {/* Audio Player */}
-                  {file.upload_status === 'completed' && (
-                    <RobustAudioPlayer
-                      audioFile={{
-                        id: file.id,
-                        file_name: file.file_name,
-                        audio_url: file.file_path,
-                        title: file.meditation_content?.title || file.file_name
-                      }}
-                      showDownload={true}
-                      className="mt-3"
-                    />
-                  )}
                 </div>
               ))}
             </div>

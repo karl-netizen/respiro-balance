@@ -1,8 +1,8 @@
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import TooltipSystem from './TooltipSystem';
 import GuidedTourEngine from './GuidedTourEngine';
-import { TooltipConfig, TourSequence, UserProfileAnalysis } from './types';
+import { UserProfileAnalysis } from './types';
 import { useUserGuideProgress } from './hooks/useUserGuideProgress';
 import { useAuth } from '@/hooks/useAuth';
 import { tourSequences } from './config/tourSequences';

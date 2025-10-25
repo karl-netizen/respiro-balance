@@ -1,13 +1,9 @@
-
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
-import { Award, Flame, Target, Star, Trophy, Calendar, Zap } from 'lucide-react';
-import { toast } from 'sonner';
-
+import { Award, Flame, Target, Star, Trophy } from 'lucide-react';
 interface Achievement {
   id: string;
   title: string;
@@ -131,13 +127,6 @@ export const HabitFormationSystem: React.FC = () => {
       case 'legendary': return 'bg-yellow-500';
       default: return 'bg-gray-500';
     }
-  };
-
-  const celebrateAchievement = (achievement: Achievement) => {
-    toast.success(`🎉 Achievement Unlocked: ${achievement.title}!`, {
-      description: achievement.description,
-      duration: 5000
-    });
   };
 
   return (
