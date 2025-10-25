@@ -36,6 +36,11 @@ jwt_expiry = 3600
 refresh_token_rotation_enabled = true
 security_update_password_require_reauthentication = true
 
+# Password Security (Security Issue #1 - Password Leak Detection)
+enable_password_leak_detection = true
+password_min_length = 8
+password_required_characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
 [storage]
 enabled = true
 port = 54325
