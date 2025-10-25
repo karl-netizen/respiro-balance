@@ -59,7 +59,7 @@ export const ProductivityHeatmap: React.FC<ProductivityHeatmapProps> = ({ data }
           <div className="space-y-1">
             {weeks.map((week, weekIndex) => (
               <div key={weekIndex} className="flex gap-1">
-                {week.map((day, dayIndex) => (
+                {week.map((day) => (
                   <div
                     key={day.date}
                     className={`w-3 h-3 rounded-sm ${getIntensityColor(day.intensity)} cursor-pointer transition-all hover:scale-110`}

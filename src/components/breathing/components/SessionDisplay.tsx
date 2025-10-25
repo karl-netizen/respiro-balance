@@ -18,7 +18,6 @@ const SessionDisplay: React.FC = () => {
       
       {isActive && (
         <SessionTimer
-          isActive={isActive}
           sessionElapsed={sessionElapsed}
           formatTime={formatTime}
         />

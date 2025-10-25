@@ -7,7 +7,6 @@ import { ResponsiveChart, ResponsiveXAxis, ResponsiveYAxis, ResponsiveTooltip } 
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 import { FadeIn, SlideIn } from '@/components/animations/MicroInteractions';
 import { useMeditationStats } from '@/components/progress/useMeditationStats';
-import { useBiometricData } from '@/hooks/useBiometricData';
 
 const UnifiedProgressDashboard: React.FC = () => {
   const { meditationStats } = useMeditationStats();
@@ -99,7 +98,7 @@ const UnifiedProgressDashboard: React.FC = () => {
 
       {/* Main Progress Charts - Mobile Optimized */}
       <SlideIn direction="up" delay={200}>
-        <Tabs defaultValue="overview" className="space-y-4" onValueChange={setActiveTab}>
+        <Tabs defaultValue="overview" className="space-y-4">
           {/* Mobile-friendly tab list */}
           <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 h-auto">
             <TabsTrigger value="overview" className="text-xs sm:text-sm px-2 py-2">

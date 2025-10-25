@@ -5,8 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { X, Crown, Star, Clock, Users, Award, TrendingUp } from 'lucide-react';
-import { useFeatureAccess } from '@/hooks/useFeatureAccess';
-import { useNavigate } from 'react-router-dom';
 
 interface SmartPaywallProps {
   trigger: 'feature_limit' | 'session_limit' | 'premium_feature' | 'trial_end' | 'usage_milestone';

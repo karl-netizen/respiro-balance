@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { CheckCircle, Clock, Target, Ban, Star } from 'lucide-react';
+import { CheckCircle, Clock, Target, Ban } from 'lucide-react';
 import { FocusSession } from './types';
 
 interface FocusSessionSummaryProps {

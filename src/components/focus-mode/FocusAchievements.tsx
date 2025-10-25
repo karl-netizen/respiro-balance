@@ -5,7 +5,6 @@ import { Progress } from '@/components/ui/progress';
 import { Trophy } from 'lucide-react';
 import { FocusAchievement } from './types';
 import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/integrations/supabase/client';
 
 export const FocusAchievements: React.FC = () => {
   const { user } = useAuth();
