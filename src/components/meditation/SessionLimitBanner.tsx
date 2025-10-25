@@ -15,20 +15,21 @@ export const SessionLimitBanner: React.FC<SessionLimitBannerProps> = ({
 }) => {
   if (remainingSessions === 0) {
     return (
-      <Alert variant="destructive">
+      <Alert>
         <AlertCircle className="h-4 w-4" />
-        <AlertTitle>Weekly Limit Reached</AlertTitle>
+        <AlertTitle>Weekly Sessions Complete</AlertTitle>
         <AlertDescription className="flex items-center justify-between">
           <span>
-            You've used all {FREE_TIER_WEEKLY_LIMIT} free sessions this week. Upgrade for unlimited access!
+            You've completed all {FREE_TIER_WEEKLY_LIMIT} free sessions this week. Great progress! Explore unlimited access when ready.
           </span>
           <Button 
             size="sm" 
+            variant="outline"
             onClick={onUpgrade}
             className="ml-4 whitespace-nowrap"
           >
             <Crown className="h-3 w-3 mr-1" />
-            Upgrade
+            View Plans
           </Button>
         </AlertDescription>
       </Alert>
@@ -39,19 +40,19 @@ export const SessionLimitBanner: React.FC<SessionLimitBannerProps> = ({
     return (
       <Alert>
         <AlertCircle className="h-4 w-4" />
-        <AlertTitle>Almost at your weekly limit</AlertTitle>
+        <AlertTitle>Making great use of your sessions!</AlertTitle>
         <AlertDescription className="flex items-center justify-between">
           <span>
-            {remainingSessions} free session{remainingSessions !== 1 ? 's' : ''} remaining this week
+            {remainingSessions} free session{remainingSessions !== 1 ? 's' : ''} left this week. Consider unlimited access for your practice.
           </span>
           <Button 
             size="sm" 
-            variant="outline"
+            variant="ghost"
             onClick={onUpgrade}
             className="ml-4 whitespace-nowrap"
           >
             <Crown className="h-3 w-3 mr-1" />
-            Upgrade
+            Explore Plans
           </Button>
         </AlertDescription>
       </Alert>

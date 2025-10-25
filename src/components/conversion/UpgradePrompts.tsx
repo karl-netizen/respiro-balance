@@ -28,25 +28,25 @@ export const UpgradePrompts: React.FC<UpgradePromptProps> = ({
       case 'usage_based':
         return {
           icon: <TrendingUp className="w-6 h-6 text-blue-600" />,
-          title: 'You\'re a meditation superstar! 🌟',
-          message: `You've completed ${userData?.sessionsCompleted || 0} sessions in ${userData?.daysActive || 0} days. Ready for advanced features?`,
-          cta: 'Unlock Premium Features'
+          title: 'You\'re making great progress! 🌟',
+          message: `${userData?.sessionsCompleted || 0} sessions in ${userData?.daysActive || 0} days! Explore what's next on your journey with advanced features when you're ready.`,
+          cta: 'Explore Premium'
         };
       
       case 'feature_discovery':
         return {
           icon: <Sparkles className="w-6 h-6 text-purple-600" />,
-          title: 'Discover Advanced Features',
-          message: 'Based on your meditation style, you\'d love our advanced breathing techniques and personalized coaching.',
-          cta: 'Explore Premium'
+          title: 'Personalized for You',
+          message: 'Based on your meditation style, we think you might enjoy advanced breathing techniques and personalized coaching.',
+          cta: 'Learn More'
         };
       
       case 'goal_achievement':
         return {
           icon: <Target className="w-6 h-6 text-green-600" />,
-          title: 'Achieve Your Goals Faster',
-          message: 'Users with Premium reach their wellness goals 3x faster with our advanced tracking and coaching.',
-          cta: 'Accelerate Progress'
+          title: 'Enhance Your Journey',
+          message: 'Premium members enjoy advanced tracking and personalized coaching to support their wellness goals.',
+          cta: 'See What\'s Included'
         };
       
       case 'social_proof':

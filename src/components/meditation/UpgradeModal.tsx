@@ -8,7 +8,6 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Crown, Check } from 'lucide-react';
 import { TIER_PRICES } from '@/utils/tierAccess';
 
@@ -48,10 +47,10 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Crown className="h-5 w-5 text-yellow-500" />
-            Unlock "{sessionTitle}"
+            Continue Your Journey
           </DialogTitle>
           <DialogDescription>
-            Upgrade to {tierInfo.label} to access this meditation session
+            "{sessionTitle}" is available with {tierInfo.label}
           </DialogDescription>
         </DialogHeader>
 
@@ -86,7 +85,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
             onClick={() => onOpenChange(false)}
             className="w-full sm:w-auto"
           >
-            Maybe Later
+            Not Right Now
           </Button>
           <Button
             onClick={() => {
@@ -95,7 +94,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
             }}
             className="w-full sm:w-auto"
           >
-            Upgrade Now
+            View Plans
           </Button>
         </DialogFooter>
       </DialogContent>

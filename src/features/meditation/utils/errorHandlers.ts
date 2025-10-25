@@ -47,17 +47,29 @@ const handleMeditationLibraryError = (
 
   // Show user-friendly messages based on error type
   if (error instanceof AudioProcessingError) {
-    toast.error('Audio file processing failed. Please try a different file.');
+    toast.error('Unable to process audio file', {
+      description: 'The audio format may not be supported. Try uploading an MP3 or WAV file.'
+    });
   } else if (error instanceof StorageError) {
-    toast.error('Storage operation failed. Please try again.');
+    toast.error('Storage operation failed', {
+      description: 'Check your internet connection and available storage space, then try again.'
+    });
   } else if (error instanceof PlaybackError) {
-    toast.error('Playback failed. Please check your audio file.');
+    toast.error('Playback error', {
+      description: 'The audio file may be corrupted. Try refreshing the page or selecting a different session.'
+    });
   } else if (error instanceof ValidationError) {
-    toast.error(`Invalid ${error.field}: ${error.message}`);
+    toast.error(`Invalid ${error.field}`, {
+      description: error.message
+    });
   } else if (error instanceof NetworkError) {
-    toast.error('Network error. Please check your connection.');
+    toast.error('Connection issue', {
+      description: 'Please check your internet connection and try again.'
+    });
   } else {
-    toast.error(error.message);
+    toast.error('Something went wrong', {
+      description: error.message
+    });
   }
 
   // Log to external service in production
@@ -73,7 +85,9 @@ const handleGenericError = (error: Error, context: ErrorContext): void => {
     context
   });
 
-  toast.error('An unexpected error occurred. Please try again.');
+  toast.error('Unexpected error', {
+    description: 'Something went wrong. Try refreshing the page or contact support if this continues.'
+  });
 
   if (process.env.NODE_ENV === 'production') {
     logErrorToService(error, context);
@@ -86,7 +100,9 @@ const handleUnknownError = (error: unknown, context: ErrorContext): void => {
     context
   });
 
-  toast.error('Something went wrong. Please refresh the page.');
+  toast.error('Unexpected issue', {
+    description: 'An unknown error occurred. Please refresh the page. If this persists, contact our support team.'
+  });
 
   if (process.env.NODE_ENV === 'production') {
     logErrorToService(new Error(`Unknown error: ${String(error)}`), context);

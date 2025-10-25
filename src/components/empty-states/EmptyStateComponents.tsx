@@ -47,12 +47,12 @@ export const NoDataEmpty: React.FC<{
   description?: string;
   action?: EmptyStateProps['action'];
 }> = ({
-  title = "No data available",
-  description = "There's no data to display yet. Start using the app to see your progress here.",
+  title = "Your journey starts here",
+  description = "Complete your first activity to see your progress and insights appear here.",
   action
 }) => (
   <EmptyState
-    icon={<div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center">📊</div>}
+    icon={<div className="h-16 w-16 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center text-3xl">📊</div>}
     title={title}
     description={description}
     action={action}
@@ -63,9 +63,9 @@ export const NoDevicesEmpty: React.FC<{
   onScanDevices?: () => void;
 }> = ({ onScanDevices }) => (
   <EmptyState
-    icon={<div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center">📱</div>}
-    title="No devices found"
-    description="Connect a biofeedback device to start monitoring your health metrics in real-time."
+    icon={<div className="h-16 w-16 rounded-full bg-gradient-to-br from-blue-500/20 to-blue-500/5 flex items-center justify-center text-3xl">📱</div>}
+    title="Ready to connect"
+    description="Connect a biofeedback device to track heart rate, HRV, and other health metrics during your sessions."
     action={onScanDevices ? {
       label: "Scan for Devices",
       onClick: onScanDevices
@@ -77,11 +77,11 @@ export const NoSessionsEmpty: React.FC<{
   onStartSession?: () => void;
 }> = ({ onStartSession }) => (
   <EmptyState
-    icon={<div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center">🧘</div>}
-    title="No meditation sessions yet"
-    description="Start your mindfulness journey by beginning your first meditation session."
+    icon={<div className="h-16 w-16 rounded-full bg-gradient-to-br from-purple-500/20 to-purple-500/5 flex items-center justify-center text-3xl">🧘</div>}
+    title="Begin your practice"
+    description="Take a moment for yourself. Choose a meditation session below to start your mindfulness journey."
     action={onStartSession ? {
-      label: "Start Meditating",
+      label: "Browse Sessions",
       onClick: onStartSession
     } : undefined}
   />
