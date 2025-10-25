@@ -6,14 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { useNotifications } from "@/context/NotificationsProvider";
 import NotificationDropdown from "./NotificationDropdown";
 import { useOnClickOutside } from "@/hooks/useOnClickOutside";
-
-interface Notification {
-  id: string;
-  title: string;
-  message: string;
-  time: string;
-  read: boolean;
-}
+import { Notification } from "@/hooks/useRitualNotifications";
 
 export function NotificationBell() {
   const [isOpen, setIsOpen] = useState(false);
@@ -85,12 +78,12 @@ export function NotificationBell() {
       </Button>
       
       {isOpen && (
-        <NotificationDropdown
-          notifications={notifications}
-          markAllAsRead={markAllAsRead}
-          markAsRead={markAsRead}
-          onClose={() => setIsOpen(false)}
-        />
+      <NotificationDropdown
+        notifications={notifications as any}
+        markAllAsRead={markAllAsRead}
+        markAsRead={markAsRead}
+        onClose={() => setIsOpen(false)}
+      />
       )}
     </div>
   );

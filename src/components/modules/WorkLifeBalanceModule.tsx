@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Scale, AlertTriangle, CheckCircle2, Coffee } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, Coffee } from 'lucide-react';
 import { useWorkLifeBalanceStore } from '@/store/workLifeBalanceStore';
 import { toast } from 'sonner';
 
@@ -14,7 +14,6 @@ export default function WorkLifeBalanceModule() {
     getBalanceScore 
   } = useWorkLifeBalanceStore();
   
-  const totalMinutes = workMinutesToday + breakMinutesToday;
   const balanceScore = getBalanceScore();
   
   // Ideal balance is 15-20% breaks

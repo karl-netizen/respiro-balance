@@ -27,8 +27,6 @@ export const EnhancedPlayerCore: React.FC<EnhancedPlayerCoreProps> = ({
 }) => {
   const {
     isPlaying,
-    currentTime,
-    duration,
     sessionStarted,
     sessionCompleted,
     handlePlayPause,

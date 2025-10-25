@@ -11,7 +11,6 @@ interface BiometricDataProps {
 
 const BiometricDisplay: React.FC<BiometricDataProps> = ({
   currentBiometrics,
-  initialBiometrics,
   biometricChange,
   isPlaying,
   sessionStarted

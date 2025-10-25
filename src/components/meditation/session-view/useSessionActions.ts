@@ -10,7 +10,6 @@ import { BiometricData } from '@/components/meditation/types/BiometricTypes';
 export const useSessionActions = (sessionId?: string) => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { biometricData } = useBiometricData();
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   // Navigate back to the meditation library page

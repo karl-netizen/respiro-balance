@@ -2,7 +2,7 @@
 import React, { useRef, useEffect } from 'react';
 import { useMobileGestures } from '@/components/meditation/hooks/useMobileGestures';
 import { useMobileFeatures } from '@/hooks/useMobileFeatures';
-import { Play, Pause, SkipForward, SkipBack, Volume2 } from 'lucide-react';
+import { Play, SkipForward, SkipBack, Volume2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 
 interface MobileGestureControlsProps {

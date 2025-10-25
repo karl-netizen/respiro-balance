@@ -17,16 +17,10 @@ import {
   NavigationEventEmitter,
   NavigationError,
   Result,
-  NavItemId,
-  RoutePath,
-  DropdownId,
   CategoryId,
-  createNavItemId,
   createRoutePath,
-  createCategoryId,
   safeNavigate,
   isNavigationSuccess,
-  isDropdownOpen,
   Ok,
   Err
 } from "./types";

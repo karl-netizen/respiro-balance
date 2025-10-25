@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Upload, RefreshCw, CheckCircle, XCircle, AlertCircle, UserCheck } from 'lucide-react';
-import { uploadMeditationAudio } from '@/lib/meditationAudio';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
