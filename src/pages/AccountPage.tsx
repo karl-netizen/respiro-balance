@@ -65,14 +65,28 @@ const AccountPage = () => {
     }, 1500);
   };
   
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <main className="flex-grow py-16 px-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="flex items-center justify-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
-      
-      
+
+
       <main className="flex-grow py-16 px-4">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl font-bold mb-8">Account Settings</h1>
-          
+
           <div className="space-y-6">
             <Card>
               <CardHeader>
@@ -93,7 +107,7 @@ const AccountPage = () => {
                       </p>
                     </div>
                   </div>
-                  
+
                   {/* Profile Form */}
                   <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

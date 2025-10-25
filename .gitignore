@@ -25,3 +25,11 @@ dist-ssr
 
 # Ignore nested git repository (duplicate/backup)
 .github/respiro-balance/
+
+# Test results and progress tracking
+test-results.json
+TODAYS_PROGRESS.md
+IMPROVEMENT_PLAN.md
+
+# Claude Code settings
+.claude/settings.local.json
