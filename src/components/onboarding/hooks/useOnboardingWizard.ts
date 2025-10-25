@@ -31,7 +31,7 @@ export const useOnboardingWizard = () => {
       };
       
       const needsUpdate = Object.entries(requiredArrays).some(
-        ([key, value]) => !Array.isArray(preferences[key]) || preferences[key].length === 0
+        ([key]) => !Array.isArray(preferences[key as keyof UserPreferences]) || (preferences[key as keyof UserPreferences] as any[])?.length === 0
       );
       
       if (needsUpdate) {

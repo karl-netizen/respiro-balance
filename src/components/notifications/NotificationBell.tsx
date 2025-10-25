@@ -1,5 +1,5 @@
 
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -7,22 +7,30 @@ import { useNotifications } from "@/context/NotificationsProvider";
 import NotificationDropdown from "./NotificationDropdown";
 import { useOnClickOutside } from "@/hooks/useOnClickOutside";
 
+interface Notification {
+  id: string;
+  title: string;
+  message: string;
+  time: string;
+  read: boolean;
+}
+
 export function NotificationBell() {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   
   // Get notifications with error handling
-  let notifications = [];
+  let notifications: Notification[] = [];
   let unreadCount = 0;
   let markAllAsRead = () => {};
-  let markAsRead = (id: string) => {};
+  let markAsRead = (_id: string) => {};
   
   try {
     const notificationContext = useNotifications();
     notifications = notificationContext?.notifications || [];
     unreadCount = notificationContext?.unreadCount || 0;
     markAllAsRead = notificationContext?.markAllAsRead || (() => {});
-    markAsRead = notificationContext?.markAsRead || ((id: string) => {});
+    markAsRead = notificationContext?.markAsRead || ((_id: string) => {});
     
     console.log('Notifications context:', { 
       notifications: notifications.length, 

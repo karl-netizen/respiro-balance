@@ -63,7 +63,7 @@ export const PerformanceMonitor: React.FC = () => {
     return 'text-red-600';
   };
 
-  const _getScoreBadge = (score: number) => {
+  const getScoreBadge = (score: number) => {
     if (score >= 90) return 'bg-green-100 text-green-800';
     if (score >= 70) return 'bg-yellow-100 text-yellow-800';
     return 'bg-red-100 text-red-800';
