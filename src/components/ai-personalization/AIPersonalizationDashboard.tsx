@@ -2,22 +2,15 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import { useAIPersonalization } from '@/hooks/useAIPersonalization';
 import { SessionRecommendation } from '@/lib/ai-personalization/types';
 import { PersonalizedSessionCard } from './PersonalizedSessionCard';
 import { AIInsightsPanel } from './AIInsightsPanel';
 import { 
   Brain, 
-  Target, 
-  Clock, 
   TrendingUp, 
-  Star, 
-  Play,
   RefreshCw,
   User,
-  Heart,
-  Zap,
   Sparkles
 } from 'lucide-react';
 
@@ -46,23 +39,6 @@ export const AIPersonalizationDashboard: React.FC<AIPersonalizationDashboardProp
 
   const handleGeneratePersonalized = () => {
     generateRecommendations(contextualInputs);
-  };
-
-  const getSessionTypeIcon = (type: SessionRecommendation['sessionType']) => {
-    const icons = {
-      meditation: Brain,
-      breathing: Heart,
-      focus: Target,
-      sleep: Clock,
-      stress_relief: Zap
-    };
-    return icons[type] || Brain;
-  };
-
-  const getConfidenceColor = (confidence: number) => {
-    if (confidence >= 0.8) return 'bg-green-500';
-    if (confidence >= 0.6) return 'bg-yellow-500';
-    return 'bg-orange-500';
   };
 
   if (!isProfileLoaded && isLoading) {

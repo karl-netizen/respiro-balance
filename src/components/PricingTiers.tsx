@@ -2,14 +2,12 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Check, X, Loader2, ToggleLeft, ToggleRight } from 'lucide-react';
-import { useAuth } from '@/hooks/useAuth';
+import { Check, X, Loader2 } from 'lucide-react';
 import { PaymentButton } from '@/components/payment';
 import { toast } from 'sonner';
 
 const PricingTiers = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [isAnnual, setIsAnnual] = useState(false);
   
@@ -138,11 +136,11 @@ const PricingTiers = () => {
                 <PricingFeature included={false}>No focus tools</PricingFeature>
                 
                 {/* Community & Social */}
-                <PricingFeature included={false} highlighted>View-only community feed</PricingFeature>
+                <PricingFeature included={false}>View-only community feed</PricingFeature>
                 
                 {/* Support & Sharing */}
-                <PricingFeature included={false} highlighted>FAQ & help articles only</PricingFeature>
-                <PricingFeature included={false} highlighted>Single user only</PricingFeature>
+                <PricingFeature included={false}>FAQ & help articles only</PricingFeature>
+                <PricingFeature included={false}>Single user only</PricingFeature>
                 <PricingFeature included={false}>Basic app experience</PricingFeature>
                 <PricingFeature included={false}>Standard releases only</PricingFeature>
                 <PricingFeature included={false}>No data export</PricingFeature>
@@ -225,10 +223,10 @@ const PricingTiers = () => {
                 
                 {/* Support & Sharing */}
                 <PricingFeature included>Community forum + email (72h response)</PricingFeature>
-                <PricingFeature included={false} highlighted>Single user only</PricingFeature>
+                <PricingFeature included={false}>Single user only</PricingFeature>
                 <PricingFeature included={false}>Standard theme only</PricingFeature>
                 <PricingFeature included={false}>Standard releases only</PricingFeature>
-                <PricingFeature included={false} highlighted>Basic stats sharing</PricingFeature>
+                <PricingFeature included={false}>Basic stats sharing</PricingFeature>
               </ul>
             </CardContent>
             <CardFooter>
@@ -333,10 +331,9 @@ const PricingTiers = () => {
   );
 };
 
-const PricingFeature = ({ children, included = true, highlighted = false }: { 
+const PricingFeature = ({ children, included = true }: { 
   children: React.ReactNode; 
-  included?: boolean; 
-  highlighted?: boolean;
+  included?: boolean;
 }) => (
   <li className="flex items-start text-respiro-dark font-medium dark:text-respiro-light">
     {included ? (

@@ -7,7 +7,6 @@ interface LoadingMonitorProps {
 }
 
 export const LoadingMonitor: React.FC<LoadingMonitorProps> = ({ threshold = 3000 }) => {
-  const [isSlowLoading, setIsSlowLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {
@@ -16,7 +15,6 @@ export const LoadingMonitor: React.FC<LoadingMonitorProps> = ({ threshold = 3000
     const checkLoadingTime = () => {
       const loadTime = performance.now() - startTime;
       if (loadTime > threshold) {
-        setIsSlowLoading(true);
         setShowAlert(true);
         console.warn(`⚠️ Slow loading detected: ${Math.round(loadTime)}ms`);
       }

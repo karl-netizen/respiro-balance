@@ -70,9 +70,8 @@ export const useParallax = (speed: number = 0.5) => {
     const handleScroll = () => {
       if (!ref.current) return;
       
-      const rect = ref.current.getBoundingClientRect();
-      const scrolled = window.pageYOffset;
-      const rate = scrolled * -speed;
+      window.pageYOffset;
+      const rate = window.pageYOffset * -speed;
       setOffset(rate);
     };
 
@@ -106,10 +105,10 @@ export const useAnimationState = (trigger: boolean = true) => {
   }, []);
 
   const endAnimation = useCallback(() => {
-    setState(prev => ({
+    setState({
       isAnimating: false,
       hasAnimated: true
-    }));
+    });
   }, []);
 
   const resetAnimation = useCallback(() => {

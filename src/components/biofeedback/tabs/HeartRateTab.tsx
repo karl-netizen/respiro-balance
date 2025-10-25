@@ -3,7 +3,6 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useBiofeedback } from '@/hooks/biofeedback';
 import BiometricMonitorSection from '../sections/BiometricMonitorSection';
-import type { BiometricData } from '@/hooks/biofeedback/types';
 
 const HeartRateTab: React.FC = () => {
   const { 

@@ -9,13 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import { 
-  Upload, 
-  Plus, 
-  Trash2, 
-  Edit,
-  Play,
-  Eye,
-  EyeOff
+  Upload
 } from 'lucide-react';
 
 interface ContentUploadForm {
@@ -88,7 +82,7 @@ export const ContentManagement = () => {
     const fileName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
     const filePath = `content/${fileName}`;
 
-    const { data, error } = await supabase.storage
+    const { error } = await supabase.storage
       .from('meditation-audio')
       .upload(filePath, file);
 

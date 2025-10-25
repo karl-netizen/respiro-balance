@@ -13,7 +13,7 @@ import React, {
   ButtonHTMLAttributes,
   InputHTMLAttributes
 } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 // 1. ENHANCED ACCESSIBLE BUTTON

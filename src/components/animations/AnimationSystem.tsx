@@ -293,7 +293,6 @@ interface FloatingProps {
 
 export const Floating: React.FC<FloatingProps> = ({
   children,
-  amplitude = 10,
   duration = 3000,
   delay = 0,
   className

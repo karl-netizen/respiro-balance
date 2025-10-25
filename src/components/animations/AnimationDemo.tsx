@@ -5,14 +5,12 @@ import { Badge } from '@/components/ui/badge';
 import { 
   ScrollReveal, 
   StaggerContainer, 
-  StaggerItem, 
   ParallaxSection,
   HoverScale,
   HoverGlow,
   PulseLoader,
   Spinner,
-  Floating,
-  SlideIn
+  Floating
 } from './AnimationSystem';
 import { useInView, useScrollProgress, useStaggerAnimation } from './AnimationHooks';
 import { Grid, GridItem, Container, Section } from '../layout/ResponsiveLayout';
@@ -20,7 +18,7 @@ import { Grid, GridItem, Container, Section } from '../layout/ResponsiveLayout';
 const AnimationDemo: React.FC = () => {
   const [showLoaders, setShowLoaders] = useState(false);
   const scrollProgress = useScrollProgress();
-  const { ref: sectionRef, isInView } = useInView({ threshold: 0.2 });
+  const { ref: sectionRef } = useInView({ threshold: 0.2 });
   const { visibleItems, startStagger, resetStagger } = useStaggerAnimation(6, 150);
 
   const features = [

@@ -10,10 +10,7 @@ import {
   Brain, 
   TrendingUp, 
   TrendingDown,
-  Calendar,
-  Clock,
-  Target,
-  BarChart3
+  Target
 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 

@@ -2,14 +2,6 @@ import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { useUserPreferences } from "@/context";
 
-// Custom implementation of motion functionality 
-const customMotion = {
-  div: ({ children, ...props }: any) => (
-    <div className={`transition-all duration-300 ${props.animate ? props.className : props.initial}`}>
-      {children}
-    </div>
-  )
-};
 
 const moods = [
   { id: 'stressed', label: 'Stressed', emoji: '😖', color: 'bg-orange-100 border-orange-300 text-orange-700' },
