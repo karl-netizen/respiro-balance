@@ -1,5 +1,3 @@
-
-import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
@@ -45,7 +43,7 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
     return deviceType === 'mobile' ? 'text-base' : 'text-sm';
   };
 
-  const handleLinkClick = (path: string) => {
+const handleLinkClick = () => {
     toggleMenu();
     // Scroll to top after navigation
     setTimeout(() => {
@@ -58,7 +56,7 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
       <Link
         to="/landing"
         className={getLinkClasses(isActive('/landing') || isActive('/'))}
-        onClick={() => handleLinkClick('/landing')}
+        onClick={handleLinkClick}
       >
         <Home className={getIconSize()} />
         <span className={getTextSize()}>Home</span>
@@ -68,7 +66,7 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
         <Link
           to="/dashboard"
           className={getLinkClasses(isActive('/dashboard'))}
-          onClick={() => handleLinkClick('/dashboard')}
+          onClick={handleLinkClick}
         >
           <Gauge className={getIconSize()} />
           <span className={getTextSize()}>Dashboard</span>
@@ -157,7 +155,7 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
       <Link
         to="/morning-ritual"
         className={getLinkClasses(isActive('/morning-ritual'))}
-        onClick={() => handleLinkClick('/morning-ritual')}
+        onClick={handleLinkClick}
       >
         <Sunrise className={getIconSize()} />
         <span className={getTextSize()}>Morning Ritual</span>
@@ -166,7 +164,7 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
       <Link
         to="/progress"
         className={getLinkClasses(isActive('/progress'))}
-        onClick={() => handleLinkClick('/progress')}
+        onClick={handleLinkClick}
       >
         <LineChart className={getIconSize()} />
         <span className={getTextSize()}>Progress</span>
@@ -175,7 +173,7 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
       <Link
         to="/pricing"
         className={getLinkClasses(isActive('/pricing'))}
-        onClick={() => handleLinkClick('/pricing')}
+        onClick={handleLinkClick}
       >
         <Sparkles className={getIconSize()} />
         <span className={getTextSize()}>Pricing</span>
@@ -184,7 +182,7 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
       <Link
         to="/account"
         className={getLinkClasses(isActive('/account'))}
-        onClick={() => handleLinkClick('/account')}
+        onClick={handleLinkClick}
       >
         <Settings className={getIconSize()} />
         <span className={getTextSize()}>Account</span>
@@ -193,7 +191,7 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
         <Link
           to="/testing-demo"
           className={getLinkClasses(isActive('/testing-demo'))}
-          onClick={() => handleLinkClick('/testing-demo')}
+          onClick={handleLinkClick}
         >
           <Clock className={getIconSize()} />
           <span className={getTextSize()}>🧪 Testing</span>
@@ -202,7 +200,7 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
         <Link
           to="/testing-summary"
           className={getLinkClasses(isActive('/testing-summary'))}
-          onClick={() => handleLinkClick('/testing-summary')}
+          onClick={handleLinkClick}
         >
           <Clock className={getIconSize()} />
           <span className={getTextSize()}>📊 Test Overview</span>
@@ -211,7 +209,7 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
         <Link
           to="/performance-demo"
           className={getLinkClasses(isActive('/performance-demo'))}
-          onClick={() => handleLinkClick('/performance-demo')}
+          onClick={handleLinkClick}
         >
           <Gauge className={getIconSize()} />
           <span className={getTextSize()}>⚡ Performance</span>
@@ -220,7 +218,7 @@ const MobileMenuLinks = ({ toggleMenu }: MobileMenuLinksProps) => {
         <Link
           to="/ai-personalization"
           className={getLinkClasses(isActive('/ai-personalization'))}
-          onClick={() => handleLinkClick('/ai-personalization')}
+          onClick={handleLinkClick}
         >
           <Brain className={getIconSize()} />
           <span className={getTextSize()}>🧠 AI Engine</span>

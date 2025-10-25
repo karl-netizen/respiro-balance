@@ -1,6 +1,3 @@
-
-import React from 'react';
-
 const MeditationHeader = () => {
   return (
     <section className="bg-gradient-to-b from-background to-secondary/20 pt-24 pb-12 px-6">

@@ -1,7 +1,5 @@
-
-import React from 'react';
 import { useMeditationSessions } from '@/hooks/useMeditationSessions';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { format, formatDistanceToNow } from 'date-fns';
 import { Clock, Calendar } from 'lucide-react';
 
