@@ -53,7 +53,7 @@ export const OfflineContentSync: React.FC = () => {
   const checkPendingSyncs = async () => {
     try {
       // Check for offline sessions that need metadata sync
-      const offlineSessions = await getAllOfflineSessions();
+      await getAllOfflineSessions();
       
       // In a real app, you'd check for:
       // - Session progress that needs to be uploaded

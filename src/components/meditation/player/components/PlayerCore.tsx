@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Pause, Play, SkipBack, SkipForward } from 'lucide-react';
 import { TouchFriendlyButton } from '@/components/responsive/TouchFriendlyButton';
 import ProgressDisplay from './ProgressDisplay';
@@ -25,7 +25,6 @@ export interface PlayerCoreProps {
 }
 
 export const PlayerCore: React.FC<PlayerCoreProps> = ({
-  session,
   isPlaying = false,
   currentTime = 0,
   duration = 0,
@@ -40,8 +39,7 @@ export const PlayerCore: React.FC<PlayerCoreProps> = ({
   },
   onPlayStateChange,
   onStart,
-  onComplete,
-  biometricData
+  onComplete
 }) => {
   // Calculate progress as a value between 0-1
   const progress = duration > 0 ? currentTime / duration : 0;

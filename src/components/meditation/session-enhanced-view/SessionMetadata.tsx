@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
-import { Clock, User, Tag, Award } from 'lucide-react';
+import { Clock, User, Award } from 'lucide-react';
 import { MeditationSession } from '@/types/meditation';
 
 interface SessionMetadataProps {

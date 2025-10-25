@@ -29,8 +29,7 @@ export const OfflineDownloadManager: React.FC<OfflineDownloadManagerProps> = ({ 
     storageLimit, 
     downloadSession, 
     deleteOfflineSession,
-    getAllOfflineSessions,
-    isSessionDownloaded 
+    getAllOfflineSessions
   } = useOfflineStorage();
 
   useEffect(() => {

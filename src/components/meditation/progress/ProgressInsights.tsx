@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { TrendingUp, Award, Target, Calendar, Clock, Brain } from 'lucide-react';
+import { TrendingUp, Award, Target, Brain, Calendar } from 'lucide-react';
 
 export const ProgressInsights: React.FC = () => {
   const insights = [

@@ -9,9 +9,6 @@ const PlayerTab: React.FC<PlayerTabProps> = ({
   setIsPlaying,
   currentTime,
   setCurrentTime,
-  progress,
-  setProgress,
-  onSessionComplete,
   formatTime
 }) => {
   if (!selectedSession) {

@@ -26,7 +26,7 @@ export const BiometricIntegration: React.FC = () => {
     timestamp: new Date().toISOString()
   });
 
-  const [historicalData, setHistoricalData] = useState<BiometricData[]>([
+  const [historicalData] = useState<BiometricData[]>([
     { heartRate: 75, hrv: 42, stressLevel: 30, focusLevel: 70, timestamp: '10:00' },
     { heartRate: 73, hrv: 44, stressLevel: 28, focusLevel: 72, timestamp: '10:05' },
     { heartRate: 71, hrv: 46, stressLevel: 25, focusLevel: 75, timestamp: '10:10' },

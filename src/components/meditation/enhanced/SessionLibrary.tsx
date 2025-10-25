@@ -6,8 +6,6 @@ import SessionGrid from './SessionGrid';
 
 const SessionLibrary: React.FC<SessionLibraryProps> = ({
   filteredSessions,
-  filters,
-  setFilters,
   sortBy,
   setSortBy,
   searchTerm,
