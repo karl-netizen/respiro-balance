@@ -1,21 +1,22 @@
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { TrendingUp, TrendingDown, Users, DollarSign, Target, Clock } from 'lucide-react';
+import { PRICING } from '@/lib/pricing/constants';
 
-export const ConversionAnalytics: React.FC = () => {
+export const ConversionAnalytics = () => {
   const [timeRange, setTimeRange] = useState('30d');
 
-  // Mock data
+  // Mock data - 3-tier system only
   const conversionData = [
-    { name: 'Week 1', free: 1200, premium: 45, premiumPro: 12, premiumPlus: 3 },
-    { name: 'Week 2', free: 1350, premium: 52, premiumPro: 15, premiumPlus: 4 },
-    { name: 'Week 3', free: 1180, premium: 48, premiumPro: 11, premiumPlus: 2 },
-    { name: 'Week 4', free: 1420, premium: 58, premiumPro: 18, premiumPlus: 5 }
+    { name: 'Week 1', free: 1200, standard: 32, premium: 25 },
+    { name: 'Week 2', free: 1350, standard: 38, premium: 29 },
+    { name: 'Week 3', free: 1180, standard: 35, premium: 24 },
+    { name: 'Week 4', free: 1420, standard: 42, premium: 34 }
   ];
 
   const revenueData = [
@@ -26,9 +27,8 @@ export const ConversionAnalytics: React.FC = () => {
   ];
 
   const churnData = [
-    { tier: 'Premium', rate: 5.2, color: '#3b82f6' },
-    { tier: 'Premium Pro', rate: 3.8, color: '#8b5cf6' },
-    { tier: 'Premium Plus', rate: 2.1, color: '#f59e0b' }
+    { tier: 'Standard', rate: 6.5, color: '#3b82f6' },
+    { tier: 'Premium', rate: 3.2, color: '#8b5cf6' }
   ];
 
   const funnelData = [
@@ -132,41 +132,30 @@ export const ConversionAnalytics: React.FC = () => {
                   <XAxis dataKey="name" />
                   <YAxis />
                   <Tooltip />
-                  <Bar dataKey="premium" fill="#3b82f6" name="Premium" />
-                  <Bar dataKey="premiumPro" fill="#8b5cf6" name="Premium Pro" />
-                  <Bar dataKey="premiumPlus" fill="#f59e0b" name="Premium Plus" />
+                  <Bar dataKey="standard" fill="#3b82f6" name="Standard" />
+                  <Bar dataKey="premium" fill="#8b5cf6" name="Premium" />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Card>
               <CardContent className="p-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-600">4.1%</div>
+                  <div className="text-2xl font-bold text-blue-600">3.8%</div>
+                  <div className="text-sm text-muted-foreground">Standard Conversion</div>
+                  <Badge variant="secondary" className="mt-2">+0.4% vs last month</Badge>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardContent className="p-4">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-purple-600">2.9%</div>
                   <div className="text-sm text-muted-foreground">Premium Conversion</div>
-                  <Badge variant="secondary" className="mt-2">+0.3% vs last month</Badge>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardContent className="p-4">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-purple-600">1.8%</div>
-                  <div className="text-sm text-muted-foreground">Premium Pro Conversion</div>
-                  <Badge variant="secondary" className="mt-2">+0.1% vs last month</Badge>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardContent className="p-4">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-orange-600">0.4%</div>
-                  <div className="text-sm text-muted-foreground">Premium Plus Conversion</div>
-                  <Badge variant="secondary" className="mt-2">+0.1% vs last month</Badge>
+                  <Badge variant="secondary" className="mt-2">+0.2% vs last month</Badge>
                 </div>
               </CardContent>
             </Card>
@@ -199,11 +188,11 @@ export const ConversionAnalytics: React.FC = () => {
               <CardContent>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span>Standard ($6.99/mo)</span>
+                    <span>Standard (${PRICING.STANDARD.monthly}/mo)</span>
                     <span className="font-semibold">$4,890</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span>Premium ($12.99/mo)</span>
+                    <span>Premium (${PRICING.PREMIUM.monthly}/mo)</span>
                     <span className="font-semibold">$14,010</span>
                   </div>
                 </div>
@@ -241,7 +230,7 @@ export const ConversionAnalytics: React.FC = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {funnelData.map((stage, index) => (
+                {funnelData.map((stage) => (
                   <div key={stage.stage} className="relative">
                     <div className="flex items-center justify-between mb-2">
                       <span className="font-medium">{stage.stage}</span>

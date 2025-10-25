@@ -1,10 +1,11 @@
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Clock, Star, Gift, ArrowRight } from 'lucide-react';
+import { PRICING } from '@/lib/pricing/constants';
 
 interface TrialSystemProps {
   trialTier: 'premium' | 'premium-pro' | 'premium-plus';
@@ -109,7 +110,7 @@ export const TrialSystem: React.FC<TrialSystemProps> = ({
                 className="w-full" 
                 onClick={() => onUpgrade(trialTier)}
               >
-                Continue with {trialTier.replace('-', ' ')} - $12.99/mo
+                Continue with Premium - ${PRICING.PREMIUM.monthly}/mo
               </Button>
               
               {onExtendTrial && (

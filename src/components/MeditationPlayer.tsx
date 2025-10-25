@@ -6,7 +6,7 @@ import { Slider } from "@/components/ui/slider";
 const MeditationPlayer = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [duration, setDuration] = useState(600); // 10 minutes in seconds
+  const [duration] = useState(600); // 10 minutes in seconds
   const [volume, setVolume] = useState(80);
   
   useEffect(() => {
@@ -34,11 +34,6 @@ const MeditationPlayer = () => {
   
   const togglePlay = () => {
     setIsPlaying(!isPlaying);
-  };
-  
-  const resetProgress = () => {
-    setProgress(0);
-    setIsPlaying(false);
   };
   
   const skipForward = () => {

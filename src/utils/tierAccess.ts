@@ -18,8 +18,8 @@ export const TIER_LABELS: Record<UserTier, string> = {
 };
 
 export const TIER_PRICES: Record<'standard' | 'premium', { monthly: number; label: string }> = {
-  standard: { monthly: 9, label: 'Standard Plan' },
-  premium: { monthly: 13, label: 'Premium Plan' }
+  standard: { monthly: 6.99, label: 'Standard Plan' },
+  premium: { monthly: 12.99, label: 'Premium Plan' }
 };
 
 export const FREE_TIER_WEEKLY_LIMIT = 3;

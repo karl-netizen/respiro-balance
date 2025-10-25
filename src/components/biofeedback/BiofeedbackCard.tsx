@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { TouchFriendlyButton } from "@/components/responsive/TouchFriendlyButton";
 import { Switch } from "@/components/ui/switch";
@@ -64,7 +64,7 @@ const BiofeedbackCard = () => {
     }
   };
 
-  const handleScanForDevices = async (deviceType?: string, options?: any): Promise<void> => {
+  const handleScanForDevices = async (): Promise<void> => {
     setIsConnecting(true);
     try {
       // Mock scanning process
