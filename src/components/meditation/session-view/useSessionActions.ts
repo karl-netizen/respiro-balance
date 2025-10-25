@@ -1,10 +1,8 @@
-
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { useBiometricData } from '@/hooks/useBiometricData';
 import { BiometricData } from '@/components/meditation/types/BiometricTypes';
 
 export const useSessionActions = (sessionId?: string) => {
