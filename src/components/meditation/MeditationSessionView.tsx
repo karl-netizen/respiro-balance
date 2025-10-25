@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Play, Pause, RotateCcw, Heart, Clock, Star, Crown } from 'lucide-react';
+import { ArrowLeft, Play, Pause, RotateCcw, Clock, Star, Crown } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { SubscriptionGate } from '@/features/subscription';
 import { useSubscription } from '@/features/subscription';
@@ -22,7 +22,7 @@ const MeditationSessionView: React.FC<MeditationSessionViewProps> = ({
 }) => {
   const { sessionId: urlSessionId } = useParams<{ sessionId: string }>();
   const navigate = useNavigate();
-  const { isPremium, subscription } = useSubscription();
+  const { isPremium } = useSubscription();
   
   const sessionId = propSessionId || urlSessionId;
   const [isPlaying, setIsPlaying] = useState(false);
@@ -45,9 +45,6 @@ const MeditationSessionView: React.FC<MeditationSessionViewProps> = ({
   };
 
   const progress = session.duration > 0 ? (currentTime / (session.duration * 60)) * 100 : 0;
-
-  // Check if user has access to this session - simplified access check
-  const hasAccess = isPremium || !session.isPremium;
 
   const getAccessMessage = () => {
     if (session.isPremium && !isPremium) {

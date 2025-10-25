@@ -2,6 +2,8 @@
  * Tier-based access control utilities
  */
 
+import { PRICING } from '@/lib/pricing/constants';
+
 export type UserTier = 'free' | 'standard' | 'premium';
 export type SessionTier = 'free' | 'standard' | 'premium';
 
@@ -18,8 +20,8 @@ export const TIER_LABELS: Record<UserTier, string> = {
 };
 
 export const TIER_PRICES: Record<'standard' | 'premium', { monthly: number; label: string }> = {
-  standard: { monthly: 6.99, label: 'Standard Plan' },
-  premium: { monthly: 12.99, label: 'Premium Plan' }
+  standard: { monthly: PRICING.STANDARD.monthly, label: 'Standard Plan' },
+  premium: { monthly: PRICING.PREMIUM.monthly, label: 'Premium Plan' }
 };
 
 export const FREE_TIER_WEEKLY_LIMIT = 3;

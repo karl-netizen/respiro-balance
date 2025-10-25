@@ -28,7 +28,7 @@ export const SessionStartGuard: React.FC<SessionStartGuardProps> = ({
   const navigate = useNavigate();
   const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
   const { canStartSession, incrementSessionCount, tier, sessionsUsed, sessionsLimit } = useSubscriptionStore();
-  const { hasReachedLimit, trackSession, getRemainingSessions } = useSessionLimit();
+  const { hasReachedLimit } = useSessionLimit();
 
   const handleStartSession = async () => {
     // Check session limit for free tier users
