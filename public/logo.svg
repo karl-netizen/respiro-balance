@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" fill="none">
+  <!-- Background circle with gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="breathGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#93c5fd;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Main background circle -->
+  <circle cx="256" cy="256" r="256" fill="url(#bgGradient)"/>
+
+  <!-- Breathing circles - representing breath waves -->
+  <g opacity="0.3">
+    <circle cx="256" cy="256" r="200" stroke="#ffffff" stroke-width="2" fill="none"/>
+    <circle cx="256" cy="256" r="170" stroke="#ffffff" stroke-width="2" fill="none"/>
+    <circle cx="256" cy="256" r="140" stroke="#ffffff" stroke-width="2" fill="none"/>
+  </g>
+
+  <!-- Central meditation icon - stylized lungs/breath symbol -->
+  <g transform="translate(256, 256)">
+    <!-- Left breath wave -->
+    <path d="M -60,-40 Q -80,-20 -80,0 Q -80,20 -60,40 Q -45,50 -30,40 Q -20,30 -20,10 L -20,-10 Q -20,-30 -30,-40 Q -45,-50 -60,-40 Z"
+          fill="#ffffff" opacity="0.9"/>
+
+    <!-- Right breath wave -->
+    <path d="M 60,-40 Q 80,-20 80,0 Q 80,20 60,40 Q 45,50 30,40 Q 20,30 20,10 L 20,-10 Q 20,-30 30,-40 Q 45,-50 60,-40 Z"
+          fill="#ffffff" opacity="0.9"/>
+
+    <!-- Center connecting element -->
+    <circle cx="0" cy="0" r="15" fill="#ffffff"/>
+
+    <!-- Top curve (representing breath flow) -->
+    <path d="M -15,-35 Q 0,-50 15,-35" stroke="#ffffff" stroke-width="6" fill="none" stroke-linecap="round"/>
+
+    <!-- Bottom curve -->
+    <path d="M -15,35 Q 0,50 15,35" stroke="#ffffff" stroke-width="6" fill="none" stroke-linecap="round"/>
+  </g>
+
+  <!-- Subtle glow effect -->
+  <circle cx="256" cy="256" r="110" fill="url(#breathGradient)" opacity="0.2"/>
+</svg>
