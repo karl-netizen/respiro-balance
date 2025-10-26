@@ -4,11 +4,13 @@ import { useNavigate } from "react-router-dom";
 import { useUserPreferences } from "@/context";
 import { toast } from "sonner";
 import { onboardingSteps } from "../config/onboardingSteps";
+import { useAuth } from "@/hooks/useAuth";
 import { UserPreferences } from "@/context/types";
 import { useCleanupEffect } from "@/hooks/useCleanupEffect";
 
 export const useOnboardingWizard = () => {
   const { preferences, updatePreferences } = useUserPreferences();
+  const { user } = useAuth();
   const [open, setOpen] = useState(!preferences.hasCompletedOnboarding);
   const [currentStep, setCurrentStep] = useState(preferences.lastOnboardingStep || 0);
   const navigate = useNavigate();

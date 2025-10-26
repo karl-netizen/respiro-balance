@@ -1,4 +1,5 @@
 
+import React, { useState } from "react";
 import { MorningRitual } from "@/context/types";
 import { 
   Card, 
@@ -16,7 +17,7 @@ import RitualStatusBadge from "./RitualStatusBadge";
 import RitualMetadata from "./RitualMetadata";
 import RitualActions from "./RitualActions";
 import { useRitualItem } from "./hooks/useRitualItem";
-import { Clock, Flame, CheckCircle2, AlertCircle, Play } from "lucide-react";
+import { Clock, Calendar, Flame, CheckCircle2, AlertCircle, Play } from "lucide-react";
 
 interface RitualTimelineItemProps {
   ritual: MorningRitual;
@@ -31,6 +32,7 @@ const RitualTimelineItem: React.FC<RitualTimelineItemProps> = ({
   onDelete,
   onUpdate
 }) => {
+  const [showDetails, setShowDetails] = useState(false);
   const {
     editDialogOpen,
     setEditDialogOpen,

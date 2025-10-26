@@ -111,7 +111,7 @@ export const generateRitualId = (): string => {
   return `ritual_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 };
 
-export const getSuggestedActivities = (): string[] => {
+export const getSuggestedActivities = (preferences: any): string[] => {
   const suggestions = [
     'Morning Meditation',
     'Gratitude Journaling',

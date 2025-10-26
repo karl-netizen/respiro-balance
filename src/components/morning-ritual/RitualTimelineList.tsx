@@ -1,5 +1,5 @@
 
-
+import React from 'react';
 import RitualTimelineItem from './RitualTimelineItem';
 import { MorningRitual } from '@/context/types';
 
@@ -18,7 +18,7 @@ const RitualTimelineList: React.FC<RitualTimelineListProps> = ({
 }) => {
   return (
     <div className="space-y-6 relative z-10">
-      {rituals.map((ritual) => (
+      {rituals.map((ritual, index) => (
         <RitualTimelineItem
           key={ritual.id}
           ritual={ritual}

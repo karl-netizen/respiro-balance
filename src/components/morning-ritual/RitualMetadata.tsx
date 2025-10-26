@@ -1,14 +1,16 @@
+
+import React from 'react';
 import { Badge } from '@/components/ui/badge';
-import { Clock, Repeat } from 'lucide-react';
+import { Clock, Calendar, Repeat } from 'lucide-react';
 import { MorningRitual } from '@/context/types';
 
 interface RitualMetadataProps {
   ritual: MorningRitual;
-  isToday?: boolean;
-  isCompletedToday?: boolean;
+  isToday: boolean;
+  isCompletedToday: boolean;
 }
 
-const RitualMetadata: React.FC<RitualMetadataProps> = ({ ritual }) => {
+const RitualMetadata: React.FC<RitualMetadataProps> = ({ ritual, isToday, isCompletedToday }) => {
   return (
     <div className="flex items-center space-x-4 text-sm text-muted-foreground">
       <div className="flex items-center space-x-1">

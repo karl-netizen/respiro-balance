@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
 import { Cloud, Sun, CloudRain, Snowflake, Plus, X } from 'lucide-react';
 
 interface WeatherAlternative {
@@ -54,6 +55,18 @@ const WeatherIntegration: React.FC<WeatherIntegrationProps> = ({
 
   const handleRemoveAlternative = (id: string) => {
     onAlternativeRemove(id);
+  };
+
+  const handleUpdateAlternative = (id: string, updatedData: Partial<WeatherAlternative>) => {
+    const alternativeToUpdate = alternatives.find(alt => alt.id === id);
+    if (!alternativeToUpdate) return;
+
+    const updatedAlternative: WeatherAlternative = {
+      ...alternativeToUpdate,
+      ...updatedData,
+    };
+
+    onAlternativeUpdate(updatedAlternative);
   };
 
   const getWeatherIcon = (condition: string) => {

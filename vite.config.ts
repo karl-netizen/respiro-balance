@@ -29,9 +29,6 @@ export default defineConfig(({ mode }) => ({
       brotliSize: true,
     }),
   ].filter(Boolean),
-  esbuild: {
-    logOverride: { 'this-is-undefined-in-esm': 'silent' }
-  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
