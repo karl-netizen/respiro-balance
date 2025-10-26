@@ -2,7 +2,6 @@
 import React from 'react';
 import { SubscriptionCard } from './SubscriptionCard';
 import { useSubscriptionContext } from '@/hooks/useSubscriptionContext';
-import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 
@@ -77,12 +76,6 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
   };
 
   const currentTier = isPremium ? (subscriptionData?.tier || 'premium') : 'free';
-
-  // Calculate annual pricing with different discount percentages
-  const _getAnnualPrice = (monthlyPrice: number, discountPercent: number) => {
-    if (monthlyPrice === 0) return 0;
-    return Math.round(monthlyPrice * 12 * (1 - discountPercent / 100) * 100) / 100;
-  };
 
   return (
     <div className="w-full">

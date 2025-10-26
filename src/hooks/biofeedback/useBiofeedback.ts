@@ -58,7 +58,7 @@ export const useBiofeedback = (): BiofeedbackHookReturn => {
     return () => clearInterval(interval);
   }, [connectedDeviceId, heartRate, stress]);
 
-  const connectDevice = async (deviceId: string, options?: any): Promise<boolean> => {
+  const connectDevice = async (deviceId: string): Promise<boolean> => {
     setIsConnecting(true);
     try {
       // Check Bluetooth availability
@@ -88,7 +88,7 @@ export const useBiofeedback = (): BiofeedbackHookReturn => {
       setConnectedDeviceId(deviceId);
       
       // Start reading data from the device
-      const cleanup = startDataReading(deviceId);
+      startDataReading(deviceId);
 
       toast.success('Device connected', {
         description: `Successfully connected to ${connectedDevice.name}`
@@ -106,7 +106,7 @@ export const useBiofeedback = (): BiofeedbackHookReturn => {
     }
   };
 
-  const disconnectDevice = async (deviceId: string, options?: any): Promise<boolean> => {
+  const disconnectDevice = async (deviceId: string): Promise<boolean> => {
     try {
       const success = await DeviceService.disconnectFromDevice(deviceId);
       
@@ -130,7 +130,7 @@ export const useBiofeedback = (): BiofeedbackHookReturn => {
     }
   };
 
-  const scanForDevices = async (deviceType?: string, options?: any): Promise<boolean> => {
+  const scanForDevices = async (): Promise<boolean> => {
     setIsScanning(true);
     try {
       // Check Bluetooth availability
@@ -177,7 +177,7 @@ export const useBiofeedback = (): BiofeedbackHookReturn => {
     }
   };
 
-  const stopScan = async (deviceType?: string, callback?: () => void): Promise<void> => {
+  const stopScan = async (_deviceType?: string, callback?: () => void): Promise<void> => {
     setIsScanning(false);
     if (callback) callback();
   };

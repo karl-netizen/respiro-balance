@@ -1,10 +1,10 @@
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Trophy, Users, Calendar, Target, Flame, Bell } from 'lucide-react';
+import { Trophy, Users, Target, Flame, Bell } from 'lucide-react';
 
 interface Challenge {
   id: string;

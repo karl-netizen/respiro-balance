@@ -188,7 +188,7 @@ export const getHeartRateData = async (deviceId: string): Promise<number> => {
 };
 
 // Get stress level data (could be derived from HRV or other metrics)
-export const getStressLevelData = async (deviceId: string): Promise<number> => {
+export const getStressLevelData = async (_deviceId: string): Promise<number> => {
   // For now, return calculated data based on heart rate variability
   // In production, this would use more sophisticated HRV analysis
   return Math.floor(Math.random() * (80 - 20) + 20);

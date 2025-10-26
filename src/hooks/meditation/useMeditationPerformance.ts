@@ -5,7 +5,6 @@ import { MeditationSession } from '@/types/meditation';
 export const useMeditationPerformance = (sessions: MeditationSession[]) => {
   const { 
     isLowPerformanceDevice, 
-    getOptimizedImageSize, 
     shouldLazyLoad,
     getLoadingStrategy 
   } = usePerformanceOptimization();

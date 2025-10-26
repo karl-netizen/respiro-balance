@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Download, FileText, Crown } from 'lucide-react';
+import { Download, Crown } from 'lucide-react';
 import { useSubscriptionContext } from './SubscriptionProvider';
 import { SubscriptionGate } from './SubscriptionGate';
 import jsPDF from 'jspdf';

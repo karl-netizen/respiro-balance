@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Calendar, Clock, Users, Play, Radio, Download, MessageCircle } from 'lucide-react';
+import { Calendar, Users, Play, Radio, Download, MessageCircle } from 'lucide-react';
 import { FeatureGate } from '../management/FeatureGate';
 
 interface Masterclass {

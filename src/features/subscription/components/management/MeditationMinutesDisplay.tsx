@@ -13,7 +13,7 @@ export const MeditationMinutesDisplay: React.FC<MeditationMinutesDisplayProps> =
   showIcon = true,
   compact = false
 }) => {
-  const { subscription, isPremium } = useSubscriptionContext();
+  const { isPremium } = useSubscriptionContext();
   
   // Don't show for premium users
   if (isPremium) return null;

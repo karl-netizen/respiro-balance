@@ -12,7 +12,7 @@ interface FocusMetrics {
 }
 
 export const useFocusMetrics = () => {
-  const [metrics, setMetrics] = useState<FocusMetrics>({
+  const [metrics] = useState<FocusMetrics>({
     currentFocusScore: 85,
     focusScoreTrend: 5,
     weeklyProgress: 12,

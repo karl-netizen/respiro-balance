@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button, ButtonProps } from '@/components/ui/button';
 import { ExternalLink, Loader2 } from 'lucide-react';
-import { redirectToStripePayment, openStripePaymentInNewTab } from '@/lib/stripePayment';
+import { openStripePaymentInNewTab } from '@/lib/stripePayment';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 

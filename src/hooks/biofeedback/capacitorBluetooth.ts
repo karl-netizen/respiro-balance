@@ -1,6 +1,6 @@
 // Capacitor Bluetooth LE integration for native mobile support
 import { Capacitor } from '@capacitor/core';
-import { BleClient, BleDevice } from '@capacitor-community/bluetooth-le';
+import { BleClient } from '@capacitor-community/bluetooth-le';
 import { BluetoothDevice } from '@/types/supabase';
 
 const HEART_RATE_SERVICE = '0000180d-0000-1000-8000-00805f9b34fb';

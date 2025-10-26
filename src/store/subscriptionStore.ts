@@ -187,7 +187,6 @@ export const useSubscriptionStore = create<SubscriptionState>()(
         // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 1000));
         
-        const now = new Date();
         const periodEnd = new Date();
         if (cycle === 'monthly') {
           periodEnd.setMonth(periodEnd.getMonth() + 1);

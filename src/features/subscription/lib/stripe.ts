@@ -32,8 +32,8 @@ export class MockStripeService {
    */
   async createPaymentIntent(
     amount: number,
-    tier: SubscriptionTier,
-    cycle: BillingCycle
+    _tier: SubscriptionTier,
+    _cycle: BillingCycle
   ): Promise<PaymentIntent> {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 1500));
@@ -56,8 +56,8 @@ export class MockStripeService {
     cvc: string,
     cardholderName: string,
     amount: number,
-    tier: SubscriptionTier,
-    cycle: BillingCycle
+    _tier: SubscriptionTier,
+    _cycle: BillingCycle
   ): Promise<{ success: boolean; paymentIntent?: PaymentIntent; error?: string }> {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 2000));
@@ -80,7 +80,7 @@ export class MockStripeService {
     }
     
     // Create payment intent
-    const paymentIntent = await this.createPaymentIntent(amount, tier, cycle);
+    const paymentIntent = await this.createPaymentIntent(amount, _tier, _cycle);
     
     return {
       success: true,
@@ -92,8 +92,8 @@ export class MockStripeService {
    * Simulates creating a subscription
    */
   async createSubscription(
-    customerId: string,
-    priceId: string
+    _customerId: string,
+    _priceId: string
   ): Promise<{ subscriptionId: string; status: string }> {
     await new Promise(resolve => setTimeout(resolve, 1500));
 
@@ -106,7 +106,7 @@ export class MockStripeService {
   /**
    * Simulates canceling a subscription
    */
-  async cancelSubscription(subscriptionId: string): Promise<boolean> {
+  async cancelSubscription(_subscriptionId: string): Promise<boolean> {
     await new Promise(resolve => setTimeout(resolve, 1000));
     return true;
   }
@@ -131,8 +131,8 @@ export class MockStripeService {
    */
   async updatePaymentMethod(
     cardNumber: string,
-    expiry: string,
-    cvc: string
+    _expiry: string,
+    _cvc: string
   ): Promise<{ success: boolean; error?: string }> {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 1500));

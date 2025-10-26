@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
-import { useSubscriptionStore, SubscriptionTier } from '../../store/subscriptionStore';
+import { useSubscriptionStore } from '../../store/subscriptionStore';
 import { Check, Lock, Sparkles } from 'lucide-react';
 
 interface UpgradePromptDialogProps {

@@ -1,5 +1,3 @@
-
-import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { TouchFriendlyButton } from "@/components/responsive/TouchFriendlyButton";
 import { Switch } from "@/components/ui/switch";

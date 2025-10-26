@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Calendar } from '@/components/ui/calendar';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Video, Star, Clock, DollarSign, User, BookOpen } from 'lucide-react';
+import { Video, Star, DollarSign, User } from 'lucide-react';
 
 interface Expert {
   id: string;

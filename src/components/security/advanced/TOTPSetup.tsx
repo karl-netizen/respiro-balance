@@ -38,9 +38,8 @@ export class AdvancedTwoFactorService {
       setTimeout(() => {
         const secret = this.generateSecret();
         const accountName = 'user@example.com';
-        const issuer = 'Respiro Balance';
         
-        // Generate mock QR code data URL (qrData would be used in production)
+        // Generate mock QR code data URL
         const qrCodeUrl = `data:image/svg+xml;base64,${btoa(this.generateQRCodeSVG())}`;
         
         resolve(Ok({

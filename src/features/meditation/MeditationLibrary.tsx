@@ -36,7 +36,7 @@ interface LocalLoadingState {
 const PremiumBanner = React.lazy(() => import('./components/PremiumBanner'));
 
 // Memoized child components with proper typing
-const _MeditationCard = React.memo<{
+const MeditationCard = React.memo<{
   item: ComponentMeditationContent;
   progress: UserProgress | undefined;
   selectedContent: ComponentMeditationContent | null;

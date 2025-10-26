@@ -35,9 +35,7 @@ export const TieredSupportSystem: React.FC = () => {
   
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
-  const [isChatOpen, setIsChatOpen] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState('');
   const [newTicket, setNewTicket] = useState({
     title: '',
     description: '',

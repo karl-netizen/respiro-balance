@@ -14,7 +14,7 @@ export function useDeviceManagement() {
   };
   
   // Scan for available Bluetooth devices
-  const scanForDevices = async (deviceType?: string, options?: any): Promise<boolean> => {
+  const scanForDevices = async (_deviceType?: string, options?: any): Promise<boolean> => {
     try {
       setIsScanning(true);
       
@@ -56,7 +56,7 @@ export function useDeviceManagement() {
   };
 
   // Stop ongoing scan with explicit Promise<void> return type
-  const stopScan = async (deviceType?: string, callback?: () => void): Promise<void> => {
+  const stopScan = async (_deviceType?: string, callback?: () => void): Promise<void> => {
     setIsScanning(false);
     
     if (callback && typeof callback === 'function') {

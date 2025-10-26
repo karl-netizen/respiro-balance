@@ -99,15 +99,6 @@ export const FamilySharingSystem: React.FC = () => {
     ));
   };
 
-  const getRoleIcon = (role: string) => {
-    switch (role) {
-      case 'parent': return '👨‍👩‍👧‍👦';
-      case 'teen': return '🧑‍🎓';
-      case 'child': return '🧒';
-      default: return '👤';
-    }
-  };
-
   const formatLastActive = (date: Date) => {
     const now = new Date();
     const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));

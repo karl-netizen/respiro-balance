@@ -7,16 +7,14 @@ import {
   MeditationProgress, 
   MeditationCategory, 
   DifficultyLevel,
-  SubscriptionTier,
-  AudioFile 
+  SubscriptionTier
 } from './meditation.types';
 import { MeditationId } from './branded.types';
 import { ResourceState, AsyncOperationState, AudioPlayerState } from './state.types';
 import { 
   Identifiable, 
   Timestamped, 
-  Favoritable, 
-  ContentFeatures 
+  Favoritable
 } from './generic.types';
 
 // =============================================

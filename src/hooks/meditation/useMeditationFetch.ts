@@ -38,8 +38,8 @@ export const useMeditationFetch = () => {
         audio_url: session.audio_file_url,
         started_at: session.created_at,
         completed: false,
-        completed_at: null,
-        rating: null,
+        completed_at: null as string | null,
+        rating: null as number | null,
         favorite: false,
         premium: session.subscription_tier === 'premium',
       }));
@@ -87,8 +87,8 @@ export const useMeditationFetch = () => {
         audio_url: data.audio_file_url,
         started_at: data.created_at,
         completed: false,
-        completed_at: null,
-        rating: null,
+        completed_at: null as string | null,
+        rating: null as number | null,
         favorite: false,
         premium: data.subscription_tier === 'premium',
       };

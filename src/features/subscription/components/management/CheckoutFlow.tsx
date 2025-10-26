@@ -13,7 +13,7 @@ interface CheckoutFlowProps {
   onComplete: () => void;
 }
 
-const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ onCancel, onComplete }) => {
+const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ onCancel }) => {
   const [step, setStep] = useState<'details' | 'payment' | 'confirmation'>('details');
   const [isProcessing, setIsProcessing] = useState(false);
   const { user } = useAuth();

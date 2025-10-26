@@ -4,7 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Crown, Check, Star, CreditCard, Calendar, Users } from 'lucide-react';
+import { Crown, Check, Star, CreditCard } from 'lucide-react';
 
 interface SubscriptionTier {
   id: string;
@@ -34,7 +34,6 @@ export const SubscriptionManagement: React.FC<SubscriptionManagementProps> = ({
   onUpgrade,
   onManageSubscription
 }) => {
-  const [selectedTier, setSelectedTier] = useState<string | null>(null);
 
   // Calculate annual pricing with different discount percentages
   const getAnnualPrice = (monthlyPrice: number, discountPercent: number) => {

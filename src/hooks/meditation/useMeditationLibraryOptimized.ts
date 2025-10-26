@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useTransformedMeditationSessions } from './useMeditationQuery';
 import { useMeditationFiltersOptimized } from './useMeditationFiltersOptimized';
 import { useMeditationFavorites } from '../useMeditationFavorites';
@@ -22,7 +22,6 @@ export const useMeditationLibraryOptimized = () => {
   const {
     filteredSessions,
     getSessionsByCategory,
-    getFavoriteSessions: getFilteredFavorites,
     getRecentSessions
   } = useMeditationFiltersOptimized(sessions, filterOptions);
 

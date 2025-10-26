@@ -57,9 +57,8 @@ const FeatureIcon: React.FC<{ type: FeatureValue['type'] }> = ({ type }) => {
 // Feature cell component
 const FeatureCell: React.FC<{ 
   feature: FeatureValue; 
-  planColor: string;
   isHighlighted?: boolean;
-}> = ({ feature, planColor, isHighlighted = false }) => {
+}> = ({ feature, isHighlighted = false }) => {
   return (
     <div className={cn(
       "flex items-start gap-2 p-4 min-h-[60px]",
@@ -334,7 +333,7 @@ const PricingMatrix: React.FC<PricingMatrixProps> = ({
 
       {/* Mobile View - Stacked Cards */}
       <div className="block lg:hidden space-y-6">
-        {plans.map((plan, planIndex) => (
+        {plans.map((plan) => (
           <div key={plan.name} className="bg-card rounded-lg shadow-lg border border-border overflow-hidden">
             {/* Mobile Plan Header */}
             <div className={getPlanHeaderClass(plan.buttonStyle, plan.popular)}>
@@ -369,9 +368,9 @@ const PricingMatrix: React.FC<PricingMatrixProps> = ({
                       {category.title}
                     </h4>
                   </div>
-                  {category.features.map((feature) => {
-                    const planFeature = planIndex === 0 ? feature.free : 
-                                      planIndex === 1 ? feature.standard : feature.premium;
+                   {category.features.map((feature) => {
+                    const planFeature = plan.name === 'Free' ? feature.free : 
+                                      plan.name === 'Standard' ? feature.standard : feature.premium;
                     return (
                       <div key={feature.name} className="p-4 border-b border-border last:border-b-0">
                         <div className="font-medium text-sm text-foreground mb-2">
@@ -405,7 +404,7 @@ const PricingMatrix: React.FC<PricingMatrixProps> = ({
           
           {/* Plan Headers */}
           <div className="grid grid-cols-3 border-b border-border">
-            {plans.map((plan, index) => (
+            {plans.map((plan) => (
               <div key={plan.name} className={getPlanHeaderClass(plan.buttonStyle, plan.popular)}>
                 {plan.popular && (
                   <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground">
@@ -433,7 +432,7 @@ const PricingMatrix: React.FC<PricingMatrixProps> = ({
 
           {/* Feature Categories and Rows */}
           <div className="divide-y divide-border">
-            {featureCategories.map((category, categoryIndex) => (
+            {featureCategories.map((category) => (
               <div key={category.title}>
                 {/* Category Header */}
                 <div className="grid grid-cols-3 bg-muted/50">
@@ -445,7 +444,7 @@ const PricingMatrix: React.FC<PricingMatrixProps> = ({
                 </div>
                 
                 {/* Category Features */}
-                {category.features.map((feature, featureIndex) => (
+                {category.features.map((feature) => (
                   <div 
                     key={feature.name} 
                     className="grid grid-cols-3 hover:bg-muted/30 transition-colors border-b border-border last:border-b-0"

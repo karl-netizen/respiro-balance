@@ -2,7 +2,10 @@
 // GENERIC CONSTRAINTS & UTILITY TYPES
 // =============================================
 
-import { MeditationCategory, DifficultyLevel, SubscriptionTier } from './meditation.types';
+export type MeditationCategory = 'mindfulness' | 'sleep' | 'stress' | 'focus' | 'breathing';
+export type DifficultyLevel = 'beginner' | 'intermediate' | 'advanced';
+
+import { SubscriptionTier } from './meditation.types';
 import { MeditationId } from './branded.types';
 import { AsyncOperationState } from './state.types';
 
@@ -121,7 +124,7 @@ export type SafeEventHandler<T extends Event, R = void> = (
 ) => R | Promise<R> | AsyncOperationState<R>;
 
 // Generic async hook return type
-export interface UseAsyncReturn<T, TError = Error> {
+export interface UseAsyncReturn<T> {
   state: AsyncOperationState<T>;
   execute: (...args: unknown[]) => Promise<void>;
   reset: () => void;
