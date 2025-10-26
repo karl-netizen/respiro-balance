@@ -24,6 +24,7 @@ import HomePage from '@/pages/HomePage';
 import LandingPage from '@/pages/LandingPage';
 import LoginPage from '@/pages/LoginPage';
 import RegisterPage from '@/pages/RegisterPage';
+import SignupPage from '@/pages/SignupPage';
 import ForgotPasswordPage from '@/pages/ForgotPasswordPage';
 import ResetPasswordPage from '@/pages/ResetPasswordPage';
 // import ProfilePage from '@/pages/ProfilePage';
@@ -177,6 +178,7 @@ function AppContent() {
                             <SuspenseRoute><LazyDashboard /></SuspenseRoute>
                           } />
                          <Route path="/register" element={<RegisterPage />} />
+                         <Route path="/signup" element={<SignupPage />} />
                          <Route path="/login" element={<LoginPage />} />
                          <Route path="/auth" element={<SimpleAuthPage />} />
                          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
