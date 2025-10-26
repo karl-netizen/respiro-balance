@@ -458,17 +458,14 @@ const PricingMatrix: React.FC<PricingMatrixProps> = ({
                     
                     {/* Plan Features */}
                     <FeatureCell 
-                      feature={feature.free} 
-                      planColor="gray"
+                      feature={feature.free}
                     />
                     <FeatureCell 
-                      feature={feature.standard} 
-                      planColor="teal"
+                      feature={feature.standard}
                       isHighlighted={plans[1].popular}
                     />
                     <FeatureCell 
-                      feature={feature.premium} 
-                      planColor="blue"
+                      feature={feature.premium}
                     />
                   </div>
                 ))}

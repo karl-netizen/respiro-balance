@@ -1,16 +1,16 @@
 
-export const useOfflineSync = (userId?: string, updateUsage?: any, invalidateQueries?: any) => {
+export const useOfflineSync = (_userId?: string, _updateUsage?: any, _invalidateQueries?: any) => {
   const processOfflineSync = async () => {
     // Mock implementation
     return;
   };
 
-  const handleOfflineSessionStart = (session: any, user: any): string => {
+  const handleOfflineSessionStart = (_session: any, _user: any): string => {
     // Mock implementation
     return `offline-${Date.now()}`;
   };
 
-  const handleOfflineSessionComplete = async (sessionId: string, user: any) => {
+  const handleOfflineSessionComplete = async (_sessionId: string, _user: any) => {
     // Mock implementation
     return;
   };

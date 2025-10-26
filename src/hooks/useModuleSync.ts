@@ -12,13 +12,11 @@ export function useModuleSync() {
 
   useEffect(() => {
     // Map subscription tier to module store tier
-    const tier = subscription.subscribed 
-      ? (subscription.tier as 'free' | 'standard' | 'premium')
-      : 'free';
+    const tier = subscriptionData?.tier as 'free' | 'standard' | 'premium' || 'free';
 
     // Only update if tier changed
     if (tier !== subscriptionTier) {
       setSubscriptionTier(tier);
     }
-  }, [subscription, setSubscriptionTier, subscriptionTier]);
+  }, [subscriptionData, setSubscriptionTier, subscriptionTier]);
 }

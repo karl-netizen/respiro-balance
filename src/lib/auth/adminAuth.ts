@@ -7,7 +7,7 @@
  * All admin operations MUST go through the admin-check Edge Function
  */
 
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 
 export type UserRole = 'user' | 'moderator' | 'admin' | 'super_admin';
 
@@ -123,7 +123,7 @@ export async function getCurrentUserRoles(): Promise<UserRole[]> {
       return [];
     }
 
-    return data.map(r => r.role as UserRole);
+    return data.map((r: any) => r.role as UserRole);
   } catch (error) {
     console.error('Error getting current user roles:', error);
     return [];

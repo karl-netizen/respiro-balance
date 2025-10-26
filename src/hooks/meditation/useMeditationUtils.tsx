@@ -1,5 +1,5 @@
 
-import { Heart, Clock, User, Sparkles, Compass, Leaf, Mountain, Sun, Moon, Star } from 'lucide-react';
+import { Heart, Sparkles, Compass, Leaf, Mountain, Sun, Moon, Star } from 'lucide-react';
 
 export const useMeditationUtils = () => {
   // Utility functions

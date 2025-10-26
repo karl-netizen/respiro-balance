@@ -6,7 +6,6 @@ export type MeditationCategory = 'mindfulness' | 'sleep' | 'stress' | 'focus' | 
 export type DifficultyLevel = 'beginner' | 'intermediate' | 'advanced';
 
 import { SubscriptionTier } from './meditation.types';
-import { MeditationId } from './branded.types';
 import { AsyncOperationState } from './state.types';
 
 // Generic constraint for items with required properties

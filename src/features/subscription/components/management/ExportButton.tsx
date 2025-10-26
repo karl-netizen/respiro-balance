@@ -16,8 +16,7 @@ interface ExportButtonProps {
 export const ExportButton: React.FC<ExportButtonProps> = ({
   data,
   filename,
-  type,
-  title = 'Export Data'
+  type
 }) => {
   const [isExporting, setIsExporting] = useState(false);
   const { isPremium } = useSubscriptionContext();

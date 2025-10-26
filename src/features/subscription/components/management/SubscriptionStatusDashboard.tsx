@@ -15,11 +15,10 @@ import {
 import { useFeatureAccess } from '@/hooks/useFeatureAccess';
 import { useSubscriptionContext } from '@/hooks/useSubscriptionContext';
 import { useNavigate } from 'react-router-dom';
-import { format } from 'date-fns';
 
 export const SubscriptionStatusDashboard: React.FC = () => {
   const { currentTier, getSessionLimits, getMeditationLibraryAccess, getFeatureFlags } = useFeatureAccess();
-  const { isPremium, subscriptionData, manageSubscription } = useSubscriptionContext();
+  const { isPremium, manageSubscription } = useSubscriptionContext();
   const navigate = useNavigate();
 
   const sessionLimits = getSessionLimits();

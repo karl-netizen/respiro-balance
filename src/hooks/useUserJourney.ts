@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/features/subscription';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
 
 interface JourneyStep {
   id: string;
@@ -24,7 +23,7 @@ interface UserJourneyData {
 
 export const useUserJourney = () => {
   const { user } = useAuth();
-  const { subscriptionData } = useSubscription();
+  const subscriptionData = useSubscription();
   const [currentJourney, setCurrentJourney] = useState<UserJourneyData | null>(null);
   const [journeyMetrics, setJourneyMetrics] = useState<Record<string, any>>({});
 
@@ -100,8 +99,8 @@ export const useUserJourney = () => {
     
     // Track journey start
     trackStep('journey_start', `${journeyType} journey started`, {
-      user_tier: subscription.tier,
-      is_premium: subscription.subscribed
+      user_tier: subscriptionData?.subscriptionData?.tier || 'free',
+      is_premium: subscriptionData?.isPremium || false
     });
   };
 
