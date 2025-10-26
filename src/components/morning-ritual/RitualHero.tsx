@@ -1,15 +1,12 @@
-
-import React, { useState } from "react";
+import { useState } from "react";
 import { useUserPreferences } from "@/context";
 import { Sun, Clock, Calendar, Info } from "lucide-react";
 import { useTimeAwareness } from "@/hooks/useTimeAwareness";
-import { useDeviceDetection } from '@/hooks/core/useDeviceDetection';
 import { cn } from "@/lib/utils";
 
 const RitualHero = () => {
   const { preferences } = useUserPreferences();
   const { getGreeting } = useTimeAwareness();
-  const { deviceType } = useDeviceDetection();
   const [showDetails, setShowDetails] = useState(false);
   const morningActivities = preferences.morningActivities || [];
   const ritualsCount = preferences.morningRituals?.length || 0;

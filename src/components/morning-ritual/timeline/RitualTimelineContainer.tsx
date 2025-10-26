@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { MorningRitual } from "@/context/types";
 import { useRitualTimeline } from "../hooks/useRitualTimeline";
 import { RitualFilters } from "../RitualFilter";
