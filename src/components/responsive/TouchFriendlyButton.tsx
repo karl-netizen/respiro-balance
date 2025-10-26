@@ -20,7 +20,7 @@ export const TouchFriendlyButton: React.FC<TouchFriendlyButtonProps> = ({
   onClick,
   ...props
 }) => {
-  const { vibrate, isMobile } = useMobileFeatures();
+  const { vibrate } = useMobileFeatures();
   const { touchCapable } = useDeviceDetection();
   const [isPressed, setIsPressed] = useState(false);
   const [ripples, setRipples] = useState<Array<{ id: number; x: number; y: number }>>([]);

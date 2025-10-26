@@ -1,6 +1,5 @@
 
-import { format, parseISO, subDays, startOfDay, addDays, isWithinInterval } from 'date-fns';
-import { getDateKey } from './dateUtils';
+import { format, subDays } from 'date-fns';
 
 // Generate monthly trend data for charts
 export const generateMonthlyTrend = (sessions: any[]): number[] => {

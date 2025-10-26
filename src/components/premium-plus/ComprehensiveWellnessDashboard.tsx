@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -13,7 +13,6 @@ import {
   TrendingUp, 
   TrendingDown,
   Download,
-  Calendar,
   Target,
   Award
 } from 'lucide-react';
@@ -22,7 +21,6 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 
 const ComprehensiveWellnessDashboard: React.FC = () => {
   const [timeRange, setTimeRange] = useState('week');
-  const [selectedMetric, setSelectedMetric] = useState('overall');
 
   // Mock data for wellness metrics
   const wellnessData = [

@@ -49,7 +49,7 @@ const PerformanceDemo: React.FC = () => {
     reconnectDelay: 1000
   }), []);
 
-  const { connectionState, send: sendWsMessage } = useWebSocket(wsConfig);
+  const { connectionState } = useWebSocket(wsConfig);
 
   // Performance testing functions
   const generateHeavyData = React.useCallback(() => {

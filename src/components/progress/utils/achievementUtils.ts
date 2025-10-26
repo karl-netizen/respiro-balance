@@ -79,7 +79,7 @@ export const calculateAchievements = (sessions: any[]) => {
     ...a, 
     unlocked: false, 
     progress: 0,
-    unlockedDate: undefined 
+    unlockedDate: undefined as any
   }));
   
   const totalSessions = sessions.length;

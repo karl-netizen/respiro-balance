@@ -1,5 +1,5 @@
 
-import { differenceInCalendarDays, isSameDay, format, startOfDay, parseISO } from 'date-fns';
+import { differenceInCalendarDays, format, startOfDay, parseISO } from 'date-fns';
 
 // Calculate current streak based on completed sessions
 export const calculateStreak = (sessions: any[]): number => {
@@ -25,7 +25,6 @@ export const calculateStreak = (sessions: any[]): number => {
   }
   
   let streak = 1;
-  const previousDate = currentDate;
   
   // Create a map of days with completed sessions
   const completedDays = new Map<string, boolean>();

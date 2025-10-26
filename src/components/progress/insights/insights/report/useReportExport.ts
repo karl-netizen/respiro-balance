@@ -152,7 +152,6 @@ export const useReportExport = (meditationStats: MeditationStats) => {
         
         while (remainingHeight > 0) {
           pdf.addPage();
-          const pageHeight = Math.min(remainingHeight, 297);
           pdf.addImage(imgData, 'PNG', 0, yOffset, pdfWidth, pdfHeight);
           remainingHeight -= 297;
           yOffset -= 297;

@@ -4,10 +4,9 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Lightbulb, Clock, Calendar, ThumbsUp, AlarmCheck, BarChart } from "lucide-react";
 
 interface InsightsSectionProps {
-  preferences?: any;
 }
 
-const InsightsSection: React.FC<InsightsSectionProps> = ({ preferences }) => {
+const InsightsSection: React.FC<InsightsSectionProps> = () => {
   // Sample insights based on meditation data
   const insights = [
     {

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useAuth } from '@/hooks/useAuth';
 import { useUserPreferences } from '@/context';
 import { toast } from 'sonner';
-import { User, Globe, Clock, Ruler } from 'lucide-react';
+import { User, Globe, Ruler } from 'lucide-react';
 
 const COUNTRIES = [
   { code: 'US', name: 'United States' },

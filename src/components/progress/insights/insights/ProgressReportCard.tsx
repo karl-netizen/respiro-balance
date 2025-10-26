@@ -1,14 +1,11 @@
 
-import React from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FileText, ChevronRight } from "lucide-react";
 import { useMeditationStats } from "../../useMeditationStats";
-import { useAuth } from "@/hooks/useAuth";
 
 const ProgressReportCard = () => {
   const { meditationStats } = useMeditationStats();
-  const { user } = useAuth();
   
   return (
     <Card className="hover:shadow-md transition-shadow">

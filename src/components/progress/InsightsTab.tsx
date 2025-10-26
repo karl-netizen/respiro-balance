@@ -29,7 +29,6 @@ const SectionLoadingFallback = () => (
 
 const InsightsTab: React.FC = () => {
   const { meditationStats } = useMeditationStats();
-  const { preferences } = useUserPreferences();
   const { biometricData } = useBiometricData();
   const [activeSubTab, setActiveSubTab] = useState<string>("monthly");
   
@@ -79,7 +78,7 @@ const InsightsTab: React.FC = () => {
         <TabsContent value="insights" className="mt-0">
           <Suspense fallback={<SectionLoadingFallback />}>
             <div className="space-y-6">
-              <InsightsSection preferences={preferences} />
+              <InsightsSection />
               <ShareableReport />
             </div>
           </Suspense>

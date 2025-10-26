@@ -1,6 +1,6 @@
 
 import { MeditationStats } from '../types/meditationStats';
-import { addDays, format, subDays } from 'date-fns';
+import { format, subDays } from 'date-fns';
 import { calculateAchievements } from './achievementUtils';
 
 // Generate default stats for when we don't have real data yet

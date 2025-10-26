@@ -2,7 +2,6 @@
 import React from 'react';
 import { TouchFriendlyButton } from "@/components/responsive/TouchFriendlyButton";
 import { Calendar } from "lucide-react";
-import { useDeviceDetection } from '@/hooks/core/useDeviceDetection';
 
 interface ChartControlsProps {
   view: 'daily' | 'weekly';
@@ -10,8 +9,6 @@ interface ChartControlsProps {
 }
 
 export const ChartControls: React.FC<ChartControlsProps> = ({ view, onViewChange }) => {
-  const { deviceType } = useDeviceDetection();
-
   return (
     <div className="flex gap-1 shrink-0">
       <TouchFriendlyButton

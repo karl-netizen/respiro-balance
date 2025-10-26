@@ -1,9 +1,9 @@
 // Secure Input Component with XSS Protection
 // Extracted from SecureFormComponents.tsx
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { z } from 'zod';
-import { Input } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Shield, AlertTriangle, CheckCircle } from 'lucide-react';
 import { sanitizeUserInput } from '@/security/SecureAuthSystem';
 

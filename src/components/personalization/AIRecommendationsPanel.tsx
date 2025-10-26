@@ -4,14 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAIRecommendations } from '@/hooks/useAIRecommendations';
 import { Sparkles, Clock, TrendingUp, Brain, Loader2, Settings } from 'lucide-react';
-import { SessionRecommendation, RecommendationContext } from '@/services/AIPersonalizationEngine';
+import { RecommendationContext } from '@/services/AIPersonalizationEngine';
 import { ContextControls } from './ContextControls';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { AIUsageStats } from './AIUsageStats';
 
 export function AIRecommendationsPanel() {
   const { recommendations, isLoading, generateRecommendations } = useAIRecommendations();
-  const [selectedRec, setSelectedRec] = useState<SessionRecommendation | null>(null);
   const [showControls, setShowControls] = useState(false);
   const [currentContext, setCurrentContext] = useState<RecommendationContext>({
     currentMood: 5,
@@ -123,11 +122,10 @@ export function AIRecommendationsPanel() {
             </p>
           </div>
         ) : (
-          recommendations.map((rec, index) => (
+          recommendations.map((rec) => (
             <Card
               key={rec.id}
               className="cursor-pointer transition-all hover:shadow-md border-2"
-              onClick={() => setSelectedRec(rec)}
             >
               <CardHeader>
                 <div className="flex items-start justify-between">

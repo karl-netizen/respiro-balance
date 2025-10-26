@@ -17,7 +17,6 @@ interface NoOverlapGridProps {
 export const NoOverlapGrid: React.FC<NoOverlapGridProps> = ({
   children,
   className,
-  columns = { mobile: 1, tablet: 2, desktop: 3 },
   gap = 'md',
   minItemHeight,
 }) => {

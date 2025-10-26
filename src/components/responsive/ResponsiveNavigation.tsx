@@ -18,7 +18,7 @@ export const ResponsiveNavigation: React.FC<ResponsiveNavigationProps> = ({
   toggleMenu,
   className,
 }) => {
-  const { deviceType, touchCapable } = useDeviceDetection();
+  const { deviceType } = useDeviceDetection();
 
   if (deviceType === 'mobile') {
     return (

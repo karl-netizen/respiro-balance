@@ -64,7 +64,6 @@ const EnhancedMeditationPlayer: React.FC<EnhancedMeditationPlayerProps> = ({
   const [selectedBackgroundSound, setSelectedBackgroundSound] = useState('none');
   const [playbackSpeed, setPlaybackSpeed] = useState(1);
   
-  const audioRef = useRef<HTMLAudioElement>(null);
   const intervalRef = useRef<NodeJS.Timeout>();
 
   // Calculate progress

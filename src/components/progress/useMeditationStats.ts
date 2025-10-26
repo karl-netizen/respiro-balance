@@ -87,6 +87,6 @@ export const useMeditationStats = () => {
     meditationStats,
     isLoading,
     refreshStats,
-    sessions: []
+    sessions: [] as any[]
   };
 };

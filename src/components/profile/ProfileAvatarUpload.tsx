@@ -1,9 +1,9 @@
 
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
-import { Camera, Upload, User } from 'lucide-react';
+import { Upload } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   Dialog,

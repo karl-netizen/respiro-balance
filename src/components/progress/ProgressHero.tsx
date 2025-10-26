@@ -1,5 +1,4 @@
 
-import React from 'react';
 import { useMeditationStats } from './useMeditationStats';
 import { Flame, Calendar, Clock, Star } from 'lucide-react';
 

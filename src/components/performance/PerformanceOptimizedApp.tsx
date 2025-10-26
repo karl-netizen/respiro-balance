@@ -1,9 +1,9 @@
-import React, { Suspense, ReactNode } from 'react';
+import { Suspense, ReactNode } from 'react';
 import { Loader2 } from 'lucide-react';
 import { usePerformanceOptimization } from '@/hooks/usePerformanceOptimization';
 
-const PerformanceAwareLoader: React.FC<{ variant?: string }> = ({ variant = 'default' }) => {
-  const { isLowPerformanceDevice, deviceType } = usePerformanceOptimization();
+const PerformanceAwareLoader = () => {
+  const { deviceType } = usePerformanceOptimization();
   
   return (
     <div className="flex items-center justify-center min-h-[200px]">
@@ -19,26 +19,11 @@ const PerformanceAwareLoader: React.FC<{ variant?: string }> = ({ variant = 'def
 
 interface PerformanceOptimizedAppProps {
   children: ReactNode;
-  enableOfflineIndicator?: boolean;
-  enableFocusManagement?: boolean;
 }
 
-const PerformanceOptimizedApp: React.FC<PerformanceOptimizedAppProps> = ({ 
-  children,
-  enableOfflineIndicator = true,
-  enableFocusManagement = true
-}) => {
-  const { getLoadingStrategy } = usePerformanceOptimization();
-  const loadingStrategy = getLoadingStrategy();
-
+const PerformanceOptimizedApp = ({ children }: PerformanceOptimizedAppProps) => {
   return (
-    <Suspense 
-      fallback={
-        <PerformanceAwareLoader 
-          variant={loadingStrategy === 'progressive' ? 'dashboard' : 'spinner'} 
-        />
-      }
-    >
+    <Suspense fallback={<PerformanceAwareLoader />}>
       {children}
     </Suspense>
   );

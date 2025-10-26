@@ -58,9 +58,8 @@ const FeatureIcon: React.FC<{ type: FeatureValue['type'] }> = ({ type }) => {
 // Feature cell component
 const FeatureCell: React.FC<{ 
   feature: FeatureValue; 
-  planColor: string;
   isHighlighted?: boolean;
-}> = ({ feature, planColor, isHighlighted = false }) => {
+}> = ({ feature, isHighlighted = false }) => {
   return (
     <div className={cn(
       "flex items-start gap-2 p-4 min-h-[60px]",
@@ -406,7 +405,7 @@ const PricingMatrix: React.FC<PricingMatrixProps> = ({
           
           {/* Plan Headers */}
           <div className="grid grid-cols-3 border-b border-border">
-            {plans.map((plan, index) => (
+            {plans.map((plan) => (
               <div key={plan.name} className={getPlanHeaderClass(plan.buttonStyle, plan.popular)}>
                 {plan.popular && (
                   <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground">
@@ -434,7 +433,7 @@ const PricingMatrix: React.FC<PricingMatrixProps> = ({
 
           {/* Feature Categories and Rows */}
           <div className="divide-y divide-border">
-            {featureCategories.map((category, categoryIndex) => (
+            {featureCategories.map((category) => (
               <div key={category.title}>
                 {/* Category Header */}
                 <div className="grid grid-cols-3 bg-muted/50">
@@ -446,7 +445,7 @@ const PricingMatrix: React.FC<PricingMatrixProps> = ({
                 </div>
                 
                 {/* Category Features */}
-                {category.features.map((feature, featureIndex) => (
+                {category.features.map((feature) => (
                   <div 
                     key={feature.name} 
                     className="grid grid-cols-3 hover:bg-muted/30 transition-colors border-b border-border last:border-b-0"
@@ -459,19 +458,12 @@ const PricingMatrix: React.FC<PricingMatrixProps> = ({
                     </div>
                     
                     {/* Plan Features */}
+                    <FeatureCell feature={feature.free} />
                     <FeatureCell 
-                      feature={feature.free} 
-                      planColor="gray"
-                    />
-                    <FeatureCell 
-                      feature={feature.standard} 
-                      planColor="teal"
+                      feature={feature.standard}
                       isHighlighted={plans[1].popular}
                     />
-                    <FeatureCell 
-                      feature={feature.premium} 
-                      planColor="blue"
-                    />
+                    <FeatureCell feature={feature.premium} />
                   </div>
                 ))}
               </div>

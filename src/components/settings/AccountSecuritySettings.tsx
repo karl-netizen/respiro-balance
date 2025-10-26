@@ -8,7 +8,7 @@ import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { Shield, Key, Eye, EyeOff, Smartphone, Globe, Calendar, LogOut } from 'lucide-react';
+import { Shield, Key, Eye, EyeOff, Smartphone, Globe, LogOut } from 'lucide-react';
 import { toast } from 'sonner';
 
 const AccountSecuritySettings = () => {

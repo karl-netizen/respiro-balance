@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Flame, Calendar, Trophy } from "lucide-react";
+import { Flame, Trophy } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 
 interface MeditationStreakCardProps {
