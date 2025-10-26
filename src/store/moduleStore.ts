@@ -25,9 +25,9 @@ interface ModuleState {
 export const useModuleStore = create<ModuleState>()(
   persist(
     (set, get) => ({
-      subscriptionTier: 'free',
-      activeModules: [],
-      lastModuleSwap: null,
+      subscriptionTier: 'free' as SubscriptionTier,
+      activeModules: [] as string[],
+      lastModuleSwap: null as Date | null,
       devMode: process.env.NODE_ENV === 'development' ? false : false,
 
       setSubscriptionTier: (tier) => {

@@ -42,13 +42,13 @@ export const useFocusModeStore = create<FocusModeState>()(
   persist(
     (set, get) => ({
       isActive: false,
-      currentSession: null,
+      currentSession: null as FocusSession | null,
       timeRemaining: 0,
       workDuration: 25,
       shortBreakDuration: 5,
       longBreakDuration: 15,
       sessionsUntilLongBreak: 4,
-      sessions: [],
+      sessions: [] as FocusSession[],
       completedCycles: 0,
 
       startSession: (type) => {

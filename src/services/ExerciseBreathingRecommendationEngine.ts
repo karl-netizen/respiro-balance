@@ -93,7 +93,7 @@ export class ExerciseBreathingRecommendationEngine {
       equipment: false,
       contexts: ['cool-down', 'post-exercise', 'recovery-day'],
       purposes: ['recovery', 'stress-relief', 'cool-down'],
-      bestForExerciseTypes: ['yoga', 'pilates', 'stretching'],
+      bestForExerciseTypes: ['yoga', 'pilates'],
       bestForIntensity: ['very-light', 'light'],
       tensionAreas: ['neck', 'shoulders', 'stomach']
     },
@@ -132,9 +132,9 @@ export class ExerciseBreathingRecommendationEngine {
       equipment: false,
       contexts: ['pre-exercise', 'cool-down', 'recovery-day'],
       purposes: ['focus', 'recovery', 'stress-relief'],
-      bestForExerciseTypes: ['yoga', 'meditation', 'tai-chi'],
+      bestForExerciseTypes: ['yoga'],
       bestForIntensity: ['very-light', 'light'],
-      tensionAreas: ['neck', 'head', 'shoulders']
+      tensionAreas: ['neck', 'shoulders']
     }
   };
 
@@ -481,7 +481,7 @@ export class ExerciseBreathingRecommendationEngine {
         'Keep the rhythm steady and relaxed',
         'Focus on smooth, even breaths'
       ],
-      'wim-hof': [
+      'box-breathing-variation': [
         'Sit comfortably and take 30 deep breaths',
         'Breathe in fully, breathe out naturally (not forced)',
         'After the 30th breath, exhale and hold',
@@ -561,14 +561,9 @@ export class ExerciseBreathingRecommendationEngine {
     }
 
     // Technique-specific tips
-    if (technique === 'wim-hof') {
-      baseTips.push('Never practice this while driving or in water');
-      baseTips.push('Some tingling or lightheadedness is normal');
-    }
-
-    if (technique === 'breath-of-fire') {
-      baseTips.push('Stop if you feel dizzy');
-      baseTips.push('Build up duration gradually');
+    if (technique === 'box-breathing') {
+      baseTips.push('Maintain consistent rhythm throughout');
+      baseTips.push('Focus on smooth transitions between phases');
     }
 
     // Experience level tips

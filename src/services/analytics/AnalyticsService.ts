@@ -224,7 +224,7 @@ export class AnalyticsService {
 
       // Calculate streak (simplified)
       const hasSession = dailySessions.length > 0;
-      const previousStreak = i > 0 ? streakData[i - 1] : 0;
+      const previousStreak: number = i > 0 ? streakData[i - 1] : 0;
       streakData.push(hasSession ? previousStreak + 1 : 0);
     }
 

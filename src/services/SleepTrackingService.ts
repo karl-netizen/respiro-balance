@@ -3,11 +3,9 @@ import {
   SleepBreathingSession,
   SleepTrend,
   SleepAnalytics,
-  SleepChallenge,
-  WindDownActivity,
-  SleepGoal,
-  BreathingTechnique
+  WindDownActivity
 } from '@/types/sleepRecovery';
+import { BreathingTechnique } from '@/types/workLifeBalance';
 
 /**
  * Service for tracking and analyzing sleep data

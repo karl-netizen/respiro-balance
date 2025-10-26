@@ -35,10 +35,10 @@ export const useBiofeedbackStore = create<BiofeedbackState>()(
   persist(
     (set, get) => ({
       isConnected: false,
-      currentMetrics: null,
-      lastSyncTime: null,
-      sessionInsights: [],
-      weeklyReports: [],
+      currentMetrics: null as BiofeedbackMetrics | null,
+      lastSyncTime: null as Date | null,
+      sessionInsights: [] as SessionInsight[],
+      weeklyReports: [] as WeeklyReport[],
 
       connectHealthApp: async () => {
         const hasPermission = await healthDataService.requestPermission();

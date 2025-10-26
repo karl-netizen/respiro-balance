@@ -24,7 +24,7 @@ export const useWorkLifeBalanceStore = create<WorkLifeBalanceState>()(
     (set, get) => ({
       workMinutesToday: 0,
       breakMinutesToday: 0,
-      sessions: [],
+      sessions: [] as WorkSession[],
 
       addWorkSession: (minutes) => {
         set(state => ({

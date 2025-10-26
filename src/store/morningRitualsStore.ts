@@ -34,8 +34,8 @@ export const useMorningRitualsStore = create<MorningRitualsState>()(
         { id: '1', name: 'Meditation', icon: '🧘', order: 1 },
         { id: '2', name: 'Exercise', icon: '💪', order: 2 },
         { id: '3', name: 'Journaling', icon: '📝', order: 3 }
-      ],
-      completions: [],
+      ] as Habit[],
+      completions: [] as HabitCompletion[],
       currentStreak: 0,
       longestStreak: 0,
 
