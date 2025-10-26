@@ -175,7 +175,7 @@ export const DeviceManagement: React.FC = () => {
 
   const handleRevokeDevice = async (deviceId: string) => {
     setIsRevoking(true);
-    const result = await deviceService.revokeTrustedDevice(deviceId);
+    const result = await deviceService.revokeTrustedDevice();
     
     if (result.success) {
       setDevices(prev => prev.filter(d => d.id !== deviceId));

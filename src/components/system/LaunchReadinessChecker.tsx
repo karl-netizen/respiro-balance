@@ -98,13 +98,14 @@ export const LaunchReadinessChecker: React.FC = () => {
     setChecks(launchChecks);
     
     // Calculate readiness
+    const criticalChecks = launchChecks.filter(check => check.critical);
     const totalPassed = launchChecks.filter(check => check.status === 'pass').length;
     
     const readinessScore = Math.round((totalPassed / launchChecks.length) * 100);
     setOverallReadiness(readinessScore);
     
     // Can launch if all critical checks pass
-    const canLaunchStatus = criticalChecks.every(check => check.status === 'pass');
+    const canLaunchStatus = criticalChecks.every((check: any) => check.status === 'pass');
     setCanLaunch(canLaunchStatus);
     
     setIsLoading(false);

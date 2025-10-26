@@ -149,7 +149,6 @@ export const BiometricSetup: React.FC<BiometricSetupProps> = ({
     setIsRegistering(true);
     
     const result = await biometricService.registerBiometric(
-      'current-user-id',
       credentialName
     );
     

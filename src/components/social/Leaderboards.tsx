@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Trophy, Crown, Medal, Target, Brain, Zap } from 'lucide-react';
+import { Crown, Medal, Target, Brain, Zap } from 'lucide-react';
 
 interface LeaderboardEntry {
   rank: number;
@@ -18,7 +18,6 @@ interface LeaderboardEntry {
 }
 
 export const Leaderboards: React.FC = () => {
-  const [timeframe] = useState('week');
 
   const meditationLeaderboard: LeaderboardEntry[] = [
     { rank: 1, user: { name: 'Alex Rivera', level: 20 }, score: 450, change: 2 },

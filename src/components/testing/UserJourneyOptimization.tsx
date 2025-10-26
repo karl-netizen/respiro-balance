@@ -132,8 +132,8 @@ export const UserJourneyOptimization: React.FC = () => {
               severity: 'high',
               category: test.flowType,
               description: error,
-              impact: getImpactForError(error, test.flowType),
-              recommendation: getRecommendationForError(error, test.flowType),
+              impact: getImpactForError(error),
+              recommendation: getRecommendationForError(error),
               estimatedFix: getEstimatedFixTime(error)
             });
           });

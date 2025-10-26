@@ -3,7 +3,6 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ChevronLeft, ChevronRight, Search, Filter, ArrowUpDown } from 'lucide-react';
 import { useDeviceDetection } from '@/hooks/core/useDeviceDetection';
 
@@ -33,7 +32,6 @@ export const MobileTable: React.FC<MobileTableProps> = ({
   data,
   columns,
   onSort,
-  onFilter,
   onRowSelect,
   pagination,
   searchable = false,

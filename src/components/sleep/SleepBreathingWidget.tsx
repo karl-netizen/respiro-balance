@@ -465,8 +465,8 @@ export const SleepBreathingWidget: React.FC<SleepBreathingWidgetProps> = ({
         ) : (
           <div className="space-y-4">
             <h4 className="font-medium text-sm">Recommended for You</h4>
-            {recommendations.map((recommendation) => {
-              const technique = SLEEP_TECHNIQUE_DESCRIPTIONS[recommendation.suggestedTechnique];
+            {recommendations.map((recommendation: any) => {
+              const technique = SLEEP_TECHNIQUE_DESCRIPTIONS[recommendation.technique as any];
 
               return (
                 <div
@@ -500,7 +500,7 @@ export const SleepBreathingWidget: React.FC<SleepBreathingWidgetProps> = ({
 
                   <div className="flex items-center justify-between">
                     <div className="flex flex-wrap gap-1">
-                      {technique.bestFor.slice(0, 2).map((benefit, index) => (
+                      {technique?.bestFor?.slice(0, 2).map((benefit: string, index: number) => (
                         <Badge key={index} variant="secondary" className="text-xs">
                           {benefit}
                         </Badge>

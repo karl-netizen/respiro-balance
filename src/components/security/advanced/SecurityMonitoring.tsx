@@ -167,7 +167,7 @@ export const SecurityAlerts: React.FC = () => {
   };
 
   const handleMarkAsRead = async (alertId: string) => {
-    await monitoringService.markAlertAsRead(alertId);
+    await monitoringService.markAlertAsRead();
     setAlerts(prev => prev.map(alert => 
       alert.id === alertId ? { ...alert, isRead: true } : alert
     ));

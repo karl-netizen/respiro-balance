@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Share2, Download, Copy, Twitter, Facebook, Instagram, Link } from 'lucide-react';
+import { Download, Copy, Twitter, Facebook, Instagram, Link } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface ShareableAchievement {
@@ -177,7 +177,7 @@ export const SharingCenter: React.FC = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => downloadImage(achievement)}
+                  onClick={() => downloadImage()}
                   className="flex items-center gap-2"
                 >
                   <Download className="h-4 w-4" />

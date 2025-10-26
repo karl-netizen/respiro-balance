@@ -90,7 +90,7 @@ export class AdvancedTwoFactorService {
     return codes;
   }
 
-  private generateQRCodeSVG(data: string): string {
+  private generateQRCodeSVG(): string {
     // Simple mock QR code SVG
     return `
       <svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
@@ -124,7 +124,7 @@ export const TOTPSetup: React.FC<TOTPSetupProps> = ({
   const handleSetupStart = async () => {
     setIsLoading(true);
     
-    const result = await twoFactorService.setupTOTP('current-user-id');
+    const result = await twoFactorService.setupTOTP();
     
     if (result.success) {
       setSetupData(result.data!);
@@ -142,9 +142,7 @@ export const TOTPSetup: React.FC<TOTPSetupProps> = ({
     setIsLoading(true);
     
     const result = await twoFactorService.verifyTOTPSetup(
-      'current-user-id',
-      verificationCode,
-      setupData.secret
+      verificationCode
     );
     
     if (result.success) {

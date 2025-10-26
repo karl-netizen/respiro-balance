@@ -2,13 +2,12 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
 import { MobileTable } from "./mobile-table"
-import { useDeviceDetection } from '@/hooks/core/useDeviceDetection';
+
 
 const Table = React.forwardRef<
   HTMLTableElement,
   React.HTMLAttributes<HTMLTableElement>
 >(({ className, ...props }, ref) => {
-  const { deviceType } = useDeviceDetection();
   
   // For mobile, we'll let individual components decide how to handle tables
   // This maintains backward compatibility while allowing opt-in mobile optimization

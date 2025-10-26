@@ -54,7 +54,7 @@ export const SleepAnalytics: React.FC<SleepAnalyticsProps> = ({
   trends,
   onUpdateGoals
 }) => {
-  const [timeRange, setTimeRange] = useState<'week' | 'month' | 'quarter'>('month');
+  const [timeRange] = useState<'week' | 'month' | 'quarter'>('month');
 
   // Color schemes for charts
   const colors = {
