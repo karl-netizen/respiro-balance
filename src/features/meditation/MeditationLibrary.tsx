@@ -35,19 +35,19 @@ interface LocalLoadingState {
 // Lazy-loaded components for better performance
 const PremiumBanner = React.lazy(() => import('./components/PremiumBanner'));
 
-// Memoized child components with proper typing
-const _MeditationCard = React.memo<{
-  item: ComponentMeditationContent;
-  progress: UserProgress | undefined;
-  selectedContent: ComponentMeditationContent | null;
-  onPlay: (item: ComponentMeditationContent) => Promise<void>;
-  onToggleFavorite: (id: string) => Promise<void>;
-}>(({ 
+// MeditationCard component (currently unused but maintained for future use)
+const _MeditationCard = ({
   item, 
   progress, 
   selectedContent, 
   onPlay, 
   onToggleFavorite 
+}: {
+  item: ComponentMeditationContent;
+  progress: UserProgress | undefined;
+  selectedContent: ComponentMeditationContent | null;
+  onPlay: (item: ComponentMeditationContent) => Promise<void>;
+  onToggleFavorite: (id: string) => Promise<void>;
 }) => {
   const isSelected = selectedContent?.id === item.id;
   
@@ -154,7 +154,7 @@ const _MeditationCard = React.memo<{
       </CardContent>
     </Card>
   );
-});
+};
 
 const AudioFileItem = React.memo<{
   file: AudioFile;

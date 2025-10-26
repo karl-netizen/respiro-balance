@@ -147,7 +147,7 @@ const loadCachedAudioFiles = () => {
   }
 };
 
-export const mapAudioFilesToSessions = (sessions: any[], audioFiles: string[]) => {
+export const mapAudioFilesToSessions = (sessions: any[], _audioFiles: string[]) => {
   // Mock implementation - just return sessions as is
   return sessions;
 };

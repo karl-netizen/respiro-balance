@@ -1,5 +1,4 @@
 // Demo data constants for Respiro Balance
-import { User } from '@supabase/supabase-js';
 
 export const DEMO_USER: any = {
   id: '00000000-0000-0000-0000-000000000001',
@@ -40,7 +39,7 @@ export const DEMO_USER_PREFERENCES = {
     session_reminders: true,
     achievement_notifications: true
   },
-  connected_devices: []
+  connected_devices: [] as any[]
 };
 
 export const DEMO_MEDITATION_SESSIONS = [

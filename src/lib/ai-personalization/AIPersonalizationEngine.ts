@@ -162,7 +162,7 @@ export class AIPersonalizationEngine {
     sessionType: SessionActivity['sessionType'],
     context: ContextAnalysis
   ): Promise<SessionRecommendation> {
-    const _baseRecommendation = await this.getBaseSessionTemplate(sessionType);
+    await this.getBaseSessionTemplate(sessionType);
     
     // Personalize based on user data
     const personalizedDuration = this.calculateOptimalDuration(sessionType, context);

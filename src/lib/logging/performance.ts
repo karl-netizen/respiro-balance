@@ -157,7 +157,7 @@ class PerformanceMonitor {
   public getAllMetrics(): Record<string, any> {
     const summary: Record<string, any> = {};
     
-    for (const [operation, durations] of this.metrics.entries()) {
+    for (const [operation] of this.metrics.entries()) {
       summary[operation] = this.getMetricSummary(operation);
     }
 

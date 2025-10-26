@@ -20,7 +20,7 @@ class TokenManager {
 }
 
 class SecurityBatcher {
-  async batchSecurityOperation(operation: string, data: any): Promise<any> {
+  async batchSecurityOperation(operation: string, _data: any): Promise<any> {
     // Mock batch operation
     await new Promise(resolve => setTimeout(resolve, 50));
     return { 

@@ -7,8 +7,7 @@ import {
   ProductionErrorBoundary,
   measureOperation,
   monitoring as tracking,
-  initializeMonitoring,
-  identifyUser
+  initializeMonitoring
 } from '@/lib/logging';
 
 // 1. Initialize monitoring services on app startup

@@ -8,14 +8,14 @@ export class ProgressTrackingService {
   /**
    * Records meditation session progress
    */
-  static async recordProgress(sessionId: string, progress: number): Promise<void> {
+  static async recordProgress(_sessionId: string, _progress: number): Promise<void> {
     // Implementation for recording progress
   }
 
   /**
    * Gets user's meditation progress
    */
-  static async getUserProgress(userId: string): Promise<any> {
+  static async getUserProgress(_userId: string): Promise<any> {
     // Implementation for getting user progress
     return {};
   }
@@ -23,7 +23,7 @@ export class ProgressTrackingService {
   /**
    * Calculates streak information
    */
-  static calculateStreak(sessions: MeditationSession[]): number {
+  static calculateStreak(_sessions: MeditationSession[]): number {
     // Implementation for calculating streak
     return 0;
   }

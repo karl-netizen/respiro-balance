@@ -256,7 +256,7 @@ const hashString = (str: string): string => {
 export const reportErrorToServices = (error: Error, context?: Record<string, any>) => {
   // Sentry
   if (window.Sentry) {
-    window.Sentry.withScope((scope) => {
+    window.Sentry.withScope((scope: any) => {
       if (context) {
         Object.entries(context).forEach(([key, value]) => {
           scope.setTag(key, value);

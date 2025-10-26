@@ -14,13 +14,12 @@ interface ConnectionState {
   error?: string;
 }
 
-export const useWebSocket = (config: WebSocketConfig) => {
+export const useWebSocket = (_config: WebSocketConfig) => {
   const [connectionState, setConnectionState] = useState<ConnectionState>({
     status: 'disconnected',
     reconnectAttempts: 0
   });
 
-  const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const connect = useCallback(() => {
