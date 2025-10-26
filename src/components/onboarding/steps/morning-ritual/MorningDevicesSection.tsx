@@ -36,21 +36,18 @@ const MorningDevicesSection = ({ selectedDevice, onChange }: MorningDevicesSecti
           id="devices-first"
           value="phone_first"
           label="Check phone immediately after waking up"
-          selectedValue={selectedDevice}
           onChange={handleDevicesChange}
         />
         <DeviceOption
           id="devices-delayed"
           value="phone_delayed"
           label="Use phone after morning routine"
-          selectedValue={selectedDevice}
           onChange={handleDevicesChange}
         />
         <DeviceOption
           id="devices-none"
           value="no_devices"
           label="Try to avoid devices in the morning"
-          selectedValue={selectedDevice}
           onChange={handleDevicesChange}
         />
       </RadioGroup>
@@ -62,11 +59,10 @@ interface DeviceOptionProps {
   id: string;
   value: MorningDevicesType;
   label: string;
-  selectedValue: MorningDevicesType;
   onChange: (value: MorningDevicesType) => void;
 }
 
-const DeviceOption = ({ id, value, label, selectedValue, onChange }: DeviceOptionProps) => {
+const DeviceOption = ({ id, value, label, onChange }: DeviceOptionProps) => {
   return (
     <div 
       className="flex items-center space-x-2 p-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md cursor-pointer"

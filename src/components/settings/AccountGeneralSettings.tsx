@@ -1,5 +1,4 @@
 
-import React from 'react';
 import ProfileManagement from './sections/ProfileManagement';
 import AccountStatusDashboard from './sections/AccountStatusDashboard';
 import DataManagement from './sections/DataManagement';

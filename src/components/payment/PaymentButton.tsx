@@ -1,8 +1,7 @@
-
-import React from 'react';
+import { useState } from 'react';
 import { Button, ButtonProps } from '@/components/ui/button';
 import { ExternalLink, Loader2 } from 'lucide-react';
-import { redirectToStripePayment, openStripePaymentInNewTab } from '@/lib/stripePayment';
+import { openStripePaymentInNewTab } from '@/lib/stripePayment';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
@@ -20,7 +19,7 @@ export const PaymentButton = ({
   ...props
 }: PaymentButtonProps) => {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleClick = async () => {
     setIsLoading(true);
