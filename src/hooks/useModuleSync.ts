@@ -7,7 +7,7 @@ import { useSubscription } from '@/features/subscription';
  * Auto-activates modules when subscription changes
  */
 export function useModuleSync() {
-  const { subscription } = useSubscription();
+  const { subscriptionData } = useSubscription();
   const { setSubscriptionTier, subscriptionTier } = useModuleStore();
 
   useEffect(() => {

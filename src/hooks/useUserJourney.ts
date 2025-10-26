@@ -24,7 +24,7 @@ interface UserJourneyData {
 
 export const useUserJourney = () => {
   const { user } = useAuth();
-  const { subscription } = useSubscription();
+  const { subscriptionData } = useSubscription();
   const [currentJourney, setCurrentJourney] = useState<UserJourneyData | null>(null);
   const [journeyMetrics, setJourneyMetrics] = useState<Record<string, any>>({});
 

@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 export const useMeditationRatings = () => {
   const [showRatingDialog, setShowRatingDialog] = useState(false);
