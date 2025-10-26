@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { useSubscriptionStore } from '@/features/subscription';
 import { mockStripeService } from '@/lib/payment/stripe';
-import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
 import { 
   ArrowLeft, 
   CreditCard, 
@@ -28,10 +28,11 @@ import {
   AlertTriangle
 } from 'lucide-react';
 import { format } from 'date-fns';
+import { toast } from 'sonner';
 
 export default function AccountSettings() {
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const { user } = useAuth();
   const {
     tier,
     status,
@@ -49,6 +50,11 @@ export default function AccountSettings() {
   const [billingHistory, setBillingHistory] = useState<any[]>([]);
   const [paymentMethod, setPaymentMethod] = useState<any>(null);
 
+  // Redirect if not authenticated
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
   useEffect(() => {
     if (tier !== 'free') {
       // Load billing history and payment method
@@ -60,16 +66,14 @@ export default function AccountSettings() {
   const handleCancelSubscription = () => {
     cancelSubscription();
     setShowCancelDialog(false);
-    toast({
-      title: 'Subscription Canceled',
+    toast.success('Subscription Canceled', {
       description: `Your subscription will remain active until ${currentPeriodEnd ? format(new Date(currentPeriodEnd), 'PPP') : 'the end of the billing period'}.`,
     });
   };
 
   const handleReactivate = () => {
     reactivateSubscription();
-    toast({
-      title: 'Subscription Reactivated',
+    toast.success('Subscription Reactivated', {
       description: 'Your subscription has been reactivated successfully.',
     });
   };
