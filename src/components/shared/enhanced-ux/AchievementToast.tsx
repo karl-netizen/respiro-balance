@@ -1,7 +1,7 @@
 
 import React, { useEffect } from 'react';
 import { toast } from 'sonner';
-import { Trophy, Star, Award } from 'lucide-react';
+import { Trophy, Star } from 'lucide-react';
 import { useEnhancedUXContext } from './EnhancedUXProvider';
 
 export const AchievementToast: React.FC = () => {

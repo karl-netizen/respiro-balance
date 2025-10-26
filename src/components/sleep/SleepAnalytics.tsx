@@ -40,9 +40,6 @@ import {
 import {
   SleepAnalytics as SleepAnalyticsType,
   SleepTrend,
-  BreathingTechnique,
-  SleepChallenge,
-  WindDownActivity
 } from '@/types/sleepRecovery';
 
 interface SleepAnalyticsProps {
@@ -55,7 +52,6 @@ interface SleepAnalyticsProps {
 export const SleepAnalytics: React.FC<SleepAnalyticsProps> = ({
   analytics,
   trends,
-  onViewDetails,
   onUpdateGoals
 }) => {
   const [timeRange, setTimeRange] = useState<'week' | 'month' | 'quarter'>('month');
@@ -72,7 +68,7 @@ export const SleepAnalytics: React.FC<SleepAnalyticsProps> = ({
   };
 
   // Prepare chart data
-  const sleepTrendData = trends.map((trend, index) => ({
+  const sleepTrendData = trends.map((trend) => ({
     date: new Date(trend.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
     sleepQuality: trend.sleepQuality,
     morningEnergy: trend.morningEnergy,
@@ -87,7 +83,7 @@ export const SleepAnalytics: React.FC<SleepAnalyticsProps> = ({
     value: Math.floor(Math.random() * 30) + 10 // Mock frequency data
   }));
 
-  const windDownData = analytics.mostEffectiveWindDownActivities.map(activity => ({
+  analytics.mostEffectiveWindDownActivities.map(activity => ({
     name: activity.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()),
     effectiveness: Math.floor(Math.random() * 40) + 60,
     usage: Math.floor(Math.random() * 20) + 10
@@ -365,7 +361,7 @@ export const SleepAnalytics: React.FC<SleepAnalyticsProps> = ({
                     fill="#8884d8"
                     dataKey="value"
                   >
-                    {challengesData.map((entry, index) => (
+                    {challengesData.map((_, index) => (
                       <Cell key={`cell-${index}`} fill={Object.values(colors)[index % Object.values(colors).length]} />
                     ))}
                   </Pie>

@@ -74,7 +74,6 @@ export class BiometricAuthService {
   }
 
   async registerBiometric(
-    userId: string,
     credentialName: string
   ): Promise<Result<BiometricCredential, SecurityError>> {
     if (!await this.isSupported()) {

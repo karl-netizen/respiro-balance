@@ -13,7 +13,7 @@ const SocialFeedTab: React.FC = () => {
     refreshing,
     createPost,
     likePost,
-    addComment,
+    
     refreshFeed
   } = useSocialFeed();
 

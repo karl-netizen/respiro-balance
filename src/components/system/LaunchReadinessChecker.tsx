@@ -98,8 +98,6 @@ export const LaunchReadinessChecker: React.FC = () => {
     setChecks(launchChecks);
     
     // Calculate readiness
-    const criticalChecks = launchChecks.filter(check => check.critical);
-    const passedCritical = criticalChecks.filter(check => check.status === 'pass').length;
     const totalPassed = launchChecks.filter(check => check.status === 'pass').length;
     
     const readinessScore = Math.round((totalPassed / launchChecks.length) * 100);

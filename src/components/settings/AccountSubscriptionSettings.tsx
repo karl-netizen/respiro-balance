@@ -55,11 +55,6 @@ const AccountSubscriptionSettings = () => {
     }
   };
 
-  const getUsageColor = (percentage: number) => {
-    if (percentage >= 85) return 'bg-red-500';
-    if (percentage >= 60) return 'bg-yellow-500';
-    return 'bg-green-500';
-  };
 
   const usagePercentage = (usageData.minutesUsed / usageData.minutesLimit) * 100;
   const daysUntilReset = Math.ceil((usageData.resetDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));

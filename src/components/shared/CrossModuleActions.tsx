@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, TrendingUp, Activity, Brain, Play, Target } from 'lucide-react';
+import { ArrowRight, TrendingUp, Activity, Brain, Target } from 'lucide-react';
 import { crossModuleNavigation } from '@/services/CrossModuleNavigationService';
 import { useNavigate } from 'react-router-dom';
 

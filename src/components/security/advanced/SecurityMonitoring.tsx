@@ -47,7 +47,6 @@ interface Result<T, E> {
 }
 
 const Ok = <T,>(data: T): Result<T, never> => ({ success: true, data });
-const Err = <E,>(error: E): Result<never, E> => ({ success: false, error });
 
 export class SecurityMonitoringService {
   async getSecurityAlerts(): Promise<Result<SecurityAlert[], SecurityError>> {
@@ -134,7 +133,7 @@ export class SecurityMonitoringService {
     });
   }
 
-  async markAlertAsRead(alertId: string): Promise<Result<void, SecurityError>> {
+  async markAlertAsRead(): Promise<Result<void, SecurityError>> {
     // In demo mode, simulate successful mark as read
     return new Promise((resolve) => {
       setTimeout(() => {

@@ -11,7 +11,7 @@ interface CorrelationsSectionProps {
   biometricData?: BiometricData[];
 }
 
-const CorrelationsSection: React.FC<CorrelationsSectionProps> = ({ meditationStats, biometricData }) => {
+const CorrelationsSection: React.FC<CorrelationsSectionProps> = ({ meditationStats }) => {
   // Generate correlation data (mocked)
   const generateCorrelationData = () => {
     return Array.from({ length: 30 }, (_, i) => {

@@ -2,10 +2,10 @@
 import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Users, Trophy, Share2, MessageCircle, Heart, Calendar } from 'lucide-react';
+import { Users, Trophy, Share2, Heart, Calendar } from 'lucide-react';
 
 interface Challenge {
   id: string;

@@ -202,7 +202,7 @@ export const UserJourneyOptimization: React.FC = () => {
     }
   };
 
-  const getImpactForError = (error: string, flowType: string): string => {
+  const getImpactForError = (error: string): string => {
     if (error.includes('email') || error.includes('signup')) {
       return 'Blocks new user acquisition and growth';
     }
@@ -215,7 +215,7 @@ export const UserJourneyOptimization: React.FC = () => {
     return 'Degrades overall user experience';
   };
 
-  const getRecommendationForError = (error: string, flowType: string): string => {
+  const getRecommendationForError = (error: string): string => {
     if (error.includes('email')) {
       return 'Implement proper email validation and error handling';
     }

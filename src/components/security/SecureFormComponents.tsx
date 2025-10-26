@@ -17,7 +17,7 @@ import {
   Key, 
   AlertTriangle, 
   CheckCircle, 
-  Lock, 
+   
   Eye, 
   EyeOff,
   ArrowLeft
@@ -235,8 +235,7 @@ interface SecureLoginFormProps {
 export const EnhancedSecureLoginForm: React.FC<SecureLoginFormProps> = ({
   onSuccess,
   onError,
-  allowRememberMe = false,
-  enableTwoFactor = true
+  allowRememberMe = false
 }) => {
   const { login, state } = useAuth();
   const { token: csrfToken } = useCSRF();

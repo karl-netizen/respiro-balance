@@ -46,7 +46,6 @@ interface Result<T, E> {
 }
 
 const Ok = <T,>(data: T): Result<T, never> => ({ success: true, data });
-const Err = <E,>(error: E): Result<never, E> => ({ success: false, error });
 
 export class DeviceTrustService {
   async generateDeviceFingerprint(): Promise<string> {
@@ -140,7 +139,7 @@ export class DeviceTrustService {
     });
   }
 
-  async revokeTrustedDevice(deviceId: string): Promise<Result<void, SecurityError>> {
+  async revokeTrustedDevice(): Promise<Result<void, SecurityError>> {
     // In demo mode, simulate successful revocation
     return new Promise((resolve) => {
       setTimeout(() => {

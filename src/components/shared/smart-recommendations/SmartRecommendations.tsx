@@ -10,7 +10,6 @@ import { useNavigate } from 'react-router-dom';
 import { useSmartRecommendations } from './useSmartRecommendations';
 import { RecommendationCard } from './RecommendationCard';
 import { LoadingState } from './LoadingState';
-import { EmptyState } from './EmptyState';
 
 interface SmartRecommendationsProps {
   maxRecommendations?: number;

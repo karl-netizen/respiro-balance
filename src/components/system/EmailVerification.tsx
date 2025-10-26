@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Mail, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useEmailSystem } from '@/hooks/useEmailSystem';
-import { supabase } from '@/integrations/supabase/client';
+
 import { toast } from 'sonner';
 
 export const EmailVerification: React.FC = () => {

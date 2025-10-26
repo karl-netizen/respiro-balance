@@ -192,7 +192,7 @@ const SharingCenter: React.FC<SharingCenterProps> = ({ achievement, onShare }) =
           <div className="space-y-2">
             <label className="text-sm font-medium">Choose a template:</label>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-              {Object.entries(messageTemplates).map(([key, template]) => (
+              {Object.entries(messageTemplates).map(([key]) => (
                 <Button
                   key={key}
                   variant={selectedTemplate === key ? "default" : "outline"}

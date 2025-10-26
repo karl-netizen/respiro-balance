@@ -1,6 +1,6 @@
 import React from 'react';
-import { hasItems, isEmpty, renderIfHasItems } from '@/lib/utils/array';
-import { createEmptyState, EmptyStateConfig } from '@/lib/utils/patterns';
+import { hasItems, renderIfHasItems } from '@/lib/utils/array';
+import { EmptyStateConfig } from '@/lib/utils/patterns';
 
 interface EmptyStateProps extends EmptyStateConfig {
   className?: string;

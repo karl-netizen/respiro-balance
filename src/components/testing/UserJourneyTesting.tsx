@@ -69,7 +69,7 @@ export const UserJourneyTesting: React.FC = () => {
       critical: true,
       testFn: async () => {
         // Test onboarding preferences save
-        const { data, error } = await supabase
+        const { error } = await supabase
           .from('user_preferences')
           .select('has_completed_onboarding')
           .eq('user_id', user?.id || '')
@@ -176,7 +176,7 @@ export const UserJourneyTesting: React.FC = () => {
       category: 'content',
       critical: false,
       testFn: async () => {
-        const { data, error } = await supabase
+        const { error } = await supabase
           .from('meditation_sessions')
           .select('*')
           .eq('user_id', user?.id || '')
@@ -374,20 +374,6 @@ export const UserJourneyTesting: React.FC = () => {
     }
   };
 
-  const getCategoryIcon = (category: string) => {
-    switch (category) {
-      case 'auth':
-        return <Users className="h-4 w-4" />;
-      case 'payment':
-        return <CreditCard className="h-4 w-4" />;
-      case 'mobile':
-        return <Smartphone className="h-4 w-4" />;
-      case 'performance':
-        return <Zap className="h-4 w-4" />;
-      default:
-        return <CheckCircle className="h-4 w-4" />;
-    }
-  };
 
   const successCount = testResults.filter(r => r.status === 'success').length;
   const failedCount = testResults.filter(r => r.status === 'failed').length;

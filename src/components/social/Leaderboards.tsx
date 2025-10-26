@@ -18,7 +18,7 @@ interface LeaderboardEntry {
 }
 
 export const Leaderboards: React.FC = () => {
-  const [timeframe, setTimeframe] = useState('week');
+  const [timeframe] = useState('week');
 
   const meditationLeaderboard: LeaderboardEntry[] = [
     { rank: 1, user: { name: 'Alex Rivera', level: 20 }, score: 450, change: 2 },

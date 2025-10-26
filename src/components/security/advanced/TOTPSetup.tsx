@@ -32,7 +32,7 @@ const Ok = <T,>(data: T): Result<T, never> => ({ success: true, data });
 const Err = <E,>(error: E): Result<never, E> => ({ success: false, error });
 
 export class AdvancedTwoFactorService {
-  async setupTOTP(userId: string): Promise<Result<TOTPSetupData, SecurityError>> {
+  async setupTOTP(): Promise<Result<TOTPSetupData, SecurityError>> {
     // In demo mode, generate mock TOTP setup data
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -55,9 +55,7 @@ export class AdvancedTwoFactorService {
   }
 
   async verifyTOTPSetup(
-    userId: string, 
-    code: string, 
-    secret: string
+    code: string
   ): Promise<Result<string[], SecurityError>> {
     // In demo mode, accept any 6-digit code
     return new Promise((resolve) => {

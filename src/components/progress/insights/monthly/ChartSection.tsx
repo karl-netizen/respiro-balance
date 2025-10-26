@@ -16,8 +16,7 @@ import {
   Tooltip, 
   Legend, 
   ResponsiveContainer,
-  ReferenceLine,
-  ReferenceArea
+  ReferenceLine
 } from "recharts";
 import { Button } from "@/components/ui/button";
 import { Calendar, BarChart2, LineChart as LineChartIcon, LayoutGrid } from "lucide-react";

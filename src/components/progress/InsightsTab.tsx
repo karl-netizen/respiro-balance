@@ -2,7 +2,7 @@ import React, { useState, lazy, Suspense } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardHeader, CardDescription } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useUserPreferences } from "@/context";
+
 import { useBiometricData } from "@/hooks/useBiometricData";
 import { useMeditationStats } from './useMeditationStats';
 import { Activity, TrendingUp, Lightbulb } from "lucide-react";

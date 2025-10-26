@@ -14,7 +14,7 @@ interface RecommendationsCardProps {
 
 const RecommendationsCard: React.FC<RecommendationsCardProps> = ({ 
   timeOfDay, 
-  recentSessions,
+  
   preferredDuration = 10
 }) => {
   const { recommendations } = useTimeAwareness();

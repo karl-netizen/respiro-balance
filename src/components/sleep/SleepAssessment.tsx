@@ -17,7 +17,7 @@ import {
   Brain,
   Heart,
   CheckCircle,
-  Zap,
+  
   Wind
 } from 'lucide-react';
 import {

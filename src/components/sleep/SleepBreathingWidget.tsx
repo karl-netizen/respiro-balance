@@ -9,16 +9,12 @@ import { Slider } from '@/components/ui/slider';
 import {
   Moon,
   Play,
-  Pause,
-  CheckCircle,
   Clock,
   Brain,
   Heart,
   Zap,
   Wind,
-  Target,
-  TrendingUp,
-  BarChart3
+  Target
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { SleepBreathingRecommendationEngine } from '@/services/SleepBreathingRecommendationEngine';

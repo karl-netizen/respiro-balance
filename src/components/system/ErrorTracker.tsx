@@ -54,7 +54,7 @@ export const ErrorTracker: React.FC = () => {
     };
 
     // Set up React Error Boundary simulation
-    const handleReactError = (error: Error, errorInfo: any) => {
+    (error: Error, errorInfo: any) => {
       const newError: ErrorLog = {
         id: Date.now().toString(),
         message: error.message,

@@ -74,7 +74,7 @@ export const SharingCenter: React.FC = () => {
     toast.success('Link copied to clipboard!');
   };
 
-  const downloadImage = (achievement: ShareableAchievement) => {
+  const downloadImage = () => {
     // In a real app, this would generate and download an image
     toast.success('Achievement image downloaded!');
   };

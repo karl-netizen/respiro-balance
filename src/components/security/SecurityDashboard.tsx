@@ -17,7 +17,7 @@ import {
   Eye,
   UserCheck
 } from 'lucide-react';
-import { useAuth, type SecureUser, type LoginAttempt, type Permission } from '@/security/SecureAuthSystem';
+import { useAuth, type Permission } from '@/security/SecureAuthSystem';
 
 interface SecurityMetrics {
   successfulLogins: number;
@@ -38,7 +38,7 @@ interface SecurityAlert {
 }
 
 export const SecurityDashboard: React.FC = () => {
-  const { user, session, isAuthenticated, hasPermission } = useAuth();
+  const { user, session, isAuthenticated } = useAuth();
   const [metrics, setMetrics] = useState<SecurityMetrics>({
     successfulLogins: 0,
     failedAttempts: 0,
@@ -48,7 +48,7 @@ export const SecurityDashboard: React.FC = () => {
     riskLevel: 'low'
   });
   
-  const [alerts, setAlerts] = useState<SecurityAlert[]>([
+  const [alerts] = useState<SecurityAlert[]>([
     {
       id: '1',
       type: 'info',
