@@ -79,7 +79,7 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
   const currentTier = isPremium ? (subscriptionData?.tier || 'premium') : 'free';
 
   // Calculate annual pricing with different discount percentages
-  const getAnnualPrice = (monthlyPrice: number, discountPercent: number) => {
+  const _getAnnualPrice = (monthlyPrice: number, discountPercent: number) => {
     if (monthlyPrice === 0) return 0;
     return Math.round(monthlyPrice * 12 * (1 - discountPercent / 100) * 100) / 100;
   };
@@ -135,7 +135,7 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
           subscription={currentTier === 'standard' ? {
             status: 'active',
             tier: 'standard',
-            current_period_end: subscriptionData?.subscription_period_end || '',
+            current_period_end: '',
             cancel_at_period_end: false
           } : undefined}
           onSubscribe={() => handleSubscribe('standard')}
@@ -165,7 +165,7 @@ const SubscriptionPlanComparison: React.FC<SubscriptionPlanComparisonProps> = ({
           subscription={currentTier === 'premium' ? {
             status: 'active',
             tier: 'premium',
-            current_period_end: subscriptionData?.subscription_period_end || '',
+            current_period_end: '',
             cancel_at_period_end: false
           } : undefined}
           onSubscribe={() => handleSubscribe('premium')}

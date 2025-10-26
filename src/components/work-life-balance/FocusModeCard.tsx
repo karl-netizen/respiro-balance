@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { TouchFriendlyButton } from "@/components/responsive/TouchFriendlyButton";
 import { Switch } from "@/components/ui/switch";
-import { Battery, Target, Clock } from "lucide-react";
+import { Target, Clock } from "lucide-react";
 import { useUserPreferences } from "@/context";
 import { formatTime } from "./utils";
 import { Progress } from "@/components/ui/progress";

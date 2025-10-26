@@ -7,13 +7,10 @@ import { Progress } from '@/components/ui/progress';
 import { 
   Crown, 
   Calendar, 
-  CreditCard, 
   Settings, 
   TrendingUp, 
-  Users, 
   Zap,
-  Heart,
-  Shield
+  Heart
 } from 'lucide-react';
 import { useFeatureAccess } from '@/hooks/useFeatureAccess';
 import { useSubscriptionContext } from '@/hooks/useSubscriptionContext';
@@ -110,14 +107,10 @@ export const SubscriptionStatusDashboard: React.FC = () => {
                 <Badge className={`${getTierColor()} text-white px-3 py-1 text-sm`}>
                   {getTierName()}
                 </Badge>
-                {subscriptionData?.subscription_period_end && (
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Calendar className="h-4 w-4" />
-                    <span>
-                      Renews {format(new Date(subscriptionData.subscription_period_end), 'MMM dd, yyyy')}
-                    </span>
-                  </div>
-                )}
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Calendar className="h-4 w-4" />
+                  <span>Active Subscription</span>
+                </div>
               </div>
               <Button onClick={handleManageSubscription} variant="outline">
                 <Settings className="h-4 w-4 mr-2" />

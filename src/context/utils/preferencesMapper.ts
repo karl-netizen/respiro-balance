@@ -173,7 +173,7 @@ export const mapDbToUiPreferences = (
   dbPreferences: UserPreferencesData | null,
   subscriptionTier?: string,
   hasWearableDevice?: boolean,
-  role?: string
+  _role?: string
 ): UserPreferences => {
   if (!dbPreferences) {
     return {

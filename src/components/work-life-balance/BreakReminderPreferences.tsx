@@ -1,5 +1,5 @@
 
-import React from "react";
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";

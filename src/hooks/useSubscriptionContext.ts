@@ -1,15 +1,23 @@
-// Backward compatibility hook - provides fallback subscription data
+import { useSubscription } from './useSubscription';
+
+// Backward compatibility hook - wraps useSubscription with additional properties
 export const useSubscriptionContext = () => {
-  // Return mock data for backward compatibility during testing phase
+  const { isPremium, isLoading, subscriptionData, startPremiumCheckout, manageSubscription } = useSubscription();
+  
   return {
-    isPremium: false,
-    isSubscribed: false,
-    tier: 'free' as const,
-    tierName: 'Free',
+    isPremium,
+    isSubscribed: isPremium,
+    tier: subscriptionData?.tier || 'free' as const,
+    tierName: subscriptionData?.tier === 'premium' ? 'Premium' : 'Free',
     subscriptionData: {
       meditation_minutes_used: 0,
-      meditation_minutes_limit: 60
-    }
+      meditation_minutes_limit: isPremium ? -1 : 60,
+      tier: subscriptionData?.tier || 'free',
+      status: subscriptionData?.status || 'inactive'
+    },
+    startPremiumCheckout,
+    manageSubscription,
+    isLoading
   };
 };
 

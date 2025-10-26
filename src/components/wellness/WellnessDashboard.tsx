@@ -10,14 +10,11 @@ import {
   Moon,
   Activity,
   TrendingUp,
-  Settings,
   Target,
   Wind,
-  Clock,
   Zap,
   CheckCircle2,
   AlertCircle,
-  Calendar,
   Gauge
 } from 'lucide-react';
 
@@ -33,8 +30,7 @@ import {
 } from '@/types/workLifeBalance';
 import {
   EnhancedSleepRecovery,
-  SleepWellnessIntegration,
-  SleepAnalytics
+  SleepWellnessIntegration
 } from '@/types/sleepRecovery';
 
 export interface WellnessProfile {

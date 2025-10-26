@@ -10,13 +10,9 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import {
   Heart,
-  Brain,
   Target,
   CheckCircle,
-  AlertCircle,
-  Activity,
   Stethoscope,
-  TrendingUp,
   Wind
 } from 'lucide-react';
 import {

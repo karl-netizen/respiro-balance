@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { UserPreferencesData } from '@/types/supabase';
-import { supabase } from '@/integrations/supabase/client';
+import { isSupabaseConfigured } from '@/integrations/supabase/client';
 
 export interface BluetoothDeviceInfo {
   id: string;
@@ -15,7 +15,7 @@ export interface UseBluetoothDevicesProps {
   updatePreferences: (updates: Partial<UserPreferencesData>) => void;
 }
 
-export const useBluetoothDevices = ({ userId, updatePreferences }: UseBluetoothDevicesProps) => {
+export const useBluetoothDevices = ({ updatePreferences }: UseBluetoothDevicesProps) => {
   const [connectedDevices, setConnectedDevices] = useState<BluetoothDeviceInfo[]>([]);
   const [hasWearableDevice, setHasWearableDevice] = useState<boolean>(false);
 

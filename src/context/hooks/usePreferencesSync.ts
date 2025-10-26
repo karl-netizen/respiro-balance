@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { UserPreferences } from '../types';
 import defaultPreferences from '../defaultPreferences';
 import { isSupabaseConfigured } from '@/integrations/supabase/client';

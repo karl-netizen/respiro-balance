@@ -1,8 +1,8 @@
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { BluetoothDeviceInfo } from '../types';
 
-export const useDeviceConnections = (userId?: string) => {
+export const useDeviceConnections = () => {
   const [connectedDevices, setConnectedDevices] = useState<BluetoothDeviceInfo[]>([]);
   const [isConnecting, setIsConnecting] = useState(false);
 

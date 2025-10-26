@@ -466,7 +466,8 @@ export const SleepBreathingWidget: React.FC<SleepBreathingWidgetProps> = ({
           <div className="space-y-4">
             <h4 className="font-medium text-sm">Recommended for You</h4>
             {recommendations.map((recommendation: any) => {
-              const technique = SLEEP_TECHNIQUE_DESCRIPTIONS[recommendation.technique as any];
+              const defaultTechnique = { name: 'Relaxation Breathing', sleepContext: 'Calming technique for better sleep', instructions: ['Breathe in', 'Hold', 'Breathe out'], bestFor: ['Relaxation', 'Sleep'] };
+              const technique = SLEEP_TECHNIQUE_DESCRIPTIONS[recommendation.technique as BreathingTechnique] || defaultTechnique;
 
               return (
                 <div

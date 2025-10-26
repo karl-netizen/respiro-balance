@@ -41,8 +41,8 @@ export class AdvancedTwoFactorService {
         const issuer = 'Respiro Balance';
         
         // Generate mock QR code data URL
-        const qrData = `otpauth://totp/${encodeURIComponent(issuer)}:${encodeURIComponent(accountName)}?secret=${secret}&issuer=${encodeURIComponent(issuer)}`;
-        const qrCodeUrl = `data:image/svg+xml;base64,${btoa(this.generateQRCodeSVG(qrData))}`;
+        const _qrData = `otpauth://totp/${encodeURIComponent(issuer)}:${encodeURIComponent(accountName)}?secret=${secret}&issuer=${encodeURIComponent(issuer)}`;
+        const qrCodeUrl = `data:image/svg+xml;base64,${btoa(this.generateQRCodeSVG())}`;
         
         resolve(Ok({
           secret,

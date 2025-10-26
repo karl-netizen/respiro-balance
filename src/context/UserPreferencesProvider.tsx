@@ -33,7 +33,7 @@ interface UserPreferencesProviderProps {
 export const UserPreferencesProvider: React.FC<UserPreferencesProviderProps> = ({ children }) => {
   const [preferences, setPreferences] = useState<UserPreferences>(defaultPreferences);
   const [isLoading, setIsLoading] = useState(false);
-  const { user, session } = useAuth();
+  const { user, session: _session } = useAuth();
 
   // Load preferences from database when user changes
   useEffect(() => {
@@ -278,7 +278,7 @@ export const UserPreferencesProvider: React.FC<UserPreferencesProviderProps> = (
     setPreferences(defaultPreferences);
   };
 
-  const connectBluetoothDevice = async (deviceId: string): Promise<boolean> => {
+  const connectBluetoothDevice = async (_deviceId: string): Promise<boolean> => {
     // Implement Bluetooth connection logic
     return true;
   };

@@ -38,8 +38,8 @@ interface UserFlowIssue {
 }
 
 export const UserJourneyOptimization: React.FC = () => {
-  const { user } = useAuth();
-  const { testUserFlow, getJourneyAnalytics, journeyMetrics } = useUserJourney();
+  const { user: _user } = useAuth();
+  const { testUserFlow } = useUserJourney();
   const [optimizationData, setOptimizationData] = useState<OptimizationMetric[]>([]);
   const [identifiedIssues, setIdentifiedIssues] = useState<UserFlowIssue[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);

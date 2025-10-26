@@ -1,6 +1,6 @@
 
 import React from "react";
-import { CardTitle, CardDescription } from "@/components/ui/card";
+import { CardTitle } from "@/components/ui/card";
 import { BellRing, BellOff } from "lucide-react";
 
 interface BreakReminderHeaderProps {
