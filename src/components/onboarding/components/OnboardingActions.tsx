@@ -1,5 +1,5 @@
 
-import React from "react";
+
 import { TouchFriendlyButton } from "@/components/responsive/TouchFriendlyButton";
 import { useIsMobile } from "@/hooks/use-mobile";
 

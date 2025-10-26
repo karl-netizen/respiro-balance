@@ -1,5 +1,5 @@
 
-import React from "react";
+
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useMobileGestures } from "@/hooks/useMobileGestures";
