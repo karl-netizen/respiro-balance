@@ -52,12 +52,6 @@ const RitualAnalyticsDashboard: React.FC<AnalyticsProps> = ({ rituals }) => {
   
   // Calculate comprehensive performance metrics
   const performanceMetrics = useMemo((): PerformanceMetrics => {
-    const now = new Date();
-    const timeRangeMs = selectedTimeRange === 'week' ? 7 * 24 * 60 * 60 * 1000 :
-                       selectedTimeRange === 'month' ? 30 * 24 * 60 * 60 * 1000 :
-                       90 * 24 * 60 * 60 * 1000;
-    
-    const cutoffDate = new Date(now.getTime() - timeRangeMs);
     
     // Simulate session data based on ritual completion
     const totalSessions = rituals.reduce((sum, ritual) => sum + (ritual.streak || 0), 0);

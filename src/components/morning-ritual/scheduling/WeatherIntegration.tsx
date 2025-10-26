@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
 import { Cloud, Sun, CloudRain, Snowflake, Plus, X } from 'lucide-react';
 
 interface WeatherAlternative {
@@ -18,15 +17,13 @@ interface WeatherIntegrationProps {
   alternatives: WeatherAlternative[];
   onAlternativeAdd: (alternative: WeatherAlternative) => void;
   onAlternativeRemove: (id: string) => void;
-  onAlternativeUpdate: (alternative: WeatherAlternative) => void;
 }
 
 const WeatherIntegration: React.FC<WeatherIntegrationProps> = ({
   rituals,
   alternatives,
   onAlternativeAdd,
-  onAlternativeRemove,
-  onAlternativeUpdate
+  onAlternativeRemove
 }) => {
   const [newRitualId, setNewRitualId] = useState('');
   const [newCondition, setNewCondition] = useState('sunny');
@@ -55,18 +52,6 @@ const WeatherIntegration: React.FC<WeatherIntegrationProps> = ({
 
   const handleRemoveAlternative = (id: string) => {
     onAlternativeRemove(id);
-  };
-
-  const handleUpdateAlternative = (id: string, updatedData: Partial<WeatherAlternative>) => {
-    const alternativeToUpdate = alternatives.find(alt => alt.id === id);
-    if (!alternativeToUpdate) return;
-
-    const updatedAlternative: WeatherAlternative = {
-      ...alternativeToUpdate,
-      ...updatedData,
-    };
-
-    onAlternativeUpdate(updatedAlternative);
   };
 
   const getWeatherIcon = (condition: string) => {

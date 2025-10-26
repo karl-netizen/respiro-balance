@@ -62,7 +62,7 @@ const BiometricTracker: React.FC<BiometricTrackerProps> = ({
         
         setCurrentBiometrics(newBiometrics);
         
-        const changes = calculateBiometricChange(initialBiometrics, newBiometrics);
+        const changes = calculateBiometricChange();
         setBiometricChange(changes);
       }, 10000);
       

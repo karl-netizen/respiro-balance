@@ -34,6 +34,13 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  esbuild: {
+    logOverride: { 
+      'this-is-undefined-in-esm': 'silent' 
+    },
+    // Treat unused variables as warnings during development
+    loglevel: 'warning',
+  },
   build: {
     outDir: 'dist',
     assetsDir: 'assets',

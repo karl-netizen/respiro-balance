@@ -53,7 +53,7 @@ export const updateRitualStatuses = (rituals: MorningRitual[]): MorningRitual[] 
 };
 
 // Biometric utilities (placeholder for now)
-export const calculateBiometricChange = (before: any, after: any): number => {
+export const calculateBiometricChange = (): number => {
   // Simplified calculation - would integrate with actual biometric data
   return Math.floor(Math.random() * 20) - 10; // -10 to +10 change
 };

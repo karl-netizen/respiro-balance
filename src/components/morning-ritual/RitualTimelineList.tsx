@@ -18,7 +18,7 @@ const RitualTimelineList: React.FC<RitualTimelineListProps> = ({
 }) => {
   return (
     <div className="space-y-6 relative z-10">
-      {rituals.map((ritual, index) => (
+      {rituals.map((ritual) => (
         <RitualTimelineItem
           key={ritual.id}
           ritual={ritual}
