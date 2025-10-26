@@ -11,8 +11,6 @@ import {
   AlertCircle, 
   Info,
   Zap,
-  DollarSign,
-  ShoppingCart,
   BookOpen,
   BarChart,
   Lock,

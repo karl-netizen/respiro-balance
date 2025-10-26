@@ -8,11 +8,8 @@ import {
   Ok,
   Err,
   Failure,
-  AuthState,
   UserId,
   Email,
-  createUserId,
-  createEmail 
 } from '../types/advanced-patterns';
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { z } from 'zod'; // For runtime validation
@@ -377,12 +374,12 @@ export class SecureAuthService implements AuthService {
     throw new Error('Not implemented');
   }
 
-  async verifyTwoFactor(token: TwoFactorToken): Promise<Result<void, SecurityError>> {
+  async verifyTwoFactor(_token: TwoFactorToken): Promise<Result<void, SecurityError>> {
     // Implementation for 2FA verification
     throw new Error('Not implemented');
   }
 
-  async resetPassword(email: Email): Promise<Result<void, SecurityError>> {
+  async resetPassword(_email: Email): Promise<Result<void, SecurityError>> {
     // Implementation for password reset
     throw new Error('Not implemented');
   }
@@ -401,10 +398,10 @@ export class SecureAuthService implements AuthService {
   private async secureRequest(endpoint: string, options: RequestInit): Promise<Response> {
     const session = await this.getStoredSession();
     
-    const headers: HeadersInit = {
+    const headers: Record<string, string> = {
       'Content-Type': 'application/json',
       'X-Requested-With': 'XMLHttpRequest', // CSRF protection
-      ...options.headers,
+      ...(options.headers as Record<string, string> || {}),
     };
 
     if (session) {

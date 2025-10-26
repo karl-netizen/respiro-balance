@@ -1,10 +1,9 @@
 
-import React, { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { MeditationHeader, MeditationSessionDialog } from '@/components/meditation';
 import RecentPlayedList from '@/components/meditation/RecentPlayedList';
 import MeditationTabsContent from '@/components/meditation/MeditationTabsContent';
 import { SubscriptionBanner } from '@/features/subscription';
-import { useMeditatePage } from '@/hooks/useMeditatePage';
 import { MeditationSession } from '@/types/meditation';
 import { StateDebugger } from '@/components/dev';
 import { meditationSessions } from '@/data/meditationSessions';
@@ -36,15 +35,15 @@ const Meditate = () => {
   const getFilteredSessions = (category: string) => {
     return meditationSessions.filter(s => s.category === category);
   };
-  const getRecentSessions = () => [];
+  const getRecentSessions = (): MeditationSession[] => [];
   const handleTabChange = (tab: string) => setActiveTab(tab);
-  const handleSelectSession = (session: any) => {
+  const handleSelectSession = (session: MeditationSession) => {
     setSelectedSession(session);
     setDialogOpen(true);
   };
   const handleStartMeditation = () => console.log('Start meditation');
-  const handleToggleFavorite = (session: any) => console.log('Toggle favorite', session);
-  const isFavorite = (id: string) => false;
+  const handleToggleFavorite = (session: MeditationSession) => console.log('Toggle favorite', session);
+  const isFavorite = (_id: string) => false;
 
   // State to track filtered sessions
   const [filteredSessions, setFilteredSessions] = useState<MeditationSession[]>([]);

@@ -1,7 +1,6 @@
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import AccountGeneralSettings from '@/components/settings/AccountGeneralSettings';
 import AccountPreferencesSettings from '@/components/settings/AccountPreferencesSettings';
 import AccountNotificationSettings from '@/components/settings/AccountNotificationSettings';

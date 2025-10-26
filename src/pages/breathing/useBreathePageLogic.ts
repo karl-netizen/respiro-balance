@@ -1,9 +1,8 @@
 
 import { useState, useRef, useEffect } from 'react';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 
 export const useBreathePageLogic = () => {
-  const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const initialTab = searchParams.get('tab') || 'exercises';
   const initialTechnique = searchParams.get('technique');

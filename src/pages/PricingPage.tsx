@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,14 +7,14 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { useSubscriptionStore, BillingCycle, SubscriptionTier } from '@/features/subscription';
-import { Check, Sparkles, Zap, ArrowLeft } from 'lucide-react';
+import { Check, Zap, ArrowLeft } from 'lucide-react';
 import { CheckoutDialog } from '@/features/subscription';
 
 export default function PricingPage() {
   const navigate = useNavigate();
   const [isAnnual, setIsAnnual] = useState(false);
   const [selectedTier, setSelectedTier] = useState<SubscriptionTier | null>(null);
-  const { tier: currentTier, getPricing } = useSubscriptionStore();
+  const { tier: currentTier } = useSubscriptionStore();
 
   const billingCycle: BillingCycle = isAnnual ? 'annual' : 'monthly';
 

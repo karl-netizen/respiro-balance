@@ -51,22 +51,18 @@ const Dashboard: React.FC = () => {
       <div className="min-h-screen bg-background">
         <DashboardContainer>
         {({
-          user,
           currentPeriod,
-          meditationStats,
           currentStreak,
           weeklyGoal,
           weeklyProgress,
           progressPercentage,
           welcomeMessage,
-          userName,
           dailyMood,
           showMoodModal,
           quickStats,
           handleMoodModalSelect,
           handleMoodChange,
           handleGoBack,
-          setShowMoodModal,
         }) => (
           <>
             {/* Header with Back Button */}

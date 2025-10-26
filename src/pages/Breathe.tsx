@@ -1,5 +1,5 @@
 
-import React from 'react';
+
 import BreathePageContent from '@/components/breathing/components/BreathePageContent';
 import { useBreathePageLogic } from './breathing/useBreathePageLogic';
 

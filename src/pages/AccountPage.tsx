@@ -24,7 +24,6 @@ type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 const AccountPage = () => {
   const { user, updateProfile, loading, signOut } = useAuth();
-  const { preferences, updatePreferences } = useUserPreferences();
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
   
   // Extract first and last name from the user data, if available

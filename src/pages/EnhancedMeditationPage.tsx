@@ -1,5 +1,5 @@
 
-import React from 'react';
+
 import SessionLibrary from '@/components/meditation/enhanced/SessionLibrary';
 import ResumeTab from '@/components/meditation/enhanced/ResumeTab';
 import PlayerTab from '@/components/meditation/enhanced/PlayerTab';
@@ -10,7 +10,6 @@ const EnhancedMeditationPage = () => {
     activeTab,
     setActiveTab,
     selectedSession,
-    setSelectedSession,
     isPlaying,
     setIsPlaying,
     currentTime,
@@ -29,14 +28,9 @@ const EnhancedMeditationPage = () => {
     setViewMode,
     progress,
     setProgress,
-    recentSessions,
-    completedSessions,
-    favoritesList,
     handleSessionSelect,
     handleSessionComplete,
-    handleSessionResume,
     formatTime,
-    getProgressColor,
     getDifficultyColor,
     getCategoryIcon
   } = useEnhancedMeditationPage();

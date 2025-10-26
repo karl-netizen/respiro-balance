@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import RitualCreationWizard from "@/components/morning-ritual/RitualCreationWizard";
 import { useUserPreferences } from "@/context";
 import { useNotifications } from "@/context/NotificationsProvider";

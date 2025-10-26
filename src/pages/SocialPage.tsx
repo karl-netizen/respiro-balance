@@ -1,8 +1,6 @@
 
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Users, Trophy, Gift, MessageSquare, Share2, Target } from 'lucide-react';
 import { SocialFeed } from '@/components/social/SocialFeed';

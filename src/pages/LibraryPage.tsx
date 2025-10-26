@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { MeditationLibrary } from '@/components/meditation/MeditationLibrary';
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';

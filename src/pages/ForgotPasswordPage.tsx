@@ -9,7 +9,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { requestPasswordReset } from "@/lib/authActions";
-import { toast } from "sonner";
 import { CheckCircle, Mail, ArrowLeft, AlertCircle, Circle, Clock, Shield } from "lucide-react";
 
 const formSchema = z.object({

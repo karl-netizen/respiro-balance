@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { FocusPageHeader } from '@/components/focus-mode/FocusPageHeader';
 import { FocusOverviewCards } from '@/components/focus-mode/FocusOverviewCards';

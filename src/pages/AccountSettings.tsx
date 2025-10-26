@@ -35,7 +35,6 @@ export default function AccountSettings() {
   const { user } = useAuth();
   const {
     tier,
-    status,
     billingCycle,
     currentPeriodEnd,
     cancelAtPeriodEnd,

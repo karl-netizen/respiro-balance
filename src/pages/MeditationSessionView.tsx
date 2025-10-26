@@ -13,7 +13,6 @@ import { meditationSessions } from '@/data/meditationSessions';
 import SessionCompletionDialog from '@/components/meditation/SessionCompletionDialog';
 import { 
   BiometricDisplay, 
-  LoadingState, 
   NotFoundState, 
   SessionInfo,
   useBiometrics,
@@ -34,7 +33,6 @@ const MeditationSessionView = () => {
     biometricChange,
     sessionStarted,
     handleSessionStart,
-    handleAudioTimeUpdate
   } = useBiometrics();
   
   const {

@@ -39,7 +39,6 @@ const MorningRitualTabsContent: React.FC<MorningRitualTabsContentProps> = ({
   removeDependency,
   addWeatherAlternative,
   removeWeatherAlternative,
-  updateWeatherAlternative
 }) => {
   return (
     <>
@@ -121,7 +120,6 @@ const MorningRitualTabsContent: React.FC<MorningRitualTabsContentProps> = ({
             alternatives={weatherAlternatives}
             onAlternativeAdd={addWeatherAlternative}
             onAlternativeRemove={removeWeatherAlternative}
-            onAlternativeUpdate={updateWeatherAlternative}
           />
         </div>
       </TabsContent>

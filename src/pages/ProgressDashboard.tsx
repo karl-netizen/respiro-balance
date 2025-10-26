@@ -1,21 +1,18 @@
 
-import React, { useState } from 'react';
-
+import { useState } from 'react';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useUserPreferences } from "@/context";
 import { 
   ProgressHero, 
-  OverviewTab, 
-  InsightsTab, 
-  AchievementsTab,
-  CorrelationsTab,
   useMeditationStats
 } from "@/components/progress";
+import OverviewTab from "@/components/progress/OverviewTab";
+import InsightsTab from "@/components/progress/InsightsTab";
+import AchievementsTab from "@/components/progress/AchievementsTab";
+import CorrelationsTab from "@/components/progress/CorrelationsTab";
 import { Achievement } from '@/types/achievements';
 
 const ProgressDashboard = () => {
-  const { preferences } = useUserPreferences();
   const [activeTab, setActiveTab] = useState("overview");
   const { meditationStats, sessions, isLoading } = useMeditationStats();
 

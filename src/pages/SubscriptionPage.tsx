@@ -1,12 +1,11 @@
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 
-import { PaymentCard } from '@/components/payment';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
-import { Link, Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { SubscriptionPlanComparison, SubscriptionFAQs, CheckoutFlow, useSubscription } from '@/features/subscription';
 import { useNavigationHistory } from '@/context/NavigationHistoryProvider';
 import { toast } from 'sonner';

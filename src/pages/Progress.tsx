@@ -26,7 +26,6 @@ const TabLoadingFallback = () => (
 );
 
 const Progress = () => {
-  const { preferences } = useUserPreferences();
   const location = useLocation();
   const navigate = useNavigate();
   const { isPremium } = useSubscriptionContext();

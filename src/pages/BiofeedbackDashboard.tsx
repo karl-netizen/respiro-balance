@@ -3,11 +3,10 @@ import React, { useState } from 'react';
 
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Monitor, Settings, Activity, Heart } from 'lucide-react';
-import { useUserPreferences } from '@/context';
 import { useBiofeedback } from '@/hooks/biofeedback';
 
 // Tab Components
@@ -17,7 +16,6 @@ import AnalyticsTab from '@/components/biofeedback/tabs/AnalyticsTab';
 import BiofeedbackSettingsTab from '@/components/biofeedback/tabs/BiofeedbackSettingsTab';
 
 const BiofeedbackDashboard: React.FC = () => {
-  const { preferences } = useUserPreferences();
   const { devices, isScanning, heartRate, stress, isSimulating } = useBiofeedback();
   
   // Smart default logic based on device status
