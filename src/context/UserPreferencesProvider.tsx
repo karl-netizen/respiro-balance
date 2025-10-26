@@ -283,7 +283,7 @@ export const UserPreferencesProvider: React.FC<UserPreferencesProviderProps> = (
     return true;
   };
 
-  const disconnectBluetoothDevice = async (deviceId: string): Promise<boolean> => {
+  const disconnectBluetoothDevice = async (_deviceId: string): Promise<boolean> => {
     // Implement Bluetooth disconnection logic
     return true;
   };

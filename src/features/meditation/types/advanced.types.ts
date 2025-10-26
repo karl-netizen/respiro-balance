@@ -2,12 +2,11 @@
 // ADVANCED TYPESCRIPT PATTERNS IMPLEMENTATION
 // =============================================
 
-import React from 'react';
 import { 
   MeditationContent, 
   MeditationProgress, 
   MeditationCategory, 
-  DifficultyLevel, 
+  DifficultyLevel,
   SubscriptionTier,
   AudioFile 
 } from './meditation.types';

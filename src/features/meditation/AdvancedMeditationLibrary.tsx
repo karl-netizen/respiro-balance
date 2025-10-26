@@ -9,7 +9,6 @@ import { cn } from '@/lib/utils';
 
 // Import our advanced types
 import { MeditationId, createMeditationId } from './types/branded.types';
-import { AsyncOperationState } from './types/state.types';
 import { MeditationCategory, DifficultyLevel, SubscriptionTier } from './types/meditation.types';
 
 // =============================================
@@ -127,7 +126,7 @@ const AdvancedMeditationCard: React.FC<AdvancedMeditationCardProps> = ({
   customization = {}
 }) => {
   const {
-    variant = 'card',
+    variant: _variant = 'card',
     size = 'md',
     showFavorite = true
   } = customization;

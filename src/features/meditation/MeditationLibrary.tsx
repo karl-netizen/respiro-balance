@@ -19,7 +19,6 @@ import { SessionLimitBanner } from '@/components/meditation/SessionLimitBanner';
 // Import typed interfaces and utilities
 import {
   AudioFile,
-  LoadingState,
   CategoryTab
 } from './types/meditation.types';
 
@@ -27,9 +26,6 @@ import {
 type ComponentMeditationContent = HookMeditationContent;
 import { SupabaseStorageResponse, SupabaseFileObject } from './types/supabase.types';
 import { handleError, withErrorHandling } from './utils/errorHandlers';
-import { isValidAudioFileType, isValidFileSize } from './utils/typeGuards';
-
-// Types are now imported from dedicated type files
 
 interface LocalLoadingState {
   audioFiles: boolean;
@@ -40,7 +36,7 @@ interface LocalLoadingState {
 const PremiumBanner = React.lazy(() => import('./components/PremiumBanner'));
 
 // Memoized child components with proper typing
-const MeditationCard = React.memo<{
+const _MeditationCard = React.memo<{
   item: ComponentMeditationContent;
   progress: UserProgress | undefined;
   selectedContent: ComponentMeditationContent | null;
@@ -197,7 +193,7 @@ const CategoryTabs = React.memo<{
   categories: CategoryTab[];
   selectedCategory: string;
   onCategoryChange: (category: string) => void;
-}>(({ categories, selectedCategory, onCategoryChange }) => (
+}>(({ categories, onCategoryChange }) => (
   <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
     {categories.map((tab) => (
       <TabsTrigger 
@@ -332,7 +328,6 @@ const MeditationLibrary: React.FC = () => {
     content, 
     categories, 
     isLoading, 
-    getContentByCategory, 
     toggleFavorite, 
     getProgressForContent,
     incrementPlayCount
@@ -381,7 +376,7 @@ const MeditationLibrary: React.FC = () => {
   
   const { audioFiles, loading: audioLoading } = useAudioFiles();
   const { 
-    weeklySessionCount, 
+    weeklySessionCount: _weeklySessionCount, 
     hasReachedLimit, 
     getRemainingSessions, 
     trackSession 

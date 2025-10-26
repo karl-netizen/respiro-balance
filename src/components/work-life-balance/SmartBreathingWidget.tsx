@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Brain, Clock, Zap, Play, CheckCircle, AlertCircle } from 'lucide-react';
+import { Brain, Clock, Zap, Play, AlertCircle } from 'lucide-react';
 import { useUserPreferences } from '@/context';
 import { toast } from 'sonner';
 import { BreathingRecommendationEngine } from '@/services/BreathingRecommendationEngine';
@@ -11,8 +11,7 @@ import { migrateToEnhancedWorkLife } from '@/utils/workLifeBalanceMigration';
 import {
   BreakRecommendation,
   BreathingTechnique,
-  WorkBreathingSession,
-  EnhancedWorkLifePreferences
+  WorkBreathingSession
 } from '@/types/workLifeBalance';
 
 interface SmartBreathingWidgetProps {

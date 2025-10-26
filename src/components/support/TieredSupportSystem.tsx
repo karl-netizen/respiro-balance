@@ -32,8 +32,6 @@ interface ChatMessage {
 export const TieredSupportSystem: React.FC = () => {
   const { user } = useAuth();
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
-  const tickets: any[] = [];
-  const history: any[] = [];
   
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');

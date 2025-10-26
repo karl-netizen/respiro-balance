@@ -5,15 +5,11 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import {
-  Moon,
   TrendingUp,
   Calendar,
   Activity,
   Wind,
   BarChart3,
-  Clock,
-  Zap,
-  Target,
   Brain,
   PlayCircle,
   PauseCircle,
@@ -26,9 +22,7 @@ import { SleepTrackingService } from '../services/SleepTrackingService';
 import {
   SleepAnalytics as SleepAnalyticsType,
   SleepTrend,
-  EnhancedSleepRecovery,
-  SleepBreathingSession,
-  SleepChallenge
+  EnhancedSleepRecovery
 } from '@/types/sleepRecovery';
 
 /**

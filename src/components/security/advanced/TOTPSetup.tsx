@@ -40,8 +40,7 @@ export class AdvancedTwoFactorService {
         const accountName = 'user@example.com';
         const issuer = 'Respiro Balance';
         
-        // Generate mock QR code data URL
-        const _qrData = `otpauth://totp/${encodeURIComponent(issuer)}:${encodeURIComponent(accountName)}?secret=${secret}&issuer=${encodeURIComponent(issuer)}`;
+        // Generate mock QR code data URL (qrData would be used in production)
         const qrCodeUrl = `data:image/svg+xml;base64,${btoa(this.generateQRCodeSVG())}`;
         
         resolve(Ok({

@@ -1,7 +1,6 @@
 
 import { useState } from 'react';
 import { UserPreferencesData } from '@/types/supabase';
-import { isSupabaseConfigured } from '@/integrations/supabase/client';
 
 export interface BluetoothDeviceInfo {
   id: string;
