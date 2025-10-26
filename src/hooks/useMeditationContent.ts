@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useSubscription } from '@/features/subscription';
 import { toast } from 'sonner';
 
 export interface MeditationContent {

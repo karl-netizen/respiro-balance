@@ -12,7 +12,7 @@ export const signInWithEmail = async (
   email: string, 
   password: string,
   navigate: NavigateFunction,
-  setLoading: (loading: boolean) => void
+  _setLoading: (loading: boolean) => void
 ) => {
   try {
     console.log("Signing in with:", email);

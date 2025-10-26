@@ -4,7 +4,6 @@
 
 import { Result, Ok, Err } from '../advanced-patterns';
 import {
-  PersonalizationProfileId,
   SessionRecommendationId,
   UserBehaviorData,
   SessionActivity,
@@ -13,8 +12,7 @@ import {
   ModelWeights,
   MoodEntry,
   PersonalGoal,
-  SessionFeedback,
-  PersonalizedElement
+  SessionFeedback
 } from './types';
 
 export class AIPersonalizationEngine {
@@ -164,7 +162,7 @@ export class AIPersonalizationEngine {
     sessionType: SessionActivity['sessionType'],
     context: ContextAnalysis
   ): Promise<SessionRecommendation> {
-    const baseRecommendation = await this.getBaseSessionTemplate(sessionType);
+    const _baseRecommendation = await this.getBaseSessionTemplate(sessionType);
     
     // Personalize based on user data
     const personalizedDuration = this.calculateOptimalDuration(sessionType, context);
@@ -340,7 +338,7 @@ export class AIPersonalizationEngine {
   private generateRecommendationReasoning(
     sessionType: SessionActivity['sessionType'],
     context: ContextAnalysis,
-    duration: number,
+    _duration: number,
     difficulty: SessionActivity['difficulty']
   ): string[] {
     const reasoning: string[] = [];
@@ -435,8 +433,8 @@ export class AIPersonalizationEngine {
   }
 
   private async updateModelWeights(
-    recommendationId: SessionRecommendationId,
-    session: SessionActivity,
+    _recommendationId: SessionRecommendationId,
+    _session: SessionActivity,
     feedback: SessionFeedback
   ): Promise<void> {
     // Simple gradient descent-like update
@@ -642,22 +640,22 @@ export class AIPersonalizationEngine {
 
   private async filterGuidesByContext(
     guides: string[], 
-    sessionType: SessionActivity['sessionType'], 
-    context: ContextAnalysis
+    _sessionType: SessionActivity['sessionType'], 
+    _context: ContextAnalysis
   ): Promise<string[]> {
     // Filter guides based on context - placeholder implementation
-    return guides.filter(guide => {
+    return guides.filter(_guide => {
       // Logic to filter guides based on session type and context
       return true; // Simplified for now
     });
   }
 
   private getOptimalGuideForContext(
-    sessionType: SessionActivity['sessionType'], 
-    context: ContextAnalysis
+    _sessionType: SessionActivity['sessionType'], 
+    _context: ContextAnalysis
   ): string {
     // Select optimal guide based on context - placeholder implementation
-    const guides = {
+    const guides: Record<string, string[]> = {
       meditation: ['calm_voice', 'nature_guide', 'mindful_teacher'],
       breathing: ['breath_coach', 'wellness_guide', 'zen_master'],
       focus: ['productivity_coach', 'focus_trainer', 'clarity_guide'],
@@ -665,7 +663,7 @@ export class AIPersonalizationEngine {
       stress_relief: ['relaxation_expert', 'stress_coach', 'peace_guide']
     };
 
-    const sessionGuides = guides[sessionType] || ['default_guide'];
+    const sessionGuides = guides[_sessionType as keyof typeof guides] || ['default_guide'];
     return sessionGuides[0]; // Return first as default
   }
 

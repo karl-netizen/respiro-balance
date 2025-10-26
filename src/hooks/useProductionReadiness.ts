@@ -25,7 +25,7 @@ interface ProductionMetrics {
 }
 
 export const useProductionReadiness = () => {
-  const [metrics, setMetrics] = useState<ProductionMetrics>({
+  const [metrics] = useState<ProductionMetrics>({
     security: {
       rlsPolicies: 18,
       authenticationRequired: true,

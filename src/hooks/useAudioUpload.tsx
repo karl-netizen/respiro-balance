@@ -25,7 +25,7 @@ export const useAudioUpload = () => {
   const uploadAudio = useCallback(async (
     file: File,
     meditationContentId: string,
-    metadata?: {
+    _metadata?: {
       title?: string;
       description?: string;
     }

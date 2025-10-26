@@ -1,7 +1,6 @@
 
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
 
 interface EmailSystemHook {
   sendEmail: (to: string, template: string, variables?: Record<string, any>) => Promise<boolean>;

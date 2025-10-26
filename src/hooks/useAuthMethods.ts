@@ -61,7 +61,7 @@ export const useAuthMethods = (
   };
 
   // Email verification methods
-  const verifyEmail = async (token: string) => {
+  const verifyEmail = async (_token: string) => {
     setLoading(true);
     try {
       if (!isSupabaseConfigured()) {
@@ -79,7 +79,7 @@ export const useAuthMethods = (
     }
   };
 
-  const resendVerificationEmail = async (email: string) => {
+  const resendVerificationEmail = async (_email: string) => {
     setLoading(true);
     try {
       if (!isSupabaseConfigured()) {

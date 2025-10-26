@@ -163,7 +163,7 @@ export const useConversionTracking = () => {
   }, [calculateMetrics]);
 
   // A/B testing utilities
-  const getVariant = useCallback((testName: string): string => {
+  const getVariant = useCallback((_testName: string): string => {
     if (!user) return 'control';
     
     // Simple hash-based A/B testing

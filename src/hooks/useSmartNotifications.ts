@@ -50,7 +50,7 @@ export const useSmartNotifications = () => {
     if (!isPermissionGranted || !preferences.notifications?.enabled) return;
 
     // Check if this type of notification is enabled
-    if (!preferences.notifications.types?.[type]) return;
+    if (!preferences.notifications.types?.[type as keyof typeof preferences.notifications.types]) return;
 
     const optimalTime = calculateOptimalTime(preferences);
     
@@ -70,7 +70,7 @@ export const useSmartNotifications = () => {
     scheduleNotification(notification);
   }, [isPermissionGranted]);
 
-  const calculateOptimalTime = (preferences: UserPreferences): Date => {
+  const calculateOptimalTime = (_preferences: UserPreferences): Date => {
     // Default to morning if no specific preference
     const baseTime = new Date();
     baseTime.setHours(9, 0, 0, 0); // 9 AM default
@@ -119,7 +119,7 @@ export const useSmartNotifications = () => {
     }
   };
 
-  const getNotificationBody = (type: string, preferences: UserPreferences): string => {
+  const getNotificationBody = (type: string, _preferences: UserPreferences): string => {
     const messages = {
       reminder: [
         'Your daily mindfulness session awaits',

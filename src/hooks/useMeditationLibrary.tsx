@@ -1,5 +1,4 @@
 import { useState, useMemo } from 'react';
-import { MeditationSession } from '@/types/meditation';
 import { useMeditationFetch } from './meditation/useMeditationFetch';
 import { useMeditationFavorites } from './useMeditationFavorites';
 

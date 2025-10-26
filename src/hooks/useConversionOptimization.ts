@@ -76,7 +76,7 @@ export const useConversionOptimization = () => {
     setConversionEvents(prev => [...prev, conversionEvent]);
     
     // Update behavior data
-    setUserBehaviorData(prev => ({
+    setUserBehaviorData((prev: any) => ({
       ...prev,
       [event]: (prev[event] || 0) + 1,
       lastActivity: new Date()

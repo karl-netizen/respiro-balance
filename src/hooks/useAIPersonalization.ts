@@ -14,7 +14,7 @@ export const useAIPersonalization = ({
   recommendationCount = 5
 }: UseAIPersonalizationProps = {}) => {
   const { user } = useAuth();
-  const { preferences } = useUserPreferences();
+  useUserPreferences();
   const [recommendations, setRecommendations] = useState<SessionRecommendation[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

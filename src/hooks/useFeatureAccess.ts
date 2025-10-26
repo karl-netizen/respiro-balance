@@ -15,7 +15,7 @@ export interface FeatureAccess {
 
 export const useFeatureAccess = () => {
   const { user } = useAuth();
-  const { isPremium, subscriptionData } = useSubscription();
+  useSubscription();
 
   const { tier: storeTier } = useSubscriptionStore();
 

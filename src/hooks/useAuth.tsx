@@ -46,7 +46,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<ExtendedUser | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const { isDemoMode, getDemoSession, isLoggedInDemo } = useDemoMode();
+  const { isDemoMode, getDemoSession } = useDemoMode();
 
   useEffect(() => {
     // Check for demo mode first
@@ -197,7 +197,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     toast.success('Password reset email sent!');
   };
 
-  const resetPassword = async (password: string, token?: string) => {
+  const resetPassword = async (password: string, _token?: string) => {
     const { error } = await supabase.auth.updateUser({
       password
     });

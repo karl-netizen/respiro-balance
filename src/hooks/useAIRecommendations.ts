@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { aiPersonalizationEngine, SessionRecommendation, RecommendationContext } from '@/services/AIPersonalizationEngine';
 import { useAuth } from './useAuth';
 import { useToast } from '@/hooks/use-toast';

@@ -13,11 +13,11 @@ export const useOfflineStorageSafe = () => {
       isSupported: false,
       storageUsed: 0,
       storageLimit: 0,
-      downloadSession: async (sessionId: string, audioUrl: string, metadata: any) => false,
-      getOfflineSession: async (sessionId: string) => null,
-      deleteOfflineSession: async (sessionId: string) => false,
-      getAllOfflineSessions: async () => [],
-      isSessionDownloaded: async (sessionId: string) => false,
+      downloadSession: async (_sessionId: string, _audioUrl: string, _metadata: any): Promise<boolean> => false,
+      getOfflineSession: async (_sessionId: string): Promise<any> => null,
+      deleteOfflineSession: async (_sessionId: string): Promise<boolean> => false,
+      getAllOfflineSessions: async (): Promise<any[]> => [],
+      isSessionDownloaded: async (_sessionId: string): Promise<boolean> => false,
       clearAllOfflineData: async () => false,
       isAvailable: false
     };

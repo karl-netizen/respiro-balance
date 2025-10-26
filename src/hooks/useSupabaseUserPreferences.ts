@@ -16,7 +16,7 @@ export function useSupabaseUserPreferences() {
     enabled: !!user,
     staleTime: 5 * 60 * 1000, // 5 minutes
     meta: {
-      onSuccess: async (data: UserPreferences) => {
+      onSuccess: async (_data: UserPreferences) => {
         // Process any pending offline changes after successful fetch
         if (user?.id) {
           await processOfflineSync(user.id);

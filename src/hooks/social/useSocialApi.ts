@@ -6,16 +6,11 @@ import { toast } from 'sonner';
 import type {
   SocialPost,
   PostComment,
-  PostInteraction,
-  UserFriendship,
   CommunityGroup,
-  GroupMembership,
   CommunityChallenge,
-  ChallengeParticipation,
   LeaderboardEntry,
   UserSocialProfile,
-  UserRewards,
-  UserNotification
+  UserRewards
 } from '@/types/social';
 
 export function useSocialApi() {
