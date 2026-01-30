@@ -43,7 +43,7 @@ export class SleepPreferenceFilter {
     if (preferredTechniques.length === 0) return original;
 
     // Sleep-specific technique similarity mapping
-    const sleepSimilarityMap: Record<BreathingTechnique, BreathingTechnique[]> = {
+    const sleepSimilarityMap: Partial<Record<BreathingTechnique, BreathingTechnique[]>> = {
       'four-seven-eight': ['belly-breathing', 'coherent-breathing'],
       'belly-breathing': ['four-seven-eight', 'coherent-breathing'],
       'coherent-breathing': ['belly-breathing', 'box-breathing'],

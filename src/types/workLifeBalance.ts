@@ -96,6 +96,7 @@ export type BreakLength =
 // Breathing techniques suitable for work environments
 export type BreathingTechnique =
   | 'box-breathing'        // 4-4-4-4 pattern
+  | 'box-breathing-variation' // Box breathing variation
   | 'triangular-breathing' // 4-4-8 pattern
   | 'coherent-breathing'   // 5-5 pattern
   | 'alternate-nostril'    // Nadi Shodhana
@@ -103,7 +104,13 @@ export type BreathingTechnique =
   | 'quick-coherence'      // HeartMath technique
   | 'four-seven-eight'     // 4-7-8 pattern
   | 'tactical-breathing'   // Military technique
-  | 'physiological-sigh';  // Double inhale + long exhale
+  | 'physiological-sigh'   // Double inhale + long exhale
+  | 'wim-hof'              // Wim Hof breathing method
+  | 'breath-of-fire'       // Kundalini breathing technique
+  | 'extended-exhale'      // Long exhale for relaxation
+  | 'resonance-breathing'  // Resonance frequency breathing
+  | 'ocean-breath'         // Ujjayi pranayama
+  | 'lions-breath';        // Simhasana pranayama
 
 // Smart break recommendations based on user data
 export interface BreakRecommendation {

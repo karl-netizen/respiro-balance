@@ -66,7 +66,7 @@ export class PreferenceFilter {
     if (preferred.length === 0) return original;
 
     // Technique similarity mapping
-    const similarityMap: Record<BreathingTechnique, BreathingTechnique[]> = {
+    const similarityMap: Partial<Record<BreathingTechnique, BreathingTechnique[]>> = {
       'box-breathing': ['coherent-breathing', 'tactical-breathing'],
       'coherent-breathing': ['box-breathing', 'belly-breathing'],
       'four-seven-eight': ['triangular-breathing', 'physiological-sigh'],
@@ -95,7 +95,7 @@ export class PreferenceFilter {
    * Get alternative technique for low-performing ones
    */
   getAlternativeTechnique(original: BreathingTechnique): BreathingTechnique {
-    const alternatives: Record<BreathingTechnique, BreathingTechnique> = {
+    const alternatives: Partial<Record<BreathingTechnique, BreathingTechnique>> = {
       'box-breathing': 'coherent-breathing',
       'coherent-breathing': 'box-breathing',
       'four-seven-eight': 'physiological-sigh',

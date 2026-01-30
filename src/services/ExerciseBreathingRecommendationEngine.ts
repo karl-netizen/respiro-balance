@@ -32,7 +32,7 @@ interface ExerciseRecommendationContext {
  * Provides context-aware suggestions based on exercise type, timing, and personal goals
  */
 export class ExerciseBreathingRecommendationEngine {
-  private breathingTechniques: Record<BreathingTechnique, {
+  private breathingTechniques: Partial<Record<BreathingTechnique, {
     name: string;
     description: string;
     benefits: string[];
@@ -44,7 +44,7 @@ export class ExerciseBreathingRecommendationEngine {
     bestForExerciseTypes: ExerciseType[];
     bestForIntensity: IntensityLevel[];
     tensionAreas: TensionArea[];
-  }> = {
+  }>> = {
     'box-breathing': {
       name: 'Box Breathing',
       description: 'Four-count breathing pattern for focus and calm',
@@ -80,7 +80,7 @@ export class ExerciseBreathingRecommendationEngine {
       equipment: false,
       contexts: ['pre-exercise', 'recovery-day'],
       purposes: ['energy-boost', 'endurance', 'performance'],
-      bestForExerciseTypes: ['hiit', 'crossfit', 'endurance'],
+      bestForExerciseTypes: ['hiit', 'crossfit', 'cardio'],
       bestForIntensity: ['vigorous', 'maximum'],
       tensionAreas: ['chest', 'whole-body']
     },
@@ -121,7 +121,7 @@ export class ExerciseBreathingRecommendationEngine {
       purposes: ['recovery', 'tension-relief', 'cool-down'],
       bestForExerciseTypes: ['strength', 'hiit', 'crossfit'],
       bestForIntensity: ['moderate', 'vigorous', 'maximum'],
-      tensionAreas: ['shoulders', 'back', 'chest']
+      tensionAreas: ['shoulders', 'lower-back', 'chest']
     },
     'alternate-nostril': {
       name: 'Alternate Nostril Breathing',
@@ -465,7 +465,7 @@ export class ExerciseBreathingRecommendationEngine {
     purpose: ExerciseBreathingPurpose,
     context: ExerciseBreathingContext
   ): string[] {
-    const baseInstructions: Record<BreathingTechnique, string[]> = {
+    const baseInstructions: Partial<Record<BreathingTechnique, string[]>> = {
       'box-breathing': [
         'Sit or stand comfortably with spine straight',
         'Inhale for 4 counts through your nose',

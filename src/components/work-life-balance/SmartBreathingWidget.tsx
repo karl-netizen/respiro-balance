@@ -20,12 +20,12 @@ interface SmartBreathingWidgetProps {
 }
 
 // Technique descriptions for user education
-const TECHNIQUE_DESCRIPTIONS: Record<BreathingTechnique, {
+const TECHNIQUE_DESCRIPTIONS: Partial<Record<BreathingTechnique, {
   name: string;
   description: string;
   pattern: string;
   benefits: string[]
-}> = {
+}>> = {
   'box-breathing': {
     name: 'Box Breathing',
     description: 'Equal duration inhale, hold, exhale, hold',
