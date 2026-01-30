@@ -39,7 +39,7 @@ export default defineConfig(({ mode }) => ({
       'this-is-undefined-in-esm': 'silent' 
     },
     // Treat unused variables as warnings during development
-    loglevel: 'warning',
+    logLevel: 'warning',
   },
   build: {
     outDir: 'dist',
