@@ -567,6 +567,8 @@ export type Database = {
       }
       meditation_audio: {
         Row: {
+          approved_at: string | null
+          approved_by: string | null
           bitrate: number | null
           created_at: string | null
           duration_seconds: number | null
@@ -575,6 +577,7 @@ export type Database = {
           file_size: number
           file_type: string
           id: string
+          is_approved: boolean | null
           meditation_content_id: string | null
           sample_rate: number | null
           updated_at: string | null
@@ -583,6 +586,8 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
           bitrate?: number | null
           created_at?: string | null
           duration_seconds?: number | null
@@ -591,6 +596,7 @@ export type Database = {
           file_size: number
           file_type: string
           id?: string
+          is_approved?: boolean | null
           meditation_content_id?: string | null
           sample_rate?: number | null
           updated_at?: string | null
@@ -599,6 +605,8 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          approved_at?: string | null
+          approved_by?: string | null
           bitrate?: number | null
           created_at?: string | null
           duration_seconds?: number | null
@@ -607,6 +615,7 @@ export type Database = {
           file_size?: number
           file_type?: string
           id?: string
+          is_approved?: boolean | null
           meditation_content_id?: string | null
           sample_rate?: number | null
           updated_at?: string | null
@@ -993,6 +1002,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      role_change_audit: {
+        Row: {
+          action: string
+          id: string
+          ip_address: unknown
+          performed_at: string
+          performed_by: string | null
+          reason: string | null
+          role: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          action: string
+          id?: string
+          ip_address?: unknown
+          performed_at?: string
+          performed_by?: string | null
+          reason?: string | null
+          role: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          action?: string
+          id?: string
+          ip_address?: unknown
+          performed_at?: string
+          performed_by?: string | null
+          reason?: string | null
+          role?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       shared_achievements: {
         Row: {
@@ -1658,6 +1703,42 @@ export type Database = {
           },
         ]
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          granted_at: string
+          granted_by: string | null
+          id: string
+          notes: string | null
+          revoked_at: string | null
+          role: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          granted_at?: string
+          granted_by?: string | null
+          id?: string
+          notes?: string | null
+          revoked_at?: string | null
+          role: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          granted_at?: string
+          granted_by?: string | null
+          id?: string
+          notes?: string | null
+          revoked_at?: string | null
+          role?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_social_profiles: {
         Row: {
           avatar_url: string | null
@@ -1720,25 +1801,41 @@ export type Database = {
         Args: { p_user_id: string }
         Returns: number
       }
+      current_user_has_role: { Args: { role_name: string }; Returns: boolean }
+      get_user_roles: {
+        Args: { user_uuid: string }
+        Returns: {
+          granted_at: string
+          granted_by: string
+          role: string
+        }[]
+      }
+      grant_role: {
+        Args: {
+          grant_notes?: string
+          role_to_grant: string
+          target_user_id: string
+        }
+        Returns: string
+      }
       has_exceeded_free_limits: {
         Args: { user_id_param: string }
         Returns: boolean
       }
-      has_premium_access: {
-        Args: { user_id_param: string }
+      has_premium_access: { Args: { user_id_param: string }; Returns: boolean }
+      has_role: {
+        Args: { role_name: string; user_uuid: string }
         Returns: boolean
       }
       increment_meditation_usage: {
         Args: { minutes_used: number; user_id_param: string }
         Returns: undefined
       }
-      increment_play_count: {
-        Args: { content_id: string }
-        Returns: undefined
-      }
-      reset_monthly_meditation_limits: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
+      increment_play_count: { Args: { content_id: string }; Returns: undefined }
+      reset_monthly_meditation_limits: { Args: never; Returns: undefined }
+      revoke_role: {
+        Args: { role_to_revoke: string; target_user_id: string }
+        Returns: boolean
       }
       update_content_progress: {
         Args: {

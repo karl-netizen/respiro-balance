@@ -35,12 +35,12 @@ interface SleepBreathingWidgetProps {
 }
 
 // Technique descriptions for sleep context
-const SLEEP_TECHNIQUE_DESCRIPTIONS: Record<BreathingTechnique, {
+const SLEEP_TECHNIQUE_DESCRIPTIONS: Partial<Record<BreathingTechnique, {
   name: string;
   sleepContext: string;
   instructions: string[];
   bestFor: string[];
-}> = {
+}>> = {
   'four-seven-eight': {
     name: '4-7-8 Sleep Breathing',
     sleepContext: 'Specifically designed to activate your natural sleep response',
