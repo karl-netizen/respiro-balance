@@ -106,17 +106,21 @@ export const AudioUploader: React.FC<AudioUploaderProps> = ({
       
       console.log('File uploaded successfully:', uploadData);
       
-      // Generate public URL
-      const { data: urlData } = supabase.storage
+      // Generate signed URL (bucket is private for security)
+      const { data: signedUrlData, error: signedUrlError } = await supabase.storage
         .from('meditation-audio')
-        .getPublicUrl(uniqueFileName);
+        .createSignedUrl(uniqueFileName, 3600); // 1 hour expiry
       
-      const publicUrl = urlData.publicUrl;
-      console.log('Generated public URL:', publicUrl);
+      if (signedUrlError) {
+        throw new Error(`Failed to create signed URL: ${signedUrlError.message}`);
+      }
+      
+      const signedUrl = signedUrlData.signedUrl;
+      console.log('Generated signed URL:', signedUrl);
       
       return {
         success: true,
-        publicUrl: publicUrl,
+        publicUrl: signedUrl,
         message: 'File uploaded successfully!'
       };
       

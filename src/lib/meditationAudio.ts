@@ -105,12 +105,18 @@ export const uploadMeditationAudio = async (file: File, fileName: string): Promi
       return null;
     }
     
-    console.log('File uploaded successfully, getting public URL...');
+    console.log('File uploaded successfully, getting signed URL...');
     
-    // Get the public URL
-    const { data: publicUrlData } = supabase.storage
+    // Get signed URL (bucket is private for security)
+    const { data: signedUrlData, error: signedUrlError } = await supabase.storage
       .from(BUCKET_NAME)
-      .getPublicUrl(data.path);
+      .createSignedUrl(data.path, 3600); // 1 hour expiry
+    
+    if (signedUrlError) {
+      console.error('Error creating signed URL:', signedUrlError);
+      toast.error('File uploaded but could not generate access URL');
+      return null;
+    }
     
     console.log('Creating database record...');
     
@@ -134,9 +140,9 @@ export const uploadMeditationAudio = async (file: File, fileName: string): Promi
       console.log('Database record created successfully');
     }
     
-    console.log('Upload complete:', publicUrlData.publicUrl);
+    console.log('Upload complete:', signedUrlData.signedUrl);
     toast.success('Audio file uploaded successfully');
-    return publicUrlData.publicUrl;
+    return signedUrlData.signedUrl;
     
   } catch (error: any) {
     console.error('Upload error:', error);
@@ -153,14 +159,19 @@ export const uploadMeditationAudio = async (file: File, fileName: string): Promi
 };
 
 /**
- * Fetches the public URL for a meditation audio file
+ * Fetches a signed URL for a meditation audio file (bucket is private)
  */
-export const getMeditationAudioUrl = (filePath: string): string => {
-  const { data } = supabase.storage
+export const getMeditationAudioUrl = async (filePath: string): Promise<string | null> => {
+  const { data, error } = await supabase.storage
     .from(BUCKET_NAME)
-    .getPublicUrl(filePath);
+    .createSignedUrl(filePath, 3600); // 1 hour expiry
   
-  return data.publicUrl;
+  if (error) {
+    console.error('Error creating signed URL:', error);
+    return null;
+  }
+  
+  return data.signedUrl;
 };
 
 /**
