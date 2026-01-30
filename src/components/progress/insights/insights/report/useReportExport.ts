@@ -1,7 +1,6 @@
 
 import { useRef, useState } from 'react';
 import html2canvas from 'html2canvas';
-import { jsPDF } from 'jspdf';
 import { toast } from "sonner";
 import { MeditationStats } from '@/components/progress/types/meditationStats';
 
@@ -105,7 +104,7 @@ export const useReportExport = (meditationStats: MeditationStats) => {
     }
   };
   
-  // Function to export the report as PDF
+  // Function to export the report as PDF (now exports as image since jspdf was removed for security)
   const exportAsPDF = async () => {
     if (isExporting) {
       toast.warning("Export already in progress. Please wait...");
@@ -115,59 +114,41 @@ export const useReportExport = (meditationStats: MeditationStats) => {
     setIsExporting(true);
     
     try {
-      toast.info("Generating PDF...", { 
+      toast.info("Generating report...", { 
         description: "This may take a few moments" 
       });
       
       const canvas = await captureReport();
       if (!canvas) {
-        toast.error("Failed to generate PDF. Please try again.");
+        toast.error("Failed to generate report. Please try again.");
         return;
       }
       
-      console.log("Starting PDF generation with canvas dimensions:", {
+      console.log("Starting report generation with canvas dimensions:", {
         width: canvas.width,
         height: canvas.height
       });
       
+      // Export as PNG instead of PDF (jspdf removed due to security vulnerability)
       const imgData = canvas.toDataURL('image/png', 0.95);
+      const link = document.createElement('a');
+      const fileName = `meditation_progress_${new Date().toISOString().split('T')[0]}.png`;
       
-      // Calculate PDF dimensions to fit nicely
-      const pdfWidth = 210; // A4 width in mm
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      link.download = fileName;
+      link.href = imgData;
+      link.style.display = 'none';
       
-      const pdf = new jsPDF({
-        orientation: pdfHeight > 297 ? 'portrait' : 'portrait',
-        unit: 'mm',
-        format: 'a4'
-      });
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
       
-      // Add the image to PDF with proper scaling
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, Math.min(pdfHeight, 297));
-      
-      // If content is too tall, add additional pages
-      if (pdfHeight > 297) {
-        let remainingHeight = pdfHeight - 297;
-        let yOffset = -297;
-        
-        while (remainingHeight > 0) {
-          pdf.addPage();
-          pdf.addImage(imgData, 'PNG', 0, yOffset, pdfWidth, pdfHeight);
-          remainingHeight -= 297;
-          yOffset -= 297;
-        }
-      }
-      
-      const fileName = `meditation_progress_${new Date().toISOString().split('T')[0]}.pdf`;
-      pdf.save(fileName);
-      
-      toast.success("PDF Downloaded Successfully", {
+      toast.success("Report Downloaded Successfully", {
         description: `Saved as ${fileName}`
       });
       
     } catch (error) {
-      console.error("Error generating PDF:", error);
-      toast.error("Failed to generate PDF. Please try again.", {
+      console.error("Error generating report:", error);
+      toast.error("Failed to generate report. Please try again.", {
         description: error instanceof Error ? error.message : "Unknown error occurred"
       });
     } finally {

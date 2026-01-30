@@ -31,16 +31,20 @@ export const useSessionPlayer = ({
       setAudioError(null);
       
       try {
-        let url: string;
+        let url: string | null = null;
         
         if (session.audio_url) {
           // Use the audio_url directly since it's already a complete URL from the database
           url = session.audio_url;
           console.log("🎵 Using session's audio_url directly:", session.audio_url);
         } else {
-          // Fallback to generating URL from session ID
-          url = getMeditationAudioUrl(`${session.id}.mp3`);
+          // Fallback to generating signed URL from session ID (async)
+          url = await getMeditationAudioUrl(`${session.id}.mp3`);
           console.log("🎵 Using session ID for audio:", session.id, "resolved to:", url);
+        }
+        
+        if (!url) {
+          throw new Error('Could not generate audio URL');
         }
         
         console.log("🔍 Testing audio URL accessibility:", url);

@@ -88,12 +88,14 @@ export const ContentManagement = () => {
 
     if (error) throw error;
 
-    // Get public URL
-    const { data: urlData } = supabase.storage
+    // Get signed URL (bucket is private for security)
+    const { data: signedUrlData, error: signedUrlError } = await supabase.storage
       .from('meditation-audio')
-      .getPublicUrl(filePath);
+      .createSignedUrl(filePath, 3600); // 1 hour expiry
 
-    return urlData.publicUrl;
+    if (signedUrlError) throw signedUrlError;
+
+    return signedUrlData.signedUrl;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

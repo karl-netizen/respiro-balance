@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Download, Crown } from 'lucide-react';
 import { useSubscriptionContext } from './SubscriptionProvider';
 import { SubscriptionGate } from './SubscriptionGate';
-import jsPDF from 'jspdf';
 
 interface ExportButtonProps {
   data: any;
@@ -21,46 +20,37 @@ export const ExportButton: React.FC<ExportButtonProps> = ({
   const [isExporting, setIsExporting] = useState(false);
   const { isPremium } = useSubscriptionContext();
 
-  const exportToPDF = (data: any, filename: string) => {
-    const doc = new jsPDF();
-    
-    // Title
-    doc.setFontSize(20);
-    doc.text('Meditation Progress Report', 20, 30);
-    
-    // Date
-    doc.setFontSize(12);
-    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, 45);
-    
-    // Content
-    doc.setFontSize(14);
-    let yPosition = 65;
+  const exportToText = (data: any, filename: string) => {
+    // Generate a text-based report (PDF removed due to security vulnerability)
+    let content = 'Meditation Progress Report\n';
+    content += '='.repeat(40) + '\n';
+    content += `Generated on: ${new Date().toLocaleDateString()}\n\n`;
     
     if (data.stats) {
-      doc.text('Statistics:', 20, yPosition);
-      yPosition += 10;
+      content += 'Statistics:\n';
+      content += '-'.repeat(20) + '\n';
       
       Object.entries(data.stats).forEach(([key, value]) => {
-        doc.setFontSize(10);
-        doc.text(`${key}: ${value}`, 25, yPosition);
-        yPosition += 8;
+        content += `  ${key}: ${value}\n`;
       });
     }
     
     if (data.sessions && data.sessions.length > 0) {
-      yPosition += 10;
-      doc.setFontSize(14);
-      doc.text('Recent Sessions:', 20, yPosition);
-      yPosition += 10;
+      content += '\nRecent Sessions:\n';
+      content += '-'.repeat(20) + '\n';
       
       data.sessions.slice(0, 10).forEach((session: any, index: number) => {
-        doc.setFontSize(10);
-        doc.text(`${index + 1}. ${session.title || 'Meditation Session'} - ${session.duration}min`, 25, yPosition);
-        yPosition += 8;
+        content += `  ${index + 1}. ${session.title || 'Meditation Session'} - ${session.duration}min\n`;
       });
     }
     
-    doc.save(`${filename}.pdf`);
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${filename}.txt`;
+    link.click();
+    window.URL.revokeObjectURL(url);
   };
 
   const exportToCSV = (data: any, filename: string) => {
@@ -112,7 +102,8 @@ export const ExportButton: React.FC<ExportButtonProps> = ({
       
       switch (type) {
         case 'pdf':
-          exportToPDF(data, filename);
+          // Use text export instead of PDF (jspdf removed due to security vulnerability)
+          exportToText(data, filename);
           break;
         case 'csv':
           exportToCSV(data, filename);
@@ -153,7 +144,7 @@ export const ExportButton: React.FC<ExportButtonProps> = ({
       ) : (
         <>
           <Download className="h-4 w-4 mr-2" />
-          Export {type.toUpperCase()}
+          Export {type === 'pdf' ? 'TXT' : type.toUpperCase()}
         </>
       )}
     </Button>
